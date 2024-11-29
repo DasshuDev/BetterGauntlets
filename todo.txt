@@ -1,6 +1,10 @@
 Better Gauntlets To-Do:
 
 Main To-Do:
+- Decorations:
+    - Remove Torch particles, replace with an animation loop
+- Optimize GauntletSelectLayer.cpp code
+- Rewrite code to support GauntletNode class, and not IDRecursive
 - Settings To-Do:
 
 
@@ -27,8 +31,7 @@ Done:
         - recolor everything (kill me)
 - Properly center gauntlets
 
-v2.0.0 Plans
-- Check "Level Reposition" setting for gauntlet-shadow, set visibility to false for ALL LEVELS
+v1.0.0+ Plans
 - "Page X/X" text above page navigation buttons
 - Search button
 - Create GDW Islands
@@ -40,4 +43,3 @@ v2.0.0 Plans
     - Re-implement Level Reposition (support for GDW islands)
     - Disable island movement settings (reduce motion)
     - Change Gauntlet sprite based on "Level Reposition" setting status
-- Rewrite code to support GauntletNode class, and not IDRecursive

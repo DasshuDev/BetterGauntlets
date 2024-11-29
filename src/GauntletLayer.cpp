@@ -78,50 +78,27 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 	auto levelMenuPos = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
 	if (!levelMenuPos) return;
 		levelMenuPos->setPosition(0, 0);
-
-		auto reposLevels = Mod::get()->getSettingValue<bool>("level-reposition");
-		if (!reposLevels) {
 		
-		auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
-			levelOne->setPositionX(winSize.width / 2 - 180);
-			levelOne->setPositionY(winSize.height / 2 - 70);
+	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
+	levelOne->setPositionX(winSize.width / 2 - 180);
+	levelOne->setPositionY(winSize.height / 2 - 70);
 
-			auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
-			levelTwo->setPositionX(winSize.width / 2 - 90);
-			levelTwo->setPositionY(winSize.height / 2 + 40);;
+	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
+	levelTwo->setPositionX(winSize.width / 2 - 90);
+	levelTwo->setPositionY(winSize.height / 2 + 40);;
 
-			auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
-			levelThree->setPositionX(winSize.width / 2);
-			levelThree->setPositionY(winSize.height / 2 - 70);
+	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
+	levelThree->setPositionX(winSize.width / 2);
+	levelThree->setPositionY(winSize.height / 2 - 70);
 
-			auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
-			levelFour->setPositionX(winSize.width / 2 + 90);
-			levelFour->setPositionY(winSize.height / 2 + 40);
+	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
+	levelFour->setPositionX(winSize.width / 2 + 90);
+	levelFour->setPositionY(winSize.height / 2 + 40);
 
-			auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
-			levelFive->setPositionX(winSize.width / 2 + 180);
-			levelFive->setPositionY(winSize.height / 2 - 70);
-	} else {
-		auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
-			levelOne->setPositionX(winSize.width / 2 - 150);
-			levelOne->setPositionY(winSize.height / 2 - 10);
-
-			auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
-			levelTwo->setPositionX(winSize.width / 2 - 75);
-			levelTwo->setPositionY(winSize.height / 2 + 15);;
-
-			auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
-			levelThree->setPositionX(winSize.width / 2);
-			levelThree->setPositionY(winSize.height / 2 - 15);
-
-			auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
-			levelFour->setPositionX(winSize.width / 2 + 75);
-			levelFour->setPositionY(winSize.height / 2 + 15);
-
-			auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
-			levelFive->setPositionX(winSize.width / 2 + 150);
-			levelFive->setPositionY(winSize.height / 2 - 10);
-		}
+	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
+	levelFive->setPositionX(winSize.width / 2 + 180);
+	levelFive->setPositionY(winSize.height / 2 - 70);
+	
 	for (int g = 0; g < 5; g++) {
 		auto gauntletLevel = getChildByIDRecursive(fmt::format("level-{}", g + 1));
 		if (gauntletLevel) {
@@ -138,13 +115,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 						if (shadow) {
 							shadow->setID("gauntlet-shadow");
-
-							// auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-							// if (!reposLevel) {
-							// 	shadow->setVisible(true);
-							// } else {
-							// 	shadow->setVisible(false);
-							// }
 						}
 						if (island) {
 							island->setID("gauntlet-level");
@@ -168,13 +138,9 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 								if (nameRecolor) {
 									nameRecolor->setID("level-name");
 								}
-							// } else {
-								// log::error("Error: No children found in gauntlet-stats or fewer than expected.");
 							}
 						}
 					}
-				// } else {
-				// log::error("Error: Gauntlet level {} not found.", g + 1);
                 }
             }
         }
@@ -213,21 +179,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 185, 80));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -245,21 +196,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(197, 237, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -277,21 +213,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(210, 255, 201));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -310,21 +231,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(233, 161, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -342,21 +248,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 173, 148));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -374,21 +265,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 229, 144));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -406,21 +282,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 201, 180));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -438,21 +299,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 192, 167));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -470,21 +316,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(202, 249, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -502,21 +333,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(253, 226, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -534,21 +350,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(195, 253, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -566,21 +367,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(245, 222, 160));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -598,21 +384,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(151, 192, 146));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -632,21 +403,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(212, 156, 156));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -664,21 +420,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(153, 106, 106));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -696,21 +437,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(154, 214, 148));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -728,21 +454,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 230, 161));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -760,21 +471,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(245, 166, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -792,21 +488,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(139, 180, 175));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -824,21 +505,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 188, 157));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -856,21 +522,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(175, 210, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -888,21 +539,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 250, 202));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -920,21 +556,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(209, 255, 207));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -952,21 +573,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(170, 184, 196));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -984,21 +590,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(226, 212, 164));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1016,21 +607,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(246, 209, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1048,21 +624,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(189, 164, 128));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1080,21 +641,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(165, 255, 153));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1112,21 +658,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 204, 145));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1144,21 +675,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 239, 170));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1176,21 +692,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(216, 216, 216));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1208,21 +709,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(219, 181, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1240,21 +726,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(207, 255, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1272,21 +743,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(252, 174, 110));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1304,21 +760,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 196, 225));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1336,21 +777,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(225, 184, 226));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1368,21 +794,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(212, 255, 143));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1400,21 +811,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(192, 245, 240));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1432,21 +828,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(233, 153, 117));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1464,21 +845,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 223, 80));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 		}
@@ -1495,21 +861,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(147, 255, 133));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1527,21 +878,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(187, 212, 212));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1559,21 +895,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(221, 203, 179));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1591,21 +912,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(175, 225, 160));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1623,21 +929,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(226, 215, 163));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1655,21 +946,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(175, 255, 166));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1688,21 +964,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 151, 243));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1721,21 +982,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 197, 103));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1764,22 +1010,11 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 								auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
 
 								auto updatedSprite = Mod::get()->getSettingValue<bool>("update-discord-sprite");
-									if (!updatedSprite) {
-										// :3
-									} else {
-										swapSprite->setDisplayFrame(CCSprite::create("island_discord_002.png"_spr)->displayFrame());
-									}
-								// auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-								// if (!reposLevel) {
-								// 	// log::info("level retained sprite");
-								// } else { // Setting "discord-sprite"
-								// 	auto updatedSprite = Mod::get()->getSettingValue<bool>("update-discord-sprite");
-								// 	if (!updatedSprite) {
-								// 		swapSprite->setDisplayFrame(CCSprite::create("island_lvl_discord_001.png"_spr)->displayFrame());
-								// 	} else {
-								// 		swapSprite->setDisplayFrame(CCSprite::create("island_lvl_discord_002.png"_spr)->displayFrame());
-								// 	}
-								// }
+								if (!updatedSprite) {
+									// :3
+								} else {
+									swapSprite->setDisplayFrame(CCSprite::create("island_discord_002.png"_spr)->displayFrame());
+								}
 							}
 						}				
 					}
@@ -1800,21 +1035,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 155, 240));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1833,21 +1053,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(170, 245, 255));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
@@ -1866,31 +1071,15 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 160, 250));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
 		}
 		case GauntletType::Space: { // 53
 			editGauntletSingle("Space", ccc3(136, 81, 136), ccc3(255, 152, 255), ccc3(80, 47, 80));
-			GameManager::get()->loadBackground(21);
-			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_21_001.png");
+			GameManager::get()->loadBackground(13);
+			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_13_001.png");
 			this->m_backgroundSprite->setTexture(bgTexture);
-			m_backgroundSprite->setPositionY(-250);
 
 			for (int i = 0; i < 5; i++) {
 				auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
@@ -1899,31 +1088,15 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(128, 187, 229));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
 		}
 		case GauntletType::Cosmos: { // 54
 			editGauntletSingle("Cosmos", ccc3(136, 81, 136), ccc3(255, 152, 255), ccc3(80, 47, 80));
-			GameManager::get()->loadBackground(21);
-			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_21_001.png");
+			GameManager::get()->loadBackground(13);
+			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_13_001.png");
 			this->m_backgroundSprite->setTexture(bgTexture);
-			m_backgroundSprite->setPositionY(-250);
 
 			for (int i = 0; i < 5; i++) {
 				auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
@@ -1932,27 +1105,12 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					if (name) {
 						name->setColor(ccc3(255, 208, 80));
 					}
-					// for (int c = 0; c < 5; c++) {
-					// 	auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-					// 	if (sprite) {
-					// 		CCArray* children = sprite->getChildren();
-					// 		if (children && children->count() > 0) {
-					// 			auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-					// 			if (swapSprite) {
-					// 				auto reposLevel = Mod::get()->getSettingValue<bool>("level-reposition");
-					// 				if (reposLevel) {
-					// 					swapSprite->setDisplayFrame(CCSprite::create("island_lvl_fire_001.png"_spr)->displayFrame());
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
 				}
 			}
 			break;
 		}
 	}
-	// Logs which Gauntlet has been opened
+
 	m_fields->m_loaded = true;
 	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 

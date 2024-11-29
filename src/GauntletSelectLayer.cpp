@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
+#include <Geode/modify/GauntletNode.hpp>
 
 using namespace geode::prelude;
 
@@ -152,16 +153,11 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             float scale = std::min(scaleX, scaleY);
 
             floor->setScale(scale);
-
             floor->setPosition(ccp(winSize.width / 2, floorSize.height * scale / 2));
             floor->setAnchorPoint(ccp(0.5, 0.5));
-
             floor->setZOrder(-1);
             this->addChild(floor);
         }
-
-        auto navMenu = getChildByID("dasshu.better-gauntlets/page-navigation");
-        navMenu->setScale(0.9f);
 
         auto decorationParentNode = CCNode::create();
         if (decorationParentNode) {
@@ -177,186 +173,30 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                 chainParentNode->setZOrder(-1);
                 decorationParentNode->addChild(chainParentNode);
 
-                for (int c = 0; c < 15; c++) {
+                for (int c = 0; c < 3; c++) {
 
-                auto chain = CCSprite::createWithSpriteFrameName("d_03_chain_01_001.png");
+                auto chain = CCSprite::createWithSpriteFrameName("chain_01_001.png");
                 chain->setID(fmt::format("chain-{}", c + 1));
                 chain->setColor(ccc3(20, 20, 20));
                 chain->setPosition(ccp(0, 0));
+                chain->setRotation(180);
                 chainParentNode->addChild(chain);
                 }
+                
                 // first chain pair //
                 auto chain1 = getChildByIDRecursive("chain-1");
                 chain1->setScale(2.0);
-                chain1->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 0));
-
-                auto chain2 = getChildByIDRecursive("chain-2");
-                chain2->setScale(2.0);
-                chain2->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 30));
-
-                auto chain3 = getChildByIDRecursive("chain-3");
-                chain3->setScale(2.0);
-                chain3->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 60));
-
-                auto chain4 = getChildByIDRecursive("chain-4");
-                chain4->setScale(2.0);
-                chain4->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 90));
-
-                auto chain5 = getChildByIDRecursive("chain-5");
-                chain5->setScale(2.0);
-                chain5->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 120));
+                chain1->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 70));
 
                 // second chain pair //
-                auto chain6 = getChildByIDRecursive("chain-6");
-                chain6->setScale(1.0);
-                chain6->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 0));
-
-                auto chain7 = getChildByIDRecursive("chain-7");
-                chain7->setScale(1.0);
-                chain7->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 15));
-
-                auto chain8 = getChildByIDRecursive("chain-8");
-                chain8->setScale(1.0);
-                chain8->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 30));
-
-                auto chain9 = getChildByIDRecursive("chain-9");
-                chain9->setScale(1.0);
-                chain9->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 45));
-
-                auto chain10 = getChildByIDRecursive("chain-10");
-                chain10->setScale(1.0);
-                chain10->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 60));
+                auto chain2 = getChildByIDRecursive("chain-2");
+                chain2->setScale(1.0);
+                chain2->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 35));
 
                 // third chain pair //
-                auto chain11 = getChildByIDRecursive("chain-11");
-                chain11->setScale(1.65);
-                chain11->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 0));
-
-                auto chain12 = getChildByIDRecursive("chain-12");
-                chain12->setScale(1.65);
-                chain12->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 25));
-
-                auto chain13 = getChildByIDRecursive("chain-13");
-                chain13->setScale(1.65);
-                chain13->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 50));
-
-                auto chain14 = getChildByIDRecursive("chain-14");
-                chain14->setScale(1.65);
-                chain14->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 75));
-
-                auto chain15 = getChildByIDRecursive("chain-15");
-                chain15->setScale(1.65);
-                chain15->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 100));
-            }
-        }
-
-        auto torchParentNode = CCNode::create();
-        if (torchParentNode) {
-            torchParentNode->setID("torch-parent-node");
-            torchParentNode->setPosition(0, 0);
-            torchParentNode->setZOrder(-1);
-            decorationParentNode->addChild(torchParentNode);
-
-            auto lightL = CCSprite::create("torchShine_001.png"_spr);
-            if (lightL) {
-                
-                auto lightScaleUp = CCEaseInOut::create(CCScaleTo::create(1.5f, 2.0f), 2.0f);
-                auto lightScaleDown = CCEaseInOut::create(CCScaleTo::create(1.5f, 1.15f), 2.0f);
-                auto lightScaleSequence = CCSequence::create(lightScaleUp, lightScaleDown, nullptr);
-                
-                auto lightFadeFrom = CCFadeTo::create(3.0f, 112);
-                auto lightFadeTo = CCFadeTo::create(3.0f, 156);
-                auto lightFadeSequence = CCSequence::create(lightFadeFrom, lightFadeTo, nullptr);
-
-                auto scaleLoop = CCRepeatForever::create(lightScaleSequence);
-                auto fadeLoop = CCRepeatForever::create(lightFadeSequence);
-                
-                lightL->setScale(1.15f);
-                lightL->setPosition(ccp(director->getScreenLeft() + 75.f, winSize.height / 2));
-                lightL->setZOrder(3);
-                lightL->setOpacity(156);
-                lightL->setColor(ccc3(255, 196, 0));
-                lightL->runAction(scaleLoop);
-                lightL->runAction(fadeLoop);
-                torchParentNode->addChild(lightL);
-            }
-
-            auto lightR = CCSprite::create("torchShine_001.png"_spr);
-            if (lightR) {
-                
-                auto lightScaleUp = CCEaseInOut::create(CCScaleTo::create(1.5f, 2.0f), 2.0f);
-                auto lightScaleDown = CCEaseInOut::create(CCScaleTo::create(1.5f, 1.15f), 2.0f);
-                auto lightScaleSequence = CCSequence::create(lightScaleUp, lightScaleDown, nullptr);
-                
-                auto lightFadeFrom = CCFadeTo::create(3.0f, 112);
-                auto lightFadeTo = CCFadeTo::create(3.0f, 156);
-                auto lightFadeSequence = CCSequence::create(lightFadeFrom, lightFadeTo, nullptr);
-
-                auto scaleLoop = CCRepeatForever::create(lightScaleSequence);
-                auto fadeLoop = CCRepeatForever::create(lightFadeSequence);
-                
-                lightR->setScale(1.15f);
-                lightR->setPosition(ccp(director->getScreenRight() - 75.f, winSize.height / 2));
-                lightR->setZOrder(3);
-                lightR->setOpacity(156);
-                lightR->setColor(ccc3(255, 196, 0));
-                lightR->runAction(scaleLoop);
-                lightR->runAction(fadeLoop);
-                torchParentNode->addChild(lightR);
-            }
-
-            auto torchParticleA1 = CCParticleSystemQuad::create();
-            if (torchParticleA1) {
-                CCParticleSystemQuad* torchParticleLA = GameToolbox::particleFromString("30a-1a2a0.55a6a90a90a0a0a0a0a0a28a2a0a0a6a75a0a0a40a1a0a0.5a0a0a0a1a0a0a0a0a25a1a0a0.5a0a0a0a1a0a0.15a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                torchParticleLA->setPosition(director->getScreenLeft() + 75.f, winSize.height / 2);
-                torchParticleLA->setZOrder(1);
-                torchParticleLA->setScale(0.85f);
-                torchParentNode->addChild(torchParticleLA);
-            }
-        
-            auto torchParticleA2 = CCParticleSystemQuad::create();
-            if (torchParticleA2) {
-                CCParticleSystemQuad* torchParticleLB = GameToolbox::particleFromString("30a-1a2a0.55a6a90a90a0a0a0a0a0a43a2a0a0a10a10a0a0a40a0.25a0a0.25a0a0.25a0a1a0a30a10a0a25a0a0a0a0a0a0a0a0a0.15a0a0.25a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.4a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                torchParticleLB->setPosition(director->getScreenLeft() + 75.f, winSize.height / 2);
-                torchParticleLB->setZOrder(0);
-                torchParticleLB->setScale(1.75f);
-                torchParentNode->addChild(torchParticleLB);
-                }
-            
-            auto torchHandleL = CCSprite::create("wallTorch_001.png"_spr);
-            if (torchHandleL) {
-                torchHandleL->setPosition(ccp(director->getScreenLeft() + 75.f, winSize.height / 2 - 20));
-                torchHandleL->setZOrder(2);
-                torchHandleL->setScale(0.75);
-                torchHandleL->setColor(ccc3(35, 35, 35));
-                torchParentNode->addChild(torchHandleL);
-            }
-
-            auto torchParticleB1 = CCParticleSystemQuad::create();
-            if (torchParticleB1) {
-                CCParticleSystemQuad* torchParticleRA = GameToolbox::particleFromString("30a-1a2a0.55a6a90a90a0a0a0a0a0a28a2a0a0a6a75a0a0a40a1a0a0.5a0a0a0a1a0a0a0a0a25a1a0a0.5a0a0a0a1a0a0.15a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                torchParticleRA->setPosition(director->getScreenRight() - 75.f, winSize.height / 2);
-                torchParticleRA->setZOrder(1);
-                torchParticleRA->setScale(0.85f);
-                torchParentNode->addChild(torchParticleRA);
-            }
-        
-            auto torchParticleB2 = CCParticleSystemQuad::create();
-            if (torchParticleB2) {
-                CCParticleSystemQuad* torchParticleRB = GameToolbox::particleFromString("30a-1a2a0.55a6a90a90a0a0a0a0a0a43a2a0a0a10a10a0a0a40a0.25a0a0.25a0a0.25a0a1a0a30a10a0a25a0a0a0a0a0a0a0a0a0.15a0a0.25a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.4a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                torchParticleRB->setPosition(director->getScreenRight() - 75.f, winSize.height / 2);
-                torchParticleRB->setZOrder(0);
-                torchParticleRB->setScale(1.75f);
-                torchParentNode->addChild(torchParticleRB);
-                }
-            
-            auto torchHandleR = CCSprite::create("wallTorch_001.png"_spr);
-            if (torchHandleR) {
-                torchHandleR->setPosition(ccp(director->getScreenRight() - 75.f, winSize.height / 2 - 20));
-                torchHandleR->setZOrder(2);
-                torchHandleR->setScale(0.75);
-                torchHandleR->setColor(ccc3(94, 94, 94));
-                torchParentNode->addChild(torchHandleR);
+                auto chain3 = getChildByIDRecursive("chain-3");
+                chain3->setScale(1.65);
+                chain3->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 55));
             }
         }
 
@@ -366,296 +206,32 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             dustParticles->setPosition(winSize.width / 2, director->getScreenTop() + 10);
             dustParticles->setZOrder(-2);
             this->addChild(dustParticles);
-        }   
+        }
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
 
-        auto gauntletList = getChildByIDRecursive("gauntlets-list");
-        if (gauntletList) {
-            
-            auto gauntletPages = gauntletList->getChildByIDRecursive("gauntlet-pages");
-            if (gauntletPages) {
-                
-                auto gauntletPage = gauntletPages->getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1));
-                if (gauntletPage) {
-                    
-                    auto gauntletMenu = gauntletPage->getChildByIDRecursive("gauntlet-menu");
-                    if (gauntletMenu) {
-                        gauntletMenu->setScale(0.85);
-                        gauntletMenu->setPosition(0, 5);
-                        for (int gb = 0; gb < 3; gb++) {
-                            
-                            auto gauntletBtn = gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", gb + 1));
-                            if (gauntletBtn) {
-                                
-                                auto gauntletNodePrnt = gauntletBtn->getChildByIDRecursive("gauntlet-node-parent");
-                                if (gauntletNodePrnt) {
-                                    
-                                    auto gauntletNode = gauntletNodePrnt->getChildByIDRecursive("gauntlet-node");
-                                    if (gauntletNode) {
-                                        
-                                        auto bgPortal = Mod::get()->getSettingValue<bool>("update-backgrounds");
-                                        if (bgPortal) {
+            auto gauntletPage = static_cast<CCMenu*>(this->getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
+            if (gauntletPage) {
 
-                                            auto particleParentNode = CCNode::create();
-                                            if (particleParentNode) {
-                                                particleParentNode->setID("particle-parent-node");
-                                                particleParentNode->setZOrder(5);
-                                                gauntletNode->addChild(particleParentNode);
+                auto gauntletMenu = gauntletPage->getChildByIDRecursive("gauntlet-menu");
+                if (gauntletMenu) {
+                    gauntletMenu->setScale(0.85);
+                    gauntletMenu->setPosition(ccp(0, 5));
 
-                                                for (int p = 0; p < 1; p++) {
-                                                    auto portalParticle1 = CCParticleSystemQuad::create();
-                                                    if (portalParticle1) {
-                                                        CCParticleSystemQuad* particle1 = GameToolbox::particleFromString("50a-1a2a0.35a7a0a180a0a0a20a40a0a0a-19a0a0a0a2a1a0a40a1a0a1a0a1a0a0.7a0.3a0a0a0a25a1a0a1a0a1a0a0.4a0.05a0.6a0a1a0a50a0a0a10a-30a15a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                                                        particle1->setPosition(ccp(0, 0));
-                                                        particle1->setZOrder(2);
-                                                        particle1->setScale(1.7f);
-                                                        particleParentNode->addChild(particle1);
-                                                    }
-                                                
-                                                    auto portalParticle2 = CCParticleSystemQuad::create();
-                                                    if (portalParticle2) {
-                                                        CCParticleSystemQuad* particle2 = GameToolbox::particleFromString("20a-1a2a1a6a180a0a0a0a25a50a0a5a-8a0a0a10a0a0a0a360a1a0a1a0a1a0a0.08a0.04a100a30a0a180a1a0a1a0a1a0a0.02a0a0.6a0a1a0a0a0a0a0a0a0a1a2a1a0a0a0a190a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                                                        particle2->setPosition(ccp(0, 0));
-                                                        particle2->setZOrder(2);
-                                                        particle2->setScaleX(1.25f);
-                                                        particle2->setScaleY(2.5f);
-                                                        particleParentNode->addChild(particle2);
-                                                    }
-
-                                                    auto portalParticle3 = CCParticleSystemQuad::create();
-                                                    if (portalParticle3) {
-                                                        CCParticleSystemQuad* particle3 = GameToolbox::particleFromString("20a-1a2a0a2a180a0a0a0a25a50a0a5a-8a0a0a10a0a0a0a171a1a0a1a0a1a0a0.1a0.05a85a10a0a97a1a0a1a0a1a0a0.02a0a0a0a0.35a0a0a0a0a0a0a0a1a2a1a0a0a0a179a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-                                                        particle3->setPosition(ccp(0, 0));
-                                                        particle3->setZOrder(2);
-                                                        particle3->setScaleX(1.25f);
-                                                        particle3->setScaleY(2.5f);
-                                                        particleParentNode->addChild(particle3);
-                                                    }
-                                                }
-                                            }
-
-                                            auto nameLabelRepos = gauntletNode->getChildByIDRecursive("gauntlet-name-label");
-                                            nameLabelRepos->setScale(0.50);
-                                            nameLabelRepos->setPosition(ccp(0, 90));
-
-                                            auto nameLabelShadowRepos = gauntletNode->getChildByIDRecursive("gauntlet-name-shadow-label");
-                                            nameLabelShadowRepos->setScale(nameLabelRepos->getScale());
-                                            nameLabelShadowRepos->setPosition(ccp(nameLabelRepos->getPositionX() + 1, nameLabelRepos->getPositionY() - 1.5));
-                                            
-                                            auto gauntletLabel = gauntletNode->getChildByIDRecursive("gauntlet-label");
-                                            gauntletLabel->setScale(0.35);
-                                            gauntletLabel->setPosition(ccp(0, nameLabelRepos->getPositionY() - 10));
-                                            
-                                            auto gauntletShadowLabel = gauntletNode->getChildByIDRecursive("gauntlet-shadow-label");
-                                            gauntletShadowLabel->setScale(gauntletLabel->getScale());
-                                            gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 1, gauntletLabel->getPositionY() - 1.5));
-
-                                            auto infoNode = gauntletNode->getChildByIDRecursive("gauntlet-info-node");
-                                                
-                                                auto gauntletSprite = infoNode->getChildByIDRecursive("gauntlet-sprite");
-                                                if (gauntletSprite) {
-                                                    gauntletSprite->setPosition(ccp(0, -92.5));
-                                                    gauntletSprite->setScale(0.65);
-                                                }
-
-                                                auto chestSprite = infoNode->getChildByIDRecursive("chest-sprite");
-                                                if (chestSprite) {
-                                                    chestSprite->setPosition(ccp(0, -120.5));
-                                                    chestSprite->setScale(0.25);
-                                                }
-
-                                                auto chestShadowSprite = infoNode->getChildByIDRecursive("chest-shadow-sprite");
-                                                if (chestShadowSprite) {
-                                                    chestShadowSprite->setPosition(ccp(chestSprite->getPositionX() + 2, chestSprite->getPositionY() - 3));
-                                                    chestShadowSprite->setScale(0.25);
-                                                }
-
-                                                auto rewardLabel = infoNode->getChildByIDRecursive("reward-label");
-                                                if (rewardLabel) {
-                                                    rewardLabel->setPosition(ccp(0, -130));
-                                                    rewardLabel->setZOrder(3);
-                                                }
-
-                                                auto rewardShadowLabel = infoNode->getChildByIDRecursive("reward-shadow-label");
-                                                if (rewardShadowLabel) {
-                                                    rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 3));
-                                                }
-                                                
-                                                auto progressLabel = infoNode->getChildByIDRecursive("gauntlet-progress-label");
-                                                if (progressLabel) {
-                                                    progressLabel->setPosition(ccp(0, 55));
-                                                } 
-
-                                                auto progressShadowLabel = infoNode->getChildByIDRecursive("gauntlet-progress-shadow-label");
-                                                if (progressShadowLabel) {
-                                                    progressShadowLabel->setPosition(ccp(progressLabel->getPositionX() + 2, progressLabel->getPositionY() - 3));
-                                                }
-
-                                            auto checkmarkSprite = gauntletNode->getChildByIDRecursive("checkmark-sprite");
-                                            if (checkmarkSprite) {
-                                                checkmarkSprite->setPosition(ccp(0, -120));
-                                            }
-
-                                            auto checkmarkShadowSprite = gauntletNode->getChildByIDRecursive("checkmark-shadow-sprite");
-                                            if (checkmarkShadowSprite) {
-                                                checkmarkShadowSprite->setPosition(ccp(checkmarkSprite->getPositionX() + 2, checkmarkSprite->getPositionY() - 3));
-                                            }
-
-                                            auto shadowSprite = gauntletNode->getChildByIDRecursive("gauntlet-shadow-sprite");
-                                            shadowSprite->setVisible(false);
-                                        }
-                                    }
-                                }
-                            }
+                    std::vector<CCSprite*> gauntletButtons;
+                    for (int b = 0; b < 3; b++) {
+                        auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
+                        if (gauntletButton) {
+                            gauntletButtons.push_back(gauntletButton);
                         }
-                        std::vector<CCSprite*> gauntletButtons;
-                        for (int b = 0; b < 3; b++) {
-                            
-                            auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
-                            if (gauntletButton) {
-                                gauntletButtons.push_back(gauntletButton);
-                            }
-                        }
-                        int buttonCount = gauntletButtons.size();
+                    }
+
+                    int buttonCount = gauntletButtons.size();
+                    if (buttonCount > 0) {
                         float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
                         float posY = winSize.height / 2 - 17.5;
                         for (int i = 0; i < buttonCount; i++) {
                             gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
-
-                            auto bgPortal = Mod::get()->getSettingValue<bool>("update-backgrounds");
-                            if (bgPortal) {
-                            
-                                auto gauntletNodeParent = gauntletButtons[i]->getChildByIDRecursive("gauntlet-node-parent");
-                                if (gauntletNodeParent) {
-                                    
-                                    auto gauntletNode = static_cast<CCSprite*>(gauntletNodeParent->getChildByIDRecursive("gauntlet-node"));
-                                    if (gauntletNode) {
-
-                                        auto backgroundNode = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                        ccColor3B backgroundColor = backgroundNode ? backgroundNode->getColor() : ccc3(128, 128, 128); // grey bg by default
-
-                                        auto portalParentNode = CCNode::create();
-                                        if (portalParentNode) {
-                                            portalParentNode->setID("gauntlet-portal-parent-node");
-                                            portalParentNode->setPosition(ccp(gauntletNode->getContentSize().width / 2 - 3, gauntletNode->getContentSize().height / 2));
-                                            gauntletNode->addChild(portalParentNode);
-
-                                            auto portalBase = CCSprite::create("gauntletPortal_001_01.png"_spr);
-                                            portalBase->setID(fmt::format("portal-base", i + 1));
-                                            portalBase->setColor(backgroundColor);
-                                            portalBase->setPosition(ccp(1, 0));
-                                            portalBase->setZOrder(0);
-                                            portalParentNode->addChild(portalBase);
-                                            
-                                            auto portalOut = CCSprite::create("gauntletPortal_002.png"_spr);
-                                            portalOut->setID("portal-outline");
-                                            portalOut->setPosition(ccp(3, -1.75));
-                                            portalOut->setZOrder(-3);
-
-                                            auto portalOutColor = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                                if (portalOutColor) {
-                                                    ccColor3B bgColor = portalOutColor->getColor();
-                                                    portalOut->setColor(bgColor);
-                                                } else {
-                                                    portalOut->setColor(ccc3(128, 128, 128));
-                                                }
-                                                portalParentNode->addChild(portalOut);
-
-                                            auto portalFill = CCSprite::create("gauntletPortal_003.png"_spr);
-                                            portalFill->setID("portal-fill");
-                                            portalFill->setPosition(ccp(2.5, 1.50));
-                                            portalFill->setZOrder(-1);
-                                            ccBlendFunc portalFillBlend = { GL_SRC_ALPHA, GL_ONE };
-                                            portalFill->setBlendFunc(portalFillBlend);
-                                            portalParentNode->addChild(portalFill);
-
-                                            auto portalColor = CCSprite::create("gauntletPortal_004_02.png"_spr);
-                                            portalColor->setID("portal-color");
-                                            portalColor->setPosition(ccp(1.25, 0.3));
-                                            portalColor->setZOrder(-1);
-
-                                                auto portalBaseColor = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                                if (portalBaseColor) {
-                                                    ccColor3B bgColor = portalBaseColor->getColor();
-                                                    portalColor->setColor(bgColor);
-                                                } else {
-                                                    portalColor->setColor(ccc3(128, 128, 128));
-                                                }
-                                                portalParentNode->addChild(portalColor);
-
-                                            auto portalBG = CCSprite::create("gauntletPortal_005.png"_spr);
-                                            portalBG->setID("portal-background");
-                                            portalBG->setPosition(ccp(0, 0));
-                                            portalBG->setScale(1.25);
-                                            portalBG->setZOrder(-2);
-
-                                                auto portalBGColor = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                                if (portalBGColor) {
-                                                    ccColor3B bgColor = portalBGColor->getColor();
-                                                    portalBG->setColor(bgColor);
-                                                } else {
-                                                    portalBG->setColor(ccc3(128, 128, 128));
-                                                }
-                                                portalParentNode->addChild(portalBG);
-
-                                            auto portalBGGlow = CCSprite::create("gauntletPortal_006.png"_spr);
-                                            portalBGGlow->setID("portal-background-glow");
-                                            portalBGGlow->setPosition(ccp(2.5, 1));
-                                            portalBGGlow->setZOrder(-1);
-                                            portalBGGlow->setOpacity(150);
-                                            ccBlendFunc portalBGGlowBlend = { GL_SRC_ALPHA, GL_ONE };
-                                            portalBGGlow->setBlendFunc(portalBGGlowBlend);
-                                            portalParentNode->addChild(portalBGGlow);
-                                            
-                                            auto portalPlaque = CCSprite::create("gauntletPlaque_001.png"_spr);
-                                            portalPlaque->setID(fmt::format("portal-plaque", i + 1));
-                                            portalPlaque->setPosition(ccp(3, -95));
-                                            portalPlaque->setZOrder(1);
-
-                                                auto portalPlaqueColor = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                                if (portalPlaqueColor) {
-                                                    ccColor3B plaqueColor = portalPlaqueColor->getColor();
-                                                    portalPlaque->setColor(plaqueColor);
-                                                } else {
-                                                    portalPlaque->setColor(ccc3(255, 255, 255));
-                                                }
-                                                portalParentNode->addChild(portalPlaque);
-
-                                            auto portalPlaqueOut = CCSprite::create("gauntletPlaque_002.png"_spr);
-                                            portalPlaqueOut->setID("portal-plaque-outline");
-                                            portalPlaqueOut->setPosition(ccp(portalPlaque->getPositionX() + 1.5, portalPlaque->getPositionY() - 1));
-                                            portalPlaqueOut->setZOrder(-3);
-                                            portalParentNode->addChild(portalPlaqueOut);
-                                            
-                                            auto portalNamePlaque = CCSprite::create("gauntletPlaque_003.png"_spr);
-                                            portalNamePlaque->setID(fmt::format("portal-name-plaque", i + 1));
-                                            portalNamePlaque->setPosition(ccp(3, 84));
-                                            portalNamePlaque->setZOrder(1);
-                                            portalNamePlaque->setScale(0.65);
-
-                                                auto portalNamePlaqueColor = static_cast<CCSprite*>(gauntletNode->getChildByIDRecursive("background"));
-                                                if (portalNamePlaqueColor) {
-                                                    ccColor3B plaqueColor = portalNamePlaqueColor->getColor();
-                                                    portalNamePlaque->setColor(plaqueColor);
-                                                } else {
-
-                                                    portalNamePlaque->setColor(ccc3(255, 255, 255));
-                                                }
-                                                portalParentNode->addChild(portalNamePlaque);
-
-                                            auto portalNamePlaqueOut = CCSprite::create("gauntletPlaque_004_1.png"_spr);
-                                            portalNamePlaqueOut->setID("portal-name-plaque-outline");
-                                            portalNamePlaqueOut->setPosition(ccp(portalNamePlaque->getPositionX() + 0.75, portalNamePlaque->getPositionY() - 0.75));
-                                            portalNamePlaqueOut->setZOrder(-3);
-                                            portalNamePlaqueOut->setScale(portalNamePlaque->getScale());
-                                            portalParentNode->addChild(portalNamePlaqueOut);
-                                            }
-                                            backgroundNode->setVisible(false);
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -672,6 +248,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             titleParentNode->setZOrder(-1);
             this->addChild(titleParentNode);
         }
+
         // order SHOULD be Shadow -> Outline -> Base -> Detail //
         auto GRTitleShadowSML = CCLabelBMFont::create(titleA, "GR_OxygeneFontOutline.fnt"_spr);
         GRTitleShadowSML->setID("title-small-shadow");
@@ -786,6 +363,231 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onBack(cocos2d::CCObject* sender){
         m_fields->currentGauntletPage = 0;
         GauntletSelectLayer::onBack(sender);
+    }
+};
+
+class $modify(GauntletNode) {
+
+public:
+    void setupGauntletNode() {
+        auto updateBackground = Mod::get()->getSettingValue<bool>("update-backgrounds");
+        if (updateBackground) {
+            // Get the background node color
+            auto backgroundNode = static_cast<CCSprite*>(this->getChildByIDRecursive("background"));
+            ccColor3B backgroundColor = backgroundNode ? backgroundNode->getColor() : ccc3(128, 128, 128); // Default: grey
+
+            // Create parent node
+            auto portalParent = CCNode::create();
+            if (portalParent) {
+                portalParent->setID("gauntlet-portal-parent-node");
+                portalParent->setPosition(ccp(this->getContentSize().width / 2 - 3, this->getContentSize().height / 2));
+                this->addChild(portalParent);
+            }
+
+            // Hide the background node
+            if (backgroundNode) {
+                backgroundNode->setVisible(false);
+            }
+
+            createParticleParentNode();
+            repositionLabels();
+            setupInfoNode();
+            setupPortalSprites(portalParent, backgroundColor);
+        }
+    }
+
+private:
+    void createParticleParentNode() {
+        auto particleParentNode = CCNode::create();
+        if (particleParentNode) {
+            particleParentNode->setID("particle-parent-node");
+            particleParentNode->setZOrder(5);
+            this->addChild(particleParentNode);
+
+            for (int p = 0; p < 1; p++) {
+                auto portalParticle1 = CCParticleSystemQuad::create();
+                if (portalParticle1) {
+                    CCParticleSystemQuad* particle1 = GameToolbox::particleFromString("50a-1a2a0.35a7a0a180a0a0a20a40a0a0a-19a0a0a0a2a1a0a40a1a0a1a0a1a0a0.7a0.3a0a0a0a25a1a0a1a0a1a0a0.4a0.05a0.6a0a1a0a50a0a0a10a-30a15a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+                    particle1->setPosition(ccp(0, 0));
+                    particle1->setZOrder(2);
+                    particle1->setScale(1.7f);
+                    particleParentNode->addChild(particle1);
+                }
+
+                auto portalParticle2 = CCParticleSystemQuad::create();
+                if (portalParticle2) {
+                    CCParticleSystemQuad* particle2 = GameToolbox::particleFromString("20a-1a2a1a6a180a0a0a0a25a50a0a5a-8a0a0a10a0a0a0a360a1a0a1a0a1a0a0.08a0.04a100a30a0a180a1a0a1a0a1a0a0.02a0a0.6a0a1a0a0a0a0a0a0a0a1a2a1a0a0a0a190a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+                    particle2->setPosition(ccp(0, 0));
+                    particle2->setZOrder(2);
+                    particle2->setScaleX(1.25f);
+                    particle2->setScaleY(2.5f);
+                    particleParentNode->addChild(particle2);
+                }
+
+                auto portalParticle3 = CCParticleSystemQuad::create();
+                if (portalParticle3) {
+                    CCParticleSystemQuad* particle3 = GameToolbox::particleFromString("20a-1a2a0a2a180a0a0a0a25a50a0a5a-8a0a0a10a0a0a0a171a1a0a1a0a1a0a0.1a0.05a85a10a0a97a1a0a1a0a1a0a0.02a0a0a0a0.35a0a0a0a0a0a0a0a1a2a1a0a0a0a179a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+                    particle3->setPosition(ccp(0, 0));
+                    particle3->setZOrder(2);
+                    particle3->setScaleX(1.25f);
+                    particle3->setScaleY(2.5f);
+                    particleParentNode->addChild(particle3);
+                }
+            }
+        }
+    }
+
+    void repositionLabels() {
+        auto nameLabelRepos = this->getChildByIDRecursive("gauntlet-name-label");
+        nameLabelRepos->setScale(0.50);
+        nameLabelRepos->setPosition(ccp(0, 90));
+
+        auto nameLabelShadowRepos = this->getChildByIDRecursive("gauntlet-name-shadow-label");
+        nameLabelShadowRepos->setScale(nameLabelRepos->getScale());
+        nameLabelShadowRepos->setPosition(ccp(nameLabelRepos->getPositionX() + 1, nameLabelRepos->getPositionY() - 1.5));
+
+        auto gauntletLabel = this->getChildByIDRecursive("gauntlet-label");
+        gauntletLabel->setScale(0.35);
+        gauntletLabel->setPosition(ccp(0, nameLabelRepos->getPositionY() - 10));
+
+        auto gauntletShadowLabel = this->getChildByIDRecursive("gauntlet-shadow-label");
+        gauntletShadowLabel->setScale(gauntletLabel->getScale());
+        gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 1, gauntletLabel->getPositionY() - 1.5));
+    }
+
+    void setupInfoNode() {
+        auto infoNode = this->getChildByIDRecursive("gauntlet-info-node");
+
+        auto gauntletSprite = infoNode->getChildByIDRecursive("gauntlet-sprite");
+        if (gauntletSprite) {
+            gauntletSprite->setPosition(ccp(0, -92.5));
+            gauntletSprite->setScale(0.65);
+        }
+
+        auto chestSprite = infoNode->getChildByIDRecursive("chest-sprite");
+        if (chestSprite) {
+            chestSprite->setPosition(ccp(0, -120.5));
+            chestSprite->setScale(0.25);
+        }
+
+        auto chestShadowSprite = infoNode->getChildByIDRecursive("chest-shadow-sprite");
+        if (chestShadowSprite) {
+            chestShadowSprite->setPosition(ccp(chestSprite->getPositionX() + 2, chestSprite->getPositionY() - 3));
+            chestShadowSprite->setScale(0.25);
+        }
+
+        auto rewardLabel = infoNode->getChildByIDRecursive("reward-label");
+        if (rewardLabel) {
+            rewardLabel->setPosition(ccp(0, -130));
+            rewardLabel->setZOrder(3);
+        }
+
+        auto rewardShadowLabel = infoNode->getChildByIDRecursive("reward-shadow-label");
+        if (rewardShadowLabel) {
+            rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 3));
+        }
+
+        auto progressLabel = infoNode->getChildByIDRecursive("gauntlet-progress-label");
+        if (progressLabel) {
+            progressLabel->setPosition(ccp(0, 55));
+        }
+
+        auto progressShadowLabel = infoNode->getChildByIDRecursive("gauntlet-progress-shadow-label");
+        if (progressShadowLabel) {
+            progressShadowLabel->setPosition(ccp(progressLabel->getPositionX() + 2, progressLabel->getPositionY() - 3));
+        }
+    }
+
+    void setupPortalSprites(CCNode* portalParent, ccColor3B backgroundColor) {
+        
+    // Main Gauntlet Portal //
+
+        // Base portal sprite
+        auto portalBase = CCSprite::create("gauntletPortal_001_01.png"_spr);
+        portalBase->setID("portal-base");
+        portalBase->setColor(backgroundColor);
+        portalBase->setPosition(ccp(1, 0));
+        portalBase->setZOrder(0);
+        portalParent->addChild(portalBase);
+
+        // Portal outline
+        auto portalOutline = CCSprite::create("gauntletPortal_002.png"_spr);
+        portalOutline->setID("portal-outline");
+        portalOutline->setPosition(ccp(3, -1.75));
+        portalOutline->setZOrder(-3);
+        portalOutline->setColor(backgroundColor);
+        portalParent->addChild(portalOutline);
+
+        // Portal inline
+        auto portalInline = CCSprite::create("gauntletPortal_003.png"_spr);
+        portalInline->setID("portal-inline");
+        portalInline->setPosition(ccp(2.5, 1.50));
+        portalInline->setZOrder(-1);
+        ccBlendFunc portalInlineBlend = { GL_SRC_ALPHA, GL_ONE };
+        portalInline->setBlendFunc(portalInlineBlend);
+        portalParent->addChild(portalInline);
+
+        // Portal color
+        auto portalColor = CCSprite::create("gauntletPortal_004_02.png"_spr);
+        portalColor->setID("portal-color");
+        portalColor->setPosition(ccp(1.25, 0.3));
+        portalColor->setZOrder(-1);
+        portalColor->setColor(backgroundColor);
+        portalParent->addChild(portalColor);
+
+        // Portal background
+        auto portalBG = CCSprite::create("gauntletPortal_005.png"_spr);
+        portalBG->setID("portal-background");
+        portalBG->setPosition(ccp(0, 0));
+        portalBG->setScale(1.25);
+        portalBG->setZOrder(-2);
+        portalBG->setColor(backgroundColor);
+        portalParent->addChild(portalBG);
+
+        auto portalBGGlow = CCSprite::create("gauntletPortal_006.png"_spr);
+        portalBGGlow->setID("portal-background-glow");
+        portalBGGlow->setPosition(ccp(2.5, 1));
+        portalBGGlow->setZOrder(-1);
+        // portalBGGlow->setOpacity(150);
+        ccBlendFunc portalBGGlowBlend = { GL_SRC_ALPHA, GL_ONE };
+        portalBGGlow->setBlendFunc(portalBGGlowBlend);
+        portalParent->addChild(portalBGGlow);
+
+    // Gauntlet Island Plaques //
+
+        // Island plaque
+        auto islandPlaque = CCSprite::create("gauntletPlaque_001.png"_spr);
+        islandPlaque->setID("island-plaque");
+        islandPlaque->setPosition(ccp(3, -95));
+        islandPlaque->setZOrder(1);
+        islandPlaque->setColor(backgroundColor);
+        portalParent->addChild(islandPlaque);
+
+        // Island plaque outline
+        auto islandPlaqueOutline = CCSprite::create("gauntletPlaque_002.png"_spr);
+        islandPlaqueOutline->setID("island-plaque-outline");
+        islandPlaqueOutline->setPosition(ccp(islandPlaque->getPositionX() + 1.5, islandPlaque->getPositionY() - 1));
+        islandPlaqueOutline->setZOrder(-3);
+        portalParent->addChild(islandPlaqueOutline);
+        
+    // Gauntlet Name Plaque //
+
+        // Name plaque
+        auto namePlaque = CCSprite::create("gauntletPlaque_003.png"_spr);
+        namePlaque->setID("gauntlet-name-plaque");
+        namePlaque->setPosition(ccp(3, 84));
+        namePlaque->setZOrder(1);
+        namePlaque->setScale(0.65);
+        namePlaque->setColor(backgroundColor);
+        portalParent->addChild(namePlaque);
+
+        // Name plaque outline
+        auto namePlaqueOutline = CCSprite::create("gauntletPlaque_004_1.png"_spr);
+        namePlaqueOutline->setID("portal-name-plaque-outline");
+        namePlaqueOutline->setPosition(ccp(namePlaque->getPositionX() + 0.75, namePlaque->getPositionY() - 0.75));
+        namePlaqueOutline->setZOrder(-3);
+        namePlaqueOutline->setScale(namePlaque->getScale());
+        portalParent->addChild(namePlaqueOutline);
     }
 };
 

@@ -134,9 +134,10 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
                                         starLabel->setColor(ccc3(255, 255, 50));
                                     }
                                 }
-								auto nameRecolor = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));
-								if (nameRecolor) {
-									nameRecolor->setID("level-name");
+								auto nameModify = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));
+								if (nameModify) {
+									nameModify->setID("level-name");
+									nameModify->setPositionY(-20);
 								}
 							}
 						}
@@ -847,6 +848,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 					}
 				}
 			}
+			break;
 		}
 		case GauntletType::Cursed: { // 41
 			editGauntletSingle("Cursed", ccc3(46, 14, 43), ccc3(81, 255, 0), ccc3(8, 121, 4));

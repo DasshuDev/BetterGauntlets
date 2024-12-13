@@ -8,9 +8,9 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.0.0-alpha.1",
+	"version": "v1.0.0",
 	"developer": "DasshuDev",
-	"description": "Brings Gauntlets to life!",
+	"description": "Brings the Gauntlets to life!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
 		"community": "https://discord.gg/F94qat6N3D",
@@ -43,27 +43,5 @@
             "importance": "required",
 			"platforms": ["win"]
 		}
-	],
-	"settings": {
-		"general": {
-            "type": "title",
-            "name": "General Settings"
-		},
-		"experimental": {
-			"type": "title",
-			"name": "Experimental Settings"
-		},
-		"update-discord-sprite": {
-			"name": "Update Discord Gauntlet Sprite",
-			"description": "Changes the <cl>Discord Gauntlet</c> sprite to be up-to-date with the <cg>current</c> Discord logo.\n\n<cr>This setting is WIP, and may not work properly on GauntletSelectLayer.</c>",
-			"type": "bool",
-			"default": false
-		},
-		"update-backgrounds": {
-			"name": "Update Layout",
-			"description": "Updates the gauntlet background textures and sprite layout to look more immersive.",
-			"type": "bool",
-			"default": true
-		}
-	}
+	]
 }

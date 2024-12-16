@@ -1,5 +1,5 @@
 # Better Gauntlets
-A Geometry Dash nod made by **[Dasshu](user:1975253)**
+A Geometry Dash mod made by **[Dasshu](user:1975253)**
 
 ---
 

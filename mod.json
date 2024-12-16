@@ -25,10 +25,8 @@
 	],
 	"resources": {
 		"files": [
-			"resources/fonts/*.fnt",
-			"resources/fonts/*.png",
-			"resources/GauntletLayer/*/*.png",
-			"resources/GauntletSelectLayer/*/*.png"
+			"resources/*/*.fnt",
+			"resources/*/*.png"
 		]
 	},
 	"dependencies": [

@@ -306,8 +306,8 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 		}
 		case GauntletType::Time: { // 9
 			editGauntletSingle("Time", ccc3(55, 79, 107), ccc3(248, 219, 138), ccc3(243, 100, 17));
-			GameManager::get()->loadBackground(7);
-			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_07_001.png");
+			GameManager::get()->loadBackground(17);
+			auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_17_001.png");
 			this->m_backgroundSprite->setTexture(bgTexture);
 
 			for (int i = 0; i < 5; i++) {

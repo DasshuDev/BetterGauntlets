@@ -1,3 +1,4 @@
+- Check me out on https://dasshu.dev/!
 - Join my [Discord Server](https://discord.gg/F94qat6N3D)!
 - Support me on [Ko-fi](ko-fi.com/jaydasshu)!
 - Get some merch at [RedBubble](https://www.redbubble.com/people/Dasshu/shop?asc=u)!

@@ -136,7 +136,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         #endif
         
         auto winSize = CCDirector::sharedDirector()->getWinSize();
-        log::debug("winSize = {}px, {}px", winSize.width, winSize.height);
+        //log::debug("winSize = {}px, {}px", winSize.width, winSize.height);
 
         auto main = getChildByID("main-layer");
 

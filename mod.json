@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.0.0",
+	"version": "v1.1.0",
 	"developer": "DasshuDev",
 	"description": "Brings the Gauntlets to life!",
 	"links": {
@@ -41,5 +41,13 @@
             "importance": "required",
 			"platforms": ["win"]
 		}
-	]
+	],
+	"settings": {
+		"update-discord-sprite": {
+			"name": "Update Discord Sprite",
+			"description": "Updates the <cj>Discord</c> logo on the <cj>Discord</c> Gauntlet to <cg>match</c> with the current company logo.\n\n<cr>This does not work on GauntletSelectLayer.</c>",
+			"type": "bool",
+			"default": false
+		}
+	}
 }

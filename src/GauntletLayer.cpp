@@ -124,14 +124,31 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 							CCArray* statsChildren = stats->getChildren();
 							if (statsChildren && statsChildren->count() > 0) {
+
+
 								auto starLabel = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(1));
+								auto starPos = static_cast<CCSprite*>(statsChildren->objectAtIndex(2));
 								bool hasCompletedLevel = GameStatsManager::sharedState()->hasCompletedLevel(static_cast<GJGameLevel*>(m_levels->objectAtIndex(g)));
 								
+								if (starPos) {
+									starPos->setID("star-icon");
+									starPos->setAnchorPoint(ccp(0.5, 0.5));
+									starPos->setPositionX(5);
+								}
+
 								if (starLabel) {
 									starLabel->setID("star-label");
-									// log::info("Set ID for star-label.");
 									if (hasCompletedLevel) {
                                         starLabel->setColor(ccc3(255, 255, 50));
+
+										auto star = CCParticleSystemQuad::create();
+										if (star) {
+											CCParticleSystemQuad* starParticles = GameToolbox::particleFromString("30a-1a2a0a8a180a180a0a0a25a50a0a5a-8a0a0a10a5a0a0a0a1a0a1a0a0.25a0a1a0.05a0a0a0a0a1a0a1a0a1a0a0a0a0a0a0.35a0a0a0a20a0a0a0a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+											starParticles->setZOrder(1);
+											starParticles->setPositionX(starPos->getPositionX());
+											starParticles->setPositionY(starPos->getPositionY());
+											stats->addChild(starParticles);
+										}
                                     }
                                 }
 								auto nameModify = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));

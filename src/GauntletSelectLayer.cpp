@@ -318,11 +318,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         m_scrollLayer->repositionPagesLooped();
     }
 
-    void scrollLayerScrolledToPage(BoomScrollLayer* p0, int p1) {
-        GauntletSelectLayer::scrollLayerScrolledToPage(p0, p1);
-        updateDots();
-    }
-
     #ifdef GEODE_IS_WINDOWS
     void defineKeybind(const char* id, std::function<void()> callback) {
         this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
@@ -353,12 +348,27 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         }
     }
 
+    #ifndef GEODE_IS_ANDROID
     void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1) {
         GauntletSelectLayer::scrollLayerWillScrollToPage(p0, p1);
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
         }
     }
+
+    void scrollLayerScrolledToPage(BoomScrollLayer* p0, int p1) {
+        GauntletSelectLayer::scrollLayerScrolledToPage(p0, p1);
+        updateDots();
+    }
+    #else
+    void updateArrows() {
+        GauntletSelectLayer::updateArrows();
+        if (const auto pageButtons = m_scrollLayer->m_dots) {
+            RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
+        }
+        updateDots();
+    }
+    #endif
 
     void onBack(cocos2d::CCObject* sender){
         m_fields->currentGauntletPage = 0;

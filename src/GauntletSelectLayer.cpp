@@ -363,6 +363,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     #else
     void updateArrows() {
         GauntletSelectLayer::updateArrows();
+        if (!m_scrollLayer) return;
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
         }

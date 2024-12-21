@@ -1,5 +1,5 @@
 {
-	"geode": "4.1.0",
+	"geode": "4.1.1",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.1.0",
+	"version": "v1.1.1",
 	"developer": "DasshuDev",
 	"description": "Brings the Gauntlets to life!",
 	"links": {
@@ -25,8 +25,12 @@
 	],
 	"resources": {
 		"files": [
-			"resources/*/*.fnt",
-			"resources/*/*.png"
+			"resources/fonts/*.fnt",
+			"resources/fonts/*.png"
+		],
+		"sprites": [
+			"resources/GauntletLayer/**/*.png",
+			"resources/GauntletSelectLayer/**/*.png"
 		]
 	},
 	"dependencies": [

@@ -1,4 +1,5 @@
 #include <Geode/Geode.hpp>
+#include <Geode/Loader.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <Geode/modify/GauntletNode.hpp>
 
@@ -27,6 +28,11 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto BRCorner = this->getChildByID("bottom-right-corner");
         if (BRCorner) {
             BRCorner->setVisible(false);
+        }
+
+        auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
+        if (backgroundColor) {
+            backgroundColor->setColor(ccc3(33, 33, 33));
         }
         return true;
     }
@@ -144,6 +150,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         if (floor) {
             floor->setID("floor");
             floor->setColor(ccc3(37, 37, 37));
+            floor->setPositionY(35);
+            floor->setOpacity(128);
 
             auto floorSize = floor->getContentSize();
 
@@ -200,12 +208,12 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             }
         }
 
-        auto dust = CCParticleSystemQuad::create();
-        if (dust) {
-            CCParticleSystemQuad* dustParticles = GameToolbox::particleFromString("30a-1a1.85a1.5a3a90a90a0a0a250a0a0a-300a0a0a0a0a15a5a0a40a0a0a0a0a0a0a0.26a0.05a0a0a0a25a0a0a0a0a0a0a0.1a0.05a0.25a0a0.25a0a0a0a0a0a0a0a0a2a0a0a0a0a183a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-            dustParticles->setPosition(winSize.width / 2, director->getScreenTop() + 10);
-            dustParticles->setZOrder(-2);
-            this->addChild(dustParticles);
+        auto bgParticleNode = CCParticleSystemQuad::create();
+        if (bgParticleNode) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("200a-1a4a2a33a90a90a0a0a300a0a128a-25a0a60a0a0a150a50a0a40a0a0a0a0a0a0a0.15a0.05a75a25a0a25a0a0a0a0a0a0a0.1a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a46a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(winSize.width / 2, director->getScreenBottom() + 10);
+            bgParticles->setZOrder(-2);
+            this->addChild(bgParticles);
         }
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
@@ -228,15 +236,25 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
                     int buttonCount = gauntletButtons.size();
                     if (buttonCount > 0) {
-                        float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
-                        float posY = winSize.height / 2 - 17.5;
                         for (int i = 0; i < buttonCount; i++) {
-                            gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+                        float posY = winSize.height / 2 - 17.5;
+
+                        auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                        if (GDUtils) {
+                            auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                            if (settingVal) {
+                                float startX = winSize.width / 2 - (buttonCount - 1) * 67.5;
+                                gauntletButtons[i]->setPosition(ccp(startX + i * 135, posY));
+                            } else {
+                                float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
+                                gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+                            }
                         }
                     }
                 }
             }
         }
+    }
 
         const char* titleA = "The Lost";
         const char* titleB = "Gauntlets";

@@ -2,7 +2,10 @@
 #include <Geode/Loader.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <Geode/modify/GauntletNode.hpp>
+#include "cocos-ext.h"
 
+using namespace cocos2d;
+using namespace cocos2d::extension;
 using namespace geode::prelude;
 
 #ifdef GEODE_IS_WINDOWS
@@ -14,6 +17,10 @@ using namespace keybinds;
 class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
     bool init(int gauntletType) {
         if (!GauntletSelectLayer::init(gauntletType)) return false;
+
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+        auto director = CCDirector::sharedDirector();
 
         auto title = this->getChildByID("title");
         if (title) {
@@ -34,118 +41,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         if (backgroundColor) {
             backgroundColor->setColor(ccc3(33, 33, 33));
         }
-        return true;
-    }
-
-    void onEnter() {
-        GauntletSelectLayer::onEnter();
-
-        auto title = this->getChildByID("title");
-        if (title) {
-            title->setVisible(false);
-        }
-        
-        auto BLCorner = this->getChildByID("bottom-left-corner");
-        if (BLCorner) {
-            BLCorner->setVisible(false);
-        }
-
-        auto BRCorner = this->getChildByID("bottom-right-corner");
-        if (BRCorner) {
-            BRCorner->setVisible(false);
-        }
-    }
-};
-
-class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
-    struct Fields {
-        std::vector<CCMenuItemSpriteExtra*> m_dots = {};
-        CCMenu* m_dotsMenu = nullptr;
-        int currentGauntletPage = 0;
-    };
-
-    void updateDots() {
-        auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
-
-        for(CCMenuItemSpriteExtra* btn : m_fields->m_dots) {
-            auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), btn) - m_fields->m_dots.begin();
-
-            int newPage = m_scrollLayer->m_page;
-            if (newPage <= -1) newPage = m_fields->m_dots.size() + newPage;
-            if (newPage >= m_fields->m_dots.size()) newPage = newPage % m_fields->m_dots.size();
-            // log::info("{}, {}", btnIdx, newPage);
-
-            if (btnIdx == newPage)
-                static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_on_001.png"));
-            else
-                static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_off_001.png"));
-        }
-    }
-
-    void setupGauntlets() {
-        GauntletSelectLayer::setupGauntlets();
-
-        m_fields->m_dots.clear();
-        if (m_fields->m_dotsMenu) {
-            m_fields->m_dotsMenu->removeFromParent();
-            m_fields->m_dotsMenu = nullptr;
-        }
-        
-        auto director = CCDirector::sharedDirector();
-
-        m_fields->m_dotsMenu = CCMenu::create();
-        m_fields->m_dotsMenu->setLayout(AxisLayout::create());
-        m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15.f);
-        m_fields->m_dotsMenu->setID("page-navigation"_spr);
-        addChild(m_fields->m_dotsMenu);
-
-        for (int i = 0; i < m_scrollLayer->getTotalPages(); i++) {
-            auto spr = CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png");
-            spr->setScale(0.8f);
-
-            CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(RedesignedGauntletSelectLayer::onDot));
-            m_fields->m_dotsMenu->addChild(btn);
-            m_fields->m_dots.push_back(btn);
-        }
-
-        auto dotsArray = CCArrayExt<CCSprite*>(m_scrollLayer->m_dots);
-
-        for(CCSprite* dot : dotsArray) {
-            dot->setVisible(false);
-        }
-        m_scrollLayer->m_dotsVisible = false;
-
-        updateDots();
-
-        m_fields->m_dotsMenu->updateLayout();
-
-        // thank you ery :3
-        if (const auto pageButtons = m_scrollLayer->m_dots) {
-            RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
-        }
-        #ifdef GEODE_IS_WINDOWS
-        this->defineKeybind("next-gauntlet"_spr, [this]() {
-            GauntletSelectLayer::onNext(nullptr); // default: right arrow key
-        });
-        this->defineKeybind("previous-gauntlet"_spr, [this]() {
-            GauntletSelectLayer::onPrev(nullptr); // default: left arrow key
-        });
-        this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numrow 1
-        });
-        this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numrow 2
-        });
-        this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
-        }); 
-        #endif
-        
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        //log::debug("winSize = {}px, {}px", winSize.width, winSize.height);
-
-        auto main = getChildByID("main-layer");
-
         auto floor = CCSprite::create("gauntletGround_001.png"_spr);
         if (floor) {
             floor->setID("floor");
@@ -211,10 +106,101 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("200a-1a4a2a33a90a90a0a0a300a0a128a-25a0a60a0a0a150a50a0a40a0a0a0a0a0a0a0.15a0.05a75a25a0a25a0a0a0a0a0a0a0.1a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a46a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-            bgParticles->setPosition(winSize.width / 2, director->getScreenBottom() + 10);
+            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() + 10));
             bgParticles->setZOrder(-2);
             this->addChild(bgParticles);
         }
+        return true;
+    }
+};
+
+class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
+    struct Fields {
+        std::vector<CCMenuItemSpriteExtra*> m_dots = {};
+        CCMenu* m_dotsMenu = nullptr;
+        int currentGauntletPage = 0;
+    };
+
+    void updateDots() {
+        auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
+
+        for(CCMenuItemSpriteExtra* btn : m_fields->m_dots) {
+            auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), btn) - m_fields->m_dots.begin();
+
+            int newPage = m_scrollLayer->m_page;
+            if (newPage <= -1) newPage = m_fields->m_dots.size() + newPage;
+            if (newPage >= m_fields->m_dots.size()) newPage = newPage % m_fields->m_dots.size();
+            // log::info("{}, {}", btnIdx, newPage);
+
+            if (btnIdx == newPage)
+                static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_on_001.png"));
+            else
+                static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_off_001.png"));
+        }
+    }
+
+    void setupGauntlets() {
+        GauntletSelectLayer::setupGauntlets();
+
+        m_fields->m_dots.clear();
+        if (m_fields->m_dotsMenu) {
+            m_fields->m_dotsMenu->removeFromParent();
+            m_fields->m_dotsMenu = nullptr;
+        }
+
+        auto director = CCDirector::sharedDirector();
+
+        m_fields->m_dotsMenu = CCMenu::create();
+        m_fields->m_dotsMenu->setLayout(AxisLayout::create());
+        m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15.f);
+        m_fields->m_dotsMenu->setID("page-navigation"_spr);
+        addChild(m_fields->m_dotsMenu);
+
+        for (int i = 0; i < m_scrollLayer->getTotalPages(); i++) {
+            auto spr = CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png");
+            spr->setScale(0.8f);
+
+            CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(RedesignedGauntletSelectLayer::onDot));
+            m_fields->m_dotsMenu->addChild(btn);
+            m_fields->m_dots.push_back(btn);
+        }
+
+        auto dotsArray = CCArrayExt<CCSprite*>(m_scrollLayer->m_dots);
+
+        for(CCSprite* dot : dotsArray) {
+            dot->setVisible(false);
+        }
+        m_scrollLayer->m_dotsVisible = false;
+
+        updateDots();
+
+        m_fields->m_dotsMenu->updateLayout();
+
+        // thank you ery :3
+        if (const auto pageButtons = m_scrollLayer->m_dots) {
+            RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
+        }
+        #ifdef GEODE_IS_WINDOWS
+        this->defineKeybind("next-gauntlet"_spr, [this]() {
+            GauntletSelectLayer::onNext(nullptr); // default: right arrow key
+        });
+        this->defineKeybind("previous-gauntlet"_spr, [this]() {
+            GauntletSelectLayer::onPrev(nullptr); // default: left arrow key
+        });
+        this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
+            RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numrow 1
+        });
+        this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
+            RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numrow 2
+        });
+        this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
+            RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
+        }); 
+        #endif
+
+        auto main = getChildByID("main-layer");
+
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
 
@@ -226,35 +212,43 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     gauntletMenu->setScale(0.9);
                     gauntletMenu->setPosition(ccp(0, 0));
 
-                    std::vector<CCSprite*> gauntletButtons;
-                    for (int b = 0; b < 3; b++) {
-                        auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
-                        if (gauntletButton) {
-                            gauntletButtons.push_back(gauntletButton);
+                        std::vector<CCSprite*> gauntletButtons;
+                        for (int b = 0; b < 3; b++) {
+                            auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
+                            if (gauntletButton) {
+                                gauntletButtons.push_back(gauntletButton);
+                            }
                         }
-                    }
 
-                    int buttonCount = gauntletButtons.size();
-                    if (buttonCount > 0) {
-                        for (int i = 0; i < buttonCount; i++) {
-                        float posY = winSize.height / 2 - 17.5;
+                        int buttonCount = gauntletButtons.size();
+                        if (buttonCount > 0) {
+                            for (int i = 0; i < buttonCount; i++) {
+                            float posY = winSize.height / 2 - 17.5;
 
-                        auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
-                        if (GDUtils) {
-                            auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
-                            if (settingVal) {
-                                float startX = winSize.width / 2 - (buttonCount - 1) * 67.5;
-                                gauntletButtons[i]->setPosition(ccp(startX + i * 135, posY));
-                            } else {
-                                float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
-                                gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+                            auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                            if (GDUtils) {
+                                auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                                if (settingVal) {
+                                    float startX = winSize.width / 2 - (buttonCount - 1) * 67.5;
+                                    gauntletButtons[i]->setPosition(ccp(startX + i * 135, posY));
+                                } else {
+                                    float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
+                                    gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
+
+        // auto patchNode = CCNode::create();
+        // auto patchBox = CCScale9Sprite::create("GJ_square05.png");
+        // patchBox->setContentSize(CCSizeMake(400, 200));
+        // patchBox->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+        // patchBox->setAnchorPoint(ccp(0.5, 0.5));
+        // patchBox->setZOrder(10);
+        // this->addChild(patchBox);
 
         const char* titleA = "The Lost";
         const char* titleB = "Gauntlets";

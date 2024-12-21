@@ -224,6 +224,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                         if (buttonCount > 0) {
                             for (int i = 0; i < buttonCount; i++) {
                             float posY = winSize.height / 2 - 17.5;
+                            float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
+                            gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
 
                             auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
                             if (GDUtils) {
@@ -231,9 +233,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                                 if (settingVal) {
                                     float startX = winSize.width / 2 - (buttonCount - 1) * 67.5;
                                     gauntletButtons[i]->setPosition(ccp(startX + i * 135, posY));
-                                } else {
-                                    float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
-                                    gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
                                 }
                             }
                         }

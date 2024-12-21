@@ -1,3 +1,6 @@
+## <cg>v1.1.2</c> <cy>(12/20/2024)</c>
+- Fixed an issue with Gauntlet placement
+
 ## <cg>v1.1.1</c> <cy>(12/20/2024)</c>
 - Fixed a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine](user:7466002)!!
 - Fixed overlapping textures when using GDUtils' "New gauntlets design" setting

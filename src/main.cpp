@@ -14,35 +14,35 @@ $execute {
 	BindManager::get()->registerBindable({
 		"first-gauntlet-level"_spr,
 		"First Gauntlet Level",
-		"Use this keybind (set to 1 by default) to view the first gauntlet level.",
+		"View the <cg>first</c> gauntlet level.",
 		{ Keybind::create(KEY_One) },
 		"Global/Better Gauntlets"
 	});
 	BindManager::get()->registerBindable({
 		"second-gauntlet-level"_spr,
 		"Second Gauntlet Level",
-		"Use this keybind (set to 2 by default) to view the second gauntlet level.",
+		"View the <cg>second</c> gauntlet level.",
 		{ Keybind::create(KEY_Two) },
 		"Global/Better Gauntlets"
 	});
 	BindManager::get()->registerBindable({
 		"third-gauntlet-level"_spr,
 		"Third Gauntlet Level",
-		"Use this keybind (set to 3 by default) to view the third gauntlet level.",
+		"View the <cg>third</c> gauntlet level.",
 		{ Keybind::create(KEY_Three) },
 		"Global/Better Gauntlets"
 	});
 	BindManager::get()->registerBindable({
 		"fourth-gauntlet-level"_spr,
 		"Fourth Gauntlet Level",
-		"Use this keybind (set to 4 by default) to view the fourth gauntlet level.",
+		"View the <cg>fourth</c> gauntlet level.",
 		{ Keybind::create(KEY_Four) },
 		"Global/Better Gauntlets"
 	});
 	BindManager::get()->registerBindable({
 		"fifth-gauntlet-level"_spr,
 		"Fifth Gauntlet Level",
-		"Use this keybind (set to 5 by default) to view the fifth gauntlet level.",
+		"View the <cg>fifth</c> gauntlet level.",
 		{ Keybind::create(KEY_Five) },
 		"Global/Better Gauntlets"
 	});

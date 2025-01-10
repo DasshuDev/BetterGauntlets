@@ -8,6 +8,8 @@ project(BetterGauntlets VERSION 1.0.0)
 
 file(GLOB_RECURSE SOURCES
         src/*.cpp
+        src/*.hpp
+        src/*/*.cpp
         src/*/*.hpp
 )
 add_library(${PROJECT_NAME} SHARED

@@ -11,18 +11,21 @@ Have you ever thought the Gauntlets looked <cr>bland and boring</c>? They have u
 ## Features
 - <cg>New</c> colored Gauntlet backgrounds!
 - <cg>New</c> keybinds! <cj>(Windows only)</c>
-- <cg>New</c> visuals and text on <cj>GauntletSelectLayer</c>
+- <cg>New</c> visuals and text!
 - <cy>Reworked</c> header fonts!
 - <cy>Reworked</c> page buttons!
 - <cy>Reworked</c> <cj>Navigation Menu</c>!
-- Made completing levels turn the Gauntlet's <cj>star-label</c> yellow
+- And much more!
 
 ### Go to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any bugs or have any suggestions!
 
 ## Special Thanks
-- **[hiimjustin000](user:7466002)** - Helping with some backend stuff.
-- **[Capeling](user:18226543)** - Helping with code optimization and tips.
-- **[LimeGradient](user:7214334)** - Initially helping me with GD Modding and setting up the scene for me. :D
-- **The Globed Staff Team** - For being great friends and being very supportive!
-- **[SeasickK](user:10038989)** - For unknowingly inspiring me to make this mod. This wouldn't have been possible without you.
-- <c-F4D48E>**T</c><c-F5C186>h</c><c-F5AE7D>e</c> <c-F18766>G</c><c-EC5F4F>e</c><c-E1504D>o</c><c-D5404A>d</c><c-C1384D>e</c> <c-AD2F4F>D</c><c-962845>i</c><c-7F213A>s</c><c-702442>c</c><c-61264A>o</c><c-522952>r</c><c-432B5A>d**</c> - For answering my stupid questions.
+- Coding:
+    - **[hiimjustin000](user:7466002)**
+    - **[Capeling](user:18226543)**
+    - **[LimeGradient](user:7214334)**
+    - **[Erymanthus](user:1941705)**
+- Support:
+    - **[SeasickK](user:10038989)** This wouldn't have been possible without you.
+    - **The Globed Staff Team**
+    - <c-F4D48E>**T</c><c-F5C186>h</c><c-F5AE7D>e</c> <c-F18766>G</c><c-EC5F4F>e</c><c-E1504D>o</c><c-D5404A>d</c><c-C1384D>e</c> <c-AD2F4F>D</c><c-962845>i</c><c-7F213A>s</c><c-702442>c</c><c-61264A>o</c><c-522952>r</c><c-432B5A>d**</c> - For answering my stupid questions.

@@ -54,7 +54,8 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 		auto director = CCDirector::sharedDirector();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
-		auto gameSize = CCDirector::sharedDirector()->getVisibleSize();
+		// auto glView = CCDirector::sharedDirector()->getOpenGLView();
+		// auto gameSize = glView->getFrameSize();
 
 		// "title" is the shadow text for whatever damn reason
 		auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
@@ -93,7 +94,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
                     circleSprite->setID("loading-spinner");
                     circleSprite->setScale(0.75);
 					circleSprite->setAnchorPoint(ccp(0.5f, 0.5f));
-					circleSprite->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 - 20));
+					circleSprite->setPosition(loadingCircleNode->getContentSize() / 2 - 20);
 				}
 			}
 		}
@@ -101,7 +102,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
         if (LCText) {
             LCText->setID("loading-text");
             LCText->setScale(0.625);
-            LCText->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 + 20));
+            LCText->setPosition(loadingCircleNode->getContentSize() / 2 + 20);
             loadingCircleNode->addChild(LCText);
         }
 
@@ -1075,7 +1076,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 		if (this->m_levels != nullptr && !m_fields->m_loaded)
 			editGauntlets();
 		
-		// int random_num = std::rand() % 200;
+		// int random_num = std::rand() % 2;
 		// if (random_num == 1) {
 			
 		// 	auto applySog = CCSprite::create("soggy.png"_spr);

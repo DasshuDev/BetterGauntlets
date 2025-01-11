@@ -54,8 +54,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 		auto director = CCDirector::sharedDirector();
 		auto winSize = CCDirector::sharedDirector()->getWinSize();
-		// auto glView = CCDirector::sharedDirector()->getOpenGLView();
-		// auto gameSize = glView->getFrameSize();
 
 		// "title" is the shadow text for whatever damn reason
 		auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
@@ -94,7 +92,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
                     circleSprite->setID("loading-spinner");
                     circleSprite->setScale(0.75);
 					circleSprite->setAnchorPoint(ccp(0.5f, 0.5f));
-					circleSprite->setPosition(loadingCircleNode->getContentSize() / 2 - 20);
+					circleSprite->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 - 20));
 				}
 			}
 		}
@@ -102,7 +100,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
         if (LCText) {
             LCText->setID("loading-text");
             LCText->setScale(0.625);
-            LCText->setPosition(loadingCircleNode->getContentSize() / 2 + 20);
+            LCText->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 + 20));
             loadingCircleNode->addChild(LCText);
         }
 
@@ -1075,33 +1073,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 		if (this->m_levels != nullptr && !m_fields->m_loaded)
 			editGauntlets();
-		
-		// int random_num = std::rand() % 2;
-		// if (random_num == 1) {
-			
-		// 	auto applySog = CCSprite::create("soggy.png"_spr);
-		// 	auto backgroundNode = dynamic_cast<CCSprite*>(this->getChildByIDRecursive("background"));
-		// 	ccColor3B BGColor = backgroundNode->getColor();
-
-		// 	auto soggySize = applySog->getContentSize();
-		// 	if (applySog && applySog->getTexture()) {
-		// 		applySog->setID("soggy-cat");
-		// 		applySog->setZOrder(-9);
-		// 		applySog->setColor(BGColor);
-		// 		applySog->setPosition(ccp(winSize.width / 2, winSize.height / 2));
-				
-		// 		if (backgroundNode) {
-		// 			auto bgContentSize = backgroundNode->getContentSize();
-		// 			float scaleX = gameSize.width / soggySize.width;
-		// 			float scaleY = gameSize.height / soggySize.height;
-
-		// 			applySog->setScaleX(scaleX);
-		// 			applySog->setScaleY(scaleY);
-
-		// 			this->addChild(applySog);
-		// 		}
-		// 	}
-		// }
 
 		return true;
 	}

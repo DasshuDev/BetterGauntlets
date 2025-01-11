@@ -21,10 +21,10 @@ Have you ever thought the Gauntlets looked <cr>bland and boring</c>? They have u
 
 ## Special Thanks
 - Coding:
-    - **[hiimjustin000](user:7466002)**
     - **[Capeling](user:18226543)**
-    - **[LimeGradient](user:7214334)**
     - **[Erymanthus](user:1941705)**
+    - **[hiimjustin000](user:7466002)**
+    - **[LimeGradient](user:7214334)**
 - Support:
     - **[SeasickK](user:10038989)** This wouldn't have been possible without you.
     - **The Globed Staff Team**

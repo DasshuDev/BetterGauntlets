@@ -21,10 +21,10 @@ Have you ever thought the Gauntlets looked *bland and boring?* They have unique 
 
 ## Special Thanks
 - Coding:
-    - **[hiimjustin000](https://bsky.app/profile/hiimjustin000.com)**
     - **[Capeling](https://bsky.app/profile/capeling.bsky.social)**
-    - **[LimeGradient](https://bsky.app/profile/limegradient.xyz)**
     - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**
+    - **[hiimjustin000](https://bsky.app/profile/hiimjustin000.com)**
+    - **[LimeGradient](https://bsky.app/profile/limegradient.xyz)**
 - Support:
     - **[SeasickK](https://x.com/seasickkpt2)** This wouldn't have been possible without you.
     - **The Globed Staff Team**

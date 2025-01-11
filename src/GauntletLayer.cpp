@@ -115,6 +115,14 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 				auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_14_001.png");
 				this->m_backgroundSprite->setTexture(bgTexture);
 
+				auto bgParticleNode = CCParticleSystemQuad::create();
+				if (bgParticleNode) {
+					CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("50a-1a2a0.45a20a90a90a0a0a300a0a-44a140a0a0a0a196a25a15a0a40a1a0a0.75a0a0a0a1a0.05a0a0a0a25a1a0a0.25a0a0a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+					bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 10));
+					bgParticles->setZOrder(-2);
+					this->addChild(bgParticles);
+				}
+
 				for (int i = 0; i < 5; i++) {
 					auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
 					if (level) {
@@ -132,6 +140,14 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 				
 				auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey("game_bg_36_001.png");
 				this->m_backgroundSprite->setTexture(bgTexture);
+
+				auto bgParticleNode = CCParticleSystemQuad::create();
+				if (bgParticleNode) {
+					CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("50a-1a2a0.45a3a90a90a0a0a300a0a0a-403a0a0a0a0a10a5a-45a0a0.619608a0a1a0a0.996078a0a1a0.05a0a0a-45a0a0a0a0.545098a0a1a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a96a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+					bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
+					bgParticles->setZOrder(-2);
+					this->addChild(bgParticles);
+				}
 
 				for (int i = 0; i < 5; i++) {
 					auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
@@ -1059,32 +1075,32 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 		if (this->m_levels != nullptr && !m_fields->m_loaded)
 			editGauntlets();
 		
-		int random_num = std::rand() % 200;
-		if (random_num == 1) {
+		// int random_num = std::rand() % 200;
+		// if (random_num == 1) {
 			
-			auto applySog = CCSprite::create("soggy.png"_spr);
-			auto backgroundNode = dynamic_cast<CCSprite*>(this->getChildByIDRecursive("background"));
-			ccColor3B BGColor = backgroundNode->getColor();
+		// 	auto applySog = CCSprite::create("soggy.png"_spr);
+		// 	auto backgroundNode = dynamic_cast<CCSprite*>(this->getChildByIDRecursive("background"));
+		// 	ccColor3B BGColor = backgroundNode->getColor();
 
-			auto soggySize = applySog->getContentSize();
-			if (applySog && applySog->getTexture()) {
-				applySog->setID("soggy-cat");
-				applySog->setZOrder(-9);
-				applySog->setColor(BGColor);
-				applySog->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+		// 	auto soggySize = applySog->getContentSize();
+		// 	if (applySog && applySog->getTexture()) {
+		// 		applySog->setID("soggy-cat");
+		// 		applySog->setZOrder(-9);
+		// 		applySog->setColor(BGColor);
+		// 		applySog->setPosition(ccp(winSize.width / 2, winSize.height / 2));
 				
-				if (backgroundNode) {
-					auto bgContentSize = backgroundNode->getContentSize();
-					float scaleX = gameSize.width / soggySize.width;
-					float scaleY = gameSize.height / soggySize.height;
+		// 		if (backgroundNode) {
+		// 			auto bgContentSize = backgroundNode->getContentSize();
+		// 			float scaleX = gameSize.width / soggySize.width;
+		// 			float scaleY = gameSize.height / soggySize.height;
 
-					applySog->setScaleX(scaleX);
-					applySog->setScaleY(scaleY);
+		// 			applySog->setScaleX(scaleX);
+		// 			applySog->setScaleY(scaleY);
 
-					this->addChild(applySog);
-				}
-			}
-		}
+		// 			this->addChild(applySog);
+		// 		}
+		// 	}
+		// }
 
 		return true;
 	}
@@ -1235,10 +1251,11 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
 		auto cornerParent = CCNode::create();
 		cornerParent->setID("corners");
+		cornerParent->setZOrder(-1);
 		this->addChild(cornerParent);
 		
 		auto TLCornerParent = CCNode::create();
-		TLCornerParent->setID("top-right");
+		TLCornerParent->setID("top-left");
 		TLCornerParent->setPositionY(director->getScreenTop());
 		cornerParent->addChild(TLCornerParent);
 		

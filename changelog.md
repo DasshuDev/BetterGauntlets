@@ -1,5 +1,6 @@
-## <cg>v1.1.3</c> <cy>(1/10/2025)</c>
-- Added Corner UI to `GauntletLayer`.
+## <cg>v1.1.3</c> <cy>(1/11/2025)</c>
+- Added Corner UI to `GauntletLayer`, corresponsive to the header text.
+- Added particles to the <c-cc5000>Fire</c> and <c-0064cc>Ice</c> Gauntlets!
 - Added loading text to the loading circle.
 - Added a new setting: "Rescale Loading Circle".
     - Allows for scaling of the loading circle from 0.75 -> 1.25
@@ -8,7 +9,7 @@
 - Updated some text and background colors.
 - Updated the Gauntlets' customizations to apply before the levels load.
 - Fixed a crash when using a keybind to enter a level before it's finished loading.
-- 1/200 chance to forget to buy a towel.
+- <cr>There is a known visual bug when a controller is connected. __This is a Node IDs bug__ that I will try to work around in a future update!</c>
 
 ## <cg>v1.1.2</c> <cy>(12/20/2024)</c>
 - Updated the particles in `GauntletSelectLayer` to add atmosphere to the space.
@@ -23,9 +24,9 @@
 ## <cg>v1.1.0</c> <cy>(N/A)</c>
 - Added particles around the stars of completed Gauntlet levels.
 - Added a new setting: "Update Discord Sprite".
-    - Changes the sprite of the <c-92ffff>Discord Gauntlet</c> to match with the company's current logo.
+    - Changes the sprite of the <c-92ffff>Discord</c> Gauntlet to match with the company's current logo.
 - Added all background changes to the UI, meaning all extra stuff will load even if the gauntlets themselves don't.
-- Updated the <c-00ffff>Time Gauntlet</c>'s background (07 -> 17).
+- Updated the <c-00ffff>Time</c> Gauntlet's background (07 -> 17).
 - Fixed a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine (hiimjustin000)](user:7466002)!!
 
 ## <cg>v1.0.0</c> <cy>(12/12/2024)</c>

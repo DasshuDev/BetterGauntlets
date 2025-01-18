@@ -31,14 +31,14 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     cornerParent->addChild(TRCornerParent);
 
     // Left Corner
-    auto TLCorner = CCSprite::create("GR_gauntletCorner_001.png"_spr);
+    auto TLCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
     TLCorner->setID("TL-corner");
     TLCorner->setAnchorPoint(ccp(0, 0));
     TLCorner->setPosition(ccp(director->getScreenLeft(), director->getScreenBottom()));
     TLCorner->setScaleY(TLCorner->getScaleY() * -1);
     TLCornerParent->addChild(TLCorner);
 
-    auto TLCornerColor = CCSprite::create("GR_gauntletCornerColor_002.png"_spr);
+    auto TLCornerColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_002.png"_spr);
     TLCornerColor->setID("TL-color");
     TLCornerColor->setAnchorPoint(ccp(0, 0));
     TLCornerColor->setZOrder(1);
@@ -46,7 +46,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     TLCornerColor->setScaleY(TLCornerColor->getScaleY() * -1);
     TLCornerParent->addChild(TLCornerColor);
 
-    auto TLCornerHighlight = CCSprite::create("GR_gauntletCornerHighlight_001.png"_spr);
+    auto TLCornerHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
     TLCornerHighlight->setID("TL-highlight");
     TLCornerHighlight->setAnchorPoint(ccp(0, 0));
     TLCornerHighlight->setZOrder(1);
@@ -55,7 +55,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     TLCornerParent->addChild(TLCornerHighlight);
 
     // Right Corner
-    auto TRCorner = CCSprite::create("GR_gauntletCorner_001.png"_spr);
+    auto TRCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
     TRCorner->setID("TR-corner");
     TRCorner->setAnchorPoint(ccp(0, 0));
     TRCorner->setPosition(ccp(director->getScreenRight(), director->getScreenBottom()));
@@ -63,7 +63,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     TRCorner->setScaleX(TRCorner->getScaleX() * -1);
     TRCornerParent->addChild(TRCorner);
 
-    auto TRCornerColor = CCSprite::create("GR_gauntletCornerColor_002.png"_spr);
+    auto TRCornerColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_002.png"_spr);
     TRCornerColor->setID("TR-color");
     TRCornerColor->setAnchorPoint(ccp(0, 0));
     TRCornerColor->setZOrder(1);
@@ -72,7 +72,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     TRCornerColor->setScaleX(TRCornerColor->getScaleX() * -1);
     TRCornerParent->addChild(TRCornerColor);
 
-    auto TRCornerHighlight = CCSprite::create("GR_gauntletCornerHighlight_001.png"_spr);
+    auto TRCornerHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
     TRCornerHighlight->setID("TR-highlight");
     TRCornerHighlight->setAnchorPoint(ccp(0, 0));
     TRCornerHighlight->setZOrder(1);

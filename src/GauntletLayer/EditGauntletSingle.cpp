@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B highlightColor) {
+void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
 
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto director = CCDirector::sharedDirector();

@@ -29,9 +29,13 @@
 			"resources/fonts/*.png"
 		],
 		"sprites": [
-			"resources/GauntletLayer/**/*.png",
 			"resources/GauntletSelectLayer/**/*.png"
-		]
+		],
+		"spritesheets": {
+			"GauntletLayerSheet_01": [
+				"resources/GauntletLayer/**/*.png"
+			]
+		}
 	},
 	"dependencies": [
         {

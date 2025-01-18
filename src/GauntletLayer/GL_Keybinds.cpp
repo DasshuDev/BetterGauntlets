@@ -1,6 +1,4 @@
 #include <Geode/Geode.hpp>
-#include <Geode/modify/GauntletLayer.hpp>
-#include "GauntletLayer.cpp"
 
 using namespace geode::prelude;
 

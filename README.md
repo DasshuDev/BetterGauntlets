@@ -6,14 +6,13 @@ A Geometry Dash mod made by **[Dasshu](https://dasshu.dev)**
 Gauntlets as they are don't get the love they deserve. *Let's change that.*
 
 ## Mod Overview
-Have you ever thought the Gauntlets looked *bland and boring?* They have unique and creative themes circled around them, yet they all look so *dull*! This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL tweaks, and more, truly a **Better Gauntlet** experience!
+This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL tweaks, and more, truly a **Better Gauntlet** experience!
 
 ## Features
 - **New** colored Gauntlet backgrounds!
 - **New** keybinds! (Windows only)
 - **New** visuals and text!
 - **Reworked** header fonts!
-- **Reworked** page buttons!
 - **Reworked** Navigation Menu!
 - And much more!
 

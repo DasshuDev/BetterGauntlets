@@ -7,6 +7,7 @@
 using namespace cocos2d;
 using namespace cocos2d::extension;
 using namespace geode::prelude;
+using namespace geode::cocos;
 
 #ifdef GEODE_IS_WINDOWS
 #include <geode.custom-keybinds/include/Keybinds.hpp>
@@ -15,11 +16,24 @@ using namespace keybinds;
 #endif
 
 class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
+
+    cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name) {
+        return findFirstChildRecursive<cocos2d::CCNode>(parent, [=](auto* spr) {
+            return isSpriteFrameName(spr, name);
+        });
+    }
+
     bool init(int gauntletType) {
         if (!GauntletSelectLayer::init(gauntletType)) return false;
 
+
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto director = CCDirector::sharedDirector();
+
+        if (PlatformToolbox::isControllerConnected()) {
+            auto controllerBtn = getChildByID("controller-back-hint");
+            controllerBtn->setZOrder(1);
+        }
 
         auto backMenu = getChildByID("back-menu");
 
@@ -121,46 +135,15 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             bgParticles->setZOrder(-2);
             this->addChild(bgParticles);
         }
-        auto loadingCircleNode = getChildByID("loading-circle");
-		if (loadingCircleNode) {
-            loadingCircleNode->setContentSize(ccp(0, 0));
-            loadingCircleNode->setAnchorPoint(ccp(0.5, 0.5));
-            loadingCircleNode->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+        auto loadingSpr = getChildBySpriteFrameNameRecursive(this, "loadingCircle-uhd.png");
+		if (loadingSpr) {
+			loadingSpr->setID("loading-spinner");
+            loadingSpr->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+            auto rescaleLC = Mod::get()->getSettingValue<double>("loading-circle-scale");
+            if (rescaleLC) {
+                loadingSpr->setScale(rescaleLC);
+            }
         }
-        auto rescaleLC = Mod::get()->getSettingValue<double>("loading-circle-scale");
-        if (rescaleLC) {
-            loadingCircleNode->setScale(rescaleLC);
-        }
-        auto LCChildren = loadingCircleNode->getChildren();
-		if (LCChildren && LCChildren->count() > 0) {
-			for (int i = 0; i < LCChildren->count(); i++) {
-				auto circleSprite = static_cast<CCSprite*>(LCChildren->objectAtIndex(i));
-				if (circleSprite) {
-                    circleSprite->setID("loading-spinner");
-                    circleSprite->setScale(0.75);
-					circleSprite->setAnchorPoint(ccp(0.5f, 0.5f));
-					circleSprite->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 - 20));
-				}
-			}
-		}
-        auto LCText = CCLabelBMFont::create(std::string("Loading...").c_str(), "bigFont.fnt");
-        if (LCText) {
-            LCText->setID("loading-text");
-            LCText->setScale(0.625);
-            LCText->setPosition(ccp(loadingCircleNode->getContentWidth() / 2, loadingCircleNode->getContentHeight() / 2 + 20));
-            loadingCircleNode->addChild(LCText);
-        }
-        // auto moveRefresh = BRMenu->getChildByIDRecursive("refresh-button");
-        // if (moveRefresh) {
-
-        //     moveRefresh->retain();
-
-        //     BRMenu->removeChild(moveRefresh, false);
-        //     backMenu->addChild(moveRefresh);
-
-        //     moveRefresh->release();
-            
-        // }
         return true;
     }
 };
@@ -358,43 +341,3 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         GauntletSelectLayer::onBack(sender);
     }
 };
-
-#ifdef GEODE_IS_WINDOWS
-$execute {
-    BindManager::get()->registerBindable({
-        "previous-gauntlet"_spr,
-        "Previous Gauntlet Page",
-        "Views the <cg>previous</c> page of gauntlets.",
-        { Keybind::create(KEY_Left) },
-        "Global/Better Gauntlets"
-    });
-    BindManager::get()->registerBindable({
-        "next-gauntlet"_spr,
-        "Next Gauntlet Page",
-        "Views the <cg>next</c> page of gauntlets.",
-        { Keybind::create(KEY_Right) },
-        "Global/Better Gauntlets"
-    });
-    BindManager::get()->registerBindable({
-        "first-visible-gauntlet"_spr,
-        "First Gauntlet",
-        "Enters the <cg>first</c> gauntlet on the current Gauntlet Page.\n\n<cy>(Disclaimer: Results may not be accurate.)</c>",
-        { Keybind::create(KEY_One) },
-        "Global/Better Gauntlets"
-    });
-    BindManager::get()->registerBindable({
-        "second-visible-gauntlet"_spr,
-        "Second Gauntlet",
-        "Enters the <cg>second</c> gauntlet on the current Gauntlet Page.\n\n<cy>(Disclaimer: Results may not be accurate.)</c>",
-        { Keybind::create(KEY_Two) },
-        "Global/Better Gauntlets"
-    });
-    BindManager::get()->registerBindable({
-        "third-visible-gauntlet"_spr,
-        "Third Gauntlet",
-        "Enters the <cg>third</c> gauntlet on the current Gauntlet Page.\n\n<cy>(Disclaimer: Results may not be accurate.)</c>",
-        { Keybind::create(KEY_Three) },
-        "Global/Better Gauntlets"
-    });
-}
-#endif

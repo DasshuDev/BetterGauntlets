@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.1.3",
+	"version": "v1.1.31",
 	"developer": "DasshuDEV",
 	"description": "Brings the Gauntlets to life!",
 	"links": {
@@ -36,7 +36,7 @@
 	"dependencies": [
         {
             "id": "geode.node-ids",
-            "version": ">=v1.15.0",
+            "version": ">=v1.19.0",
             "importance": "required"
         },
 		{
@@ -54,7 +54,7 @@
 			"default": false
 		},
 		"loading-circle-scale": {
-			"name": "Rescale Loading Circle",
+			"name": "Re-scale Loading Circle",
 			"description": "<cg>Rescale</c> the <cy>Loading Circle</c>, visible when Gauntlets and Gauntlet levels are <cj>loading</c>.",
 			"type": "float",
 			"default": 1.0,

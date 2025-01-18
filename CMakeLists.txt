@@ -11,6 +11,8 @@ file(GLOB_RECURSE SOURCES
         src/*.hpp
         src/*/*.cpp
         src/*/*.hpp
+        src/*/*/*.cpp
+        src/*/*/*.hpp
 )
 add_library(${PROJECT_NAME} SHARED
         ${SOURCES}

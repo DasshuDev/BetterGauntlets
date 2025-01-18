@@ -4,10 +4,7 @@
 #include <Geode/modify/GauntletNode.hpp>
 #include "cocos-ext.h"
 
-using namespace cocos2d;
-using namespace cocos2d::extension;
 using namespace geode::prelude;
-using namespace geode::cocos;
 
 #ifdef GEODE_IS_WINDOWS
 #include <geode.custom-keybinds/include/Keybinds.hpp>

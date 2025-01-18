@@ -9,8 +9,7 @@ void RedesignedGauntletLayer::editIceGauntlet() {
     editGauntletSingle("Ice", ccc3(8, 68, 83), ccc3(192, 236, 255), ccc3(0, 174, 255));
     GameManager::get()->loadBackground(36);
     
-    auto bgTexture = CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(36));
-    m_backgroundSprite->setTexture(bgTexture);
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(36)));
 
     auto bgParticleNode = CCParticleSystemQuad::create();
     if (bgParticleNode) {
@@ -18,15 +17,5 @@ void RedesignedGauntletLayer::editIceGauntlet() {
         bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
         bgParticles->setZOrder(-2);
         this->addChild(bgParticles);
-    }
-
-    for (int i = 0; i < 5; i++) {
-        auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
-        if (level) {
-            auto name = static_cast<CCLabelBMFont*>(level->getChildByIDRecursive("level-name"));
-            if (name) {
-                name->setColor(ccc3(197, 237, 255));
-            }
-        }
     }
 }

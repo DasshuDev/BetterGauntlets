@@ -8,9 +8,9 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.1.31",
+	"version": "v1.1.4-beta.1",
 	"developer": "DasshuDEV",
-	"description": "Brings the Gauntlets to life!",
+	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
 		"community": "https://discord.gg/F94qat6N3D",
@@ -29,11 +29,16 @@
 			"resources/fonts/*.png"
 		],
 		"sprites": [
+			"resources/*.png",
 			"resources/GauntletSelectLayer/**/*.png"
 		],
 		"spritesheets": {
-			"GauntletLayerSheet_01": [
-				"resources/GauntletLayer/**/*.png"
+			"GauntletIconSheet_001": [
+				"resources/GauntletLayer/levelSprites/*.png"
+			],
+			"GauntletUISheet_001":[
+				"resources/GauntletLayer/UI/*.png",
+				"resources/GauntletSelectLayer/*.png"
 			]
 		}
 	},
@@ -57,19 +62,9 @@
 			"type": "bool",
 			"default": false
 		},
-		"loading-circle-scale": {
-			"name": "Re-scale Loading Circle",
-			"description": "<cg>Rescale</c> the <cy>Loading Circle</c>, visible when Gauntlets and Gauntlet levels are <cj>loading</c>.",
-			"type": "float",
-			"default": 1.0,
-			"min": 0.75,
-			"max": 1.25,
-			"control": {
-				"arrows": true,
-				"slider": true,
-				"slider-step": 0.05,
-				"input": true
-			}
+		"experimental": {
+			"name": "Experimental",
+			"type": "title"
 		}
 	}
 }

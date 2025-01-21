@@ -1,5 +1,5 @@
 # Better Gauntlets
-A Geometry Dash mod made by **[Dasshu](https://dasshu.dev)**
+A Geometry Dash mod made by **[DasshuDEV](https://dasshu.dev)**
 
 ---
 

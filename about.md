@@ -1,5 +1,5 @@
-# Better Gauntlets
-A Geometry Dash mod made by **[Dasshu](user:1975253)**
+![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)\
+A Geometry Dash mod made by **[DasshuDEV](user:1975253)**
 
 ---
 
@@ -11,7 +11,6 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 ## Features
 - <cg>New</c> colored Gauntlet backgrounds!
 - <cg>New</c> keybinds! <cj>(Windows only)</c>
-- <cg>New</c> visuals and text!
 - <cy>Reworked</c> header fonts!
 - <cy>Reworked</c> <cj>Navigation Menu</c>!
 - And much more!
@@ -27,6 +26,6 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
     - **[hiimjustin000](user:7466002)**
     - **[LimeGradient](user:7214334)**
 - Support:
-    - **[SeasickK](user:10038989)** This wouldn't have been possible without you.
-    - **The Globed Staff Team**
+    - **[SeasickK](user:10038989)** - This wouldn't have been possible without you.
+    - **The Globed Staff Team** - For being great friends and support.
     - <c-F4D48E>**T</c><c-F5C186>h</c><c-F5AE7D>e</c> <c-F18766>G</c><c-EC5F4F>e</c><c-E1504D>o</c><c-D5404A>d</c><c-C1384D>e</c> <c-AD2F4F>D</c><c-962845>i</c><c-7F213A>s</c><c-702442>c</c><c-61264A>o</c><c-522952>r</c><c-432B5A>d**</c> - For answering my stupid questions.

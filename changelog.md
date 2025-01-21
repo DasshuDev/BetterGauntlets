@@ -1,23 +1,32 @@
-## <cg>v1.1.31</c> | <cy>(xx/xx/2025)</c>
+## <cg>v1.1.4-beta.1</c> | <cy>(1/20/2025)</c>
+- Bump to Geode 4.2.0.
+- Bump Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
+- Added Nightly Releases to GitHub. Happy testing!
+- Added particles to the <c-62ff32>Poison</c>, <c-d732ff>Shadow</c>, <c-f95a00>Lava</c> and <c-f9ffff>Bonus</c> Gauntlets.
 - Updated the mod logo slightly.
-- Updated a LOT of backend/file stuff.
-- Updated Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
+- Updated a LOT of backend/file stuff. Thank you so so SO much, [Capeling]((user:18226543))!!
+- Updated some graphics on the backend so the mod feels more smooth.
+- Updated <c-f9c800>Fire</c> and <c-92ffff>Ice</c> Gauntlets' particles.
+- Updated `GauntletLayer` keybind names and descriptions.
 - Fixed the back controller button sprite being behind the corner UI on `GauntletSelectLayer`.
+- Fixed a bug where re-loading `GauntletLayer` would disable it's keybinds after one use.
+- Removed "Re-scale Loading Circle" setting due to a bug. This may be re-released in the future.
+- <cr>There is a known visual bug with the "Update Discord Sprite" setting that I will fix in a future update.</c>
 
 ## <cg>v1.1.3</c> | <cy>(1/11/2025)</c>
 - <cr>jaydasshu</c> -> <cg>**DasshuDEV**</c>
 - Added Corner UI to `GauntletLayer`, responsive to the selected Gauntlets' header text.
 - Added particles to the <c-f9c800>Fire</c> and <c-92ffff>Ice</c> Gauntlets.
 - Added loading text to the loading circle.
-- Added a new setting: "Re-scale Loading Circle".
-    - Allows for scaling of the loading circle from 0.75 -> 1.25
+- ~~Added a new setting: "Re-scale Loading Circle".~~
+    - ~~Allows for scaling of the loading circle from 0.75 -> 1.25~~
 - Updated the "The Lost Gauntlets" title to be a part of the UI.
 - Updated Gauntlet spacing a bit when using GDUtils' "New gauntlets design" setting.
 - Updated some text and background colors.
 - Updated the Gauntlets' customizations to apply before the levels load.
 - Fixed a crash when using a keybind to enter a level before it's finished loading.
-- ~~<cr>~~There is a known visual bug when a controller is connected. __This is a Node IDs bug__ that I will try to work around in a future update!~~
-    - <cg>This has been fixed in Node IDs v1.19.0!</c>
+- ~~<cr>There is a known visual bug when a controller is connected. __This is a Node IDs bug__ that I will try to work around in a future update.</c>~~
+- <cg>This has been fixed in Node IDs v1.19.0!</c>
 
 ## <cg>v1.1.2</c> | <cy>(12/20/2024)</c>
 - Updated the particles in `GauntletSelectLayer` to add atmosphere to the space.

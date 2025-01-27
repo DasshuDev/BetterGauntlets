@@ -2,7 +2,6 @@
 <c-fcee76>**If you find any bugs, make sure to let me know!**</c>
 - Bump to Geode 4.2.0.
 - Bump Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
-- Added support for keybinds on <cg>all platforms!</c>
 - Added support for <cg>unsupported/custom</c> Gauntlets.
 - Added random movements to the Gauntlet levels!
 - Added particles to the <c-62ff32>**Poison**</c>, <c-d732ff>**Shadow**</c>, <c-f95a00>**Lava**</c> and <c-f9ffff>**Bonus**</c> Gauntlets.

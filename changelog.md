@@ -1,3 +1,7 @@
+## <cg>v1.2.1</c> | <cy>(1/27/25)</c>
+- Fix platform requirements.
+- Yeah that's it.
+
 ## <cg>v1.2.0</c> | <cy>(1/27/25)</c>
 <c-fcee76>**If you find any bugs, make sure to let me know!**</c>
 - Bump to Geode 4.2.0.

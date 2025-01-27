@@ -10,7 +10,7 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 
 ## Features
 - **New** colored Gauntlet backgrounds!
-- **New** keybinds! (Windows only)
+- **New** keybinds!
 - **New** visuals and text!
 - **Reworked** header fonts!
 - **Reworked** Navigation Menu!

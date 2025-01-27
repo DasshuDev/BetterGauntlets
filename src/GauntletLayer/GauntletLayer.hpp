@@ -20,6 +20,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editGauntlets();
     void editGauntletSingle(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
 
+    void editGauntletFallback();
     void editFireGauntlet();
     void editIceGauntlet();
     void editPoisonGauntlet();

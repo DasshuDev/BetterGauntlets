@@ -87,6 +87,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     gauntletHighlightText->setScale(0.75);
     gauntletHighlightText->setPositionX(winSize.width / 2 + 2);
     gauntletHighlightText->setPositionY(winSize.height - 30);
+    this->addChild(gauntletHighlightText);
 
     // Text Outlines
     gauntletOutlineText->setID("title-outline");
@@ -94,6 +95,7 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     gauntletOutlineText->setScale(0.75);
     gauntletOutlineText->setPositionX(winSize.width / 2 - 1.5);
     gauntletOutlineText->setPositionY(winSize.height - 30);
+    this->addChild(gauntletOutlineText);
 
     // Shadow
     gauntletShadowText->setString(std::string(title + " Gauntlet").c_str());
@@ -106,9 +108,6 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     TRCornerColor->setColor(titleColor);
     TLCornerHighlight->setColor(highlightColor);
     TRCornerHighlight->setColor(highlightColor);
-
-    this->addChild(gauntletOutlineText);
-    this->addChild(gauntletHighlightText);
 
     gauntletHighlightText->setZOrder(37);
 }

@@ -20,32 +20,26 @@ void RedesignedGauntletLayer::editDiscordGauntlet() {
     //     this->addChild(bgParticles);
     // }
 
-    // for (int i = 0; i < 5; i++) {
-    //     // Get the level by its recursive ID
-    //     auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
-    //     if (level) {
-    //         for (int c = 0; c < 5; c++) {
-    //             // Safely cast the child to CCSprite
-    //             auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
-    //             // Get children of the sprite and ensure they exist
-    //             CCArray* children = sprite->getChildren();
-    //             // Safely cast the first child to CCSprite
-    //             auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
-    //             // Check and apply settings
-    //             bool updatedSprite = Mod::get()->getSettingValue<bool>("update-discord-sprite");
-    //             if (!updatedSprite) {
-    //                 log::error("yeah no it died");
-    //             } else {
-    //                 // Update the sprite's display frame
-    //                 static auto discordSprite = CCSprite::create("island_discord_002.png"_spr);
-    //                 if (discordSprite) {
-    //                     swapSprite->setDisplayFrame(discordSprite->displayFrame());
-    //                     log::info("yeaah it worked");
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         log::error("die die die die die die die");
-    //     }
-    // }
+    for (int i = 0; i < 5; i++) {
+        auto level = getChildByIDRecursive(fmt::format("level-{}", i + 1));
+        if (!level) continue;
+
+        for (int c = 0; c < 5; c++) {
+            auto sprite = static_cast<CCSprite*>(level->getChildByTag(c + 1));
+            if (!sprite) continue;
+
+            auto children = sprite->getChildren();
+            if (!children || children->count() == 0) continue;
+
+            auto swapSprite = static_cast<CCSprite*>(children->objectAtIndex(0));
+            if (!swapSprite) continue;
+
+            if (Mod::get()->getSettingValue<bool>("update-discord-sprite")) {
+                auto discordSprite = CCSprite::create("island_discord_002.png"_spr);
+                if (discordSprite) {
+                    swapSprite->setDisplayFrame(discordSprite->displayFrame());
+                }
+            }
+        }
+    }
 }

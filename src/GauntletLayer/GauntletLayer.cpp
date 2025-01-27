@@ -62,7 +62,10 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	bgLayer->setZOrder(-99);
 
 	switch(m_gauntletType) {
-		default: break;
+		default: { // 0 (Fallback/Unsupported)
+			editGauntletFallback();
+		}
+		break;
 
 		case GauntletType::Fire: { // 1
 			editFireGauntlet();
@@ -441,7 +444,6 @@ void RedesignedGauntletLayer::editGauntlets() {
 			levelMenu->runAction(levelHover);
 		}
 	}
-
 	m_fields->m_loaded = true;
 	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 }

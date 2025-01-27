@@ -1,4 +1,4 @@
-![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)\
+![Better Gauntlets](dasshu.better-gauntlets/resources/GR_title_001.png?scale=0.555)\
 A Geometry Dash mod made by **[DasshuDEV](https://dasshu.dev)**
 
 ---

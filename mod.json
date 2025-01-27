@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.1.4-beta.2",
+	"version": "v1.2.0",
 	"developer": "DasshuDEV",
 	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
@@ -44,13 +44,7 @@
 	},
 	"dependencies": {
 		"geode.node-ids": ">=v1.19.0",
-		"geode.custom-keybinds": {
-			"importance": "required",
-			"version": ">=v1.0.0",
-			"platforms": [
-				"win"
-			]
-		}
+		"geode.custom-keybinds": ">=v1.0.0"
 	},
 	"settings": {
 		"experimental": {

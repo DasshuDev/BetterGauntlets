@@ -127,20 +127,16 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         }
         auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("200a-1a4a2a33a90a90a0a0a300a0a128a-25a0a60a0a0a150a50a0a40a0a0a0a0a0a0a0.15a0.05a75a25a0a25a0a0a0a0a0a0a0.1a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a46a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
+                "80a-1a4a2a13a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a0a0a0a0a0a0a0a0.05a0.05a400a0a90a0a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+                );
             bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() + 10));
             bgParticles->setZOrder(-2);
             this->addChild(bgParticles);
         }
-        auto loadingSpr = getChildBySpriteFrameNameRecursive(this, "loadingCircle-uhd.png");
-		if (loadingSpr) {
-			loadingSpr->setID("loading-spinner");
-            loadingSpr->setPosition(ccp(winSize.width / 2, winSize.height / 2));
-            auto rescaleLC = Mod::get()->getSettingValue<double>("loading-circle-scale");
-            if (rescaleLC) {
-                loadingSpr->setScale(rescaleLC);
-            }
-        }
+
         return true;
     }
 };

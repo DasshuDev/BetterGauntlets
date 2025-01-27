@@ -1,4 +1,4 @@
-# Better Gauntlets
+![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)\
 A Geometry Dash mod made by **[DasshuDEV](https://dasshu.dev)**
 
 ---
@@ -22,9 +22,10 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 - Coding:
     - **[Capeling](https://bsky.app/profile/capeling.bsky.social)**
     - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**
-    - **[hiimjustin000](https://bsky.app/profile/hiimjustin000.com)**
+    - **[hiimjasmine00](https://bsky.app/profile/hiimjustin000.com)**
     - **[LimeGradient](https://bsky.app/profile/limegradient.xyz)**
 - Support:
-    - **[SeasickK](https://x.com/seasickkpt2)** This wouldn't have been possible without you.
+    - **SeasickK** - This wouldn't have been possible without you.
+        - ([main](https://twitter.com/seasickkpt2)) ([art acc](https://twitter.com/sm0kemach1ne))
     - **The Globed Staff Team**
     - **The Geode Discord** - For answering my stupid questions.

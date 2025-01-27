@@ -7,9 +7,9 @@ void RedesignedGauntletLayer::editWorldGauntlet() {
     auto winSize = director->getWinSize();
 
     editGauntletSingle("World", ccc3(79, 80, 130), ccc3(122, 233, 31), ccc3(54, 109, 33));
-    GameManager::get()->loadBackground(27);
+    GameManager::get()->loadBackground(18);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(27)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(18)));
 
     // auto bgParticleNode = CCParticleSystemQuad::create();
     // if (bgParticleNode) {

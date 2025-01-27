@@ -1,9 +1,16 @@
+## <cg>v1.1.4-beta.2</c> | <cy>(1/26/25)</c>
+- Added random movements to the Gauntlet levels!
+- Updated <c-f9c800>Fire</c>, <c-92ffff>Ice</c>, <c-62ff32>Poison</c>, <c-d732ff>Shadow</c>, <c-f95a00>Lava</c> and <c-f9ffff>Bonus</c> Gauntlets' particles.
+- Fixed `support.md` showing an incorrect Ko-fi hyprlink.
+- Fixed the <c-f91919>Chaos</c> Gauntlet showing changes made for the <c-f9ffff>Bonus</c> Gauntlet.
+- <cr>There is a known visual bug with the "Update Discord Sprite" setting that I will fix in a future update.</c>
+
 ## <cg>v1.1.4-beta.1</c> | <cy>(1/20/2025)</c>
 - Bump to Geode 4.2.0.
 - Bump Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
 - Added Nightly Releases to GitHub. Happy testing!
 - Added particles to the <c-62ff32>Poison</c>, <c-d732ff>Shadow</c>, <c-f95a00>Lava</c> and <c-f9ffff>Bonus</c> Gauntlets.
-- Updated the mod logo slightly.
+- Updated the mod logo slightly to unify this mod with the vanilla Gauntlets.
 - Updated a LOT of backend/file stuff. Thank you so so SO much, [Capeling]((user:18226543))!!
 - Updated some graphics on the backend so the mod feels more smooth.
 - Updated <c-f9c800>Fire</c> and <c-92ffff>Ice</c> Gauntlets' particles.
@@ -11,13 +18,12 @@
 - Fixed the back controller button sprite being behind the corner UI on `GauntletSelectLayer`.
 - Fixed a bug where re-loading `GauntletLayer` would disable it's keybinds after one use.
 - Removed "Re-scale Loading Circle" setting due to a bug. This may be re-released in the future.
-- <cr>There is a known visual bug with the "Update Discord Sprite" setting that I will fix in a future update.</c>
 
 ## <cg>v1.1.3</c> | <cy>(1/11/2025)</c>
 - <cr>jaydasshu</c> -> <cg>**DasshuDEV**</c>
 - Added Corner UI to `GauntletLayer`, responsive to the selected Gauntlets' header text.
 - Added particles to the <c-f9c800>Fire</c> and <c-92ffff>Ice</c> Gauntlets.
-- Added loading text to the loading circle.
+- ~~Added loading text to the loading circle.~~
 - ~~Added a new setting: "Re-scale Loading Circle".~~
     - ~~Allows for scaling of the loading circle from 0.75 -> 1.25~~
 - Updated the "The Lost Gauntlets" title to be a part of the UI.
@@ -45,7 +51,7 @@
 - Added all background changes to the UI, meaning all extra stuff will load even if the gauntlets themselves don't.
 - Added support for the <c-31ffff>Space</c> and <c-f9c800>Cosmos</c> Gauntlets.
 - Updated the <c-00ffff>Time</c> Gauntlet's background (07 -> 17).
-- Fixed a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine (hiimjustin000)](user:7466002)!!
+- Fixed a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine (hiimjasmine000)](user:7466002)!!
 
 ## <cg>v1.0.0</c> | <cy>(12/12/2024)</c>
 - Initial release of <cs>**Better Gauntlets**</c>!

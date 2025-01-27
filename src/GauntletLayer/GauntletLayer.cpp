@@ -1,4 +1,6 @@
 #include "GauntletLayer.hpp"
+#include <cstdlib>
+#include <ctime>
 
 using namespace geode::prelude;
 
@@ -35,29 +37,26 @@ void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 #endif
 
 bool RedesignedGauntletLayer::init(GauntletType type) {
-	if (!GauntletLayer::init(type))
-		return false;
+	if (!GauntletLayer::init(type)) return false;
 
 	auto main = getChildByID("main-layer");
 
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-	// "title" is the shadow text for whatever damn reason
-	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
+	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));    // "title" is the shadow text for whatever damn reason
 	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
 	gauntletShadowText->setColor(ccc3(0, 0, 0));
 	gauntletShadowText->setScale(0.750);
-	gauntletShadowText->setPositionX(winSize.width / 2 + 1);
-	gauntletShadowText->setPositionY(winSize.height - 32.5);
+	gauntletShadowText->setPosition(ccp(winSize.width / 2 + 1, director->getScreenTop() - 32.5));
+	// gauntletShadowText->setPositionY(winSize.height - 32.5);
 
-	// and "title-shadow" is the actual title text like what dude why
-	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
+	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));    // and "title-shadow" is the actual title text like what dude why
 	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);
 	gauntletTitleText->setColor(ccc3(255, 255, 255));
 	gauntletTitleText->setScale(0.750);
-	gauntletTitleText->setPositionX(winSize.width / 2);
-	gauntletTitleText->setPositionY(winSize.height - 30);
+	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
+	// gauntletTitleText->setPositionY(winSize.height - 30);
 
 	auto bgLayer = getChildByID("background");
 	bgLayer->setZOrder(-99);
@@ -90,7 +89,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			break;
 		}
 		case GauntletType::Chaos: { // 7
-			editBonusGauntlet();
+			editChaosGauntlet();
 			break;
 		}
 		case GauntletType::Demon: { // 8
@@ -331,6 +330,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 	for (auto dot : pathVector) {
 		dot->retain();
 		dot->removeFromParentAndCleanup(false);
+		// dot->setColor(ccc3(255, 255, 255));
 		pathParent->addChild(dot);
 	}
 
@@ -395,7 +395,11 @@ void RedesignedGauntletLayer::editGauntlets() {
 										starLabel->setColor(ccc3(255, 255, 50));
 										auto star = CCParticleSystemQuad::create();
 										if (star) {
-											CCParticleSystemQuad* starParticles = GameToolbox::particleFromString("30a-1a2a0a8a180a180a0a0a25a50a0a5a-8a0a0a10a5a0a0a0a1a0a1a0a0.25a0a1a0.05a0a0a0a0a1a0a1a0a1a0a0a0a0a0a0.35a0a0a0a20a0a0a0a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+											CCParticleSystemQuad* starParticles = GameToolbox::particleFromString(
+												"30a-1a2a0a8a180a180a0a0a25a50a0a5a-8a0a0a10a5a0a0a0a1a0a1a0a0.25a0a1a0.05a0a0a0a0a1a0a1a0a1a0a0a0a0a0a0.35a0a0a0a20a0a0a0a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+												NULL,
+												false
+											);
 											starParticles->setZOrder(1);
 											starParticles->setPositionX(starPos->getPositionX());
 											starParticles->setPositionY(starPos->getPositionY());
@@ -413,6 +417,28 @@ void RedesignedGauntletLayer::editGauntlets() {
 					}
 				}
 			}
+		}
+	}
+
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+	for (int i = 0; i < 5; i++) {
+		auto levelMenu = getChildByIDRecursive(fmt::format("level-{}", i + 1));
+		if (levelMenu) {
+			float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+			float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+
+			auto moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
+			auto moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
+
+			auto easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
+			auto easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
+
+			auto hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
+
+			auto levelHover = CCRepeatForever::create(hoverSequence);
+
+			levelMenu->runAction(levelHover);
 		}
 	}
 

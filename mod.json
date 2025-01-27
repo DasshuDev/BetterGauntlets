@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.1.4-beta.1",
+	"version": "v1.1.4-beta.2",
 	"developer": "DasshuDEV",
 	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
@@ -42,29 +42,26 @@
 			]
 		}
 	},
-	"dependencies": [
-        {
-            "id": "geode.node-ids",
-            "version": ">=v1.19.0",
-            "importance": "required"
-        },
-		{
-			"id": "geode.custom-keybinds",
-            "version": ">=v1.0.0",
-            "importance": "required",
-			"platforms": ["win"]
+	"dependencies": {
+		"geode.node-ids": ">=v1.19.0",
+		"geode.custom-keybinds": {
+			"importance": "required",
+			"version": ">=v1.0.0",
+			"platforms": [
+				"win"
+			]
 		}
-	],
+	},
 	"settings": {
+		"experimental": {
+			"name": "Experimental",
+			"type": "title"
+		},
 		"update-discord-sprite": {
 			"name": "Update Discord Sprite",
 			"description": "Updates the <cj>Discord</c> logo on the <cj>Discord</c> Gauntlet to match with the <cg>current</c> company logo.\n\n<cr>This does not work on GauntletSelectLayer.</c>",
 			"type": "bool",
 			"default": false
-		},
-		"experimental": {
-			"name": "Experimental",
-			"type": "title"
 		}
 	}
 }

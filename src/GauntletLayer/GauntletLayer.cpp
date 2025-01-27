@@ -1,13 +1,10 @@
 #include "GauntletLayer.hpp"
 #include <cstdlib>
 #include <ctime>
+#include <geode.custom-keybinds/include/Keybinds.hpp>
 
 using namespace geode::prelude;
-
-#ifdef GEODE_IS_WINDOWS
-#include <geode.custom-keybinds/include/Keybinds.hpp>
 using namespace keybinds;
-#endif
 
 CCNode* RedesignedGauntletLayer::getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name) {
 	return findFirstChildRecursive<cocos2d::CCNode>(parent, [=](auto* spr) {
@@ -15,7 +12,6 @@ CCNode* RedesignedGauntletLayer::getChildBySpriteFrameNameRecursive(cocos2d::CCN
 	});
 }
 
-#ifdef GEODE_IS_WINDOWS
 void RedesignedGauntletLayer::defineKeybind(const char* id, std::function<void()> callback) {
 	this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
 		if (event->isDown()) {
@@ -34,7 +30,6 @@ void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 		GauntletLayer::onLevel(gauntletLevel);
 	}
 }
-#endif
 
 bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (!GauntletLayer::init(type)) return false;
@@ -288,7 +283,6 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
 		editGauntlets();
 
-	#ifdef GEODE_IS_WINDOWS
 	this->defineKeybind("first-gauntlet-level"_spr, [this]() {
 		RedesignedGauntletLayer::gauntletLevel(1); // default: numrow 1
 	});
@@ -304,7 +298,6 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	this->defineKeybind("fifth-gauntlet-level"_spr, [this]() {
 		RedesignedGauntletLayer::gauntletLevel(5); // default: numrow 5
 	});
-	#endif
 
 	return true;
 }

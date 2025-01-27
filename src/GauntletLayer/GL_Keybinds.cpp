@@ -1,14 +1,10 @@
 #include <Geode/Geode.hpp>
 #include <Geode/loader/Loader.hpp>
+#include <geode.custom-keybinds/include/Keybinds.hpp>
 
 using namespace geode::prelude;
-
-#ifdef GEODE_IS_WINDOWS
-#include <geode.custom-keybinds/include/Keybinds.hpp>
 using namespace keybinds;
-#endif
 
-#ifdef GEODE_IS_WINDOWS
 $execute {
 	BindManager::get()->registerBindable({
 		"first-gauntlet-level"_spr,
@@ -46,4 +42,3 @@ $execute {
 		"Global/Better Gauntlets"
 	});
 }
-#endif

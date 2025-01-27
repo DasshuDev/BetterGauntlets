@@ -1,15 +1,11 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include "GauntletSelectLayer.cpp"
+#include <geode.custom-keybinds/include/Keybinds.hpp>
 
 using namespace geode::prelude;
-
-#ifdef GEODE_IS_WINDOWS
-#include <geode.custom-keybinds/include/Keybinds.hpp>
 using namespace keybinds;
-#endif
 
-#ifdef GEODE_IS_WINDOWS
 $execute {
     BindManager::get()->registerBindable({
         "previous-gauntlet"_spr,
@@ -47,4 +43,3 @@ $execute {
         "Global/Better Gauntlets"
     });
 }
-#endif

@@ -349,32 +349,37 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-	auto vaultMenu = CCMenu::create();
-	vaultMenu->setID("level-vault-menu"_spr);
-	vaultMenu->setPosition({0, 0});
-	this->addChild(vaultMenu);
+	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
+		auto vaultMenu = CCMenu::create();
+		vaultMenu->setID("level-vault-menu"_spr);
+		vaultMenu->setPosition({0, 0});
+		this->addChild(vaultMenu);
 
-	auto type = m_gauntletType;
+		auto type = m_gauntletType;
 
-	auto vaultBtnSpr = CircleButtonSprite::createWithSpriteFrameName(
-		GauntletNode::frameForType(static_cast<GauntletType>(type)).c_str(), 1.0f
-	);
+		auto vaultBtnSpr = CircleButtonSprite::createWithSpriteFrameName(
+			GauntletNode::frameForType(static_cast<GauntletType>(type)).c_str(), 1.0f
+		);
 
-	auto vaultBtn = CCMenuItemSpriteExtra::create(
-		vaultBtnSpr,
-		this,
-		menu_selector(RedesignedGauntletLayer::gauntletVault)
-	);
-	vaultBtn->setZOrder(5);
-	vaultBtn->setPosition(ccp(director->getScreenRight() - 31, director->getScreenTop() - 30));
+		auto vaultBtn = CCMenuItemSpriteExtra::create(
+			vaultBtnSpr,
+			this,
+			menu_selector(RedesignedGauntletLayer::gauntletVault)
+		);
+		vaultBtn->setZOrder(5);
+		vaultBtn->setPosition(ccp(director->getScreenRight() - 31, director->getScreenTop() - 30));
 
-	auto vaultText = CCSprite::createWithSpriteFrameName("vaultText.png"_spr);
-	vaultText->setPosition(ccp(vaultBtn->getPositionX() - 47.5, vaultBtn->getPositionY() - 32.5));
-	vaultText->setScale(0.45f);
-	vaultText->setID("vault-text"_spr);
+		if (Mod::get()->getSettingValue<bool>("vault-tooltip")) {
+			auto vaultText = CCSprite::createWithSpriteFrameName("vaultText.png"_spr);
+			vaultText->setPosition(ccp(vaultBtn->getPositionX() - 47.5, vaultBtn->getPositionY() - 32.5));
+			vaultText->setScale(0.45f);
+			vaultText->setID("vault-text"_spr);
 
-	vaultMenu->addChild(vaultText);
-	vaultMenu->addChild(vaultBtn);
+			vaultMenu->addChild(vaultText);
+		}
+
+		vaultMenu->addChild(vaultBtn);
+	}
 }
 
 void RedesignedGauntletLayer::editGauntlets() {

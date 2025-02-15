@@ -16,6 +16,8 @@
 - <cg>Added</c> a new setting: "Islands Hover".
 - <cg>Added</c> a new setting: "Background Particles".
 - <cg>Added</c> a new setting: "Enable Gauntlet Paths".
+- <cg>Added</c> a new setting: "Toggle Vault Tooltip".
+    - Thank you, `@CherryChip`!
 - <cg>Re-added</c> a setting: "Re-scale Loading Circle".
 - <cy>Updated</c> <c-fcee76>**Better Gauntlets**</c>' Node IDs.
 - <cy>Updated</c> title colors for the following Gauntlets:

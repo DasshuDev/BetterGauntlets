@@ -89,6 +89,12 @@
 			"description": "Toggles the paths in between Gauntlet Levels.",
 			"type": "bool",
 			"default": true
+		},
+		"vault-tooltip": {
+			"name": "Toggle Vault Tooltip",
+			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.",
+			"type": "bool",
+			"default": true
 		}
 	}
 }

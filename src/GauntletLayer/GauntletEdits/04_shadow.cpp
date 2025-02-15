@@ -11,11 +11,14 @@ void RedesignedGauntletLayer::editShadowGauntlet() {
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(27)));
 
-    auto bgParticleNode = CCParticleSystemQuad::create();
-    if (bgParticleNode) {
-        CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a2a0.45a26a90a90a0a0a300a0a15a0a0a0a0a0a175a0a0a43a0a0a0a0a0a0a0.1a0.05a350a0a0a38a0.133333a0a0a0a0.2a0a0a0.15a0.35a0a0.7a0a0a0a0a0a0a0a0a1a0a0a0a0a182a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-        bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 10));
-        bgParticles->setZOrder(-2);
-        this->addChild(bgParticles);
+    auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
+	if (enableParticles) {
+		auto bgParticleNode = CCParticleSystemQuad::create();
+        if (bgParticleNode) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a3a0.45a26a90a90a0a0a300a100a15a0a0a0a0a0a175a0a0a43a0a0a0a0a0a0a0.1a0.05a350a0a0a38a0.286275a0a0a0a0.439216a0a0a0.15a0.35a0a1a0a0a0a0a0a0a0a0a1a0a0a0a0a182a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
     }
 }

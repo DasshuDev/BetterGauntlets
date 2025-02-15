@@ -2,8 +2,8 @@
 #include <Geode/Loader.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <Geode/modify/GauntletNode.hpp>
-#include "cocos-ext.h"
 #include <geode.custom-keybinds/include/Keybinds.hpp>
+#include "cocos-ext.h"
 
 using namespace geode::prelude;
 using namespace keybinds;
@@ -19,7 +19,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
     bool init(int gauntletType) {
         if (!GauntletSelectLayer::init(gauntletType)) return false;
 
-
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto director = CCDirector::sharedDirector();
 
@@ -27,8 +26,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             auto controllerBtn = getChildByID("controller-back-hint");
             controllerBtn->setZOrder(1);
         }
-
-        auto backMenu = getChildByID("back-menu");
 
         auto refreshBtn = getChildByIDRecursive("refresh-button");
         if (refreshBtn) {
@@ -51,52 +48,52 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         if (BRCorner) {
             BRCorner->setVisible(false);
         }
-        auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
-        if (backgroundColor) {
-            backgroundColor->setColor(ccc3(33, 33, 33));
-        }
-        auto floor = CCSprite::create("gauntletGround_001.png"_spr);
+        auto floor = CCSprite::createWithSpriteFrameName("gauntletGround_001.png"_spr);
         if (floor) {
-            floor->setID("floor");
-            floor->setColor(ccc3(37, 37, 37));
-            floor->setPositionY(35);
-            floor->setOpacity(128);
-
+            floor->setID("menu-floor"_spr);
+            floor->setPositionY(35.f);
+            
             auto floorSize = floor->getContentSize();
-
+            
             float scaleX = winSize.width / floorSize.width;
             float scaleY = winSize.height / floorSize.height;
             float scale = std::min(scaleX, scaleY);
-
+            
             floor->setScale(scale);
             floor->setPosition(ccp(winSize.width / 2, floorSize.height * scale / 2));
             floor->setAnchorPoint(ccp(0.5, 0.5));
-            floor->setZOrder(-1);
+            floor->setZOrder(-2);
+            floor->setColor(ccc3(175, 175, 175));
             this->addChild(floor);
+        }
+
+        auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
+        if (backgroundColor) {
+            backgroundColor->setColor(ccc3(34, 34, 34));
         }
         auto titleRedesign = CCSprite::create("gauntletTitle.png"_spr);
         if (titleRedesign) {
-            titleRedesign->setID("GR_title");
-            titleRedesign->setPosition(ccp(winSize.width / 2 + 2, director->getScreenTop() - 36));
+            titleRedesign->setID("title"_spr);
+            titleRedesign->setPosition(ccp(winSize.width / 2 + 2, director->getScreenTop() - 39));
             titleRedesign->setAnchorPoint(ccp(0.5, 0.5));
             titleRedesign->setZOrder(10);
             this->addChild(titleRedesign);
         }
-        auto decorationParentNode = CCNode::create();
-        if (decorationParentNode) {
-            decorationParentNode->setID("background-decoration-node");
-            decorationParentNode->setPosition(0, 0);
-            decorationParentNode->setZOrder(-1);
-            this->addChild(decorationParentNode);
+        auto decoParentNode = CCNode::create();
+        if (decoParentNode) {
+            decoParentNode->setID("background-decoration"_spr);
+            decoParentNode->setPosition(0, 0);
+            decoParentNode->setZOrder(-1);
+            this->addChild(decoParentNode);
         
             auto chainParentNode = CCNode::create();
             if (chainParentNode) {
-                chainParentNode->setID("chain-parent-node");
+                chainParentNode->setID("chain-parent"_spr);
                 chainParentNode->setPosition(0, 0);
                 chainParentNode->setZOrder(-1);
-                decorationParentNode->addChild(chainParentNode);
+                decoParentNode->addChild(chainParentNode);
 
-                for (int c = 0; c < 3; c++) {
+                for (int c = 0; c < 4; c++) {
 
                     auto chain = CCSprite::createWithSpriteFrameName("chain_01_001.png");
                     chain->setID(fmt::format("chain-{}", c + 1));
@@ -112,24 +109,30 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
 
                 // second chain pair //
                 auto chain2 = getChildByIDRecursive("chain-2");
-                chain2->setScale(1.0);
-                chain2->setPosition(ccp(director->getScreenRight() - 60.f, director->getScreenTop() - 35));
-
+                chain2->setScale(1.65);
+                chain2->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 55));
+                
                 // third chain pair //
                 auto chain3 = getChildByIDRecursive("chain-3");
-                chain3->setScale(1.65);
-                chain3->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 55));
+                // chain3->setScale(1.0);
+                chain3->setPosition(ccp(director->getScreenRight() - 100.f, director->getScreenTop() - 26));
+                
+                // fourth chain pair //
+                auto chain4 = getChildByIDRecursive("chain-4");
+                chain3->setScale(0.75);
+                chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
             }
         }
+        
         auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "80a-1a4a2a13a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a0a0a0a0a0a0a0a0.05a0.05a400a0a90a0a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
+                "100a-1a4a2a16a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a60a0a0a0a0a0a0a0.05a0.02a400a0a90a67a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
                 );
             bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() + 10));
-            bgParticles->setZOrder(-2);
+            bgParticles->setZOrder(-1);
             this->addChild(bgParticles);
         }
 
@@ -230,36 +233,35 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
 
-            auto gauntletPage = static_cast<CCMenu*>(this->getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
-            if (gauntletPage) {
+            auto gauntletPages = static_cast<CCMenu*>(getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
+            if (!gauntletPages) nullptr;
 
-                auto gauntletMenu = gauntletPage->getChildByIDRecursive("gauntlet-menu");
-                if (gauntletMenu) {
-                    gauntletMenu->setScale(0.9);
-                    gauntletMenu->setPosition(ccp(0, 0));
+            auto gauntletMenu = gauntletPages->getChildByIDRecursive("gauntlet-menu");
+            if (!gauntletMenu) nullptr;
 
-                        std::vector<CCSprite*> gauntletButtons;
-                        for (int b = 0; b < 3; b++) {
-                            auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
-                            if (gauntletButton) {
-                                gauntletButtons.push_back(gauntletButton);
-                            }
-                        }
-                        int buttonCount = gauntletButtons.size();
-                        if (buttonCount > 0) {
-                            for (int i = 0; i < buttonCount; i++) {
-                            float posY = winSize.height / 2 - 17.5;
-                            float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
-                            gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+            gauntletMenu->setScale(0.9);
+            gauntletMenu->setPosition(ccp(0, 0));
 
-                            auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
-                            if (GDUtils) {
-                                auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
-                                if (settingVal) {
-                                    float startX = winSize.width / 2 - (buttonCount - 1) * 69;
-                                    gauntletButtons[i]->setPosition(ccp(startX + i * 138, posY));
-                                }
-                            }
+            std::vector<CCSprite*> gauntletButtons;
+            for (int b = 0; b < 3; b++) {
+                auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
+                if (gauntletButton) {
+                    gauntletButtons.push_back(gauntletButton);
+                }
+            }
+            int buttonCount = gauntletButtons.size();
+            if (buttonCount > 0) {
+                for (int i = 0; i < buttonCount; i++) {
+                    float posY = winSize.height / 2 - 17.5;
+                    float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
+                    gauntletButtons[i]->setPosition(ccp(startX + i * 115, posY));
+
+                    auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                    if (GDUtils) {
+                        auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                        if (settingVal) {
+                            float startX = winSize.width / 2 - (buttonCount - 1) * 69;
+                            gauntletButtons[i]->setPosition(ccp(startX + i * 138, posY));
                         }
                     }
                 }

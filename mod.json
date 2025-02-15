@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.2.1",
+	"version": "v1.3.0",
 	"developer": "DasshuDEV",
 	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
@@ -44,18 +44,51 @@
 	},
 	"dependencies": {
 		"geode.node-ids": ">=v1.19.0",
-		"geode.custom-keybinds": ">=v1.0.0"
+		"geode.custom-keybinds": ">=v1.0.0",
+		"jacob375.gauntletlevelvault": {
+			"version": ">=v1.0.3",
+			"importance": "recommended"
+		}
 	},
 	"settings": {
-		"experimental": {
-			"name": "Experimental",
-			"type": "title"
-		},
-		"update-discord-sprite": {
-			"name": "Update Discord Sprite",
-			"description": "Updates the <cj>Discord</c> logo on the <cj>Discord</c> Gauntlet to match with the <cg>current</c> company logo.\n\n<cr>This does not work on GauntletSelectLayer.</c>",
+		"islands-float": {
+			"name": "Islands Hover",
+			"description": "Gauntlet Islands will have a <cg>floating/hovering animation</c>.",
 			"type": "bool",
-			"default": false
+			"default": true
+		},
+		"rescale-refresh-spr": {
+			"name": "Re-scale Loading Circle",
+			"description": "Re-scales the loading circle visible when loading Gauntlet Levels. <cg>Use the arrows for better accuracy</c>!",
+			"type": "float",
+			"default": 1.0,
+			"min": 0.75,
+			"max": 1.25,
+			"control": {
+				"arrows": true,
+				"big-arrows": false,
+				"slider": true,
+				"arrow-step": 0.005,
+				"slider-step": 0.05,
+				"input": false
+			}
+		},
+		"enable-background-particles": {
+			"name": "Background Particles",
+			"description": "Enables the background particles added by <cc>Better Gauntlets</c>.",
+			"type": "bool",
+			"default": true
+		},
+		"experimental": {
+			"name": "Experimental Settings",
+			"type": "title",
+			"description": "Category used for <cr>experimental features/settings</c>."
+		},
+		"toggle-paths": {
+			"name": "Enable Gauntlet Paths",
+			"description": "Toggles the paths in between Gauntlet Levels.",
+			"type": "bool",
+			"default": true
 		}
 	}
 }

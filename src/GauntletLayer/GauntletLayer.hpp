@@ -17,6 +17,10 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void loadLevelsFinished(cocos2d::CCArray*, char const*, int);
     void editGauntlets();
     void editGauntletSingle(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
+    void gauntletVault(cocos2d::CCObject* obj);
+    void setupGauntlet(cocos2d::CCArray* levels);
+
+    bool init(GauntletType);
 
     void editGauntletFallback();
     void editFireGauntlet();
@@ -73,7 +77,5 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editNCSGauntlet2();
     void editSpaceGauntlet();
     void editCosmosGauntlet();
-
-    bool init(GauntletType);
 };
 #endif

@@ -1,7 +1,10 @@
-#include "GauntletLayer.hpp"
 #include <cstdlib>
 #include <ctime>
+#include <Geode/ui/Layout.hpp>
+#include <Geode/ui/BasedButtonSprite.hpp>
 #include <geode.custom-keybinds/include/Keybinds.hpp>
+#include <Geode/binding/GauntletLayer.hpp>
+#include "GauntletLayer.hpp"
 
 using namespace geode::prelude;
 using namespace keybinds;
@@ -34,24 +37,27 @@ void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (!GauntletLayer::init(type)) return false;
 
-	auto main = getChildByID("main-layer");
+	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
+		auto removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
+		if (removeOGVaultBtn) {
+			removeOGVaultBtn->removeFromParent();
+		}
+	}
 
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));    // "title" is the shadow text for whatever damn reason
-	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
+	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));							// "title" is the shadow text
+	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);											// for whatever damn reason
 	gauntletShadowText->setColor(ccc3(0, 0, 0));
 	gauntletShadowText->setScale(0.750);
 	gauntletShadowText->setPosition(ccp(winSize.width / 2 + 1, director->getScreenTop() - 32.5));
-	// gauntletShadowText->setPositionY(winSize.height - 32.5);
 
-	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));    // and "title-shadow" is the actual title text like what dude why
-	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);
-	gauntletTitleText->setColor(ccc3(255, 255, 255));
+	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));					// and "title-shadow" is the actual
+	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);													// title text like what dude why.
+	gauntletTitleText->setColor(ccc3(255, 255, 255));														   // robert please explain yourself >:(
 	gauntletTitleText->setScale(0.750);
 	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
-	// gauntletTitleText->setPositionY(winSize.height - 30);
 
 	auto bgLayer = getChildByID("background");
 	bgLayer->setZOrder(-99);
@@ -59,9 +65,8 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	switch(m_gauntletType) {
 		default: { // 0 (Fallback/Unsupported)
 			editGauntletFallback();
+			break;
 		}
-		break;
-
 		case GauntletType::Fire: { // 1
 			editFireGauntlet();
 			break;
@@ -283,8 +288,22 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
 		editGauntlets();
 
+	return true;
+}
+
+void RedesignedGauntletLayer::loadLevelsFinished(CCArray* p0, char const* p1, int p2) {
+    GauntletLayer::loadLevelsFinished(p0, p1, p2);
+
+	if (m_fields->m_loaded) return;
+
+	editGauntlets();
+}
+
+void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
+    GauntletLayer::setupGauntlet(levels);
+
 	this->defineKeybind("first-gauntlet-level"_spr, [this]() {
-		RedesignedGauntletLayer::gauntletLevel(1); // default: numrow 1
+	RedesignedGauntletLayer::gauntletLevel(1); // default: numrow 1
 	});
 	this->defineKeybind("second-gauntlet-level"_spr, [this]() {
 		RedesignedGauntletLayer::gauntletLevel(2); // default: numrow 2
@@ -299,20 +318,8 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 		RedesignedGauntletLayer::gauntletLevel(5); // default: numrow 5
 	});
 
-	return true;
-}
-
-void RedesignedGauntletLayer::loadLevelsFinished(CCArray* p0, char const* p1, int p2) {
-	GauntletLayer::loadLevelsFinished(p0, p1, p2);
-
-	if (m_fields->m_loaded) return;
-
-	editGauntlets();
-}
-
-void RedesignedGauntletLayer::editGauntlets() {
 	auto pathParent = CCNode::create();
-	pathParent->setID("gauntlet-path");
+	pathParent->setID("gauntlet-path"_spr);
 	this->addChild(pathParent);
 
 	std::vector<CCSprite*> pathVector = {};
@@ -322,59 +329,98 @@ void RedesignedGauntletLayer::editGauntlets() {
 		if (!dot) continue;
 		dot->setID(fmt::format("path-dot-{}", d + 1));
 		pathVector.push_back(dot);
+		if (d % 2 == 1) {
+			dot->setColor(ccc3(210, 210, 210));
+		} else {
+			dot->setColor(ccc3(255, 255, 255));
+		}
 	}
 	for (auto dot : pathVector) {
 		dot->retain();
 		dot->removeFromParentAndCleanup(false);
-		// dot->setColor(ccc3(255, 255, 255));
 		pathParent->addChild(dot);
 	}
 
+	if (!Mod::get()->getSettingValue<bool>("toggle-paths")) {
+		auto pathParent = this->getChildByID("gauntlet-path"_spr);
+		pathParent->setVisible(false);
+	}
+
+	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+	auto vaultMenu = CCMenu::create();
+	vaultMenu->setID("level-vault-menu"_spr);
+	vaultMenu->setPosition({0, 0});
+	this->addChild(vaultMenu);
+
+	auto type = m_gauntletType;
+
+	auto vaultBtnSpr = CircleButtonSprite::createWithSpriteFrameName(
+		GauntletNode::frameForType(static_cast<GauntletType>(type)).c_str(), 1.0f
+	);
+
+	auto vaultBtn = CCMenuItemSpriteExtra::create(
+		vaultBtnSpr,
+		this,
+		menu_selector(RedesignedGauntletLayer::gauntletVault)
+	);
+	vaultBtn->setZOrder(5);
+	vaultBtn->setPosition(ccp(director->getScreenRight() - 31, director->getScreenTop() - 30));
+
+	auto vaultText = CCSprite::createWithSpriteFrameName("vaultText.png"_spr);
+	vaultText->setPosition(ccp(vaultBtn->getPositionX() - 47.5, vaultBtn->getPositionY() - 32.5));
+	vaultText->setScale(0.45f);
+	vaultText->setID("vault-text"_spr);
+
+	vaultMenu->addChild(vaultText);
+	vaultMenu->addChild(vaultBtn);
+}
+
+void RedesignedGauntletLayer::editGauntlets() {
+
+	auto director = CCDirector::sharedDirector();
+	auto winSize = CCDirector::sharedDirector()->getWinSize();
+
 	auto levelMenuPos = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
 	if (!levelMenuPos) return;
-		levelMenuPos->setPosition(0, 0);
+	levelMenuPos->setPosition(0.f, 0.f);
 
-	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
-	levelOne->setPositionX(winSize.width / 2 - 180);
-	levelOne->setPositionY(winSize.height / 2 - 70);
-
-	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
-	levelTwo->setPositionX(winSize.width / 2 - 90);
-	levelTwo->setPositionY(winSize.height / 2 + 40);;
-
-	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
-	levelThree->setPositionX(winSize.width / 2);
-	levelThree->setPositionY(winSize.height / 2 - 70);
-
-	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
-	levelFour->setPositionX(winSize.width / 2 + 90);
-	levelFour->setPositionY(winSize.height / 2 + 40);
-
-	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
-	levelFive->setPositionX(winSize.width / 2 + 180);
-	levelFive->setPositionY(winSize.height / 2 - 70);
-
+	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));				//
+	levelOne->setPosition({winSize.width / 2 - 180, winSize.height / 2 - 67});					//
+																								//
+	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));				//							 ===						 ===
+	levelTwo->setPosition({winSize.width / 2 - 90, winSize.height / 2 + 37});					//					     o[level 2]o			     o[level 4]o
+																								//					   o	 ===	 o		   	   o	 ===	 o
+	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));			//					  o			      o		  	  o			      o
+	levelThree->setPosition({winSize.width / 2, winSize.height / 2 - 67});						//					   o			 o		       o			 o
+																								//					    o		    o			    o		    o
+	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));			//			   ===	   o			 o	   ===     o			 o	   ===
+	levelFour->setPosition({winSize.width / 2 + 90, winSize.height / 2 + 37});					//			[level 1]o			       o[level 3]o			       o[level 5]
+																								//			   ===						   ===						   ===
+	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));			//
+	levelFive->setPosition({winSize.width / 2 + 180, winSize.height / 2 - 67});					//
+																								//
 	for (int g = 0; g < 5; g++) {
 		auto gauntletLevel = getChildByIDRecursive(fmt::format("level-{}", g + 1));
 		if (gauntletLevel) {
 			for (int i = 0; i < 5; i++) {
 				auto sprite = static_cast<CCSprite*>(gauntletLevel->getChildByTag(i + 1));
 				if (sprite) {
-					sprite->setID(fmt::format("gauntlet-island-{}", g + 1));
+					sprite->setID(fmt::format("gauntlet-island-{}"_spr, g + 1));
 					CCArray* children = sprite->getChildren();
 					if (children && children->count() > 0) {
 						auto shadow = static_cast<CCSprite*>(children->objectAtIndex(2));
 						auto island = static_cast<CCSprite*>(children->objectAtIndex(0));
 						auto stats = static_cast<CCSprite*>(children->objectAtIndex(1));
 						if (shadow) {
-							shadow->setID("gauntlet-shadow");
+							shadow->setID("gauntlet-shadow"_spr);
 						}
 						if (island) {
-							island->setID("gauntlet-level");
+							island->setID("gauntlet-level"_spr);
 						}
 						if (stats) {
-							stats->setID("gauntlet-stats");
+							stats->setID("gauntlet-stats"_spr);
 							CCArray* statsChildren = stats->getChildren();
 							if (statsChildren && statsChildren->count() > 0) {
 								auto starLabel = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(1));
@@ -386,7 +432,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 									starPos->setPositionX(5);
 								}
 								if (starLabel) {
-									starLabel->setID("star-label");
+									starLabel->setID("star-label"_spr);
 									if (hasCompletedLevel) {
 										starLabel->setColor(ccc3(255, 255, 50));
 										auto star = CCParticleSystemQuad::create();
@@ -405,7 +451,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 								}
 								auto nameModify = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));
 								if (nameModify) {
-									nameModify->setID("level-name");
+									nameModify->setID("level-name"_spr);
 									nameModify->setPositionY(-20);
 								}
 							}
@@ -416,27 +462,50 @@ void RedesignedGauntletLayer::editGauntlets() {
 		}
 	}
 
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+	auto hover = Mod::get()->getSettingValue<bool>("islands-float");
+	if (hover) {
 
-	for (int i = 0; i < 5; i++) {
-		auto levelMenu = getChildByIDRecursive(fmt::format("level-{}", i + 1));
-		if (levelMenu) {
-			float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
-			float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-			auto moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
-			auto moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
+		for (int i = 0; i < 5; i++) {
+			auto levelMenu = getChildByIDRecursive(fmt::format("level-{}", i + 1));
+			if (levelMenu) {
+				float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+				float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
 
-			auto easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
-			auto easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
+				auto moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
+				auto moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
 
-			auto hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
+				auto easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
+				auto easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
 
-			auto levelHover = CCRepeatForever::create(hoverSequence);
+				auto hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
 
-			levelMenu->runAction(levelHover);
+				auto levelHover = CCRepeatForever::create(hoverSequence);
+
+				levelMenu->runAction(levelHover);
+			}
 		}
 	}
+
+	auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
+	if (refreshSpr) {
+		auto loadCircle = getChildByID("loading-circle");
+		loadCircle->setScale(refreshSpr);
+	}
+
 	m_fields->m_loaded = true;
 	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
+}
+
+void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
+    auto savedGauntlets = GameLevelManager::sharedState()->m_savedGauntlets;
+    auto getGauntletType = savedGauntlets->objectForKey(std::to_string(static_cast<int>(m_gauntletType)));
+    auto gauntletLevels = static_cast<GJMapPack*>(getGauntletType);
+    auto searchObject = GJSearchObject::create(SearchType::Type19, gauntletLevels->m_levelStrings);
+    auto browserLayer = LevelBrowserLayer::create(searchObject);
+    auto scene = CCScene::create();
+    scene->addChild(browserLayer);
+    auto transition = CCTransitionFade::create(0.5, scene);
+    CCDirector::sharedDirector()->pushScene(transition);
 }

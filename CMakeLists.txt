@@ -4,15 +4,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(BetterGauntlets VERSION 1.0.0)
+project(BetterGauntlets VERSION 1.3.0)
 
 file(GLOB_RECURSE SOURCES
         src/*.cpp
-        src/*.hpp
-        src/*/*.cpp
-        src/*/*.hpp
-        src/*/*/*.cpp
-        src/*/*/*.hpp
 )
 add_library(${PROJECT_NAME} SHARED
         ${SOURCES}

@@ -1,10 +1,14 @@
 #include <cstdlib>
 #include <ctime>
+#include <Geode/binding/GauntletLayer.hpp>
 #include <Geode/ui/Layout.hpp>
 #include <Geode/ui/BasedButtonSprite.hpp>
+#include <Geode/ui/MDTextArea.hpp>
 #include <geode.custom-keybinds/include/Keybinds.hpp>
-#include <Geode/binding/GauntletLayer.hpp>
+
+// Files
 #include "GauntletLayer.hpp"
+#include "../GauntletInfo/GauntletInfo.hpp"
 
 using namespace geode::prelude;
 using namespace keybinds;
@@ -34,14 +38,73 @@ void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 	}
 }
 
+void RedesignedGauntletLayer::setupInfoButton() {
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+
+    auto infoBtnSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
+
+    auto infoBtn = CCMenuItemSpriteExtra::create(
+        infoBtnSpr, this, menu_selector(RedesignedGauntletLayer::onInfoButtonClick)
+    );
+
+    infoBtn->setPosition(ccp(director->getScreenLeft() + 30, director->getScreenBottom() + 30));
+
+    auto infoMenu = CCMenu::create();
+    infoMenu->setPosition({0.f, 0.f});
+    infoMenu->addChild(infoBtn);
+    infoMenu->setID("gauntlet-info-menu"_spr);
+
+    this->addChild(infoMenu);
+}
+
+void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
+	auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+
+	std::string gauntletName = GauntletNode::nameForType(m_gauntletType);
+	std::string infoText = getGauntletInfo(GauntletType (m_gauntletType));
+
+	auto popup = MDPopup::create(
+		("The " + gauntletName + " Gauntlet").c_str(),
+		infoText.c_str(),
+		"OK"
+	);
+	
+	auto date = fmt::format("Release Date: {}", getGauntletDate(GauntletType (m_gauntletType)));
+
+	auto releaseDate = CCLabelBMFont::create(date.c_str(), "chatFont.fnt");
+	releaseDate->setPosition({383.5, 25});
+	releaseDate->setScale(0.5f);
+	releaseDate->setAnchorPoint(ccp(1, 0));
+	releaseDate->setOpacity(51);
+
+	auto version = fmt::format("Version: {}", getGauntletVer(GauntletType (m_gauntletType)));
+
+	auto releaseVer = CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
+	releaseVer->setPosition({383.5, 15});
+	releaseVer->setScale(0.5f);
+	releaseVer->setAnchorPoint(ccp(1, 0));
+	releaseVer->setOpacity(51);
+
+	auto popupChildren = popup->getChildren();
+	auto child = static_cast<CCNode*>(popupChildren->objectAtIndex(0));
+	child->setID("popup-child");
+	log::info("Popup child: {} scaleY", child->getScaledContentHeight());
+
+	child->addChild(releaseDate);
+	child->addChild(releaseVer);
+
+	popup->show();
+}
+
 bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (!GauntletLayer::init(type)) return false;
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
 		auto removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
-		if (removeOGVaultBtn) {
-			removeOGVaultBtn->removeFromParent();
-		}
+		if (!removeOGVaultBtn) nullptr;
+		else removeOGVaultBtn->removeFromParent();
 	}
 
 	auto director = CCDirector::sharedDirector();
@@ -319,6 +382,7 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 	});
 
 	auto pathParent = CCNode::create();
+	if (!pathParent) nullptr;
 	pathParent->setID("gauntlet-path"_spr);
 	this->addChild(pathParent);
 
@@ -351,6 +415,7 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
 		auto vaultMenu = CCMenu::create();
+		if (!vaultMenu) return;
 		vaultMenu->setID("level-vault-menu"_spr);
 		vaultMenu->setPosition({0, 0});
 		this->addChild(vaultMenu);
@@ -361,11 +426,7 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 			GauntletNode::frameForType(static_cast<GauntletType>(type)).c_str(), 1.0f
 		);
 
-		auto vaultBtn = CCMenuItemSpriteExtra::create(
-			vaultBtnSpr,
-			this,
-			menu_selector(RedesignedGauntletLayer::gauntletVault)
-		);
+		auto vaultBtn = CCMenuItemSpriteExtra::create(vaultBtnSpr, this, menu_selector(RedesignedGauntletLayer::gauntletVault));
 		vaultBtn->setZOrder(5);
 		vaultBtn->setPosition(ccp(director->getScreenRight() - 31, director->getScreenTop() - 30));
 
@@ -379,6 +440,8 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		}
 
 		vaultMenu->addChild(vaultBtn);
+
+		setupInfoButton();
 	}
 }
 

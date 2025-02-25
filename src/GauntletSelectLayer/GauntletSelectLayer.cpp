@@ -181,10 +181,12 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         }
 
         auto director = CCDirector::sharedDirector();
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
 
         m_fields->m_dotsMenu = CCMenu::create();
         m_fields->m_dotsMenu->setLayout(AxisLayout::create());
         m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15.f);
+        m_fields->m_dotsMenu->setContentWidth(winSize.width - 100.f);
         m_fields->m_dotsMenu->setID("page-navigation"_spr);
         addChild(m_fields->m_dotsMenu);
 
@@ -228,8 +230,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
             RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
         }); 
-
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
 

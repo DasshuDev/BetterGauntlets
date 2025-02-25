@@ -19,6 +19,8 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editGauntletSingle(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
     void gauntletVault(cocos2d::CCObject* obj);
     void setupGauntlet(cocos2d::CCArray* levels);
+    void setupInfoButton();
+    void onInfoButtonClick(cocos2d::CCObject* obj);
 
     bool init(GauntletType);
 

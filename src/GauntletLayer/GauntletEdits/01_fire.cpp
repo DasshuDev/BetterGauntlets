@@ -30,4 +30,6 @@ void RedesignedGauntletLayer::editFireGauntlet() {
             this->addChild(bgParticles);
         }
     }
+
+    auto gauntletInfo = ("This is info for the Fire Gauntlet!");
 }

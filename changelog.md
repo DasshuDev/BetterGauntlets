@@ -1,4 +1,15 @@
-## <cg>v1.3.0</c>
+## <cg>v1.3.1</c>
+- <cg>Added</c> Gauntlet information/descriptions.
+    - Generated using GitHub Copilot, will be changed later.
+- <cg>Added</c> particles to the following Gauntlets:
+    - <c-62ffff>**Water**</c>
+- <cy>Updated</c> the following Gauntlets' particles:
+    - <c-f9ffff>**Bonus**</c>
+    - <c-f91919>**Demon**</c>
+
+---
+
+### <cy>v1.3.0</c>
 <c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
 - <cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!
     - This mod is recommended you download.

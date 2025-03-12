@@ -15,7 +15,7 @@ void RedesignedGauntletLayer::editShadowGauntlet() {
 	if (enableParticles) {
 		auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a3a0.45a26a90a90a0a0a300a100a15a0a0a0a0a0a175a0a0a43a0a0a0a0a0a0a0.1a0.05a350a0a0a38a0.286275a0a0a0a0.439216a0a0a0.15a0.35a0a1a0a0a0a0a0a0a0a0a1a0a0a0a0a182a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("150a-1a3a0.45a43a90a90a0a0a300a200a15a0a0a0a0a0a175a0a0a43a0a0a0a0a0a0a0.25a0.05a350a0a0a38a0.286275a0a0a0a0.439216a0a0.1a0.05a0.35a0a1a0a0a0a0a0a0a0a0a1a0a0a0a0a182a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
             bgParticles->setPosition(ccp(winSize.width / 2, winSize.height / 2));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);

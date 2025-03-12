@@ -11,14 +11,27 @@ void RedesignedGauntletLayer::editPortalGauntlet() {
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(57)));
 
-    // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
-	// if (enableParticles) {
-	// 	auto bgParticleNode = CCParticleSystemQuad::create();
-    //     if (bgParticleNode) {
-    //         CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("50a-1a2a0.45a3a90a90a0a0a300a0a0a-403a0a0a0a0a10a5a-45a0a0.619608a0a1a0a0.996078a0a1a0.05a0a0a-45a0a0a0a0.545098a0a1a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a96a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-    //         bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
-    //         bgParticles->setZOrder(-98);
-    //         this->addChild(bgParticles);
-    //     }
-    // }
+    auto titlePos = getChildByIDRecursive("title-shadow");
+
+    auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
+	if (enableParticles) {
+        // swirl
+		auto bgParticleNode1 = CCParticleSystemQuad::create();
+        if (bgParticleNode1) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("20a-1a1a0.3a15a0a0a0a0a0a0a0a0a0a0a0a0a500a250a0a180a0.901961a0a0.556863a0a1a0a1a0a50a30a360a0a1a0a0a0a0a0a1a0a0.5a0a0.75a0a0a0a0a0a0a0a0a2a1a0a0a0a190a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(titlePos->getPosition());
+            bgParticles->setScaleY(0.35);
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
+        // glow
+        auto bgParticleNode2 = CCParticleSystemQuad::create();
+        if (bgParticleNode2) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("20a-1a1a0.3a15a0a0a0a0a0a0a0a0a0a0a0a0a500a250a0a0a0.972549a0a0.556863a0a1a0a0.25a0a300a200a360a0a1a0a0.501961a0a0.501961a0a0.25a0a0.5a0a0.75a0a0a0a0a0a0a0a0a2a1a0a0a0a180a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(titlePos->getPosition());
+            bgParticles->setScaleY(0.35);
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
+    }
 }

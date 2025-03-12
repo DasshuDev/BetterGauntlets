@@ -16,7 +16,7 @@ void RedesignedGauntletLayer::editFireGauntlet() {
         // ashes
 		auto bgParticleNode1 = CCParticleSystemQuad::create();
         if (bgParticleNode1) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("30a-1a2a0.45a15a90a90a0a0a300a0a-44a126a0a0a0a120a35a0a0a40a1a0a0.75a0a0a0a1a0.05a0a0a0a25a1a0a0.25a0a0a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("130a-1a2a0.45a53a90a90a0a0a300a0a-44a126a0a0a0a120a35a10a0a40a1a0a0.87451a0a0.501961a0a1a0.05a0a0a0a25a1a0a0.25a0a0a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
             bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 10));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);

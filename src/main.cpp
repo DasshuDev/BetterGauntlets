@@ -1,4 +1,2 @@
-// TRANS RIGHTS ARE HUMAN RIGHTS.
-// GAY RIGHTS ARE HUMAN RIGHTS.
-// YOU ARE NOT ALONE.
-// YOU ARE VALID, NO MATTER WHO SAYS OTHERWISE.
+// And just like that, the Gauntlets have been given life.
+// Thanks for downloading. <3

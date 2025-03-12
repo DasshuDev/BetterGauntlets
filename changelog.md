@@ -1,16 +1,28 @@
-## <cg>v1.3.1</c>
-- <cg>Added</c> Gauntlet information/descriptions.
-    - Generated using GitHub Copilot, will be changed later.
+## <cg>v1.4.0</c>
+<c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
+- <cg>Added</c> Gauntlet information popups.
+    - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>
 - <cg>Added</c> particles to the following Gauntlets:
     - <c-62ffff>**Water**</c>
+    - <c-f9dc00>**Treasure**</c>
+    - <c-00ffff>**Portal**</c>
+    - <c-f9aaf4>**Split**</c>
+    - <c-1dffff>**NCS 1**</c>
+    - <c-f9afff>**NCS 2**</c>
 - <cy>Updated</c> the following Gauntlets' particles:
+    - <c-f9c800>**Fire**</c>
+    - <c-62ff32>**Poison**</c>
+    - <c-d732ff>**Shadow**</c>
     - <c-f9ffff>**Bonus**</c>
+    - <c-f91919>**Chaos**</c>
     - <c-f91919>**Demon**</c>
+    - <c-f9c832>**Spike**</c>
+    - <c-31ff00>**Forest**</c>
 
 ---
 
 ### <cy>v1.3.0</c>
-<c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
+Thank you for 30,000 downloads! <cr><3</c>
 - <cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!
     - This mod is recommended you download.
 - <cg>Added</c> a fourth chain to `GauntletSelectLayer`.
@@ -28,7 +40,7 @@
 - <cg>Added</c> a new setting: "Background Particles".
 - <cg>Added</c> a new setting: "Enable Gauntlet Paths".
 - <cg>Added</c> a new setting: "Toggle Vault Tooltip".
-    - Thank you, `@CherryChip`!
+    - Suggested by `@CherryChip`
 - <cg>Re-added</c> a setting: "Re-scale Loading Circle".
 - <cy>Updated</c> <c-fcee76>**Better Gauntlets**</c>' Node IDs.
 - <cy>Updated</c> title colors for the following Gauntlets:

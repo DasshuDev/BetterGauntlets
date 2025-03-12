@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.3.1",
+	"version": "v1.4.0",
 	"developer": "DasshuDEV",
 	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
@@ -79,11 +79,6 @@
 			"type": "bool",
 			"default": true
 		},
-		"experimental": {
-			"name": "Experimental Settings",
-			"type": "title",
-			"description": "Category used for <cr>experimental features/settings</c>."
-		},
 		"toggle-paths": {
 			"name": "Enable Gauntlet Paths",
 			"description": "Toggles the paths in between Gauntlet Levels.",
@@ -95,6 +90,11 @@
 			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.",
 			"type": "bool",
 			"default": true
+		},
+		"experimental": {
+			"name": "Experimental Settings",
+			"type": "title",
+			"description": "Category used for <cr>experimental features/settings</c>."
 		}
 	}
 }

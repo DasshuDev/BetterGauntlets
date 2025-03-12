@@ -9,7 +9,7 @@ void RedesignedGauntletLayer::editSplitGauntlet() {
     editGauntletSingle("Split", ccc3(49, 50, 65), ccc3(255, 110, 237), ccc3(113, 60, 107));
     GameManager::get()->loadBackground(13);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(9)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(13)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

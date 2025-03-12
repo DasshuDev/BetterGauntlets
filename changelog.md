@@ -1,4 +1,4 @@
-## <cg>v1.4.0</c>
+## <cg>v1.4.0 / v1.4.1</c>
 <c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
 - <cg>Added</c> Gauntlet information popups.
     - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>
@@ -18,6 +18,8 @@
     - <c-f91919>**Demon**</c>
     - <c-f9c832>**Spike**</c>
     - <c-31ff00>**Forest**</c>
+- Bump to Geode 4.3.0. (v1.4.1)
+- <cl>Fixed</c> the background in the <c-f9aaf4>**Split**</c> Gauntlet from being properly loaded. (v1.4.1)
 
 ---
 

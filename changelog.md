@@ -1,4 +1,13 @@
-## <cg>v1.4.0 / v1.4.1</c>
+## <cg>v1.4.2</c>
+### Better Gauntlets Acquired by RobTopGames in a $45 Billion Deal
+The iconic mod by rookie Geode mod developer <c-dedede>**DasshuDev**</c> is rumored to be <cg>integrated</c> into the <cy>vanilla game</c>, sources speculate. *When* the mod will be integrated is still <cr>unknown</c>.
+- Sources:
+    - Dexerto
+    - DasshuDev
+
+---
+
+### <cy>v1.4.0 / v1.4.1</c>
 <c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
 - <cg>Added</c> Gauntlet information popups.
     - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>

@@ -1,5 +1,5 @@
 {
-	"geode": "4.3.0",
+	"geode": "4.3.1",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -8,8 +8,8 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.4.1",
-	"developer": "DasshuDEV",
+	"version": "v1.4.2",
+	"developer": "DasshuDev",
 	"description": "Brings Gauntlets to life with new visuals!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
@@ -47,7 +47,7 @@
 		"geode.custom-keybinds": ">=v1.0.0",
 		"jacob375.gauntletlevelvault": {
 			"version": ">=v1.0.3",
-			"importance": "recommended"
+			"importance": "suggested"
 		}
 	},
 	"settings": {
@@ -87,7 +87,7 @@
 		},
 		"vault-tooltip": {
 			"name": "Toggle Vault Tooltip",
-			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.",
+			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cg>Gauntlet Level Vault</c> by <cy>Jacob375</c> installed.",
 			"type": "bool",
 			"default": true
 		},

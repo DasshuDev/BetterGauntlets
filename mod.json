@@ -8,9 +8,9 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.4.2",
+	"version": "v1.4.3-beta.1",
 	"developer": "DasshuDev",
-	"description": "Brings Gauntlets to life with new visuals!",
+	"description": "Bring the Gauntlets to life with new visuals!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
 		"community": "https://discord.gg/F94qat6N3D",
@@ -44,11 +44,7 @@
 	},
 	"dependencies": {
 		"geode.node-ids": ">=v1.19.0",
-		"geode.custom-keybinds": ">=v1.0.0",
-		"jacob375.gauntletlevelvault": {
-			"version": ">=v1.0.3",
-			"importance": "suggested"
-		}
+		"geode.custom-keybinds": ">=v1.0.0"
 	},
 	"settings": {
 		"islands-float": {

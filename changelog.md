@@ -1,14 +1,35 @@
-## <cg>v1.4.2</c>
+## <cg>v1.4.3</c>
+<c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
+
+Thank you for 50,000 downloads! <cr><3</c>
+
+- <cg>Added support</c> to the following Gauntlets:
+    - <c-31ffff>**Space**</c>
+    - <c-f9c800>**Cosmos**</c>
+- <cy>Updated</c> the following Gauntlets' particles:
+    - <c-f9c800>**Fire**</c>
+    - <c-62ff32>**Poison**</c>
+    - <c-f91919>**Death**</c>
+    - <c-f9ffff>**Christmas**</c>
+
+Please note that <cg>iOS support will happen</c>!
+As long as I don't have a proper method to test out my mod on an iPhone, there won't be an update for iOS.
+Learn more on my Discord server, or DM me `@dasshu_`.
+
+---
+
+### <cy>v1.4.2</c>
 ### Better Gauntlets Acquired by RobTopGames in a $45 Billion Deal
 The iconic mod by rookie Geode mod developer <c-dedede>**DasshuDev**</c> is rumored to be <cg>integrated</c> into the <cy>vanilla game</c>, sources speculate. *When* the mod will be integrated is still <cr>unknown</c>.
 - Sources:
     - Dexerto
     - DasshuDev
 
+Happy April Fools!
+
 ---
 
 ### <cy>v1.4.0 / v1.4.1</c>
-<c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
 - <cg>Added</c> Gauntlet information popups.
     - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>
 - <cg>Added</c> particles to the following Gauntlets:

@@ -63,11 +63,11 @@ void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
     auto winSize = director->getWinSize();
 
 	std::string gauntletName = GauntletNode::nameForType(m_gauntletType);
-	std::string infoText = getGauntletInfo(GauntletType (m_gauntletType));
+	std::string gauntletDesc = getGauntletInfo(GauntletType (m_gauntletType));
 
 	auto popup = MDPopup::create(
 		("The " + gauntletName + " Gauntlet").c_str(),
-		infoText.c_str(),
+		gauntletDesc.c_str(),
 		"OK"
 	);
 	
@@ -79,7 +79,7 @@ void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
 	releaseDate->setAnchorPoint(ccp(1, 0));
 	releaseDate->setOpacity(51);
 
-	auto version = fmt::format("Version: {}", getGauntletVer(GauntletType (m_gauntletType)));
+	auto version = fmt::format("Version: {}", getGauntletVersion(GauntletType (m_gauntletType)));
 
 	auto releaseVer = CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
 	releaseVer->setPosition({383.5, 15});
@@ -118,8 +118,8 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 
 	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));					// and "title-shadow" is the actual
 	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);													// title text like what dude why.
-	gauntletTitleText->setColor(ccc3(255, 255, 255));														   // robert please explain yourself >:(
-	gauntletTitleText->setScale(0.750);
+	gauntletTitleText->setColor(ccc3(255, 255, 255));														    // geode devs please explain
+	gauntletTitleText->setScale(0.750);																			// yourselves this instant >:(
 	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
 
 	auto bgLayer = getChildByID("background");
@@ -440,9 +440,9 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		}
 
 		vaultMenu->addChild(vaultBtn);
-
-		setupInfoButton();
 	}
+	
+	setupInfoButton();
 }
 
 void RedesignedGauntletLayer::editGauntlets() {

@@ -1,5 +1,5 @@
 ![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)\
-A Geometry Dash mod made by **[DasshuDEV](user:1975253)**
+A Geometry Dash mod made by **[Dasshu](user:1975253)**
 
 ---
 
@@ -29,7 +29,7 @@ Head to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any b
 - Support:
     - **SeasickK** - This wouldn't have been possible without you.
         - ([main](https://twitter.com/seasickkpt2)) ([art acc](https://twitter.com/sm0kemach1ne))
-    - **The Globed Staff Team** - For being great friends and supportive overall.
-    - <c-F4D48E>**T</c><c-F5C186>h</c><c-F5AE7D>e</c> <c-F18766>G</c><c-EC5F4F>e</c><c-E1504D>o</c><c-D5404A>d</c><c-C1384D>e</c> <c-AD2F4F>D</c><c-962845>i</c><c-7F213A>s</c><c-702442>c</c><c-61264A>o</c><c-522952>r</c><c-432B5A>d**</c> - For answering my REALLY stupid questions.
+    - **The Globed Staff Team** - For being great friends and overall supportive.
+    - <c-F4D48E>**T</c><c-F5C186>h</c><c-F5AE7D>e</c> <c-F18766>G</c><c-EC5F4F>e</c><c-E1504D>o</c><c-D5404A>d</c><c-C1384D>e</c> <c-AD2F4F>D</c><c-962845>i</c><c-7F213A>s</c><c-702442>c</c><c-61264A>o</c><c-522952>r</c><c-432B5A>d**</c> - For answering my REALLY stupid and simple-minded questions.
 
 *LGBTQIA+ RIGHTS ARE HUMAN RIGHTS. YOU ARE VALID. YOU ARE NOT ALONE*.

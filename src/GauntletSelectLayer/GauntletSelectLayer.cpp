@@ -123,6 +123,11 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
             }
         }
+
+        auto topRight = this->getChildByID("top-right-menu");
+        if (topRight) {
+            topRight->setPositionY(266.75f);
+        }
         
         auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {

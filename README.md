@@ -28,7 +28,7 @@ Coding:
 Support:
 - **SeasickK** - This wouldn't have been possible without you.
     - ([main](https://twitter.com/seasickkpt2)) ([art acc](https://twitter.com/sm0kemach1ne))
-- **The Globed Staff Team** - For being great friends and supportive overall.
-- **The Geode Discord** - For answering my REALLY stupid questions.
+- **The Globed Staff Team** - For being great friends and overall supportive.
+- **The Geode Discord** - For answering my REALLY stupid and simple-minded questions.
 
 *LGBTQIA+ RIGHTS ARE HUMAN RIGHTS. YOU ARE VALID. YOU ARE NOT ALONE*.

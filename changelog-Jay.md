@@ -1,18 +1,15 @@
-## <cg>v1.4.3</c>
+## <cg>v1.5.0-beta.1</c>
 <c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
 
 Thank you for 50,000 downloads! <cr><3</c>
 
-- <cg>Added support</c> to the following Gauntlets:
+- <cg>Added</c> particles to the following Gauntlets:
+    - <c-f91919>**Doom**</c>
     - <c-31ffff>**Space**</c>
     - <c-f9c800>**Cosmos**</c>
 - <cy>Updated</c> the following Gauntlets' particles:
     - <c-f9c800>**Fire**</c>
-    - <c-62ff32>**Poison**</c>
-    - <c-f91919>**Demon**</c>
-    - <c-f91919>**Death**</c>
     - <c-f9ffff>**Christmas**</c>
-- <cr>Removed</c> the Gauntlet Level Vault dependency. It it still recommended you install, though!
 
 Please note that <cg>iOS support will happen</c>!
 As long as I don't have a proper method to test out my mod on an iPhone, there won't be an update for iOS.

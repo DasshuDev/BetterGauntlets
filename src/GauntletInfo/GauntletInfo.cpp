@@ -1,4 +1,4 @@
-#include <Geode/geode.hpp>
+#include <Geode/Geode.hpp>
 #include "GauntletInfo.hpp"
 
 using namespace geode::prelude;

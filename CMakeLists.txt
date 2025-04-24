@@ -16,7 +16,23 @@ file(GLOB_RECURSE SOURCES
 add_library(${PROJECT_NAME} SHARED
         ${SOURCES}
 )
-    # Add any extra C++ source files here
+
+# Github actions (Taken from EclipseMenu)
+if(DEFINED ENV{GITHUB_ACTIONS})
+  # Enable LTO for smaller binaries
+  set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+  message(STATUS "GitHub Actions build detected")
+endif()
+
+# Debug macro (Taken from EclipseMenu)
+if (NOT DEFINED ENV{GITHUB_ACTIONS})
+  target_compile_definitions(
+    ${PROJECT_NAME} PRIVATE
+      $<$<CONFIG:Debug>:DEBUG_BUILD>
+      $<$<CONFIG:RelWithDebInfo>:DEBUG_BUILD>
+  )
+endif()
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

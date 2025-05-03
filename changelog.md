@@ -3,7 +3,8 @@
 
 Thank you for 50,000 downloads! <cr><3</c>
 
-- <cg>Added support</c> to the following Gauntlets:
+- Bump to Geode 4.4.0.
+- <cg>Added</c> additional support to the following Gauntlets:
     - <c-31ffff>**Space**</c>
     - <c-f9c800>**Cosmos**</c>
 - <cy>Updated</c> the following Gauntlets' particles:
@@ -74,7 +75,7 @@ Thank you for 30,000 downloads! <cr><3</c>
 - <cg>Added</c> a new setting: "Background Particles".
 - <cg>Added</c> a new setting: "Enable Gauntlet Paths".
 - <cg>Added</c> a new setting: "Toggle Vault Tooltip".
-    - Suggested by `@CherryChip`
+    - Only effective with Gauntlet Level Vault installed.
 - <cg>Re-added</c> a setting: "Re-scale Loading Circle".
 - <cy>Updated</c> <c-fcee76>**Better Gauntlets**</c>' Node IDs.
 - <cy>Updated</c> title colors for the following Gauntlets:
@@ -102,7 +103,6 @@ Thank you for 30,000 downloads! <cr><3</c>
 
 ### <cy>v1.2.1</c>
 - <cl>Fixed</c> platform requirements for Custom Keybinds.
-- Yeah that's it.
 
 ---
 
@@ -130,7 +130,7 @@ Thank you for 30,000 downloads! <cr><3</c>
 ---
 
 ### <cy>v1.1.3</c>
-- <cr>jaydasshu</c> -> <cg>**DasshuDEV**</c>
+- <cr>jaydasshu</c> -> <cg>**DasshuDev**</c>
 - <cg>Added</c> Corner UI to `GauntletLayer`, responsive to the selected Gauntlets' header text color.
 - <cg>Added</c> particles to the following Gauntlets:
     - <c-f9c800>**Fire**</c>

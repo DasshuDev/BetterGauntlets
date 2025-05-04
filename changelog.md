@@ -1,4 +1,10 @@
-## <cg>v1.5.0</c>
+## <cg>v1.5.1</c>
+- <cl>Fixed</c> an error in the Changelog.
+    - Accidentally typed "Gauntlet Level Vault" when I meant to say "Custom Keybinds", my bad!
+
+---
+
+### <cg>v1.5.0</c>
 - <cj>Bump</c> to Geode 4.4.0.
 - <cg>Added</c> iOS Support!
 - <cg>Added</c> additional support to the following Gauntlets:
@@ -11,7 +17,7 @@
     - <c-f91919>**Death**</c>
     - <c-f9ffff>**Christmas**</c>
 - <cr>Removed</c> the Gauntlet Level Vault dependency. It it still recommended you install, though!
-- <cr>Removed</c> the Gauntlet Level Vault dependency for iOS as it's not available yet.
+- <cr>Removed</c> the Custom Keybinds dependency for iOS as it's not available yet.
 
 Thank you for 50,000 downloads! <cr><3</c>
 

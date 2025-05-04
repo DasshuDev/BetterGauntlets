@@ -1,9 +1,6 @@
-## <cg>v1.4.3</c>
-<c-fcee76>**Found a bug? Let me know [here](https://discord.com/channels/1048101849481367662/1233259751077318687)!**</c>
-
-Thank you for 50,000 downloads! <cr><3</c>
-
-- Bump to Geode 4.4.0.
+## <cg>v1.5.0</c>
+- <cj>Bump</c> to Geode 4.4.0.
+- <cg>Added</c> iOS Support!
 - <cg>Added</c> additional support to the following Gauntlets:
     - <c-31ffff>**Space**</c>
     - <c-f9c800>**Cosmos**</c>
@@ -14,10 +11,9 @@ Thank you for 50,000 downloads! <cr><3</c>
     - <c-f91919>**Death**</c>
     - <c-f9ffff>**Christmas**</c>
 - <cr>Removed</c> the Gauntlet Level Vault dependency. It it still recommended you install, though!
+- <cr>Removed</c> the Gauntlet Level Vault dependency for iOS as it's not available yet.
 
-Please note that <cg>iOS support will happen</c>!
-As long as I don't have a proper method to test out my mod on an iPhone, there won't be an update for iOS.
-Learn more on my Discord server, or DM me `@dasshu_`.
+Thank you for 50,000 downloads! <cr><3</c>
 
 ---
 
@@ -27,6 +23,7 @@ The iconic mod by rookie Geode mod developer <c-dedede>**DasshuDev**</c> is rumo
 - Sources:
     - Dexerto
     - DasshuDev
+    - Geode SDK
 
 Happy April Fools!
 
@@ -57,7 +54,6 @@ Happy April Fools!
 ---
 
 ### <cy>v1.3.0</c>
-Thank you for 30,000 downloads! <cr><3</c>
 - <cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!
     - This mod is recommended you download.
 - <cg>Added</c> a fourth chain to `GauntletSelectLayer`.
@@ -99,6 +95,8 @@ Thank you for 30,000 downloads! <cr><3</c>
 - <cr>Removed</c> the Discord Link from `support.md` since it's already in `mod.json`
 - <cr>Removed</c> the "Update Discord Sprite" setting.
 
+Thank you for 30,000 downloads! <cr><3</c>
+
 ---
 
 ### <cy>v1.2.1</c>
@@ -107,8 +105,8 @@ Thank you for 30,000 downloads! <cr><3</c>
 ---
 
 ### <cy>v1.2.0</c>
-- Bump to Geode 4.2.0.
-- Bump Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
+- <cj>Bump</c> to Geode 4.2.0.
+- <cj>Bump</c> Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
 - <cg>Added</c> keybind support on all platforms!
 - <cg>Added</c> a fallback function for unsupported/custom Gauntlets.
 - <cg>Added</c> hover movements to the Gauntlet levels.
@@ -143,28 +141,20 @@ Thank you for 30,000 downloads! <cr><3</c>
 
 ---
 
-### <cy>v1.1.2</c>
-- <cy>Updated</c> the particles in `GauntletSelectLayer` to add atmosphere to the space.
-- <cy>Updated</c> the background to add to the atmosphere.
-- <cl>Fixed</c> an issue with Gauntlet placement.
-- <cr>Removed</c> some unnecessary files.
-
----
-
-### <cy>v1.1.1</c>
-- <cy>Updated</c> the opacity of the floor texture from 255 -> 128.
-- <cl>Fixed</c> overlapping textures when using GDUtils' "New gauntlets design" setting.
-
----
-
-### <cy>v1.1.0</c>
+### <cy>v1.1.0 / v1.1.1 / v1.1.2</c>
 - <cg>Added</c> particles around the stars of completed Gauntlet levels.
 - <cg>Added</c> a new setting: "Update Discord Sprite".
-    - Changes the sprite of the <c-6199ff>**Discord**</c> Gauntlet to match with the company's current logo.
+    - Changed the sprite of the <c-6199ff>**Discord**</c> Gauntlet to match with the company's current logo.
 - <cg>Added</c> all background changes to the UI, meaning all extra stuff will load even if the gauntlets themselves don't.
 - <cg>Added</c> support for the <c-31ffff>**Space**</c> and <c-f9c800>**Cosmos**</c> Gauntlets.
 - <cy>Updated</c> the <c-00ffff>**Time**</c> Gauntlet's background (07 -> 17).
+- <cy>Updated</c> the opacity of the floor texture from 255 -> 128.
+- <cy>Updated</c> the particles in `GauntletSelectLayer` to add atmosphere to the space.
+- <cy>Updated</c> the background to add to the atmosphere.
 - <cl>Fixed</c> a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine (hiimjasmine00)](user:7466002)!!
+- <cl>Fixed</c> an issue with Gauntlet placement.
+- <cl>Fixed</c> overlapping textures when using GDUtils' "New gauntlets design" setting.
+- <cr>Removed</c> some unnecessary files.
 
 ---
 

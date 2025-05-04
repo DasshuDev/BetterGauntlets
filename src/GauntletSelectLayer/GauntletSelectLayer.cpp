@@ -2,11 +2,14 @@
 #include <Geode/Loader.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <Geode/modify/GauntletNode.hpp>
-#include <geode.custom-keybinds/include/Keybinds.hpp>
 #include "cocos-ext.h"
 
 using namespace geode::prelude;
-using namespace keybinds;
+
+#ifndef GEODE_IS_IOS
+	#include <geode.custom-keybinds/include/Keybinds.hpp>
+	using namespace keybinds;
+#endif
 
 class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
 
@@ -220,21 +223,23 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
         }
-        this->defineKeybind("next-gauntlet"_spr, [this]() {
-            GauntletSelectLayer::onNext(nullptr); // default: right arrow key
-        });
-        this->defineKeybind("previous-gauntlet"_spr, [this]() {
-            GauntletSelectLayer::onPrev(nullptr); // default: left arrow key
-        });
-        this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numrow 1
-        });
-        this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numrow 2
-        });
-        this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
-            RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
-        }); 
+        #ifndef GEODE_IS_IOS
+            this->defineKeybind("next-gauntlet"_spr, [this]() {
+                GauntletSelectLayer::onNext(nullptr); // default: right arrow key
+            });
+            this->defineKeybind("previous-gauntlet"_spr, [this]() {
+                GauntletSelectLayer::onPrev(nullptr); // default: left arrow key
+            });
+            this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
+                RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numrow 1
+            });
+            this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
+                RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numrow 2
+            });
+            this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
+                RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
+            });
+        #endif
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {
 
@@ -280,14 +285,17 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         m_scrollLayer->updatePages();
         m_scrollLayer->repositionPagesLooped();
     }
-    void defineKeybind(const char* id, std::function<void()> callback) {
-        this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
-            if (event->isDown()) {
-                callback();
-            }
-            return ListenerResult::Propagate;
-        }, id);
-    }
+
+    #ifndef GEODE_IS_IOS
+        void defineKeybind(const char* id, std::function<void()> callback) {
+            this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
+                if (event->isDown()) {
+                    callback();
+                }
+                return ListenerResult::Propagate;
+            }, id);
+        }
+    #endif
 
     void findCurrentGauntletPageUsing(CCArray* pageButtons) {
         int i = 0;

@@ -1,10 +1,18 @@
-## <cg>v1.5.1</c>
+## <cg>v1.5.2</c>
+- path opacity slider
+- fixed gauntlet level vault info button
+- updated crystal, lava, and death gauntlets
+- remember to add more shit
+
+---
+
+### <cy>1.5.1</c>
 - <cl>Fixed</c> an error in the Changelog.
     - Accidentally typed "Gauntlet Level Vault" when I meant to say "Custom Keybinds", my bad!
 
 ---
 
-### <cg>v1.5.0</c>
+### <cy>v1.5.0</c>
 - <cj>Bump</c> to Geode 4.4.0.
 - <cg>Added</c> iOS Support!
 - <cg>Added</c> additional support to the following Gauntlets:

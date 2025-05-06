@@ -89,6 +89,20 @@
 			"type": "bool",
 			"default": true
 		},
+		"path-opacity": {
+			"name": "Path Opacity",
+			"description": "Sets the opacity of the path dots in between the Gauntlet Levels.",
+			"type": "float",
+			"default": 255.0,
+			"min": 1.0,
+			"max": 255.0,
+			"control": {
+				"slider": true,
+				"slider-step": 1.0,
+				"input": true
+			},
+			"enable-if": "toggle-paths"
+		},
 		"vault-tooltip": {
 			"name": "Toggle Vault Tooltip",
 			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cg>Gauntlet Level Vault</c> by <cy>Jacob375</c> installed.",

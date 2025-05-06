@@ -1,5 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/Loader.hpp>
+#include <Geode/ui/Layout.hpp>
+#include <Geode/ui/GeodeUI.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <Geode/modify/GauntletNode.hpp>
 #include "cocos-ext.h"
@@ -19,17 +21,23 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         });
     }
 
+    struct Fields {
+        CCMenuItemSpriteExtra* settingsButton;
+    };
+
     bool init(int gauntletType) {
         if (!GauntletSelectLayer::init(gauntletType)) return false;
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto director = CCDirector::sharedDirector();
 
+        CCSprite* settingsSpr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
+        m_fields->settingsButton = CCMenuItemSpriteExtra::create(settingsSpr, this, menu_selector(GauntletSelectLayerHook::onSettingsButton));
+
         if (PlatformToolbox::isControllerConnected()) {
             auto controllerBtn = getChildByID("controller-back-hint");
             controllerBtn->setZOrder(1);
         }
-
         auto refreshBtn = getChildByIDRecursive("refresh-button");
         if (refreshBtn) {
             refreshBtn->setVisible(true);
@@ -38,8 +46,20 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto BRMenu = getChildByID("bottom-right-menu");
         if (BRMenu) {
             BRMenu->setContentSize(ccp(23.25, 103));
+            BRMenu->addChild(m_fields->settingsButton);
+            BRMenu->setLayout(
+                ColumnLayout::create()
+                ->setAxisReverse(false)
+                ->setAxisAlignment(AxisAlignment::Start)
+            );
+            BRMenu->updateLayout();
         }
-        auto title = this->getChildByID("title");
+        CCArray* settingsBtn = BRMenu->getChildren();
+        if (settingsBtn && settingsBtn->count() > 0) {
+            auto button = static_cast<CCSprite*>(settingsBtn->objectAtIndex(1));
+            button->setScale(0.475);
+        }
+        auto title = this->getChildByID("title"); 
         if (title) {
             title->setVisible(false);
         }
@@ -69,7 +89,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             floor->setColor(ccc3(175, 175, 175));
             this->addChild(floor);
         }
-
         auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
         if (backgroundColor) {
             backgroundColor->setColor(ccc3(34, 34, 34));
@@ -126,11 +145,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
             }
         }
-
-        auto topRight = this->getChildByID("top-right-menu");
-        if (topRight) {
-            topRight->setPositionY(266.75f);
-        }
         
         auto bgParticleNode = CCParticleSystemQuad::create();
         if (bgParticleNode) {
@@ -143,8 +157,11 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             bgParticles->setZOrder(-1);
             this->addChild(bgParticles);
         }
-
         return true;
+    }
+
+    void onSettingsButton(CCObject* sender) {
+        geode::openSettingsPopup(Mod::get());
     }
 };
 
@@ -223,6 +240,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
         }
+        
         #ifndef GEODE_IS_IOS
             this->defineKeybind("next-gauntlet"_spr, [this]() {
                 GauntletSelectLayer::onNext(nullptr); // default: right arrow key
@@ -278,6 +296,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             }
         }
     }
+
     void onDot(CCObject* sender) {
         auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), sender) - m_fields->m_dots.begin();
 
@@ -307,6 +326,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             i++;
         }
     }
+
     void pressGauntlet(int desiredGauntlet) {
         if (const auto theGauntletPage = getChildByIDRecursive(fmt::format("gauntlet-page-{}", m_fields->currentGauntletPage))) {
             if (const auto theGauntlet = theGauntletPage->getChildByIDRecursive(fmt::format("gauntlet-button-{}", desiredGauntlet))) {
@@ -314,6 +334,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             }
         }
     }
+    
     #ifndef GEODE_IS_ANDROID
     void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1) {
         GauntletSelectLayer::scrollLayerWillScrollToPage(p0, p1);

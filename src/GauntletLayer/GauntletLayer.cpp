@@ -124,7 +124,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 
 	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));					// and "title-shadow" is the actual
 	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);													// title text like what dude why.
-	gauntletTitleText->setColor(ccc3(255, 255, 255));														    // geode devs please explain
+	gauntletTitleText->setColor(ccc3(255, 255, 255));														   // geode devs please explain
 	gauntletTitleText->setScale(0.750);																			// yourselves this instant >:(
 	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
 
@@ -399,6 +399,10 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 	for (int d = 0; d < 32; d++) {
 		auto dot = this->getChildByType<CCSprite>(d + 2);
 		if (!dot) continue;
+
+		auto dotOpacity = Mod::get()->getSettingValue<double>("path-opacity");
+		dot->setOpacity(dotOpacity);
+		
 		dot->setID(fmt::format("path-dot-{}", d + 1));
 		pathVector.push_back(dot);
 		if (d % 2 == 1) {

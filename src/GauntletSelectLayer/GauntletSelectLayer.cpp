@@ -51,13 +51,27 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 ColumnLayout::create()
                 ->setAxisReverse(false)
                 ->setAxisAlignment(AxisAlignment::Start)
+                ->setGap(-5.0f)
             );
             BRMenu->updateLayout();
         }
-        CCArray* settingsBtn = BRMenu->getChildren();
-        if (settingsBtn && settingsBtn->count() > 0) {
-            auto button = static_cast<CCSprite*>(settingsBtn->objectAtIndex(1));
-            button->setScale(0.475);
+        CCArray* settingsSetup = BRMenu->getChildren();
+        if (settingsSetup && settingsSetup->count() > 0) {
+            auto button = static_cast<CCSprite*>(settingsSetup->objectAtIndex(1));
+            button->setID("settings-button");
+            button->setContentSize(ccp(23.0, 23.75));
+            button->setScale(1.25f);
+            if (button) {
+                CCArray* setupBtn = button->getChildren();
+                if (setupBtn && setupBtn->count() > 0) {
+                    auto settingsBtn = static_cast<CCSprite*>(setupBtn->objectAtIndex(0));
+                    if (settingsBtn) {
+                        settingsBtn->setScale(0.5);
+                        settingsBtn->setPosition(ccp(11.5, 11.85));
+                        settingsBtn->setContentSize(ccp(46.0, 47.5));
+                    }
+                }
+            }
         }
         auto title = this->getChildByID("title"); 
         if (title) {

@@ -3,6 +3,8 @@
 - fixed gauntlet level vault info button
 - updated crystal, lava, and death gauntlets
 - remember to add more shit
+- added new experimental setting "path opacity" (will not work until reloaded)
+- man im finna whip this hoe (remove macos)
 
 ---
 

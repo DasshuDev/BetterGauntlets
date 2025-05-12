@@ -89,6 +89,17 @@
 			"type": "bool",
 			"default": true
 		},
+		"vault-tooltip": {
+			"name": "Toggle Vault Tooltip",
+			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cg>Gauntlet Level Vault</c> by <cy>Jacob375</c> installed.",
+			"type": "bool",
+			"default": true
+		},
+		"experimental": {
+			"name": "Experimental Settings",
+			"type": "title",
+			"description": "Category used for <cr>experimental features/settings</c>."
+		},	
 		"path-opacity": {
 			"name": "Path Opacity",
 			"description": "Sets the opacity of the path dots in between the Gauntlet Levels.",
@@ -102,17 +113,6 @@
 				"input": true
 			},
 			"enable-if": "toggle-paths"
-		},
-		"vault-tooltip": {
-			"name": "Toggle Vault Tooltip",
-			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cg>Gauntlet Level Vault</c> by <cy>Jacob375</c> installed.",
-			"type": "bool",
-			"default": true
-		},
-		"experimental": {
-			"name": "Experimental Settings",
-			"type": "title",
-			"description": "Category used for <cr>experimental features/settings</c>."
 		}
 	}
 }

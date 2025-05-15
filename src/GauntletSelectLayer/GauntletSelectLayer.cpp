@@ -32,6 +32,7 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto director = CCDirector::sharedDirector();
 
         CCSprite* settingsSpr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
+        settingsSpr->setScale(1.25f);
         m_fields->settingsButton = CCMenuItemSpriteExtra::create(settingsSpr, this, menu_selector(GauntletSelectLayerHook::onSettingsButton));
 
         if (PlatformToolbox::isControllerConnected()) {
@@ -51,7 +52,7 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 ColumnLayout::create()
                 ->setAxisReverse(false)
                 ->setAxisAlignment(AxisAlignment::Start)
-                ->setGap(-5.0f)
+                ->setGap(-15.0f)
             );
             BRMenu->updateLayout();
         }
@@ -59,16 +60,16 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         if (settingsSetup && settingsSetup->count() > 0) {
             auto button = static_cast<CCSprite*>(settingsSetup->objectAtIndex(1));
             button->setID("settings-button");
-            button->setContentSize(ccp(23.0, 23.75));
-            button->setScale(1.25f);
+            // button->setContentSize(ccp(23.0, 23.75));
+            // button->setScale(1.25f);
             if (button) {
                 CCArray* setupBtn = button->getChildren();
                 if (setupBtn && setupBtn->count() > 0) {
                     auto settingsBtn = static_cast<CCSprite*>(setupBtn->objectAtIndex(0));
                     if (settingsBtn) {
                         settingsBtn->setScale(0.5);
-                        settingsBtn->setPosition(ccp(11.5, 11.85));
-                        settingsBtn->setContentSize(ccp(46.0, 47.5));
+                        // settingsBtn->setPosition(ccp(11.4, 11.85));
+                        // settingsBtn->setContentSize(ccp(46.0, 47.5));
                     }
                 }
             }
@@ -190,7 +191,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         auto refreshBtn = getChildByIDRecursive("refresh-button");
         if (refreshBtn) {
             refreshBtn->setVisible(true);
-            refreshBtn->setScale(1.25);
+            // refreshBtn->setScale(1.25);
         }
     }
     void updateDots() {

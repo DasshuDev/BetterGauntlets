@@ -29,11 +29,35 @@ void RedesignedGauntletLayer::editLavaGauntlet() {
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
-        // ash
+        // sparks
         auto bgParticleNode3 = CCParticleSystemQuad::create();
         if (bgParticleNode3) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("25a-1a2a0.45a6a90a20a250a10a300a0a0a-225a0a0a0a0a25a10a0a43a1a0a0.792157a0a0a0a1a0.05a0a0a0a38a1a0a0.152941a0a0a0a0.5a0.15a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
             bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 10));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
+        // flow 1
+        auto bgParticleNode4 = CCParticleSystemQuad::create();
+        if (bgParticleNode4) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a2a0.45a26a90a90a0a0a0a0a0a-535a43a0a0a0a250a50a180a0a1a0a0.313726a0a0a0a0.25a0.05a150a50a180a0a1a0a0.501961a0a0a0a0.05a0.15a0.35a0a0.7a0a0a0a0a0a0a0a0a1a1a0a0a0a32a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(ccp(winSize.width / 2 - 150, director->getScreenTop() + 10));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
+        // flow 2
+        auto bgParticleNode5 = CCParticleSystemQuad::create();
+        if (bgParticleNode5) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a2a0.45a26a90a90a0a0a0a0a0a-535a43a0a0a0a150a50a180a0a1a0a0.313726a0a0a0a0.1a0.05a90a50a180a0a1a0a0.501961a0a0a0a0.01a0.05a0.35a0a0.7a0a0a0a0a0a0a0a0a1a1a0a0a0a32a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(ccp(winSize.width / 2 - 195, director->getScreenTop() + 10));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
+        // flow 3
+        auto bgParticleNode6 = CCParticleSystemQuad::create();
+        if (bgParticleNode6) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("65a-1a2a0.45a26a90a90a0a0a0a0a0a-535a43a0a0a0a150a50a180a0a1a0a0.313726a0a0a0a0.1a0.05a90a50a180a0a1a0a0.501961a0a0a0a0.01a0.05a0.35a0a0.7a0a0a0a0a0a0a0a0a1a1a0a0a0a32a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            bgParticles->setPosition(ccp(winSize.width / 2 + 215, director->getScreenTop() + 10));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }

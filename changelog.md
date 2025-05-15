@@ -1,10 +1,18 @@
 ## <cg>v1.5.2</c>
-- path opacity slider
-- fixed gauntlet level vault info button
-- updated crystal, lava, and death gauntlets
-- remember to add more shit
-- added new experimental setting "path opacity" (will not work until reloaded)
-- man im finna whip this hoe (remove macos)
+- <cg>Added</c> Path Opacity Editing!
+    - Found in Experimental Settings, you can change the opacity of your Gauntlet Path Dots.
+        - `gauntlet-paths` has been changed from a `CCNode` to a `CCLayerRGBA` layer to recognize opacity changes.
+- <cg>Added</c> a <cg>settings button</c> in the Gauntlet Select menu!
+    - Change Better Gauntlet's settings right within the menu itself!
+- <cg>Added</c> Gauntlet Description credits!
+    - Most of the descriptions are written by GitHub Copilot. Let me know if you'd like to write one!
+- <cy>Updated</c> the following Gauntlets' particles:
+    - <c-f9c8ff>**Crystal**</c>
+    - <c-f95a00>**Lava**</c>
+    - <c-f91919>**Death**</c>
+    - <c-31ff00>**Forest**</c>
+    - <c-00ffff>**Portal**</c>
+- <cl>Fixed</c> Gauntlet Level Vault's info button placement on the Gauntlet Select menu.
 
 ---
 
@@ -15,6 +23,7 @@
 ---
 
 ### <cy>v1.5.0</c>
+
 - <cj>Bump</c> to Geode 4.4.0.
 - <cg>Added</c> iOS Support!
 - <cg>Added</c> additional support to the following Gauntlets:
@@ -29,7 +38,6 @@
 - <cr>Removed</c> the Gauntlet Level Vault dependency. It it still recommended you install, though!
 - <cr>Removed</c> the Custom Keybinds dependency for iOS as it's not available yet.
 
-Thank you for 50,000 downloads! <cr><3</c>
 
 ---
 
@@ -70,6 +78,7 @@ Happy April Fools!
 ---
 
 ### <cy>v1.3.0</c>
+
 - <cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!
     - This mod is recommended you download.
 - <cg>Added</c> a fourth chain to `GauntletSelectLayer`.
@@ -111,7 +120,6 @@ Happy April Fools!
 - <cr>Removed</c> the Discord Link from `support.md` since it's already in `mod.json`
 - <cr>Removed</c> the "Update Discord Sprite" setting.
 
-Thank you for 30,000 downloads! <cr><3</c>
 
 ---
 

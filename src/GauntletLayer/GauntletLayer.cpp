@@ -93,6 +93,14 @@ void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
 	releaseVer->setAnchorPoint(ccp(1, 0));
 	releaseVer->setOpacity(51);
 
+	auto infoCredit = fmt::format("Description by: {}", getGauntletInfoCredits(GauntletType (m_gauntletType)));
+
+	auto credit = CCLabelBMFont::create(infoCredit.c_str(), "chatFont.fnt");
+	credit->setPosition({15.5, 15});
+	credit->setScale(0.5f);
+	credit->setAnchorPoint(ccp(0, 0));
+	credit->setOpacity(51);
+
 	auto popupChildren = popup->getChildren();
 	auto child = static_cast<CCNode*>(popupChildren->objectAtIndex(0));
 	child->setID("popup-child");
@@ -100,6 +108,7 @@ void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
 
 	child->addChild(releaseDate);
 	child->addChild(releaseVer);
+	child->addChild(credit);
 
 	popup->show();
 }
@@ -389,10 +398,17 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		});
 	#endif
 
-	auto pathParent = CCNode::create();
+	auto pathParent = CCLayerRGBA::create();
 	if (!pathParent) nullptr;
 	pathParent->setID("gauntlet-path"_spr);
 	this->addChild(pathParent);
+
+	auto opacityEdit = Mod::get()->getSettingValue<bool>("enable-path-opacity");
+	if (opacityEdit) {
+		auto pathOpacity = Mod::get()->getSettingValue<double>("path-opacity");
+		auto currentOpacity = pathParent->getOpacity();
+		pathParent->setOpacity(static_cast<GLubyte>(currentOpacity * pathOpacity));
+	}
 
 	std::vector<CCSprite*> pathVector = {};
 
@@ -400,9 +416,13 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		auto dot = this->getChildByType<CCSprite>(d + 2);
 		if (!dot) continue;
 
-		auto dotOpacity = Mod::get()->getSettingValue<double>("path-opacity");
-		dot->setOpacity(dotOpacity);
-		
+		auto opacityEdit = Mod::get()->getSettingValue<bool>("enable-path-opacity");
+		if (opacityEdit) {
+			auto dotOpacity = Mod::get()->getSettingValue<double>("path-opacity");
+			auto currentDotOpacity = dot->getOpacity();
+			dot->setOpacity(static_cast<GLubyte>(currentDotOpacity * dotOpacity));
+		}
+
 		dot->setID(fmt::format("path-dot-{}", d + 1));
 		pathVector.push_back(dot);
 		if (d % 2 == 1) {

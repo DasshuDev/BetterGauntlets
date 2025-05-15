@@ -1,4 +1,4 @@
-A Geometry Dash mod made by **[DasshuDEV](https://dasshu.dev)**
+A Geometry Dash mod made by **[DasshuDev](https://dasshu.dev)**
 
 ---
 
@@ -19,16 +19,19 @@ Head to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any b
 
 ---
 
+## Notes
+- LGBTQIA+ Rights are human rights. You are not alone in this fight. Stay strong.
+- Thank you for 75,000+ downloads! <cr><3</c>
+
+---
+
 ## Special Thanks
 Coding:
 - **[Capeling](https://bsky.app/profile/capeling.bsky.social)**
 - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**
-- **[hiimjasmine00](https://bsky.app/profile/hiimjustin000.com)**
 - **[LimeGradient](https://bsky.app/profile/limegradient.xyz)**
 Support:
 - **SeasickK** - This wouldn't have been possible without you.
     - ([main](https://twitter.com/seasickkpt2)) ([art acc](https://twitter.com/sm0kemach1ne))
 - **The Globed Staff Team** - For being great friends and overall supportive.
 - **The Geode Discord** - For answering my REALLY stupid and simple-minded questions.
-
-*LGBTQIA+ RIGHTS ARE HUMAN RIGHTS. YOU ARE VALID. YOU ARE NOT ALONE*.

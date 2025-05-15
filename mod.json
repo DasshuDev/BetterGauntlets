@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.5.1",
+	"version": "v1.5.2",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life with new visuals!",
 	"links": {
@@ -55,6 +55,11 @@
 		}
 	},
 	"settings": {
+		"main": {
+			"name": "Main Settings",
+			"type": "title",
+			"description": "All of Better Gauntlets' main/finished settings."
+		},
 		"islands-float": {
 			"name": "Islands Hover",
 			"description": "Gauntlet Islands will have a <cg>floating/hovering animation</c>.",
@@ -99,20 +104,27 @@
 			"name": "Experimental Settings",
 			"type": "title",
 			"description": "Category used for <cr>experimental features/settings</c>."
-		},	
+		},
+		"enable-path-opacity": {
+			"name": "Enable Path Opacity Editing",
+			"type": "bool",
+			"description": "Enables the editing of the Gauntlet Paths' opacity.",
+			"default": false
+		},
 		"path-opacity": {
 			"name": "Path Opacity",
 			"description": "Sets the opacity of the path dots in between the Gauntlet Levels.",
 			"type": "float",
 			"default": 255.0,
-			"min": 1.0,
-			"max": 255.0,
+			"min": 0.1,
+			"max": 1.0,
 			"control": {
+				"arrows": false,
 				"slider": true,
-				"slider-step": 1.0,
+				"slider-step": 0.05,
 				"input": true
 			},
-			"enable-if": "toggle-paths"
+			"enable-if": "enable-path-opacity"
 		}
 	}
 }

@@ -8,11 +8,18 @@ else()
 endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(BetterGauntlets VERSION 1.0.0)
+project(GauntletRedesign VERSION 1.0.0)
 
+set_source_files_properties(
+    src/GauntletSelectLayer/GauntletSelectLayer.cpp
+    PROPERTIES
+    OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/GauntletSelectLayer/GauntletSelectLayer.cpp
+)
+    
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
+message(STATUS "SOURCES: ${SOURCES}")
 
 # Github actions (Taken from EclipseMenu)
 if(DEFINED ENV{GITHUB_ACTIONS})

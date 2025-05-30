@@ -1,3 +1,6 @@
+#include <vector>
+#include <cstdlib>
+#include <ctime>
 #include <Geode/Geode.hpp>
 #include <Geode/Loader.hpp>
 #include <Geode/ui/Layout.hpp>
@@ -60,19 +63,23 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         if (settingsSetup && settingsSetup->count() > 0) {
             auto button = static_cast<CCSprite*>(settingsSetup->objectAtIndex(1));
             button->setID("settings-button");
-            // button->setContentSize(ccp(23.0, 23.75));
-            // button->setScale(1.25f);
+            button->setContentSize({23, 23.75});
             if (button) {
                 CCArray* setupBtn = button->getChildren();
                 if (setupBtn && setupBtn->count() > 0) {
                     auto settingsBtn = static_cast<CCSprite*>(setupBtn->objectAtIndex(0));
                     if (settingsBtn) {
                         settingsBtn->setScale(0.5);
-                        // settingsBtn->setPosition(ccp(11.4, 11.85));
-                        // settingsBtn->setContentSize(ccp(46.0, 47.5));
+                        settingsBtn->setPosition(ccp(button->getContentWidth() / 2, button->getContentHeight() / 2));
                     }
                 }
             }
+        }
+        auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
+        if (refreshSpr) {
+            auto loadCircle = getChildByIDRecursive("loading-circle");
+            loadCircle->setPositionY(-18.5f);
+            loadCircle->setScale(refreshSpr);
         }
         auto title = this->getChildByID("title"); 
         if (title) {
@@ -107,6 +114,7 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
         if (backgroundColor) {
             backgroundColor->setColor(ccc3(34, 34, 34));
+            backgroundColor->setZOrder(-99);
         }
         auto titleRedesign = CCSprite::create("gauntletTitle.png"_spr);
         if (titleRedesign) {
@@ -160,23 +168,101 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
             }
         }
+
+        auto squareBSpr = CCScale9Sprite::create("square04_001.png");
+        squareBSpr->setID("gauntlet-backdrop"_spr);
+        squareBSpr->setColor(ccc3(0, 0, 0));
+        squareBSpr->setOpacity(128);
+        squareBSpr->setZOrder(-1);
+        squareBSpr->setPosition(ccp(winSize.width / 2, winSize.height / 2 - 16.f));
+        squareBSpr->setContentSize(CCSize(324, 214));
+
+        squareBSpr->setPosition(winSize.width / 2, winSize.height / 2 - 18.5f);
+        this->addChild(squareBSpr);
         
-        auto bgParticleNode = CCParticleSystemQuad::create();
-        if (bgParticleNode) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "100a-1a4a2a16a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a60a0a0a0a0a0a0a0.05a0.02a400a0a90a67a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
-                NULL,
-                false
-                );
-            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() + 10));
-            bgParticles->setZOrder(-1);
-            this->addChild(bgParticles);
+        auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
+	    if (enableParticles) {
+            auto bgParticleNodeA = CCParticleSystemQuad::create();
+            if (bgParticleNodeA) {
+                CCParticleSystemQuad* bgParticlesA = GameToolbox::particleFromString(
+                    "100a-1a4a2a16a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a60a0a0a0a0a0a0a0.05a0.02a400a0a90a67a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
+                    NULL,
+                    false
+                    );
+                bgParticlesA->setPosition(ccp(winSize.width / 2, director->getScreenBottom() + 10));
+                bgParticlesA->setZOrder(-2);
+                this->addChild(bgParticlesA);
+            }
+            auto bgParticleNodeB = CCParticleSystemQuad::create();
+            if (bgParticleNodeB) {
+                CCParticleSystemQuad* bgParticlesB = GameToolbox::particleFromString(
+                    "100a-1a1.75a0a20a90a90a0a0a300a0a0a-77a0a0a0a0a5a3a0a60a0.0941176a0a0.0941176a0a0.0941176a0a1a0a2a0a0a67a0.0941176a0a0.0941176a0a0.0941176a0a1a0a0a0a0.2a0a0a0a0a0a0a0a0a2a0a0a0a0a0a0a-1a0a0a0a0a0a0a0a0a0a0a0a0;",
+                    NULL,
+                    false
+                    );
+                bgParticlesB->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
+                bgParticlesB->setZOrder(-2);
+                this->addChild(bgParticlesB);
+            }
+        }
+
+        auto textNode = getChildByIDRecursive("try-again-text");
+        if (textNode) {
+            textNode->setContentSize({0, 0});
+            textNode->setPosition(ccp(squareBSpr->getPositionX(), squareBSpr->getPositionY()));
+            auto children = textNode->getChildren();
+            if (children) {
+                for (int i = 0; i < children->count(); i++) {
+                    auto child = children->objectAtIndex(i);
+
+                    auto multiline = typeinfo_cast<MultilineBitmapFont*>(child);
+                    if (multiline) {
+                        multiline->removeFromParent();
+                        log::debug("MultilineBitmapFont removed from try-again-text");
+
+                    }
+                }
+            }
+
+            std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+            std::vector<std::string> headers = {
+                "Oops!",
+                "Uh-oh!",
+                "Wait, what happened?",
+                "Whoops!",
+                "Yikes...",
+                "Try Again!",
+                "404",
+                "Disconnected",
+                "Get sogged",
+                "Get Better IMO",
+                "Womp womp",
+                ":(",
+                "Well, this is awkward..."
+            };
+
+            std::string chosenHeader = headers[std::rand() % headers.size()];
+
+            auto reloadHeader = CCLabelBMFont::create(chosenHeader.c_str(), "goldFont.fnt");
+            reloadHeader->setPositionY(30.f);
+            reloadHeader->setID("error-header"_spr);
+            
+            auto reloadBody = CCLabelBMFont::create("Couldn't connect to the servers,\nreload the page and try again.", "bigFont.fnt");
+            reloadBody->setAlignment(kCCTextAlignmentCenter);
+            reloadBody->setPositionY(-15.f);
+            reloadBody->setScale(0.6f);
+            reloadBody->setID("error-body"_spr);
+
+            textNode->addChild(reloadHeader);
+            textNode->addChild(reloadBody);
+
         }
         return true;
     }
 
     void onSettingsButton(CCObject* sender) {
-        geode::openSettingsPopup(Mod::get());
+        geode::openSettingsPopup(Mod::get(), false);
     }
 };
 
@@ -185,15 +271,19 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         std::vector<CCMenuItemSpriteExtra*> m_dots = {};
         CCMenu* m_dotsMenu = nullptr;
         int currentGauntletPage = 0;
-    };
+    };    
 
     void onRefresh() {
-        auto refreshBtn = getChildByIDRecursive("refresh-button");
-        if (refreshBtn) {
-            refreshBtn->setVisible(true);
-            // refreshBtn->setScale(1.25);
+        auto refreshNode = getChildByIDRecursive("refresh-button");
+        if (refreshNode) {
+            refreshNode->setVisible(true);
+        }
+        auto textNode = getChildByIDRecursive("try-again-text");
+        if (textNode && textNode->isVisible()) {
+            refreshNode->setVisible(true);
         }
     }
+
     void updateDots() {
         auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
 
@@ -203,7 +293,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             int newPage = m_scrollLayer->m_page;
             if (newPage <= -1) newPage = m_fields->m_dots.size() + newPage;
             if (newPage >= m_fields->m_dots.size()) newPage = newPage % m_fields->m_dots.size();
-            // log::info("{}, {}", btnIdx, newPage);
 
             if (btnIdx == newPage)
                 static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_on_001.png"));
@@ -211,6 +300,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                 static_cast<CCSprite*>(btn->getNormalImage())->setDisplayFrame(sfc->spriteFrameByName("gj_navDotBtn_off_001.png"));
         }
     }
+
     void setupGauntlets() {
         GauntletSelectLayer::setupGauntlets();
 
@@ -258,19 +348,19 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         
         #ifndef GEODE_IS_IOS
             this->defineKeybind("next-gauntlet"_spr, [this]() {
-                GauntletSelectLayer::onNext(nullptr); // default: right arrow key
+                GauntletSelectLayer::onNext(nullptr); // default: right arrow
             });
             this->defineKeybind("previous-gauntlet"_spr, [this]() {
-                GauntletSelectLayer::onPrev(nullptr); // default: left arrow key
+                GauntletSelectLayer::onPrev(nullptr); // default: left arrow
             });
             this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
-                RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numrow 1
+                RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numkey 1
             });
             this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
-                RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numrow 2
+                RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numkey 2
             });
             this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
-                RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numrow 3
+                RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numkey 3
             });
         #endif
 
@@ -282,16 +372,111 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             auto gauntletMenu = gauntletPages->getChildByIDRecursive("gauntlet-menu");
             if (!gauntletMenu) nullptr;
 
+            gauntletMenu->setPosition(ccp(0, -3));
             gauntletMenu->setScale(0.9);
-            gauntletMenu->setPosition(ccp(0, 0));
 
+            auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+            if (GDUtils) {
+                auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                if (settingVal) {
+                    auto gauntletMenu = gauntletPages->getChildByIDRecursive("gauntlet-menu");
+                    gauntletMenu->setScale(0.725f);
+                }
+            }
+            
             std::vector<CCSprite*> gauntletButtons;
             for (int b = 0; b < 3; b++) {
                 auto gauntletButton = static_cast<CCSprite*>(gauntletMenu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
                 if (gauntletButton) {
                     gauntletButtons.push_back(gauntletButton);
+                    auto gauntletNode = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("background"));
+                    if (gauntletNode) {
+                        gauntletNode->setContentSize({110, 220});
+                    }
+
+                    // // Gauntlet Info Nodes // //
+
+                    // Info Node
+                    auto infoNode = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-info-node"));
+                    if (infoNode) {
+                        infoNode->setPositionY(-2.5f);
+                    }
+
+                    // // Name Nodes // //
+
+                    // Name Label
+                    auto nameLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-name-label"));
+                    if (nameLabel) {
+                        nameLabel->setPositionY(84);
+                    }
+                    // Gauntlet Label
+                    auto gauntletLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-label"));
+                    if (gauntletLabel) {
+                        gauntletLabel->setPositionY(nameLabel->getPositionY() - 15);
+                    }
+                    // Name Shadow Label
+                    auto nameShadowLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-name-shadow-label"));
+                    if (nameShadowLabel) {
+                        nameShadowLabel->setPosition(ccp(nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2));
+                    }
+                    // Gauntlet Shadow Label
+                    auto gauntletShadowLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-shadow-label"));
+                    if (gauntletShadowLabel) {
+                        gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2));
+                    }
+
+                    // // Reward Nodes // //
+
+                    // Chest Sprite
+                    auto chestSpr = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("chest-sprite"));
+                    if (chestSpr) {
+                        chestSpr->setPositionY(-64.5f);
+                        chestSpr->setScale(0.3f);
+                    }
+                    // Chest Shadow Sprite
+                    auto chestShadowSpr = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("chest-shadow-sprite"));
+                    if (chestShadowSpr) {
+                        chestShadowSpr->setPosition(ccp(chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2));
+                        chestShadowSpr->setScale(0.3f);
+                    }
+                    // Reward Label
+                    auto rewardLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("reward-label"));
+                    if (rewardLabel) {
+                        rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5f);
+                        rewardLabel->setScale(0.5f);
+                        rewardLabel->setZOrder(3);
+                    }
+                    // Reward Shadow Label
+                    auto rewardShadowLabel = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("reward-shadow-label"));
+                    if (rewardShadowLabel) {
+                        rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 2));
+                        rewardShadowLabel->setScale(0.5f);
+                    }
+
+                    // // Progression Label // //
+
+                    // Progress Label
+                    auto progressLabel = infoNode->getChildByIDRecursive("gauntlet-progress-label");
+                    if (progressLabel) {
+                        auto children = progressLabel->getChildren();
+                        if (children && children->count() > 0) {
+                            for (int i = 0; i < children->count(); i++) {
+                                auto label = typeinfo_cast<CCLabelBMFont*>(children->objectAtIndex(i));
+                                if (label) {
+                                    std::string progressText = label->getString();
+                                    if (progressText == "5/5") {
+                                        label->setColor(ccc3(113, 211, 39)); // ✅ Apply to actual label
+                                        log::info("Gauntlet is completed!");
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        log::warn("gauntlet-progress-label not found");
+                    }
                 }
             }
+
             int buttonCount = gauntletButtons.size();
             if (buttonCount > 0) {
                 for (int i = 0; i < buttonCount; i++) {

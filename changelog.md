@@ -1,11 +1,32 @@
-## <cg>v1.5.2</c>
+## <cg>v1.6.0</c>
+- <cg>Added</c> new settings:
+    - "Path Blending"
+        - Toggles blending between Default (No blending) and Additive.
+    - "Disconnect Button"
+        - Adds a disconnect button to `GauntletLayer` to simulate a disconnection from the servers.
+        - This is a quick and useful way for developers to access `m_tryAgainText`.
+- <cg>Added</c> "Rescale Loading Circle" setting compatibility to `GauntletSelectLayer`.
+- <cg>Added</c> new particles to `GauntletSelectLayer`!
+- <cg>Added</c> level authors to gauntletlayer!
+- <cg>Added</c> reactivity to the skull icon on the final level of gauntlets (finished level has darkened skull).
+- <cy>Updated</c> `GauntletSelectLayer`'s layout!
+- <cy>Updated</c> Settings' categorization (categorized by game layer).
+- <cy>Updated</c> particles settings to affect `GauntletSelectLayer`.
+- <cy>Updated</c> `m_tryAgainText` (the text that pops up when youre disconnected from the servers)
+- <cy>Updated</c> Gauntlet Credits to have newlines if a name is too long.
+- <cl>Fixed</c> a grammatical issue with the "Rescale Loading Circle" setting.
+- <cl>Fixed</c> the Settings Button on `GauntletSelectLayer` being larger than the sprite itself.
+
+---
+
+### <cy>v1.5.2</c>
 - <cg>Added</c> Path Opacity Editing!
     - Found in Experimental Settings, you can change the opacity of your Gauntlet Path Dots.
         - `gauntlet-paths` has been changed from a `CCNode` to a `CCLayerRGBA` layer to recognize opacity changes.
 - <cg>Added</c> a <cg>settings button</c> in the Gauntlet Select menu!
     - Change Better Gauntlet's settings right within the menu itself!
 - <cg>Added</c> Gauntlet Description credits!
-    - Most of the descriptions are written by GitHub Copilot. Let me know if you'd like to write one!
+    - Most of the descriptions are written by <cj>GitHub Copilot</c>. Let me know if you'd like to write one!
 - <cy>Updated</c> the following Gauntlets' particles:
     - <c-f9c8ff>**Crystal**</c>
     - <c-f95a00>**Lava**</c>
@@ -97,7 +118,7 @@ Happy April Fools!
 - <cg>Added</c> a new setting: "Enable Gauntlet Paths".
 - <cg>Added</c> a new setting: "Toggle Vault Tooltip".
     - Only effective with Gauntlet Level Vault installed.
-- <cg>Re-added</c> a setting: "Re-scale Loading Circle".
+- <cg>Re-added</c> a setting: "Rescale Loading Circle".
 - <cy>Updated</c> <c-fcee76>**Better Gauntlets**</c>' Node IDs.
 - <cy>Updated</c> title colors for the following Gauntlets:
     - <c-00ffff>**Time**</c>
@@ -183,4 +204,4 @@ Happy April Fools!
 ---
 
 ### <cy>v1.0.0</c>
-- Initial release of <cs>**Better Gauntlets**</c>!
+- Initial release of <cc>**Better Gauntlets**</c>!

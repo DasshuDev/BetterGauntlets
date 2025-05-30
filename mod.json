@@ -8,9 +8,9 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.5.2",
+	"version": "v1.6.0",
 	"developer": "DasshuDev",
-	"description": "Bring the Gauntlets to life with new visuals!",
+	"description": "Bring the Gauntlets to life!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
 		"community": "https://discord.gg/F94qat6N3D",
@@ -55,20 +55,15 @@
 		}
 	},
 	"settings": {
-		"main": {
-			"name": "Main Settings",
-			"type": "title",
-			"description": "All of Better Gauntlets' main/finished settings."
+
+		"general": {
+			"name": "General Settings",
+			"type": "title"
 		},
-		"islands-float": {
-			"name": "Islands Hover",
-			"description": "Gauntlet Islands will have a <cg>floating/hovering animation</c>.",
-			"type": "bool",
-			"default": true
-		},
+
 		"rescale-refresh-spr": {
-			"name": "Re-scale Loading Circle",
-			"description": "Re-scales the loading circle visible when loading Gauntlet Levels. <cg>Use the arrows for better accuracy</c>!",
+			"name": "Rescale Loading Circle",
+			"description": "<cg>Rescales</c> the loading circle visible when loading Gauntlet Levels. <cy>Use the arrows for better accuracy</c>!",
 			"type": "float",
 			"default": 1.0,
 			"min": 0.75,
@@ -82,49 +77,97 @@
 				"input": false
 			}
 		},
+
 		"enable-background-particles": {
 			"name": "Background Particles",
-			"description": "Enables the background particles added by <cc>Better Gauntlets</c>.",
+			"description": "Enables the <cg>background particles</c> added by <cc>**Better Gauntlets**</c>.\n\nYou'll need to <cj>reload</c> the layer to see changes (exit and re-enter the Gauntlet Screen(s)).",
 			"type": "bool",
 			"default": true
 		},
-		"toggle-paths": {
-			"name": "Enable Gauntlet Paths",
-			"description": "Toggles the paths in between Gauntlet Levels.",
+
+		"GauntletLayer": {
+			"name": "GauntletLayer",
+			"type": "title"
+		},
+
+		"islands-float": {
+			"name": "Islands Hover",
+			"description": "Gauntlet Islands will have a <cg>hovering animation</c>.",
 			"type": "bool",
 			"default": true
 		},
+
 		"vault-tooltip": {
 			"name": "Toggle Vault Tooltip",
-			"description": "Toggles the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cg>Gauntlet Level Vault</c> by <cy>Jacob375</c> installed.",
+			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed.",
 			"type": "bool",
 			"default": true
 		},
+
+		"disconnect-button": {
+			"name": "Disconnect Button",
+			"description": "Adds a button which <cj>simulates</c> a <cr>disconnect</c> from the servers.\n\nThis is useful for developers who need to <cy>test disconnections</c> for their own mod(s).",
+			"type": "bool",
+			"default": false
+		},
+
+		"GauntletPaths": {
+			"name": "Gauntlet Paths",
+			"type": "title"
+		},
+
+		"toggle-paths": {
+			"name": "Enable Gauntlet Paths",
+			"description": "<cg>Toggles</c> the paths in between Gauntlet Levels.",
+			"type": "bool",
+			"default": true
+		},
+		
+		"enable-path-edits": {
+			"name": "Enable Path Color Editing",
+			"type": "bool",
+			"description": "Enables the <cg>editing</c> of the Gauntlet Paths' <cy>color values</c>.",
+			"default": false,
+			"enable-if": "toggle-paths"
+		},
+		
+		"path-opacity": {
+			"name": "Path Opacity",
+			"description": "Sets the <cg>opacity</c> of the path dots in between the Gauntlet Levels.",
+			"type": "float",
+			"default": 255.0,
+			"min": 1.0,
+			"max": 255.0,
+			"control": {
+				"arrows": false,
+				"slider": true,
+				"slider-step": 1.0,
+				"input": true
+			},
+			"enable-if": "enable-path-edits"
+		},
+		
+		"path-blending": {
+			"name": "Path Blending",
+			"description": "Sets the <cg>blending</c> of the path dots in between the Gauntlet Levels.",
+			"type": "string",
+			"default": "Default",
+			"match": "[A-Z][a-z]+",
+			"filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+			"one-of": ["Default", "Additive"],
+			"enable-if": "enable-path-edits"
+		},
+
+		"GauntletSelectLayer": {
+			"name": "GauntletSelectLayer",
+			"type": "title"
+		},
+		
 		"experimental": {
 			"name": "Experimental Settings",
 			"type": "title",
 			"description": "Category used for <cr>experimental features/settings</c>."
-		},
-		"enable-path-opacity": {
-			"name": "Enable Path Opacity Editing",
-			"type": "bool",
-			"description": "Enables the editing of the Gauntlet Paths' opacity.",
-			"default": false
-		},
-		"path-opacity": {
-			"name": "Path Opacity",
-			"description": "Sets the opacity of the path dots in between the Gauntlet Levels.",
-			"type": "float",
-			"default": 255.0,
-			"min": 0.1,
-			"max": 1.0,
-			"control": {
-				"arrows": false,
-				"slider": true,
-				"slider-step": 0.05,
-				"input": true
-			},
-			"enable-if": "enable-path-opacity"
 		}
+		
 	}
 }

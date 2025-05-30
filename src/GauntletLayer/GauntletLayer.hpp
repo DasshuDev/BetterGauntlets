@@ -23,6 +23,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void setupGauntlet(cocos2d::CCArray* levels);
     void setupInfoButton();
     void onInfoButtonClick(cocos2d::CCObject* obj);
+    void simulateDisconnect(cocos2d::CCObject* obj);
 
     bool init(GauntletType);
 

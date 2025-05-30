@@ -3,169 +3,169 @@
 std::string getGauntletInfoCredits(GauntletType gauntletType) {
     switch (gauntletType) {
         default: {
-            return "No credits available for this gauntlet.";
+            return "\nGitHub Copilot (This could be you!)";
         }
         case GauntletType::Fire: {
             return "DasshuDev";
         }
-        case GauntletType::Ice: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Poison: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Shadow: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Lava: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Bonus: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Chaos: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Demon: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Time: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Crystal: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Magic: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Spike: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Monster: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Doom: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Death: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Forest: {
-            return "GitHub Copilot";
-        }
-        // case GauntletType::Rune: {
-        //     return "Add the gauntlet credits here.";
+        // case GauntletType::Ice: {
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Force: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Poison: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Shadow: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Lava: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Bonus: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Chaos: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Demon: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Time: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Crystal: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Magic: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Spike: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Monster: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Doom: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Death: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Forest: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Rune: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Force: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Spooky: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Dragon: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Water: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Haunted: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Water: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Haunted: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Acid: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Witch: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Power: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Power: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Potion: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Snake: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Toxic: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Halloween: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Halloween: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Treasure: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Ghost: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Spider: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Gem: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Inferno: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Portal: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Strange: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Fantasy: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Christmas: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Inferno: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Portal: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Strange: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Fantasy: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Christmas: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Surprise: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::Mystery: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Cursed: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Cyborg: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Castle: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::Mystery: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Cursed: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Cyborg: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Castle: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
         // case GauntletType::Grave: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
         // case GauntletType::Temple: {
-        //     return "Add the gauntlet credits here.";
+        //     return "\nGitHub Copilot (This could be you!)";
         // }
-        case GauntletType::World: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Galaxy: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Universe: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Discord: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Split: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::NCS: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::NCS2: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Space: {
-            return "GitHub Copilot";
-        }
-        case GauntletType::Cosmos: {
-            return "GitHub Copilot";
-        }
+        // case GauntletType::World: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Galaxy: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Universe: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Discord: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Split: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::NCS: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::NCS2: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Space: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
+        // case GauntletType::Cosmos: {
+        //     return "\nGitHub Copilot (This could be you!)";
+        // }
     }
 }

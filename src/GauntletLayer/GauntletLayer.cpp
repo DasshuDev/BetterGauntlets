@@ -1,9 +1,12 @@
+#include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <cocos2d.h>
 #include <Geode/binding/GauntletLayer.hpp>
 #include <Geode/ui/Layout.hpp>
 #include <Geode/ui/BasedButtonSprite.hpp>
 #include <Geode/ui/MDTextArea.hpp>
+#include <Geode/utils/cocos.hpp>
 
 // Files
 #include "GauntletLayer.hpp"
@@ -113,8 +116,23 @@ void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
 	popup->show();
 }
 
+inline void limitLabelWidth(CCLabelBMFont* label, float maxWidth, float originalScale = 1.0f, float minScale = 0.5f) {
+    if (!label) return;
+
+    float contentWidth = label->getContentSize().width * originalScale;
+    if (contentWidth > maxWidth) {
+        float newScale = maxWidth / label->getContentSize().width;
+        newScale = std::max(newScale, minScale);
+        label->setScale(newScale);
+    } else {
+        label->setScale(originalScale);
+    }
+}
+
 bool RedesignedGauntletLayer::init(GauntletType type) {
 	if (!GauntletLayer::init(type)) return false;
+
+	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
 		auto removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
@@ -365,7 +383,67 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
 		editGauntlets();
+		
+	auto reloadBackdrop = CCScale9Sprite::create("square04_001.png");
+	reloadBackdrop->setID("error-backdrop"_spr);
+	reloadBackdrop->setColor(ccc3(0, 0, 0));
+	reloadBackdrop->setOpacity(160);
+	reloadBackdrop->setZOrder(-1);
+	reloadBackdrop->setContentSize(CCSize(400, 125));
 
+	auto textNode = getChildByIDRecursive("try-again-text");
+	if (textNode) {
+		textNode->setContentSize({0, 0});
+		textNode->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+		auto children = textNode->getChildren();
+		if (children) {
+			for (int i = 0; i < children->count(); i++) {
+				auto child = children->objectAtIndex(i);
+
+				// Check if it's a MultilineBitmapFont
+				auto multiline = typeinfo_cast<MultilineBitmapFont*>(child);
+				if (multiline) {
+					multiline->removeFromParent();
+					log::debug("MultilineBitmapFont removed from try-again-text");
+				}
+			}
+		}
+
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+		std::vector<std::string> headers = {
+			"Oops!",
+			"Uh-oh!",
+			"Wait, what happened?",
+			"Whoops!",
+			"Yikes...",
+			"Try Again!",
+			"404",
+			"Disconnected",
+			"Get sogged",
+			"Get Better IMO",
+			"Womp womp",
+			":(",
+			"Well, this is awkward..."
+		};
+
+		std::string chosenHeader = headers[std::rand() % headers.size()];
+
+		auto reloadHeader = CCLabelBMFont::create(chosenHeader.c_str(), "goldFont.fnt");
+		reloadHeader->setPositionY(30.f);
+		reloadHeader->setID("error-header"_spr);
+		
+		auto reloadBody = CCLabelBMFont::create("Couldn't connect to the servers,\nreload the page and try again.", "bigFont.fnt");
+		reloadBody->setAlignment(kCCTextAlignmentCenter);
+		reloadBody->setPositionY(-15.f);
+		reloadBody->setScale(0.6f);
+		reloadBody->setID("error-body"_spr);
+
+		textNode->addChild(reloadHeader);
+		textNode->addChild(reloadBody);
+		textNode->addChild(reloadBackdrop);
+
+	}
 	return true;
 }
 
@@ -403,28 +481,31 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 	pathParent->setID("gauntlet-path"_spr);
 	this->addChild(pathParent);
 
-	auto opacityEdit = Mod::get()->getSettingValue<bool>("enable-path-opacity");
-	if (opacityEdit) {
-		auto pathOpacity = Mod::get()->getSettingValue<double>("path-opacity");
-		auto currentOpacity = pathParent->getOpacity();
-		pathParent->setOpacity(static_cast<GLubyte>(currentOpacity * pathOpacity));
-	}
-
 	std::vector<CCSprite*> pathVector = {};
 
 	for (int d = 0; d < 32; d++) {
 		auto dot = this->getChildByType<CCSprite>(d + 2);
+
 		if (!dot) continue;
 
-		auto opacityEdit = Mod::get()->getSettingValue<bool>("enable-path-opacity");
-		if (opacityEdit) {
+		auto pathEdit = Mod::get()->getSettingValue<bool>("enable-path-edits");
+		if (pathEdit) {
 			auto dotOpacity = Mod::get()->getSettingValue<double>("path-opacity");
-			auto currentDotOpacity = dot->getOpacity();
-			dot->setOpacity(static_cast<GLubyte>(currentDotOpacity * dotOpacity));
+			dot->setOpacity(dotOpacity);
+
+			auto dotBlending = Mod::get()->getSettingValue<std::string>("path-blending");
+			if (dotBlending == "Default") {
+				dot->setBlendFunc({ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA });
+			}
+			else if (dotBlending == "Additive") {
+				dot->setBlendFunc({ GL_SRC_ALPHA, GL_ONE });
+			}
+
 		}
 
 		dot->setID(fmt::format("path-dot-{}", d + 1));
 		pathVector.push_back(dot);
+
 		if (d % 2 == 1) {
 			dot->setColor(ccc3(210, 210, 210));
 		} else {
@@ -473,6 +554,25 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 
 		vaultMenu->addChild(vaultBtn);
 	}
+
+	auto disconnectSettings = Mod::get()->getSettingValue<bool>("disconnect-button");
+	if (disconnectSettings) {
+
+		auto disconnectMenu = CCMenu::create();
+		if (!disconnectMenu) return;
+		disconnectMenu->setID("disconnect-menu"_spr);
+		disconnectMenu->setPosition(ccp(director->getScreenRight() - 45, director->getScreenBottom() + 20));
+		disconnectMenu->setScale(0.5f);
+		disconnectMenu->setContentSize({0, 0});
+		this->addChild(disconnectMenu);
+
+		auto bigFontBtnSpr = ButtonSprite::create("Disconnect", "goldFont.fnt", "GJ_button_04.png", .8f);
+		auto bigFontBtn = CCMenuItemSpriteExtra::create(bigFontBtnSpr, this, menu_selector(RedesignedGauntletLayer::simulateDisconnect));
+		bigFontBtn->setID("disconnect-button"_spr);
+		
+		disconnectMenu->addChild(bigFontBtn);
+		
+	}
 	
 	setupInfoButton();
 }
@@ -481,6 +581,18 @@ void RedesignedGauntletLayer::editGauntlets() {
 
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+	auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
+	if (refreshSpr) {
+		auto loadCircle = getChildByID("loading-circle");
+		loadCircle->setScale(refreshSpr);
+	}
+
+	if (m_fields->m_loaded = true) {
+		log::debug("Connected to Gauntlet #{}", static_cast<int>(m_gauntletType));
+	} else {
+		log::error("Failed to connect to Gauntlet");
+	}
 
 	auto levelMenuPos = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
 	if (!levelMenuPos) return;
@@ -500,7 +612,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 																								//			   ===						   ===						   ===
 	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));			//
 	levelFive->setPosition({winSize.width / 2 + 180, winSize.height / 2 - 67});					//
-																								//
+	
 	for (int g = 0; g < 5; g++) {
 		auto gauntletLevel = getChildByIDRecursive(fmt::format("level-{}", g + 1));
 		if (gauntletLevel) {
@@ -510,27 +622,35 @@ void RedesignedGauntletLayer::editGauntlets() {
 					sprite->setID(fmt::format("gauntlet-island-{}"_spr, g + 1));
 					CCArray* children = sprite->getChildren();
 					if (children && children->count() > 0) {
+
+						auto levelNode = static_cast<GJGameLevel*>(m_levels->objectAtIndex(g));
+						auto nameString = levelNode->m_levelName;
+						std::string author = levelNode->m_creatorName;
+						
+						if (levelNode) {
+							log::info("Level {}: {} by {}", g + 1, nameString, author);
+						}
 						auto shadow = static_cast<CCSprite*>(children->objectAtIndex(2));
-						auto island = static_cast<CCSprite*>(children->objectAtIndex(0));
-						auto stats = static_cast<CCSprite*>(children->objectAtIndex(1));
 						if (shadow) {
 							shadow->setID("gauntlet-shadow"_spr);
 						}
+						auto island = static_cast<CCSprite*>(children->objectAtIndex(0));
 						if (island) {
 							island->setID("gauntlet-level"_spr);
 						}
+						auto stats = static_cast<CCSprite*>(children->objectAtIndex(1));
 						if (stats) {
 							stats->setID("gauntlet-stats"_spr);
 							CCArray* statsChildren = stats->getChildren();
-							if (statsChildren && statsChildren->count() > 0) {
-								auto starLabel = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(1));
+							if (statsChildren && statsChildren->count() > 0) {								
 								auto starPos = static_cast<CCSprite*>(statsChildren->objectAtIndex(2));
 								bool hasCompletedLevel = GameStatsManager::sharedState()->hasCompletedLevel(static_cast<GJGameLevel*>(m_levels->objectAtIndex(g)));
 								if (starPos) {
-									starPos->setID("star-icon");
+									starPos->setID("star-icon"_spr);
 									starPos->setAnchorPoint(ccp(0.5, 0.5));
 									starPos->setPositionX(5);
-								}
+								}								
+								auto starLabel = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(1));
 								if (starLabel) {
 									starLabel->setID("star-label"_spr);
 									if (hasCompletedLevel) {
@@ -548,14 +668,59 @@ void RedesignedGauntletLayer::editGauntlets() {
 											stats->addChild(starParticles);
 										}
 									}
-								}
+								}								
 								auto nameModify = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));
 								if (nameModify) {
 									nameModify->setID("level-name"_spr);
-									nameModify->setPositionY(-20);
+									nameModify->setPositionY(-11.5);
+								}
+								auto authorName = CCLabelBMFont::create(author.c_str(), "goldFont.fnt");
+								if (authorName) {
+									authorName->setID("creator-name"_spr);
+									authorName->setAlignment(kCCTextAlignmentCenter);
+									authorName->setPositionY(nameModify->getPositionY() - 11);
+									authorName->setScale(0.4f);
+									stats->addChild(authorName);
+								}
+								auto checkmarkSpr = this->getChildBySpriteFrameNameRecursive(stats, "GJ_completesIcon_001.png");
+								if (checkmarkSpr) {
+									checkmarkSpr->setID("checkmark-icon"_spr);
+									checkmarkSpr->setAnchorPoint(ccp(0.5, 0.5));
+									checkmarkSpr->setPosition(ccp(25.f, 2.f));
+								}
+								auto skullSpr = typeinfo_cast<CCSprite*>(getChildBySpriteFrameNameRecursive(stats, "miniSkull_001.png"));
+								if (skullSpr) {
+
+									auto skullNode = CCNode::create();
+									skullNode->setID("skull-node"_spr);
+									stats->addChild(skullNode);
+
+									if (skullSpr->getParent()) {
+										skullSpr->retain(); // Retain to prevent auto-deletion
+										skullSpr->removeFromParentAndCleanup(false); // Cleanup false to preserve state
+										skullNode->addChild(skullSpr);
+										skullSpr->release(); // Release after reparenting
+									}
+									
+									skullSpr->setID("skull-icon"_spr);
+									skullSpr->setPositionY(10.f);
+									if (hasCompletedLevel) {
+										skullSpr->setColor(ccc3(128, 128, 128));
+									}
 								}
 							}
 						}
+						// auto grayscaleSpr = typeinfo_cast<CCSpriteGrayscale*>(island);
+						// if (grayscaleSpr) {
+						// 	auto authorName = CCLabelBMFont::create(author.c_str(), "goldFont.fnt");
+						// 	if (authorName) {
+						// 		authorName->setID("creator-name"_spr);
+						// 		authorName->setAlignment(kCCTextAlignmentCenter);
+						// 		authorName->setPositionY(nameModify->getPositionY() - 11);
+						// 		authorName->setScale(0.4f);
+						// 		stats->addChild(authorName);
+						// 	}
+						// }
 					}
 				}
 			}
@@ -587,15 +752,6 @@ void RedesignedGauntletLayer::editGauntlets() {
 			}
 		}
 	}
-
-	auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
-	if (refreshSpr) {
-		auto loadCircle = getChildByID("loading-circle");
-		loadCircle->setScale(refreshSpr);
-	}
-
-	m_fields->m_loaded = true;
-	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 }
 
 void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
@@ -608,4 +764,18 @@ void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
     scene->addChild(browserLayer);
     auto transition = CCTransitionFade::create(0.5, scene);
     CCDirector::sharedDirector()->pushScene(transition);
+}
+
+void RedesignedGauntletLayer::simulateDisconnect(CCObject* obj) {
+    auto levels = getChildByIDRecursive("levels-menu");
+    if (levels) levels->setVisible(false);
+
+    auto path = getChildByIDRecursive("gauntlet-path"_spr);
+    if (path) path->setVisible(false);
+
+    auto disconnectText = getChildByIDRecursive("try-again-text");
+    if (disconnectText) disconnectText->setVisible(true);
+
+	auto disconnectMenu = getChildByIDRecursive("disconnect-menu"_spr);
+	if (disconnectMenu) disconnectMenu->setVisible(false);
 }

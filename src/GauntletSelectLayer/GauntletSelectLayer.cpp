@@ -404,6 +404,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                         if (!settingVal) {
                             infoNode->setPositionY(-2.5f);
                         }
+                    } else {
+                        infoNode->setPositionY(-2.5f);
                     }
 
                     // // Name Nodes // //

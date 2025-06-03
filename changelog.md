@@ -1,4 +1,4 @@
-## <cg>v1.6.1</c>
+## <cg>v1.6.1 / v1.6.11</c>
 - <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
 

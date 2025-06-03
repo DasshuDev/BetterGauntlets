@@ -1,10 +1,10 @@
-## v1.6.1
-- Fixed a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
+## <cg>v1.6.1</c>
+- <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
 
 ---
 
-## <cg>v1.6.0</c>
+### <cy>v1.6.0</c>
 - <cg>Added</c> new settings:
     - "Path Blending"
         - Toggles blending between Default (No blending) and Additive.

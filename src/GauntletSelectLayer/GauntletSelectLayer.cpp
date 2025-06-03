@@ -398,8 +398,12 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
                     // Info Node
                     auto infoNode = static_cast<CCSprite*>(gauntletButton->getChildByIDRecursive("gauntlet-info-node"));
-                    if (infoNode) {
-                        infoNode->setPositionY(-2.5f);
+                    auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                    if (GDUtils) {
+                        auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                        if (!settingVal) {
+                            infoNode->setPositionY(-2.5f);
+                        }
                     }
 
                     // // Name Nodes // //

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editPowerGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 38;
+
     editGauntletSingle("Power", ccc3(72, 58, 42), ccc3(231, 203, 182), ccc3(150, 114, 76));
-    GameManager::get()->loadBackground(38);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(38)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

@@ -9,12 +9,6 @@ endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(GauntletRedesign VERSION 1.0.0)
-
-set_source_files_properties(
-    src/GauntletSelectLayer/GauntletSelectLayer.cpp
-    PROPERTIES
-    OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/GauntletSelectLayer/GauntletSelectLayer.cpp
-)
     
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
@@ -45,5 +39,9 @@ else()
 endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+
+CPMAddPackage("gh:camila314/UIBuilder#main")
+CPMAddPackage("gh:dankmeme01/cue#778140e")
+target_link_libraries(${PROJECT_NAME} UIBuilder cue)
 
 setup_geode_mod(${PROJECT_NAME})

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editPotionGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 37;
+
     editGauntletSingle("Potion", ccc3(58, 30, 52), ccc3(255, 0, 144), ccc3(139, 0, 148));
-    GameManager::get()->loadBackground(25);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(25)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

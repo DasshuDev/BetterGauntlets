@@ -3,7 +3,7 @@
 std::string getGauntletDate(GauntletType gauntletType) {
     switch (gauntletType) {
         default: {
-            return "TBA";
+            return "Unknown Release Date";
         }
         case GauntletType::Fire: {
             return "February 5, 2017";
@@ -53,57 +53,57 @@ std::string getGauntletDate(GauntletType gauntletType) {
         case GauntletType::Forest: {
             return "July 18, 2024";
         }
-        // case GauntletType::Rune: {
-        //     return "TBA";
-        // }
+        case GauntletType::Rune: {
+            return "Unknown Release Date";
+        }
         case GauntletType::Force: {
             return "December 2, 2024";
         }
-        // case GauntletType::Spooky: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Dragon: {
-        //     return "TBA";
-        // }
+        case GauntletType::Spooky: {
+            return "October 31, 2025";
+        }
+        case GauntletType::Dragon: {
+            return "Unknown Release Date";
+        }
         case GauntletType::Water: {
             return "March 18, 2024";
         }
         case GauntletType::Haunted: {
             return "October 31, 2024";
         }
-        // case GauntletType::Acid: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Witch: {
-        //     return "TBA";
-        // }
+        case GauntletType::Acid: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Witch: {
+            return "Unknown Release Date";
+        }
         case GauntletType::Power: {
             return "January 26, 2025";
         }
-        // case GauntletType::Potion: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Snake: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Toxic: {
-        //     return "TBA7";
-        // }
+        case GauntletType::Potion: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Snake: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Toxic: {
+            return "Unknown Release Date";
+        }
         case GauntletType::Halloween: {
             return "October 31, 2024";
         }
-        // case GauntletType::Treasure: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Ghost: {
-        //     return "TBA7";
-        // }
-        // case GauntletType::Spider: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Gem: {
-        //     return "TBA";
-        // }
+        case GauntletType::Treasure: {
+            return "June 17, 2025";
+        }
+        case GauntletType::Ghost: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Spider: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Gem: {
+            return "September 1, 2025";
+        }
         case GauntletType::Inferno: {
             return "September 12, 2024";
         }
@@ -119,9 +119,9 @@ std::string getGauntletDate(GauntletType gauntletType) {
         case GauntletType::Christmas: {
             return "December 25, 2024";
         }
-        // case GauntletType::Surprise: {
-        //     return "TBA";
-        // }
+        case GauntletType::Surprise: {
+            return "Unknown Release Date";
+        }
         case GauntletType::Mystery: {
             return "June 20, 2024";
         }
@@ -134,12 +134,12 @@ std::string getGauntletDate(GauntletType gauntletType) {
         case GauntletType::Castle: {
             return "January 25, 2024";
         }
-        // case GauntletType::Grave: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Temple: {
-        //     return "TBA";
-        // }
+        case GauntletType::Grave: {
+            return "Unknown Release Date";
+        }
+        case GauntletType::Temple: {
+            return "Unknown Release Date";
+        }
         case GauntletType::World: {
             return "December 19, 2023";
         }

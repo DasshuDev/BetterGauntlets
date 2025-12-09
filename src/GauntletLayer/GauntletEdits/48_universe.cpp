@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editUniverseGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 32;
+
     editGauntletSingle("Universe", ccc3(36, 70, 105), ccc3(255, 252, 104), ccc3(255, 1, 136));
-    GameManager::get()->loadBackground(32);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(32)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
     m_backgroundSprite->setPositionY(-275);
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");

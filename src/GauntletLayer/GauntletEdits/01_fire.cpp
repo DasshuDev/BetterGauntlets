@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editFireGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 14;
+
     editGauntletSingle("Fire", ccc3(63, 29, 9), ccc3(255, 255, 0), ccc3(231, 79, 0));
-    GameManager::get()->loadBackground(14);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(14)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

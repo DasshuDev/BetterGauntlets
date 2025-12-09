@@ -211,11 +211,11 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editSpikeGauntlet();
 			break;
 		}
-		case GauntletType::Monster: { // 13
+		case GauntletType::Monster: { // 13 UNFINISHED
 			editMonsterGauntlet();
 			break;
 		}
-		case GauntletType::Doom: { // 14
+		case GauntletType::Doom: { // 14 UNFINISHED
 			editDoomGauntlet();
 			break;
 		}
@@ -227,19 +227,19 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editForestGauntlet();
 			break;
 		}
-		case GauntletType::Rune: { // 17
+		case GauntletType::Rune: { // 17 UNFINISHED
 			editRuneGauntlet();
 			break;
 		}
-		case GauntletType::Force: { // 18
+		case GauntletType::Force: { // 18 UNFINISHED
 			editForceGauntlet();
 			break;
 		}
-		case GauntletType::Spooky: { // 19
+		case GauntletType::Spooky: { // 19 UNFINISHED
 			editSpookyGauntlet();
 			break;
 		}
-		case GauntletType::Dragon: { // 20
+		case GauntletType::Dragon: { // 20 UNFINISHED
 			editDragonGauntlet();
 			break;
 		}
@@ -247,67 +247,67 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editWaterGauntlet();
 			break;
 		}
-		case GauntletType::Haunted: { // 22
+		case GauntletType::Haunted: { // 22 UNFINISHED
 			editHauntedGauntlet();
 			break;
 		}
-		case GauntletType::Acid: { // 23
+		case GauntletType::Acid: { // 23 UNFINISHED
 			editAcidGauntlet();
 			break;
 		}
-		case GauntletType::Witch: { // 24
+		case GauntletType::Witch: { // 24 UNFINISHED
 			editWitchGauntlet();
 			break;
 		}
-		case GauntletType::Power: { // 25
+		case GauntletType::Power: { // 25 UNFINISHED
 			editPowerGauntlet();
 			break;
 		}
-		case GauntletType::Potion: { // 26
+		case GauntletType::Potion: { // 26 UNFINISHED
 			editPotionGauntlet();
 			break;
 		}
-		case GauntletType::Snake: { // 27
+		case GauntletType::Snake: { // 27 UNFINISHED
 			editSnakeGauntlet();
 			break;
 		}
-		case GauntletType::Toxic: { // 28
+		case GauntletType::Toxic: { // 28 UNFINISHED
 			editToxicGauntlet();
 			break;
 		}
-		case GauntletType::Halloween: { // 29
+		case GauntletType::Halloween: { // 29 UNFINISHED
 			editHalloweenGauntlet();
 			break;
 		}
-		case GauntletType::Treasure: { // 30
+		case GauntletType::Treasure: { // 30 UNFINISHED
 			editTreasureGauntlet();
 			break;
 		}
-		case GauntletType::Ghost: { // 31
+		case GauntletType::Ghost: { // 31 UNFINISHED
 			editGhostGauntlet();
 			break;
 		}
-		case GauntletType::Spider: { // 32
+		case GauntletType::Spider: { // 32 UNFINISHED
 			editSpiderGauntlet();
 			break;
 		}
-		case GauntletType::Gem: { // 33
+		case GauntletType::Gem: { // 33 UNFINISHED
 			editGemGauntlet();
 			break;
 		}
-		case GauntletType::Inferno: { // 34
+		case GauntletType::Inferno: { // 34 UNFINISHED
 			editInfernoGauntlet();
 			break;
 		}
-		case GauntletType::Portal: { // 35
+		case GauntletType::Portal: { // 35 UNFINISHED
 			editPortalGauntlet();
 			break;
 		}
-		case GauntletType::Strange: { // 36
+		case GauntletType::Strange: { // 36 UNFINISHED
 			editStrangeGauntlet();
 			break;
 		}
-		case GauntletType::Fantasy: { // 37
+		case GauntletType::Fantasy: { // 37 UNFINISHED
 			editFantasyGauntlet();
 			break;
 		}
@@ -315,47 +315,47 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editChristmasGauntlet();
 			break;
 		}
-		case GauntletType::Surprise: { // 39
+		case GauntletType::Surprise: { // 39 UNFINISHED
 			editSurpriseGauntlet();
 			break;
 		}
-		case GauntletType::Mystery: { // 40
+		case GauntletType::Mystery: { // 40 UNFINISHED
 			editMysteryGauntlet();
 			break;
 		}
-		case GauntletType::Cursed: { // 41
+		case GauntletType::Cursed: { // 41 UNFINISHED
 			editCursedGauntlet();
 			break;
 		}
-		case GauntletType::Cyborg: { // 42
+		case GauntletType::Cyborg: { // 42 UNFINISHED
 			editCyborgGauntlet();
 			break;
 		}
-		case GauntletType::Castle: { // 43
+		case GauntletType::Castle: { // 43 UNFINISHED
 			editCastleGauntlet();
 			break;
 		}
-		case GauntletType::Grave: { // 44
+		case GauntletType::Grave: { // 44 UNFINISHED
 			editGraveGauntlet();
 			break;
 		}
-		case GauntletType::Temple: { // 45
+		case GauntletType::Temple: { // 45 UNFINISHED
 			editTempleGauntlet();
 			break;
 		}
-		case GauntletType::World: { // 46
+		case GauntletType::World: { // 46 UNFINISHED
 			editWorldGauntlet();
 			break;
 		}
-		case GauntletType::Galaxy: { // 47
+		case GauntletType::Galaxy: { // 47 UNFINISHED
 			editGalaxyGauntlet();
 			break;
 		}
-		case GauntletType::Universe: { // 48
+		case GauntletType::Universe: { // 48 UNFINISHED
 			editUniverseGauntlet();
 			break;
 		}
-		case GauntletType::Discord: { // 49
+		case GauntletType::Discord: { // 49 UNFINISHED
 			editDiscordGauntlet();
 			break;
 		}
@@ -379,71 +379,19 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editCosmosGauntlet();
 			break;
 		}
+		// case GauntletType::Random: { // 55
+		// 	editCosmosGauntlet();
+		// 	break;
+		// }
+		// case GauntletType::Chance: { // 56
+		// 	editCosmosGauntlet();
+		// 	break;
+		// }
 	}
 
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
 		editGauntlets();
 		
-	auto reloadBackdrop = CCScale9Sprite::create("square04_001.png");
-	reloadBackdrop->setID("error-backdrop"_spr);
-	reloadBackdrop->setColor(ccc3(0, 0, 0));
-	reloadBackdrop->setOpacity(160);
-	reloadBackdrop->setZOrder(-1);
-	reloadBackdrop->setContentSize(CCSize(400, 125));
-
-	auto textNode = getChildByIDRecursive("try-again-text");
-	if (textNode) {
-		textNode->setContentSize({0, 0});
-		textNode->setPosition(ccp(winSize.width / 2, winSize.height / 2));
-		auto children = textNode->getChildren();
-		if (children) {
-			for (int i = 0; i < children->count(); i++) {
-				auto child = children->objectAtIndex(i);
-
-				// Check if it's a MultilineBitmapFont
-				auto multiline = typeinfo_cast<MultilineBitmapFont*>(child);
-				if (multiline) {
-					multiline->removeFromParent();
-					log::debug("MultilineBitmapFont removed from try-again-text");
-				}
-			}
-		}
-
-		std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
-		std::vector<std::string> headers = {
-			"Oops!",
-			"Uh-oh!",
-			"Wait, what happened?",
-			"Whoops!",
-			"Yikes...",
-			"Try Again!",
-			"404",
-			"Disconnected",
-			"Get sogged",
-			"Get Better IMO",
-			"Womp womp",
-			":(",
-			"Well, this is awkward..."
-		};
-
-		std::string chosenHeader = headers[std::rand() % headers.size()];
-
-		auto reloadHeader = CCLabelBMFont::create(chosenHeader.c_str(), "goldFont.fnt");
-		reloadHeader->setPositionY(30.f);
-		reloadHeader->setID("error-header"_spr);
-		
-		auto reloadBody = CCLabelBMFont::create("Couldn't connect to the servers,\nreload the page and try again.", "bigFont.fnt");
-		reloadBody->setAlignment(kCCTextAlignmentCenter);
-		reloadBody->setPositionY(-15.f);
-		reloadBody->setScale(0.6f);
-		reloadBody->setID("error-body"_spr);
-
-		textNode->addChild(reloadHeader);
-		textNode->addChild(reloadBody);
-		textNode->addChild(reloadBackdrop);
-
-	}
 	return true;
 }
 
@@ -490,9 +438,6 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 
 		auto pathEdit = Mod::get()->getSettingValue<bool>("enable-path-edits");
 		if (pathEdit) {
-			auto dotOpacity = Mod::get()->getSettingValue<double>("path-opacity");
-			dot->setOpacity(dotOpacity);
-
 			auto dotBlending = Mod::get()->getSettingValue<std::string>("path-blending");
 			if (dotBlending == "Default") {
 				dot->setBlendFunc({ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA });
@@ -710,17 +655,6 @@ void RedesignedGauntletLayer::editGauntlets() {
 								}
 							}
 						}
-						// auto grayscaleSpr = typeinfo_cast<CCSpriteGrayscale*>(island);
-						// if (grayscaleSpr) {
-						// 	auto authorName = CCLabelBMFont::create(author.c_str(), "goldFont.fnt");
-						// 	if (authorName) {
-						// 		authorName->setID("creator-name"_spr);
-						// 		authorName->setAlignment(kCCTextAlignmentCenter);
-						// 		authorName->setPositionY(nameModify->getPositionY() - 11);
-						// 		authorName->setScale(0.4f);
-						// 		stats->addChild(authorName);
-						// 	}
-						// }
 					}
 				}
 			}

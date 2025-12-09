@@ -82,5 +82,7 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editNCSGauntlet2();
     void editSpaceGauntlet();
     void editCosmosGauntlet();
+    void editRandomGauntlet();
+    void editChanceGauntlet();
 };
 #endif

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editChristmasGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 29;
+
     editGauntletSingle("Christmas", ccc3(19, 43, 68), ccc3(231, 255, 254), ccc3(86, 202, 255));
-    GameManager::get()->loadBackground(29);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(29)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

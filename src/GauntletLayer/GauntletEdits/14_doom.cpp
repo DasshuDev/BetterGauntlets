@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editDoomGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 35;
+
     editGauntletSingle("Doom", ccc3(48, 36, 33), ccc3(141, 133, 128), ccc3(75, 69, 60));
-    GameManager::get()->loadBackground(35);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(35)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

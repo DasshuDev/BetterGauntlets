@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editRuneGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 15;
+
     editGauntletSingle("Rune", ccc3(46, 18, 0), ccc3(227, 130, 33), ccc3(100, 28, 0));
-    GameManager::get()->loadBackground(15);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(15)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

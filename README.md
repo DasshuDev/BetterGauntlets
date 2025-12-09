@@ -21,7 +21,7 @@ Head to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any b
 
 ## Notes
 - LGBTQIA+ Rights are human rights. You are not alone in this fight. Stay strong.
-- Thank you for 75,000+ downloads! <cr><3</c>
+- Thank you for *125,000+ downloads!* <cr><3</c>
 
 ---
 

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editAcidGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 24;
+
     editGauntletSingle("Acid", ccc3(45, 38, 17), ccc3(208, 255, 0), ccc3(162, 255, 24));
-    GameManager::get()->loadBackground(24);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(24)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

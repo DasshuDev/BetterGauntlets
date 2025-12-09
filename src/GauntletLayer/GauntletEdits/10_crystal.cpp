@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editCrystalGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 29;
+
     editGauntletSingle("Crystal", ccc3(28, 0, 7), ccc3(248, 223, 255), ccc3(246, 58, 218));
-    GameManager::get()->loadBackground(29);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(29)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

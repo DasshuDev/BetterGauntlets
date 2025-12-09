@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editHalloweenGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 16;
+
     editGauntletSingle("Halloween", ccc3(39, 36, 12), ccc3(255, 218, 0), ccc3(255, 0, 0));
-    GameManager::get()->loadBackground(16);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(16)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

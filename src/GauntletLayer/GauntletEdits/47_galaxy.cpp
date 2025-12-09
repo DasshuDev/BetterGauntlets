@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editGalaxyGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
-    editGauntletSingle("Galaxy", ccc3(40, 26, 44), ccc3(255, 180, 255), ccc3(181, 9, 149));
-    GameManager::get()->loadBackground(21);
+    auto backgroundValue = 21;
 
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(21)));
+    editGauntletSingle("Galaxy", ccc3(40, 26, 44), ccc3(255, 180, 255), ccc3(181, 9, 149));
+    GameManager::get()->loadBackground(backgroundValue);
+
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
     m_backgroundSprite->setPositionY(-250);
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");

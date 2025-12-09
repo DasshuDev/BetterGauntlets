@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editTempleGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 30;
+
     editGauntletSingle("Temple", ccc3(51, 59, 21), ccc3(255, 226, 184), ccc3(116, 93, 63));
-    GameManager::get()->loadBackground(30);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(30)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

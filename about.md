@@ -1,4 +1,4 @@
-![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)\
+![Better Gauntlets](dasshu.better-gauntlets/GR_title_001.png?scale=0.555)
 A Geometry Dash mod made by **[Dasshu](user:1975253)**
 
 ---
@@ -22,7 +22,7 @@ Head to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any b
 
 ## Notes
 - LGBTQIA+ Rights are human rights. You are not alone in this fight. Stay strong.
-- Thank you for 75,000+ downloads! <cr><3</c>
+- Thank you for *125,000+ downloads*! <cr><3</c>
 
 ---
 

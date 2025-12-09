@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editCyborgGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 45;
+
     editGauntletSingle("Cyborg", ccc3(50, 50, 50), ccc3(182, 228, 237), ccc3(63, 88, 123));
-    GameManager::get()->loadBackground(45);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(45)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

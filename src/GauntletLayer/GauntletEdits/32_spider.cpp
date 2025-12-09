@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editSpiderGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 23;
+
     editGauntletSingle("Spider", ccc3(44, 52, 56), ccc3(141, 192, 209), ccc3(75, 66, 91));
-    GameManager::get()->loadBackground(23);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(23)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

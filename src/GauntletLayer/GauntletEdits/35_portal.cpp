@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editPortalGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 57;
+
     editGauntletSingle("Portal", ccc3(31, 49, 77), ccc3(255, 50, 140), ccc3(109, 34, 86));
-    GameManager::get()->loadBackground(57);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(57)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto titlePos = getChildByIDRecursive("title-shadow");
 

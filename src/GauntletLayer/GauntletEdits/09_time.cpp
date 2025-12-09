@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editTimeGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 13;
+
     editGauntletSingle("Time", ccc3(0, 17, 75), ccc3(61, 152, 255), ccc3(0, 20, 61));
-    GameManager::get()->loadBackground(13);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(36)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

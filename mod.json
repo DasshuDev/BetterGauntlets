@@ -1,5 +1,5 @@
 {
-	"geode": "4.5.0",
+	"geode": "4.10.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.6.11",
+	"version": "v1.7.0-beta.1",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -45,7 +45,7 @@
 	"dependencies": {
 		"geode.node-ids": ">=v1.19.0",
 		"geode.custom-keybinds": {
-			"version": ">=v1.0.0",
+			"version": "*",
 			"platforms": [
 				"win",
 				"mac",
@@ -72,7 +72,7 @@
 				"arrows": true,
 				"big-arrows": false,
 				"slider": true,
-				"arrow-step": 0.005,
+				"arrow-step": 0.01,
 				"slider-step": 0.05,
 				"input": false
 			}
@@ -83,6 +83,11 @@
 			"description": "Enables the <cg>background particles</c> added by <cc>**Better Gauntlets**</c>.\n\nYou'll need to <cj>reload</c> the layer to see changes (exit and re-enter the Gauntlet Screen(s)).",
 			"type": "bool",
 			"default": true
+		},
+
+		"GauntletSelectLayer": {
+			"name": "GauntletSelectLayer",
+			"type": "title"
 		},
 
 		"GauntletLayer": {
@@ -106,7 +111,7 @@
 
 		"disconnect-button": {
 			"name": "Disconnect Button",
-			"description": "Adds a button which <cj>simulates</c> a <cr>disconnect</c> from the servers.\n\nThis is useful for developers who need to <cy>test disconnections</c> for their own mod(s).",
+			"description": "Adds a button which <cj>simulates</c> a <cr>disconnect</c> from the servers.",
 			"type": "bool",
 			"default": false
 		},
@@ -117,34 +122,18 @@
 		},
 
 		"toggle-paths": {
-			"name": "Enable Gauntlet Paths",
+			"name": "Enable Paths",
 			"description": "<cg>Toggles</c> the paths in between Gauntlet Levels.",
 			"type": "bool",
 			"default": true
 		},
 		
 		"enable-path-edits": {
-			"name": "Enable Path Color Editing",
+			"name": "Path Color Editing",
 			"type": "bool",
 			"description": "Enables the <cg>editing</c> of the Gauntlet Paths' <cy>color values</c>.",
 			"default": false,
 			"enable-if": "toggle-paths"
-		},
-		
-		"path-opacity": {
-			"name": "Path Opacity",
-			"description": "Sets the <cg>opacity</c> of the path dots in between the Gauntlet Levels.",
-			"type": "float",
-			"default": 255.0,
-			"min": 1.0,
-			"max": 255.0,
-			"control": {
-				"arrows": false,
-				"slider": true,
-				"slider-step": 1.0,
-				"input": true
-			},
-			"enable-if": "enable-path-edits"
 		},
 		
 		"path-blending": {
@@ -157,17 +146,11 @@
 			"one-of": ["Default", "Additive"],
 			"enable-if": "enable-path-edits"
 		},
-
-		"GauntletSelectLayer": {
-			"name": "GauntletSelectLayer",
-			"type": "title"
-		},
 		
 		"experimental": {
 			"name": "Experimental Settings",
 			"type": "title",
 			"description": "Category used for <cr>experimental features/settings</c>."
 		}
-		
 	}
 }

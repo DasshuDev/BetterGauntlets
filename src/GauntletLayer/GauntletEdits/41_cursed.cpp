@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editCursedGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 37;
+
     editGauntletSingle("Cursed", ccc3(46, 14, 43), ccc3(81, 255, 0), ccc3(8, 121, 4));
-    GameManager::get()->loadBackground(37);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(37)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editToxicGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 31;
+
     editGauntletSingle("Toxic", ccc3(41, 4, 43), ccc3(0, 248, 0), ccc3(9, 87, 8));
-    GameManager::get()->loadBackground(31);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(31)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

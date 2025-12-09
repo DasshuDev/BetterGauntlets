@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editDragonGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 30;
+
     editGauntletSingle("Dragon", ccc3(46, 0, 0), ccc3(201, 33, 33), ccc3(92, 35, 35));
-    GameManager::get()->loadBackground(30);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(30)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editSplitGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 13;
+
     editGauntletSingle("Split", ccc3(49, 50, 65), ccc3(255, 110, 237), ccc3(113, 60, 107));
-    GameManager::get()->loadBackground(13);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(13)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

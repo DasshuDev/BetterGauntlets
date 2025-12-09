@@ -1,3 +1,14 @@
+## <cg>v1.7.0</c>
+- <cj>Bump</c> to Geode 4.6.3.
+- <cg>Added</c> additional support to the following Gauntlets:
+    - <c-f9dc00>**Treasure**</c>
+- <cy>Updated</c> keybinds' placement in the keybind tree.
+- <cr>Removed</c> the "Path Opacity" setting.
+- gauntlet position rewrite in progress
+- Depreciation until new Gauntlets release.
+
+---
+
 ## <cg>v1.6.1 / v1.6.11</c>
 - <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
@@ -5,6 +16,7 @@
 ---
 
 ### <cy>v1.6.0</c>
+- <cj>Bump</c> to Geode 4.5.0.
 - <cg>Added</c> new settings:
     - "Path Blending"
         - Toggles blending between Default (No blending) and Additive.
@@ -167,7 +179,7 @@ Happy April Fools!
     - <c-f95a00>**Lava**</c>
     - <c-f9ffff>**Bonus**</c>
 - <cy>Updated</c> the mod logo to unify this mod with the vanilla Gauntlets' style.
-- <cy>Updated</c> a LOT of backend/file stuff. Thank you so so SO much, [Capeling]((user:18226543))!!
+- <cy>Updated</c> a LOT of backend/file stuff. Thank you so so SO much, [Capeling]((user:18226543))!
 - <cy>Updated</c> the following Gauntlets' particles:
     - <c-f9c800>**Fire**</c>
     - <c-92ffff>**Ice**</c>
@@ -202,7 +214,7 @@ Happy April Fools!
 - <cy>Updated</c> the opacity of the floor texture from 255 -> 128.
 - <cy>Updated</c> the particles in `GauntletSelectLayer` to add atmosphere to the space.
 - <cy>Updated</c> the background to add to the atmosphere.
-- <cl>Fixed</c> a crash on Android when entering `GauntletSelectLayer`. Thank you so much, [Jasmine (hiimjasmine00)](user:7466002)!!
+- <cl>Fixed</c> a crash on Android when entering `GauntletSelectLayer`.
 - <cl>Fixed</c> an issue with Gauntlet placement.
 - <cl>Fixed</c> overlapping textures when using GDUtils' "New gauntlets design" setting.
 - <cr>Removed</c> some unnecessary files.

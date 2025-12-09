@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editSpaceGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 13;
+
     editGauntletSingle("Space", ccc3(0, 9, 13), ccc3(180, 255, 231), ccc3(0, 167, 180));
-    GameManager::get()->loadBackground(13);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(13)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

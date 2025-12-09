@@ -6,7 +6,7 @@ using namespace geode::prelude;
 std::string getGauntletVersion(GauntletType gauntletType) {
     switch (gauntletType) {
         default: {
-            return ("{}", Loader::get()->getGameVersion());
+            return Loader::get()->getVersion().toVString();
         }
         case GauntletType::Fire: {
             return "2.1";
@@ -56,57 +56,57 @@ std::string getGauntletVersion(GauntletType gauntletType) {
         case GauntletType::Forest: {
             return "2.2";
         }
-        // case GauntletType::Rune: {
-        //     return "2.2";
-        // }
+        case GauntletType::Rune: {
+            [[fallthrough]];
+        }
         case GauntletType::Force: {
             return "2.2";
         }
-        // case GauntletType::Spooky: {
-        //     return "2.2";
-        // }
-        // case GauntletType::Dragon: {
-        //     return "2.2";
-        // }
+        case GauntletType::Spooky: {
+            return "2.207";
+        }
+        case GauntletType::Dragon: {
+            [[fallthrough]];
+        }
         case GauntletType::Water: {
             return "2.2";
         }
         case GauntletType::Haunted: {
             return "2.2";
         }
-        // case GauntletType::Acid: {
-        //     return "2.2";
-        // }
-        // case GauntletType::Witch: {
-        //     return "2.2";
-        // }
+        case GauntletType::Acid: {
+            [[fallthrough]];
+        }
+        case GauntletType::Witch: {
+            [[fallthrough]];
+        }
         case GauntletType::Power: {
             return "2.2";
         }
-        // case GauntletType::Potion: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Snake: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Toxic: {
-        //     return "TBA7";
-        // }
+        case GauntletType::Potion: {
+            [[fallthrough]];
+        }
+        case GauntletType::Snake: {
+            [[fallthrough]];
+        }
+        case GauntletType::Toxic: {
+            [[fallthrough]];
+        }
         case GauntletType::Halloween: {
             return "2.2";
         }
-        // case GauntletType::Treasure: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Ghost: {
-        //     return "TBA7";
-        // }
-        // case GauntletType::Spider: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Gem: {
-        //     return "TBA";
-        // }
+        case GauntletType::Treasure: {
+            return "2.207";
+        }
+        case GauntletType::Ghost: {
+            [[fallthrough]];
+        }
+        case GauntletType::Spider: {
+            [[fallthrough]];
+        }
+        case GauntletType::Gem: {
+            [[fallthrough]];
+        }
         case GauntletType::Inferno: {
             return "2.2";
         }
@@ -122,9 +122,9 @@ std::string getGauntletVersion(GauntletType gauntletType) {
         case GauntletType::Christmas: {
             return "2.2";
         }
-        // case GauntletType::Surprise: {
-        //     return "TBA";
-        // }
+        case GauntletType::Surprise: {
+            [[fallthrough]];
+        }
         case GauntletType::Mystery: {
             return "2.2";
         }
@@ -137,12 +137,12 @@ std::string getGauntletVersion(GauntletType gauntletType) {
         case GauntletType::Castle: {
             return "2.2";
         }
-        // case GauntletType::Grave: {
-        //     return "TBA";
-        // }
-        // case GauntletType::Temple: {
-        //     return "TBA";
-        // }
+        case GauntletType::Grave: {
+            [[fallthrough]];
+        }
+        case GauntletType::Temple: {
+            [[fallthrough]];
+        }
         case GauntletType::World: {
             return "2.2";
         }
@@ -170,5 +170,11 @@ std::string getGauntletVersion(GauntletType gauntletType) {
         case GauntletType::Cosmos: {
             return "2.207";
         }
+        // case GauntletType::Random: {
+        //     return default;
+        // }
+        // case GauntletType::Chance: {
+        //     return default;
+        // }
     }
 }

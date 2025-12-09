@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editSpikeGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 15;
+
     editGauntletSingle("Spike", ccc3(54, 37, 4), ccc3(255, 222, 92), ccc3(177, 116, 43));
-    GameManager::get()->loadBackground(15);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(15)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {

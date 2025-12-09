@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editStrangeGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 17;
+
     editGauntletSingle("Strange", ccc3(42, 52, 3), ccc3(203, 134, 255), ccc3(112, 59, 117));
-    GameManager::get()->loadBackground(17);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(17)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

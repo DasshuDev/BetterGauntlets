@@ -6,10 +6,12 @@ void RedesignedGauntletLayer::editCastleGauntlet() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
+    auto backgroundValue = 19;
+
     editGauntletSingle("Castle", ccc3(50, 67, 87), ccc3(190, 214, 230), ccc3(105, 119, 136));
-    GameManager::get()->loadBackground(19);
+    GameManager::get()->loadBackground(backgroundValue);
     
-    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(19)));
+    m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));
 
     // auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	// if (enableParticles) {

@@ -536,28 +536,28 @@ void RedesignedGauntletLayer::editGauntlets() {
 	if (m_fields->m_loaded = true) {
 		log::debug("Connected to Gauntlet #{}", static_cast<int>(m_gauntletType));
 	} else {
-		log::error("Failed to connect to Gauntlet");
+		log::error("Failed to connect to server");
 	}
 
 	auto levelMenuPos = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
 	if (!levelMenuPos) return;
 	levelMenuPos->setPosition(0.f, 0.f);
 
-	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));				//
-	levelOne->setPosition({winSize.width / 2 - 180, winSize.height / 2 - 67});					//
-																								//
-	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));				//							 ===						 ===
-	levelTwo->setPosition({winSize.width / 2 - 90, winSize.height / 2 + 37});					//					     o[level 2]o			     o[level 4]o
-																								//					   o	 ===	 o		   	   o	 ===	 o
-	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));			//					  o			      o		  	  o			      o
-	levelThree->setPosition({winSize.width / 2, winSize.height / 2 - 67});						//					   o			 o		       o			 o
-																								//					    o		    o			    o		    o
-	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));			//			   ===	   o			 o	   ===     o			 o	   ===
-	levelFour->setPosition({winSize.width / 2 + 90, winSize.height / 2 + 37});					//			[level 1]o			       o[level 3]o			       o[level 5]
-																								//			   ===						   ===						   ===
-	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));			//
-	levelFive->setPosition({winSize.width / 2 + 180, winSize.height / 2 - 67});					//
-	
+	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
+	levelOne->setPosition({winSize.width / 2 - 180, winSize.height / 2 - 67});
+
+	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
+	levelTwo->setPosition({winSize.width / 2 - 90, winSize.height / 2 + 37});
+
+	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
+	levelThree->setPosition({winSize.width / 2, winSize.height / 2 - 67});
+
+	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
+	levelFour->setPosition({winSize.width / 2 + 90, winSize.height / 2 + 37});
+
+	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
+	levelFive->setPosition({winSize.width / 2 + 180, winSize.height / 2 - 67});
+		
 	for (int g = 0; g < 5; g++) {
 		auto gauntletLevel = getChildByIDRecursive(fmt::format("level-{}", g + 1));
 		if (gauntletLevel) {
@@ -641,10 +641,10 @@ void RedesignedGauntletLayer::editGauntlets() {
 									stats->addChild(skullNode);
 
 									if (skullSpr->getParent()) {
-										skullSpr->retain(); // Retain to prevent auto-deletion
-										skullSpr->removeFromParentAndCleanup(false); // Cleanup false to preserve state
+										skullSpr->retain();
+										skullSpr->removeFromParentAndCleanup(false);
 										skullNode->addChild(skullSpr);
-										skullSpr->release(); // Release after reparenting
+										skullSpr->release();
 									}
 									
 									skullSpr->setID("skull-icon"_spr);

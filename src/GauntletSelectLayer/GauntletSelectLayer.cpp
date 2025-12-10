@@ -9,7 +9,8 @@
 #include <Geode/modify/GauntletNode.hpp>
 #include <UIBuilder.hpp>
 #include <cue/Util.hpp>
-#include "cocos-ext.h"
+
+#include "../GauntletCustomizer/Popup.hpp"
 
 using namespace geode::prelude;
 
@@ -271,7 +272,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         auto packBtn = CCMenuItemSpriteExtra::create(
             btnSpr,
             this,
-            menu_selector(RedesignedGauntletSelectLayer::onCustomGauntlet)
+            menu_selector(RedesignedGauntletSelectLayer::onCustomizer)
         );
 
         packBtn->setPosition(winSize.width / 2, winSize.height / 2);
@@ -451,15 +452,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         }
     }
 
-    void onCustomGauntlet(CCObject* obj) {
-        auto director = CCDirector::sharedDirector();
-        auto winSize = director->getWinSize();
-
-        auto popup = MDPopup::create(
-            ("popup"),
-            ("test"),
-            "OK"
-        );
+    void RedesignedGauntletSelectLayer::onCustomizer(CCObject* sender) {
+    GauntletCustomizer::create()->show();
     }
 
     void onDot(CCObject* sender) {

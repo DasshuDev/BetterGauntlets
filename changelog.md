@@ -1,15 +1,19 @@
-## <cg>v1.7.0</c>
-- <cj>Bump</c> to Geode 4.6.3.
+## <cg> v2.0.0</c>
+- <cj>Bump</c> to Geode 4.10.0
 - <cg>Added</c> additional support to the following Gauntlets:
     - <c-f9dc00>**Treasure**</c>
 - <cy>Updated</c> keybinds' placement in the keybind tree.
 - <cr>Removed</c> the "Path Opacity" setting.
-- gauntlet position rewrite in progress
-- Depreciation until new Gauntlets release.
+- Removed bloat code.
+- Refactored a LOT of stuff
+- Updated visuals to use UIBuilder
+- Added Gauntlet Customizer!
+    - Tired of waiting for Rob's Gauntlets? Create your own!
+- Gauntlet rewrite in progress.
 
 ---
 
-## <cg>v1.6.1 / v1.6.11</c>
+## <cy>v1.6.1 / v1.6.11</c>
 - <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
 

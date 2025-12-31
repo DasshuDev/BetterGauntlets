@@ -424,7 +424,7 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 	#endif
 
 	auto pathParent = CCLayerRGBA::create();
-	if (!pathParent) nullptr;
+	if (!pathParent) return;
 	pathParent->setID("gauntlet-path"_spr);
 	this->addChild(pathParent);
 
@@ -513,7 +513,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 		loadCircle->setScale(refreshSpr);
 	}
 
-	if (m_fields->m_loaded = true) {
+	if (m_fields->m_loaded == true) {
 		log::debug("Connected to Gauntlet #{}", static_cast<int>(m_gauntletType));
 	} else {
 		log::error("Failed to connect to server");

@@ -7,14 +7,18 @@ Gauntlet Creator:
         - Type
         - Color
     }
-    - Icon
+    - Icon {
+        - Vanilla
+        - Custom (made by me)
+    }
     - Island {
         - Type
         - Color
     }
-    - Particle (Limit of 1)
     - Import/Export to file (.TLG)
 [--------------------------------------------------]
 - Remove Bloat code:
-    - Remove `try-again-text` revisions
-    - Remove `Gauntlet Backdrop` as the Gauntlet Buttons are very small on Mobile, worse with GDUtils
+    - Remove `try-again-text` revisions (DONE)
+    - Remove `Gauntlet Backdrop` as the Gauntlet Buttons are very small on Mobile, worse with GDUtils (DONE)
+- Refactor UI to use UIBuilder
+- "NEW" icon on new Gauntlets (Active for 7 days)

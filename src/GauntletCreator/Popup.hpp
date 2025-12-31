@@ -11,6 +11,7 @@ protected:
     bool setup() override;
     
     cocos2d::CCMenu* createToggleSetting(const std::string& title, const std::string& key);
+    cocos2d::CCMenu* createColorSetting(const std::string& title, const std::string& key);
 
 public:
     static GauntletCreator* create();

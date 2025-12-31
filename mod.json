@@ -69,10 +69,16 @@
 			"default": false
 		},
 
-		"testColor": {
-			"name": "TestColor",
+		"testColor1": {
+			"name": "TestColorMain",
 			"type": "rgb",
-			"default": "#000000"
+			"default": "#00ff00"
+		},
+
+		"testColor2": {
+			"name": "TestColorSecondary",
+			"type": "rgb",
+			"default": "#00ffff"
 		},
 
 		"rescale-refresh-spr": {

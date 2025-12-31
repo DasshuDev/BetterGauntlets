@@ -1,27 +1,31 @@
 ## <cg> v2.0.0</c>
 - <cj>Bump</c> to Geode 4.10.0 and GD 2.2XX
+- <cg>Added</c> a **Gauntlet Creator**!
+    - Set Title!
+    - Set Colors 1 and 2!
+    - Set Background and BGColor!
+    - Set Icon (custom ones coming soon!)
+    - Export and share them with friends using `.tlg` files!
 - <cg>Added</c> additional support to the following Gauntlets:
     - <c-f9dc00>**Treasure**</c>
     - **Random** (Release TBA)
     - **Chance** (Release TBA)
-- <cg>Added</c> a Gauntlet Creator!
-    - Tired of waiting for Rob's Gauntlets? Now you can create your own!
-- <cy>Updated</c> keybinds' placement in the keybind tree.
-- <cy>Updated</c> a LOT of code.
-- <cy>Updated</c> visuals to use UIBuilder instead of manual creation.
+- <cy>Updated</c> keybinds' placement in the keybind tree
+- <cy>Updated</c> a LOT of code
+- <cy>Updated</c> visuals to use UIBuilder instead of manual creation
 - <cr>Removed</c> the following bloat code:
-    - "Path Opacity" setting.
+    - "Path Opacity" setting
     - "Disconnect Button" setting
 
 ---
 
-## <cy>v1.6.1 / v1.6.11</c>
+## v1.6.1 / v1.6.11
 - <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
 
 ---
 
-### <cy>v1.6.0</c>
+## v1.6.0
 - <cj>Bump</c> to Geode 4.5.0.
 - <cg>Added</c> new settings:
     - "Path Blending"
@@ -43,7 +47,7 @@
 
 ---
 
-### <cy>v1.5.2</c>
+## v1.5.2
 - <cg>Added</c> Path Opacity Editing!
     - Found in Experimental Settings, you can change the opacity of your Gauntlet Path Dots.
         - `gauntlet-paths` has been changed from a `CCNode` to a `CCLayerRGBA` layer to recognize opacity changes.
@@ -61,13 +65,13 @@
 
 ---
 
-### <cy>1.5.1</c>
+## 1.5.1
 - <cl>Fixed</c> an error in the Changelog.
     - Accidentally typed "Gauntlet Level Vault" when I meant to say "Custom Keybinds", my bad!
 
 ---
 
-### <cy>v1.5.0</c>
+## v1.5.0
 
 - <cj>Bump</c> to Geode 4.4.0.
 - <cg>Added</c> iOS Support!
@@ -86,7 +90,8 @@
 
 ---
 
-### <cy>v1.4.2</c>
+## v1.4.2
+
 ### Better Gauntlets Acquired by RobTopGames in a $45 Billion Deal
 The iconic mod by rookie Geode mod developer <c-dedede>**DasshuDev**</c> is rumored to be <cg>integrated</c> into the <cy>vanilla game</c>, sources speculate. *When* the mod will be integrated is still <cr>unknown</c>.
 - Sources:
@@ -98,7 +103,7 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.4.0 / v1.4.1</c>
+## v1.4.0 / v1.4.1
 - <cg>Added</c> Gauntlet information popups.
     - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>
 - <cg>Added</c> particles to the following Gauntlets:
@@ -122,7 +127,7 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.3.0</c>
+## v1.3.0
 
 - <cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!
     - This mod is recommended you download.
@@ -168,12 +173,12 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.2.1</c>
+## v1.2.1
 - <cl>Fixed</c> platform requirements for Custom Keybinds.
 
 ---
 
-### <cy>v1.2.0</c>
+## v1.2.0
 - <cj>Bump</c> to Geode 4.2.0.
 - <cj>Bump</c> Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
 - <cg>Added</c> keybind support on all platforms!
@@ -196,7 +201,7 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.1.3</c>
+## v1.1.3
 - <cr>jaydasshu</c> -> <cg>**DasshuDev**</c>
 - <cg>Added</c> Corner UI to `GauntletLayer`, responsive to the selected Gauntlets' header text color.
 - <cg>Added</c> particles to the following Gauntlets:
@@ -210,7 +215,7 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.1.0 / v1.1.1 / v1.1.2</c>
+## v1.1.0 / v1.1.1 / v1.1.2
 - <cg>Added</c> particles around the stars of completed Gauntlet levels.
 - <cg>Added</c> a new setting: "Update Discord Sprite".
     - Changed the sprite of the <c-6199ff>**Discord**</c> Gauntlet to match with the company's current logo.
@@ -227,5 +232,5 @@ Happy April Fools!
 
 ---
 
-### <cy>v1.0.0</c>
+### v1.0.0
 - Initial release of <cc>**Better Gauntlets**</c>!

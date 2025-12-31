@@ -9,8 +9,7 @@
 #include <Geode/modify/GauntletNode.hpp>
 #include <UIBuilder.hpp>
 #include <cue/Util.hpp>
-
-#include "../GauntletCustomizer/Popup.hpp"
+#include "../GauntletCreator/Popup.hpp"
 
 using namespace geode::prelude;
 
@@ -172,17 +171,6 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
             }
         }
-
-        auto backdrop = CCScale9Sprite::create("square04_001.png");
-        backdrop->setID("gauntlet-backdrop"_spr);
-        backdrop->setColor(ccc3(0, 0, 0));
-        backdrop->setOpacity(128);
-        backdrop->setZOrder(-1);
-        backdrop->setPosition(ccp(winSize.width / 2, winSize.height / 2 - 16.f));
-        backdrop->setContentSize(CCSize(324, 214));
-
-        backdrop->setPosition(winSize.width / 2, winSize.height / 2 - 18.5f);
-        this->addChild(backdrop);
         
         auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	    if (enableParticles) {
@@ -268,16 +256,25 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         packPage->setContentSize({220.f, 220.f});
         packPage->setID(fmt::format("gauntlet-page-{}", m_scrollLayer->getTotalPages() + 1));
 
-        auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_mapPacksBtn_001.png");
+        auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
         auto packBtn = CCMenuItemSpriteExtra::create(
             btnSpr,
             this,
-            menu_selector(RedesignedGauntletSelectLayer::onCustomizer)
+            menu_selector(RedesignedGauntletSelectLayer::onCreator)
         );
 
-        packBtn->setPosition(winSize.width / 2, winSize.height / 2);
+        packBtn->setPosition(winSize.width / 2, winSize.height / 2 - 20.f);
+
+        auto creatorBG = CCScale9Sprite::create("GJ_squareB_01.png");
+        creatorBG->setColor(ccc3(0, 0, 0));
+        creatorBG->setOpacity(80);
+        creatorBG->setContentSize({110.f, 220.f});
+        creatorBG->setPosition(packBtn->getPosition());
+        creatorBG->setID("creator-bg"_spr);
+        creatorBG->setZOrder(packBtn->getZOrder() - 1);
 
         packPage->addChild(packBtn);
+        packPage->addChild(creatorBG);
 
         m_scrollLayer->addPage(packPage);
         m_scrollLayer->updatePages();
@@ -343,13 +340,13 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             if (!menu) continue;
 
             menu->setPosition(ccp(0, -3));
-            menu->setScale(0.9f);
+            // menu->setScale(0.9f);
 
             auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
             if (GDUtils) {
                 auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
                 if (settingVal) {
-                    menu->setScale(0.725f);
+                    menu->setScale(0.85f);
                 }
             }
 
@@ -452,8 +449,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         }
     }
 
-    void RedesignedGauntletSelectLayer::onCustomizer(CCObject* sender) {
-    GauntletCustomizer::create()->show();
+    void onCreator(CCObject* sender) {
+    GauntletCreator::create()->show();
     }
 
     void onDot(CCObject* sender) {

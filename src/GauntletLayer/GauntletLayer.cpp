@@ -7,8 +7,6 @@
 #include <Geode/ui/BasedButtonSprite.hpp>
 #include <Geode/ui/MDTextArea.hpp>
 #include <Geode/utils/cocos.hpp>
-
-// Files
 #include "GauntletLayer.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
 
@@ -136,23 +134,24 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
 		auto removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
-		if (!removeOGVaultBtn) nullptr;
-		else removeOGVaultBtn->removeFromParent();
+		if (removeOGVaultBtn) {
+			removeOGVaultBtn->removeFromParent();
+		}
 	}
 
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));							// "title" is the shadow text
-	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);											// for whatever damn reason
+	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
+	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
 	gauntletShadowText->setColor(ccc3(0, 0, 0));
 	gauntletShadowText->setScale(0.750);
 	gauntletShadowText->setPosition(ccp(winSize.width / 2 + 1, director->getScreenTop() - 32.5));
 
-	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));					// and "title-shadow" is the actual
-	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);													// title text like what dude why.
-	gauntletTitleText->setColor(ccc3(255, 255, 255));														   // geode devs please explain
-	gauntletTitleText->setScale(0.750);																			// yourselves this instant >:(
+	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
+	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);
+	gauntletTitleText->setColor(ccc3(255, 255, 255));
+	gauntletTitleText->setScale(0.750);
 	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
 
 	auto bgLayer = getChildByID("background");
@@ -499,25 +498,6 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 
 		vaultMenu->addChild(vaultBtn);
 	}
-
-	auto disconnectSettings = Mod::get()->getSettingValue<bool>("disconnect-button");
-	if (disconnectSettings) {
-
-		auto disconnectMenu = CCMenu::create();
-		if (!disconnectMenu) return;
-		disconnectMenu->setID("disconnect-menu"_spr);
-		disconnectMenu->setPosition(ccp(director->getScreenRight() - 45, director->getScreenBottom() + 20));
-		disconnectMenu->setScale(0.5f);
-		disconnectMenu->setContentSize({0, 0});
-		this->addChild(disconnectMenu);
-
-		auto bigFontBtnSpr = ButtonSprite::create("Disconnect", "goldFont.fnt", "GJ_button_04.png", .8f);
-		auto bigFontBtn = CCMenuItemSpriteExtra::create(bigFontBtnSpr, this, menu_selector(RedesignedGauntletLayer::simulateDisconnect));
-		bigFontBtn->setID("disconnect-button"_spr);
-		
-		disconnectMenu->addChild(bigFontBtn);
-		
-	}
 	
 	setupInfoButton();
 }
@@ -698,18 +678,4 @@ void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
     scene->addChild(browserLayer);
     auto transition = CCTransitionFade::create(0.5, scene);
     CCDirector::sharedDirector()->pushScene(transition);
-}
-
-void RedesignedGauntletLayer::simulateDisconnect(CCObject* obj) {
-    auto levels = getChildByIDRecursive("levels-menu");
-    if (levels) levels->setVisible(false);
-
-    auto path = getChildByIDRecursive("gauntlet-path"_spr);
-    if (path) path->setVisible(false);
-
-    auto disconnectText = getChildByIDRecursive("try-again-text");
-    if (disconnectText) disconnectText->setVisible(true);
-
-	auto disconnectMenu = getChildByIDRecursive("disconnect-menu"_spr);
-	if (disconnectMenu) disconnectMenu->setVisible(false);
 }

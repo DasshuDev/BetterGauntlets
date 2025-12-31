@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.7.0-beta.1",
+	"version": "v2.0.0-alpha.1",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -20,8 +20,10 @@
 		"info": "https://github.com/DasshuDev/BetterGauntlets/issues"
 	},
 	"tags": [
+		"customization",
+		"enhancement",
 		"interface",
-		"enhancement"
+		"online"
 	],
 	"resources": {
 		"files": [
@@ -59,6 +61,18 @@
 		"general": {
 			"name": "General Settings",
 			"type": "title"
+		},
+
+		"testBool": {
+			"name": "TestBool",
+			"type": "bool",
+			"default": false
+		},
+
+		"testColor": {
+			"name": "TestColor",
+			"type": "rgb",
+			"default": "#000000"
 		},
 
 		"rescale-refresh-spr": {
@@ -107,13 +121,6 @@
 			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed.",
 			"type": "bool",
 			"default": true
-		},
-
-		"disconnect-button": {
-			"name": "Disconnect Button",
-			"description": "Adds a button which <cj>simulates</c> a <cr>disconnect</c> from the servers.",
-			"type": "bool",
-			"default": false
 		},
 
 		"GauntletPaths": {

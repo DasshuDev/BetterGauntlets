@@ -1,6 +1,6 @@
 Better Gauntlets TODO v2.0.0
 [--------------------------------------------------]
-Gauntlet Customizer:
+Gauntlet Creator:
 - Popup showing Customizations:
     - Name
     - Background {

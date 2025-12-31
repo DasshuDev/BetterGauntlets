@@ -1,15 +1,17 @@
 ## <cg> v2.0.0</c>
-- <cj>Bump</c> to Geode 4.10.0
+- <cj>Bump</c> to Geode 4.10.0 and GD 2.2XX
 - <cg>Added</c> additional support to the following Gauntlets:
     - <c-f9dc00>**Treasure**</c>
+    - **Random** (Release TBA)
+    - **Chance** (Release TBA)
+- <cg>Added</c> a Gauntlet Creator!
+    - Tired of waiting for Rob's Gauntlets? Now you can create your own!
 - <cy>Updated</c> keybinds' placement in the keybind tree.
-- <cr>Removed</c> the "Path Opacity" setting.
-- Removed bloat code.
-- Refactored a LOT of stuff
-- Updated visuals to use UIBuilder
-- Added Gauntlet Customizer!
-    - Tired of waiting for Rob's Gauntlets? Create your own!
-- Gauntlet rewrite in progress.
+- <cy>Updated</c> a LOT of code.
+- <cy>Updated</c> visuals to use UIBuilder instead of manual creation.
+- <cr>Removed</c> the following bloat code:
+    - "Path Opacity" setting.
+    - "Disconnect Button" setting
 
 ---
 

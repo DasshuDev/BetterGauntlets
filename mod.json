@@ -47,7 +47,7 @@
 	"dependencies": {
 		"geode.node-ids": ">=v1.19.0",
 		"geode.custom-keybinds": {
-			"version": "*",
+			"version": ">=1.11.0",
 			"platforms": [
 				"win",
 				"mac",

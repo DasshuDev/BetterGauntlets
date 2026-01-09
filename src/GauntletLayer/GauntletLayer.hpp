@@ -27,12 +27,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
     bool init(GauntletType);
 
-    cocos2d::CCParticleSystemQuad* createParticles(
-        GameToolbox* particleFromString(const gd::string &str, cocos2d::CCParticleSystemQuad *system, bool dontUpdate),
-        cocos2d::CCPoint pos,
-        int zOrder
-    );
-
     // Individual Gauntlet Callbacks
     void editGauntletFallback();
     void editFireGauntlet();

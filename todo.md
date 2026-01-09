@@ -3,6 +3,8 @@ Better Gauntlets TODO v2.0.0
 Gauntlet Creator:
 - Popup showing Customizations:
     - Name
+    - Main Color
+    - Accent Color
     - Background {
         - Type
         - Color

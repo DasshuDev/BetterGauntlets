@@ -1,12 +1,12 @@
 #include "../GauntletLayer.hpp"
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
 void RedesignedGauntletLayer::editMonsterGauntlet() {
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
-
-    auto backgroundValue = 38;
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
+    int backgroundValue = 38;
 
     editGauntletSingle("Monster", ccc3(23, 58, 28), ccc3(65, 214, 35), ccc3(8, 110, 13));
     GameManager::get()->loadBackground(backgroundValue);
@@ -15,10 +15,14 @@ void RedesignedGauntletLayer::editMonsterGauntlet() {
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {
-		auto bgParticleNode = CCParticleSystemQuad::create();
-        if (bgParticleNode) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("50a-1a2a0.45a3a90a90a0a0a300a0a0a-403a0a0a0a0a10a5a-45a0a0.619608a0a1a0a0.996078a0a1a0.05a0a0a-45a0a0a0a0.545098a0a1a0a0.5a0.15a0a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a96a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
-            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
+		CCParticleSystemQuad* particle1 = CCParticleSystemQuad::create();
+        if (particle1) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
+                "50a-1a2a0.45a10a90a20a0a0a300a200a0a0a0a0a0a0a10a5a0a43a0a0a0.537255a1a1a1a1a1a20a5a0a38a0a0a0.027451a0a1a0a0.5a0.15a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+            );
+            bgParticles->setPosition(ccp(winSize.width / 2, winSize.height / 2));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }

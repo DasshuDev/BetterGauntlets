@@ -60,25 +60,8 @@
 
 		"general": {
 			"name": "General Settings",
-			"type": "title"
-		},
-
-		"testBool": {
-			"name": "TestBool",
-			"type": "bool",
-			"default": false
-		},
-
-		"testColor1": {
-			"name": "TestColorMain",
-			"type": "rgb",
-			"default": "#00ff00"
-		},
-
-		"testColor2": {
-			"name": "TestColorSecondary",
-			"type": "rgb",
-			"default": "#00ffff"
+			"type": "title",
+			"description": "The general settings for Better Gauntlets. These settings affect the whole mod."
 		},
 
 		"rescale-refresh-spr": {
@@ -107,12 +90,14 @@
 
 		"GauntletSelectLayer": {
 			"name": "GauntletSelectLayer",
-			"type": "title"
+			"type": "title",
+			"description": "Nothing yet, come back later!\n\n:)"
 		},
 
 		"GauntletLayer": {
 			"name": "GauntletLayer",
-			"type": "title"
+			"type": "title",
+			"description": "Settings that affect only the GauntletLayer (the Gauntlet Levels page)."
 		},
 
 		"islands-float": {
@@ -124,14 +109,15 @@
 
 		"vault-tooltip": {
 			"name": "Toggle Vault Tooltip",
-			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\nMust have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed.",
+			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\n<cr>Must have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed</c>.",
 			"type": "bool",
 			"default": true
 		},
 
 		"GauntletPaths": {
 			"name": "Gauntlet Paths",
-			"type": "title"
+			"type": "title",
+			"description": "Settings that affect only the <cg>pathway dots</c> in between the Gauntlet Levels."
 		},
 
 		"toggle-paths": {
@@ -164,6 +150,24 @@
 			"name": "Experimental Settings",
 			"type": "title",
 			"description": "Category used for <cr>experimental features/settings</c>."
+		},
+
+		"testBool": {
+			"name": "bool",
+			"type": "bool",
+			"default": false
+		},
+
+		"testColor1": {
+			"name": "main",
+			"type": "rgba",
+			"default": [0, 255, 0, 255]
+		},
+
+		"testColor2": {
+			"name": "secondary",
+			"type": "rgba",
+			"default": [0, 255, 255, 255]
 		}
 	}
 }

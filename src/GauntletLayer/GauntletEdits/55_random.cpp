@@ -1,14 +1,13 @@
 #include "../GauntletLayer.hpp"
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
 void RedesignedGauntletLayer::editRandomGauntlet() {
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
-
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
     int randomNum = rand() % 60; // <-- Number of backgrounds available + 1
-
-    auto backgroundValue = randomNum;
+    int backgroundValue = randomNum;
 
     editGauntletSingle("Random", ccc3(129, 100, 18), ccc3(255, 254, 4), ccc3(253, 159, 1));
     GameManager::get()->loadBackground(backgroundValue);
@@ -20,7 +19,11 @@ void RedesignedGauntletLayer::editRandomGauntlet() {
         // stars
 		auto bgParticleNode1 = CCParticleSystemQuad::create();
         if (bgParticleNode1) {
-            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString("70a-1a2a0.45a28a90a20a0a0a300a200a0a0a0a0a0a0a5a2a0a43a1a0a1a0a1a0a1a0a10a3a0a38a1a0a0.501961a0a0a0a0.5a0.15a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0a0a0a0a0a0a0a0a0a0a0a0", NULL, false);
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
+                "70a-1a2a0.45a28a90a20a0a0a300a200a0a0a0a0a0a0a5a2a0a43a1a0a1a0a1a0a1a0a10a3a0a38a1a0a0.501961a0a0a0a0.5a0.15a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+            );
             bgParticles->setPosition(ccp(winSize.width / 2, winSize.height / 2));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);

@@ -88,6 +88,14 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         if (title) {
             title->setVisible(false);
         }
+        auto TLCorner = this->getChildByID("top-left-corner");
+        if (TLCorner) {
+            TLCorner->setVisible(false);
+        }
+        auto TRCorner = this->getChildByID("top-right-corner");
+        if (TRCorner) {
+            TRCorner->setVisible(false);
+        }
         auto BLCorner = this->getChildByID("bottom-left-corner");
         if (BLCorner) {
             BLCorner->setVisible(false);
@@ -113,6 +121,25 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             floor->setZOrder(-2);
             floor->setColor(ccc3(175, 175, 175));
             this->addChild(floor);
+        }
+        auto TLCornerNew = CCSpriteGrayscale::createWithSpriteFrameName("GJ_sideArt_001.png");
+        if (TLCornerNew) {
+            TLCornerNew->setID("top-left-corner"_spr);
+            TLCornerNew->setPosition(ccp(director->getScreenLeft() - 1, director->getScreenTop() + 1));
+            TLCornerNew->setAnchorPoint(ccp(0 , 1));
+            TLCornerNew->setFlipY(true);
+            TLCornerNew->setColor(ccc3(67, 67, 67));
+            this->addChild(TLCornerNew);
+        }
+        auto TRCornerNew = CCSpriteGrayscale::createWithSpriteFrameName("GJ_sideArt_001.png");
+        if (TRCornerNew) {
+            TRCornerNew->setID("top-right-corner"_spr);
+            TRCornerNew->setPosition(ccp(director->getScreenRight() + 1, director->getScreenTop() + 1));
+            TRCornerNew->setAnchorPoint(ccp(1 , 1));
+            TRCornerNew->setFlipY(true);
+            TRCornerNew->setFlipX(true);
+            TRCornerNew->setColor(ccc3(67, 67, 67));
+            this->addChild(TRCornerNew); 
         }
         auto backgroundColor = static_cast<CCSprite*>(this->getChildByID("background"));
         if (backgroundColor) {
@@ -197,6 +224,13 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 this->addChild(bgParticlesB);
             }
         }
+
+        auto exitAdjust = this->getChildByIDRecursive("back-menu");
+        if (!exitAdjust) return false;
+        exitAdjust->setPosition(24, 254.5);
+        exitAdjust->setContentWidth(32.5);
+        exitAdjust->setContentHeight(125);
+        exitAdjust->updateLayout();
 
         return true;
     }

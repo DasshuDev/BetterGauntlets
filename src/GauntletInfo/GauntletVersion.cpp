@@ -171,10 +171,10 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.207";
         }
         // case GauntletType::Random: {
-        //     return default;
+        //     [[fallthrough]];
         // }
         // case GauntletType::Chance: {
-        //     return default;
+        //     [[fallthrough]];
         // }
     }
 }

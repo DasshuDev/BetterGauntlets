@@ -1,25 +1,24 @@
-## <cg> v2.0.0</c>
+## <cg>v2.0.0</c>
+I actually thought about what I needed this time!
 - <cj>Bump</c> to Geode 4.10.0 and GD 2.2XX
-- <cg>Added</c> a **Gauntlet Creator**!
-    - Set Title!
-    - Set Colors 1 and 2!
-    - Set Background and BGColor!
-    - Set Icon (custom ones coming soon!)
-    - Export and share them with friends using `.tlg` files!
-- <cg>Added</c> additional support to the following Gauntlets:
-    - <c-f9dc00>**Treasure**</c>
-    - **Random** (Release TBA)
-    - **Chance** (Release TBA)
+- <cg>Added</c> iOS Jit-less support!
+- <cg>Added</c> the **Gauntlet Creator**!
+    - More on this can be found on my website!
+- <cg>Added</c> additional support to **ALL GAUNTLETS, FINALLY**! (Yes, even including Random and Chance!)
+- <cy>Updated</c> the following Gauntlets' particles:
+    - <c-f91919>**Chaos**</c>
+    - <c-00ffff>**Time**</c>
 - <cy>Updated</c> keybinds' placement in the keybind tree
-- <cy>Updated</c> a LOT of code
-- <cy>Updated</c> visuals to use UIBuilder instead of manual creation
+- <cy>Updated</c> a LOT of backend code
+- <cl>Fixed</c> Back Button placement on `GauntletSelectLayer`
+- <cl>Fixed</c> Top left/right corner UI in `GauntletSelectLayer` to match `CreatorLayer`
 - <cr>Removed</c> the following bloat code:
     - "Path Opacity" setting
     - "Disconnect Button" setting
 
 ---
 
-## v1.6.1 / v1.6.11
+## v1.6.1
 - <cl>Fixed</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.
     - Reported by `AlphaQuata`. Thank you!
 
@@ -72,7 +71,6 @@
 ---
 
 ## v1.5.0
-
 - <cj>Bump</c> to Geode 4.4.0.
 - <cg>Added</c> iOS Support!
 - <cg>Added</c> additional support to the following Gauntlets:
@@ -84,15 +82,14 @@
     - <c-f91919>**Demon**</c>
     - <c-f91919>**Death**</c>
     - <c-f9ffff>**Christmas**</c>
-- <cr>Removed</c> the Gauntlet Level Vault dependency. It it still recommended you install, though!
+- <cr>Removed</c> the Gauntlet Level Vault __dependency__. It it still recommended you install, though!
 - <cr>Removed</c> the Custom Keybinds dependency for iOS as it's not available yet.
 
 
 ---
 
 ## v1.4.2
-
-### Better Gauntlets Acquired by RobTopGames in a $45 Billion Deal
+**Better Gauntlets Acquired by RobTopGames in a $45 Billion Deal**
 The iconic mod by rookie Geode mod developer <c-dedede>**DasshuDev**</c> is rumored to be <cg>integrated</c> into the <cy>vanilla game</c>, sources speculate. *When* the mod will be integrated is still <cr>unknown</c>.
 - Sources:
     - Dexerto
@@ -103,7 +100,13 @@ Happy April Fools!
 
 ---
 
-## v1.4.0 / v1.4.1
+## v1.4.1
+- Bump to Geode 4.3.0.
+- <cl>Fixed</c> the background in the <c-f9aaf4>**Split**</c> Gauntlet from being properly loaded.
+
+---
+
+## v1.4.0
 - <cg>Added</c> Gauntlet information popups.
     - Generated using GitHub Copilot, <cr>THESE ARE PLACEHOLDERS, and will be changed later!</c>
 - <cg>Added</c> particles to the following Gauntlets:
@@ -122,8 +125,6 @@ Happy April Fools!
     - <c-f91919>**Demon**</c>
     - <c-f9c832>**Spike**</c>
     - <c-31ff00>**Forest**</c>
-- Bump to Geode 4.3.0. (v1.4.1)
-- <cl>Fixed</c> the background in the <c-f9aaf4>**Split**</c> Gauntlet from being properly loaded. (v1.4.1)
 
 ---
 

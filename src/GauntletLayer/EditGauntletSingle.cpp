@@ -1,127 +1,104 @@
 #include "GauntletLayer.hpp"
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
 void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
 
-    auto winSize = CCDirector::sharedDirector()->getWinSize();
-    auto director = CCDirector::sharedDirector();
+    CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+    CCDirector* director = CCDirector::sharedDirector();
 
-    auto gauntletOutlineText = CCLabelBMFont::create(std::string(title + " Gauntlet").c_str(), "GR_OxygeneFontOutline.fnt"_spr);
-    auto gauntletHighlightText = CCLabelBMFont::create(std::string(title + " Gauntlet").c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
+    CCNode* corner = CCNode::create();
+    corner->setID("corners"_spr);
+    corner->setZOrder(-1);
+    this->addChild(corner);
 
-    auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
-    if (!gauntletTitleText) return;
-    auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
-    if (!gauntletShadowText) return;
+    CCLabelBMFont* gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
+    CCLabelBMFont* gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
+    CCLabelBMFont* gauntletOutlineText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontOutline.fnt"_spr);
+    CCLabelBMFont* gauntletHighlightText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
+    
+    gauntletTitleText->setString(std::string("The " + title + " Gauntlet").c_str());
+    gauntletShadowText->setString(std::string("The " + title + " Gauntlet").c_str());
 
-    auto cornerParent = CCNode::create();
-    cornerParent->setID("corners"_spr);
-    cornerParent->setZOrder(-1);
-    this->addChild(cornerParent);
-
-    // ------------------------------------------------------------------------------------ //
-
-    // Left Corner
-    auto TLCornerParent = CCNode::create();
-    TLCornerParent->setID("top-left"_spr);
-    TLCornerParent->setPositionY(director->getScreenTop());
-    cornerParent->addChild(TLCornerParent);
-
-    auto TLCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
-    TLCorner->setID("TL-corner"_spr);
-    TLCorner->setAnchorPoint(ccp(0, 0));
-    TLCorner->setPosition(ccp(director->getScreenLeft(), director->getScreenBottom()));
-    TLCorner->setScaleY(TLCorner->getScaleY() * -1);
-    TLCornerParent->addChild(TLCorner);
-
-    auto TLCornerColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
-    TLCornerColor->setID("TL-color"_spr);
-    TLCornerColor->setAnchorPoint(ccp(0, 0));
-    TLCornerColor->setZOrder(1);
-    TLCornerColor->setPosition(ccp(director->getScreenLeft(), director->getScreenBottom()));
-    TLCornerColor->setScaleY(TLCornerColor->getScaleY() * -1);
-    TLCornerParent->addChild(TLCornerColor);
-
-    auto TLCornerHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
-    TLCornerHighlight->setID("TL-highlight"_spr);
-    TLCornerHighlight->setAnchorPoint(ccp(0, 0));
-    TLCornerHighlight->setZOrder(1);
-    TLCornerHighlight->setPosition(ccp(director->getScreenLeft(), director->getScreenBottom()));
-    TLCornerHighlight->setScaleY(TLCornerHighlight->getScaleY() * -1);
-    TLCornerParent->addChild(TLCornerHighlight);
-
-    // ------------------------------------------------------------------------------------ //
-
-    // Right Corner
-    auto TRCornerParent = CCNode::create();
-    TRCornerParent->setID("top-right"_spr);
-    TRCornerParent->setPositionY(director->getScreenTop());
-    cornerParent->addChild(TRCornerParent);
-
-    auto TRCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
-    TRCorner->setID("TR-corner"_spr);
-    TRCorner->setAnchorPoint(ccp(0, 0));
-    TRCorner->setPosition(ccp(director->getScreenRight(), director->getScreenBottom()));
-    TRCorner->setScaleY(TRCorner->getScaleY() * -1);
-    TRCorner->setScaleX(TRCorner->getScaleX() * -1);
-    TRCornerParent->addChild(TRCorner);
-
-    auto TRCornerColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
-    TRCornerColor->setID("TR-color"_spr);
-    TRCornerColor->setAnchorPoint(ccp(0, 0));
-    TRCornerColor->setZOrder(1);
-    TRCornerColor->setPosition(ccp(director->getScreenRight(), director->getScreenBottom()));
-    TRCornerColor->setScaleY(TRCornerColor->getScaleY() * -1);
-    TRCornerColor->setScaleX(TRCornerColor->getScaleX() * -1);
-    TRCornerParent->addChild(TRCornerColor);
-
-    auto TRCornerHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
-    TRCornerHighlight->setID("TR-highlight"_spr);
-    TRCornerHighlight->setAnchorPoint(ccp(0, 0));
-    TRCornerHighlight->setZOrder(1);
-    TRCornerHighlight->setPosition(ccp(director->getScreenRight(), director->getScreenBottom()));
-    TRCornerHighlight->setScaleY(TRCornerHighlight->getScaleY() * -1);
-    TRCornerHighlight->setScaleX(TRCornerHighlight->getScaleX() * -1);
-    TRCornerParent->addChild(TRCornerHighlight);
-
-    // ------------------------------------------------------------------------------------ //
-
-    // Text Highlights
     gauntletHighlightText->setID("title-highlight"_spr);
     gauntletHighlightText->setFntFile("GR_OxygeneFontHighlight.fnt"_spr);
     gauntletHighlightText->setScale(0.75);
     gauntletHighlightText->setPositionX(winSize.width / 2 + 2);
     gauntletHighlightText->setPositionY(winSize.height - 30);
-    this->addChild(gauntletHighlightText);
-
-    // ------------------------------------------------------------------------------------ //
-
-    // Text Outlines
+    gauntletHighlightText->setZOrder(37);
+    
     gauntletOutlineText->setID("title-outline"_spr);
     gauntletOutlineText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
     gauntletOutlineText->setScale(0.75);
     gauntletOutlineText->setPositionX(winSize.width / 2 - 1.5);
     gauntletOutlineText->setPositionY(winSize.height - 30);
-    this->addChild(gauntletOutlineText);
 
-    // ------------------------------------------------------------------------------------ //    
+    if (!gauntletTitleText || !gauntletShadowText) {
+        return;
+    }
 
-    // Shadow
-    gauntletShadowText->setString(std::string(title + " Gauntlet").c_str());
+    this->addChild(gauntletOutlineText);    
+    this->addChild(gauntletHighlightText);
 
     // ------------------------------------------------------------------------------------ //
+
+    // Left Corner
+    CCNode* TLParent = CCNode::create();
+    TLParent->setID("top-left"_spr);
+    TLParent->setPosition(director->getScreenLeft() - 1, director->getScreenTop() + 1);
+    corner->addChild(TLParent);
+
+    CCSprite* TLCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+    TLCorner->setAnchorPoint(ccp(0, 0));
+    TLCorner->setScaleY(TLCorner->getScaleY() * -1);
+    TLParent->addChild(TLCorner);
+
+    CCSprite* TLColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
+    TLColor->setAnchorPoint(ccp(0, 0));
+    TLColor->setZOrder(1);
+    TLColor->setScaleY(TLColor->getScaleY() * -1);
+    TLParent->addChild(TLColor);
+
+    CCSprite* TLHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
+    TLHighlight->setAnchorPoint(ccp(0, 0));
+    TLHighlight->setZOrder(1);
+    TLHighlight->setScaleY(TLHighlight->getScaleY() * -1);
+    TLParent->addChild(TLHighlight);
+
+    // ------------------------------------------------------------------------------------ //
+
+    // Right Corner 
+    CCNode* TRParent = CCNode::create();
+    TRParent->setID("top-right"_spr);
+    TRParent->setPosition(director->getScreenRight() + 1, director->getScreenTop() + 1);
+    corner->addChild(TRParent);
+
+    CCSprite* TRCorner = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+    TRCorner->setAnchorPoint(ccp(0, 0));
+    TRCorner->setScale(TRCorner->getScale() * -1);
+    TRParent->addChild(TRCorner);
+
+    CCSprite* TRColor = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
+    TRColor->setAnchorPoint(ccp(0, 0));
+    TRColor->setZOrder(1);
+    TRColor->setScale(TRColor->getScale() * -1);
+    TRParent->addChild(TRColor);
+
+    CCSprite* TRHighlight = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
+    TRHighlight->setAnchorPoint(ccp(0, 0));
+    TRHighlight->setZOrder(1);
+    TRHighlight->setScale(TRHighlight->getScale() * -1);
+    TRParent->addChild(TRHighlight);
+
+    // ------------------------------------------------------------------------------------ //    
 
     // Colors
     m_backgroundSprite->setColor(bgColor);
     gauntletTitleText->setColor(titleColor);
     gauntletHighlightText->setColor(highlightColor);
-    TLCornerColor->setColor(titleColor);
-    TRCornerColor->setColor(titleColor);
-    TLCornerHighlight->setColor(highlightColor);
-    TRCornerHighlight->setColor(highlightColor);
-
-    // ------------------------------------------------------------------------------------ //
-
-    gauntletHighlightText->setZOrder(37);
+    TLColor->setColor(titleColor);
+    TRColor->setColor(titleColor);
+    TLHighlight->setColor(highlightColor);
+    TRHighlight->setColor(highlightColor);
 }

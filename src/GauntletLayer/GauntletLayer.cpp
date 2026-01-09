@@ -9,6 +9,7 @@
 #include <Geode/utils/cocos.hpp>
 #include "GauntletLayer.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
@@ -141,6 +142,13 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 
 	auto director = CCDirector::sharedDirector();
 	auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+	auto exitAdjust = this->getChildByIDRecursive("exit-menu");
+	if (!exitAdjust) return false;
+	exitAdjust->setPosition(24, 254.5);
+	exitAdjust->setContentWidth(32.5);
+	exitAdjust->setContentHeight(125);
+	exitAdjust->updateLayout();
 
 	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
 	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
@@ -651,17 +659,12 @@ void RedesignedGauntletLayer::editGauntlets() {
 			if (levelMenu) {
 				float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
 				float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
-
 				auto moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
 				auto moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
-
 				auto easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
 				auto easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
-
 				auto hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
-
 				auto levelHover = CCRepeatForever::create(hoverSequence);
-
 				levelMenu->runAction(levelHover);
 			}
 		}

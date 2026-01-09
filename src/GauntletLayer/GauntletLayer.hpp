@@ -3,6 +3,7 @@
 
 #include <Geode/DefaultInclude.hpp>
 #include <Geode/modify/GauntletLayer.hpp>
+#include <UIBuilder.hpp>
 
 class $modify(RedesignedGauntletLayer, GauntletLayer) {
     struct Fields {
@@ -26,6 +27,13 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
     bool init(GauntletType);
 
+    cocos2d::CCParticleSystemQuad* createParticles(
+        GameToolbox* particleFromString(const gd::string &str, cocos2d::CCParticleSystemQuad *system, bool dontUpdate),
+        cocos2d::CCPoint pos,
+        int zOrder
+    );
+
+    // Individual Gauntlet Callbacks
     void editGauntletFallback();
     void editFireGauntlet();
     void editIceGauntlet();

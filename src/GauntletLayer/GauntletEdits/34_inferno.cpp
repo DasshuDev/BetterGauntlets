@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editInfernoGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 21;
 
-    editGauntletSingle("Inferno", ccc3(70, 24, 54), ccc3(255, 223, 67), ccc3(208, 58, 0));
+    editGauntletLayer("Inferno", ccc3(70, 24, 54), ccc3(255, 223, 67), ccc3(208, 58, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editGraveGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 16;
 
-    editGauntletSingle("Grave", ccc3(23, 32, 31), ccc3(176, 195, 207), ccc3(80, 66, 87));
+    editGauntletLayer("Grave", ccc3(23, 32, 31), ccc3(176, 195, 207), ccc3(80, 66, 87));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

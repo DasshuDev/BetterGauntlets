@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editWaterGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 2;
 
-    editGauntletSingle("Water", ccc3(13, 11, 48), ccc3(78, 212, 230), ccc3(18, 80, 151));
+    editGauntletLayer("Water", ccc3(13, 11, 48), ccc3(78, 212, 230), ccc3(18, 80, 151));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

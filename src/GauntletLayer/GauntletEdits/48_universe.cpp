@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editUniverseGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 32;
 
-    editGauntletSingle("Universe", ccc3(36, 70, 105), ccc3(255, 252, 104), ccc3(255, 1, 136));
+    editGauntletLayer("Universe", ccc3(36, 70, 105), ccc3(255, 252, 104), ccc3(255, 1, 136));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editHalloweenGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 16;
 
-    editGauntletSingle("Halloween", ccc3(39, 36, 12), ccc3(255, 218, 0), ccc3(255, 0, 0));
+    editGauntletLayer("Halloween", ccc3(39, 36, 12), ccc3(255, 218, 0), ccc3(255, 0, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editCastleGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 19;
 
-    editGauntletSingle("Castle", ccc3(50, 67, 87), ccc3(190, 214, 230), ccc3(105, 119, 136));
+    editGauntletLayer("Castle", ccc3(50, 67, 87), ccc3(190, 214, 230), ccc3(105, 119, 136));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

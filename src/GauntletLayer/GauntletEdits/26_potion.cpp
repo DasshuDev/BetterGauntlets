@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editPotionGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 37;
 
-    editGauntletSingle("Potion", ccc3(58, 30, 52), ccc3(255, 0, 144), ccc3(139, 0, 148));
+    editGauntletLayer("Potion", ccc3(58, 30, 52), ccc3(255, 0, 144), ccc3(139, 0, 148));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

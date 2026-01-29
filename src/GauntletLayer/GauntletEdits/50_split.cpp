@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editSplitGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 13;
 
-    editGauntletSingle("Split", ccc3(49, 50, 65), ccc3(255, 110, 237), ccc3(113, 60, 107));
+    editGauntletLayer("Split", ccc3(49, 50, 65), ccc3(255, 110, 237), ccc3(113, 60, 107));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

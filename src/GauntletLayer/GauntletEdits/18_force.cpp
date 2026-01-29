@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editForceGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 42;
 
-    editGauntletSingle("Force", ccc3(53, 50, 64), ccc3(130, 112, 193), ccc3(160, 19, 74));
+    editGauntletLayer("Force", ccc3(53, 50, 64), ccc3(130, 112, 193), ccc3(160, 19, 74));
 	GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

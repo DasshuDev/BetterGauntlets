@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editChaosGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 14;
 
-    editGauntletSingle("Chaos", ccc3(33, 12, 6), ccc3(255, 145, 0), ccc3(255, 18, 0));
+    editGauntletLayer("Chaos", ccc3(33, 12, 6), ccc3(255, 145, 0), ccc3(255, 18, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

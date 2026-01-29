@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editSnakeGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 21;
 
-    editGauntletSingle("Snake", ccc3(66, 31, 114), ccc3(209, 167, 107), ccc3(110, 57, 34));
+    editGauntletLayer("Snake", ccc3(66, 31, 114), ccc3(209, 167, 107), ccc3(110, 57, 34));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

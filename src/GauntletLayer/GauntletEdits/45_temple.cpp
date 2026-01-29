@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editTempleGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 30;
 
-    editGauntletSingle("Temple", ccc3(51, 59, 21), ccc3(255, 226, 184), ccc3(116, 93, 63));
+    editGauntletLayer("Temple", ccc3(51, 59, 21), ccc3(255, 226, 184), ccc3(116, 93, 63));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

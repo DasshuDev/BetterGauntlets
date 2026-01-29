@@ -1,8 +1,9 @@
 Better Gauntlets TODO v2.0.0
 [--------------------------------------------------]
 Gauntlet Creator:
-- Popup showing Customizations:
+- Popup showing customizations:
     - Name
+        - Will have text filter (no profane gauntlet names)
     - Main Color
     - Accent Color
     - Background {
@@ -18,6 +19,7 @@ Gauntlet Creator:
         - Color
     }
     - Import/Export to file (.TLG)
+    - Read/Write .TLG files to create shared Gauntlets
 [--------------------------------------------------]
 - Remove Bloat code:
     - Remove `try-again-text` revisions (DONE)

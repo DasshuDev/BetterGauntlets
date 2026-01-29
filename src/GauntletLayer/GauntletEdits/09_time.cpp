@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editTimeGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 13;
 
-    editGauntletSingle("Time", ccc3(0, 17, 75), ccc3(61, 152, 255), ccc3(0, 20, 61));
+    editGauntletLayer("Time", ccc3(0, 17, 75), ccc3(61, 152, 255), ccc3(0, 20, 61));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

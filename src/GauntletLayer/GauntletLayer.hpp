@@ -1,13 +1,40 @@
 #ifndef GAUNTLETLAYER_HPP
 #define GAUNTLETLAYER_HPP
 
-#include <Geode/DefaultInclude.hpp>
+#pragma once
+
 #include <Geode/modify/GauntletLayer.hpp>
+#include <Geode/ui/Popup.hpp>
 #include <UIBuilder.hpp>
+#include <chrono>
+
+using namespace geode::prelude;
 
 class $modify(RedesignedGauntletLayer, GauntletLayer) {
     struct Fields {
         bool m_loaded = false;
+        CCMenu* m_levelsMenu = nullptr;
+        // Drag states
+        bool m_dragging = false;
+        cocos2d::CCPoint m_touchStartLoc;
+        cocos2d::CCPoint m_touchLastLoc;
+        cocos2d::CCPoint m_menuStartPos;
+        // Velocity tracking
+        std::chrono::steady_clock::time_point m_touchLastTime;
+        cocos2d::CCPoint m_velocity;
+        bool m_flinging = false;
+        float m_deceleration = 2000.0f;
+        // Padding
+        float m_padding = 50.f;
+        float m_paddingExtra = 100.f;
+        float m_minY = 0.f;
+        float m_minX = 0.f;
+        // Background parallax
+        cocos2d::CCSprite* m_bgSprite = nullptr;
+        cocos2d::CCSprite* m_bgSprite2 = nullptr;
+        cocos2d::CCPoint m_bgStartPos = ccp(0, 0);
+        cocos2d::CCPoint m_menuOriginPos = ccp(0, 0);
+        float m_parallax = 0.25f;
     };
 
     void gauntletLevel(int);
@@ -19,11 +46,17 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
 
     void loadLevelsFinished(cocos2d::CCArray*, char const*, int);
     void editGauntlets();
-    void editGauntletSingle(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
+    void editGauntletLayer(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
     void gauntletVault(cocos2d::CCObject* obj);
     void setupGauntlet(cocos2d::CCArray* levels);
-    void setupInfoButton();
-    void onInfoButtonClick(cocos2d::CCObject* obj);
+    void setupInfo();
+    void onInfo(cocos2d::CCObject* obj);
+    bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
+    void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
+    void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
+    void onLevelInfo(CCObject* sender);
+    void onLocked(CCObject* sender);
+    void updateParallax(CCPoint const& menuPos);
 
     bool init(GauntletType);
 
@@ -85,5 +118,9 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editCosmosGauntlet();
     void editRandomGauntlet();
     void editChanceGauntlet();
+    void editCinemaGauntlet();
+    void editFutureGauntlet();
+    void editUtopiaGauntlet();
+    void editLoveGauntlet();
 };
 #endif

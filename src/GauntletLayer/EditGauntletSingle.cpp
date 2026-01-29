@@ -3,7 +3,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
+void RedesignedGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
 
     CCSize winSize = CCDirector::sharedDirector()->getWinSize();
     CCDirector* director = CCDirector::sharedDirector();
@@ -13,33 +13,31 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
     corner->setZOrder(-1);
     this->addChild(corner);
 
-    CCLabelBMFont* gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
-    CCLabelBMFont* gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
-    CCLabelBMFont* gauntletOutlineText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontOutline.fnt"_spr);
-    CCLabelBMFont* gauntletHighlightText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
+    CCLabelBMFont* titleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
+    CCLabelBMFont* shadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
+    CCLabelBMFont* outlineText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontOutline.fnt"_spr);
+    CCLabelBMFont* highlightText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
     
-    gauntletTitleText->setString(std::string("The " + title + " Gauntlet").c_str());
-    gauntletShadowText->setString(std::string("The " + title + " Gauntlet").c_str());
+    titleText->setString(std::string("The " + title + " Gauntlet").c_str());
+    shadowText->setString(std::string("The " + title + " Gauntlet").c_str());
 
-    gauntletHighlightText->setID("title-highlight"_spr);
-    gauntletHighlightText->setFntFile("GR_OxygeneFontHighlight.fnt"_spr);
-    gauntletHighlightText->setScale(0.75);
-    gauntletHighlightText->setPositionX(winSize.width / 2 + 2);
-    gauntletHighlightText->setPositionY(winSize.height - 30);
-    gauntletHighlightText->setZOrder(37);
+    highlightText->setID("title-highlight"_spr);
+    highlightText->setFntFile("GR_OxygeneFontHighlight.fnt"_spr);
+    highlightText->setScale(0.75);
+    highlightText->setPosition(winSize.width / 2 + 2, winSize.height - 30);
+    highlightText->setZOrder(37);
     
-    gauntletOutlineText->setID("title-outline"_spr);
-    gauntletOutlineText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
-    gauntletOutlineText->setScale(0.75);
-    gauntletOutlineText->setPositionX(winSize.width / 2 - 1.5);
-    gauntletOutlineText->setPositionY(winSize.height - 30);
+    outlineText->setID("title-outline"_spr);
+    outlineText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
+    outlineText->setScale(0.75);
+    outlineText->setPosition(winSize.width / 2 - 1.5, winSize.height - 30);
 
-    if (!gauntletTitleText || !gauntletShadowText) {
+    if (!titleText || !shadowText) {
         return;
     }
 
-    this->addChild(gauntletOutlineText);    
-    this->addChild(gauntletHighlightText);
+    this->addChild(outlineText);    
+    this->addChild(highlightText);
 
     // ------------------------------------------------------------------------------------ //
 
@@ -95,8 +93,8 @@ void RedesignedGauntletLayer::editGauntletSingle(std::string title, cocos2d::ccC
 
     // Colors
     m_backgroundSprite->setColor(bgColor);
-    gauntletTitleText->setColor(titleColor);
-    gauntletHighlightText->setColor(highlightColor);
+    titleText->setColor(titleColor);
+    highlightText->setColor(highlightColor);
     TLColor->setColor(titleColor);
     TRColor->setColor(titleColor);
     TLHighlight->setColor(highlightColor);

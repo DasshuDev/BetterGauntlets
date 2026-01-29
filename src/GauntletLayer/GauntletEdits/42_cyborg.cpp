@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editCyborgGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 45;
 
-    editGauntletSingle("Cyborg", ccc3(50, 50, 50), ccc3(182, 228, 237), ccc3(63, 88, 123));
+    editGauntletLayer("Cyborg", ccc3(50, 50, 50), ccc3(182, 228, 237), ccc3(63, 88, 123));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

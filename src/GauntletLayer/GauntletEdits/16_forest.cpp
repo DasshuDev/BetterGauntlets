@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editForestGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 26;
 
-    editGauntletSingle("Forest", ccc3(33, 68, 34), ccc3(148, 255, 98), ccc3(61, 165, 20));
+    editGauntletLayer("Forest", ccc3(33, 68, 34), ccc3(148, 255, 98), ccc3(61, 165, 20));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

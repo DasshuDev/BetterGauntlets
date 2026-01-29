@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editShadowGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 27;
 
-    editGauntletSingle("Shadow", ccc3(46, 19, 45), ccc3(177, 1, 255), ccc3(59, 0, 141));
+    editGauntletLayer("Shadow", ccc3(46, 19, 45), ccc3(177, 1, 255), ccc3(59, 0, 141));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

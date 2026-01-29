@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editNCSGauntlet2() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 21;
 
-    editGauntletSingle("NCS II", ccc3(136, 81, 136), ccc3(255, 152, 255), ccc3(80, 47, 80));
+    editGauntletLayer("NCS II", ccc3(136, 81, 136), ccc3(255, 152, 255), ccc3(80, 47, 80));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

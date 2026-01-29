@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editGemGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 14;
 
-    editGauntletSingle("Gem", ccc3(39, 38, 66), ccc3(201, 246, 229), ccc3(188, 129, 220));
+    editGauntletLayer("Gem", ccc3(39, 38, 66), ccc3(201, 246, 229), ccc3(188, 129, 220));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

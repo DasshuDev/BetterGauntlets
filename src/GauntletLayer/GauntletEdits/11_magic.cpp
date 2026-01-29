@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editMagicGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 32;
 
-    editGauntletSingle("Magic", ccc3(14, 16, 51), ccc3(77, 250, 255), ccc3(36, 52, 145));
+    editGauntletLayer("Magic", ccc3(14, 16, 51), ccc3(77, 250, 255), ccc3(36, 52, 145));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editSpookyGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 37;
 
-    editGauntletSingle("Spooky", ccc3(0, 47, 47), ccc3(155, 193, 193), ccc3(20, 63, 63));
+    editGauntletLayer("Spooky", ccc3(0, 47, 47), ccc3(155, 193, 193), ccc3(20, 63, 63));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

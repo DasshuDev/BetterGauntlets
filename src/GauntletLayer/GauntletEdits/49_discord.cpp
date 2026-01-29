@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editDiscordGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 10;
 
-    editGauntletSingle("Discord", ccc3(44, 47, 51), ccc3(88, 101, 212), ccc3(35, 41, 99));
+    editGauntletLayer("Discord", ccc3(44, 47, 51), ccc3(88, 101, 212), ccc3(35, 41, 99));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

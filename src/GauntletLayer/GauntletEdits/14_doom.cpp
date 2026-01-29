@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editDoomGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 35;
 
-    editGauntletSingle("Doom", ccc3(48, 36, 33), ccc3(141, 133, 128), ccc3(75, 69, 60));
+    editGauntletLayer("Doom", ccc3(48, 36, 33), ccc3(141, 133, 128), ccc3(75, 69, 60));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

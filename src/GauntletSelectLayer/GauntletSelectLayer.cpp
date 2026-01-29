@@ -107,7 +107,7 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto floor = CCSprite::createWithSpriteFrameName("gauntletGround_001.png"_spr);
         if (floor) {
             floor->setID("menu-floor"_spr);
-            floor->setPositionY(35.f);
+            floor->setPositionY(35);
             
             auto floorSize = floor->getContentSize();
             
@@ -180,22 +180,22 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 // first chain pair //
                 auto chain1 = getChildByIDRecursive("chain-1");
                 chain1->setScale(2.0);
-                chain1->setPosition(ccp(director->getScreenLeft() + 50.f, director->getScreenTop() - 70));
+                chain1->setPosition(ccp(director->getScreenLeft() + 50, director->getScreenTop() - 70));
 
                 // second chain pair //
                 auto chain2 = getChildByIDRecursive("chain-2");
                 chain2->setScale(1.65);
-                chain2->setPosition(ccp(director->getScreenRight() - 40.f, director->getScreenTop() - 55));
+                chain2->setPosition(ccp(director->getScreenRight() - 40, director->getScreenTop() - 55));
                 
                 // third chain pair //
                 auto chain3 = getChildByIDRecursive("chain-3");
                 // chain3->setScale(1.0);
-                chain3->setPosition(ccp(director->getScreenRight() - 100.f, director->getScreenTop() - 26));
+                chain3->setPosition(ccp(director->getScreenRight() - 100, director->getScreenTop() - 26));
                 
                 // fourth chain pair //
                 auto chain4 = getChildByIDRecursive("chain-4");
                 chain3->setScale(0.75);
-                chain4->setPosition(ccp(director->getScreenLeft() + 90.f, director->getScreenTop() - 34));
+                chain4->setPosition(ccp(director->getScreenLeft() + 90, director->getScreenTop() - 34));
             }
         }
         
@@ -225,12 +225,17 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             }
         }
 
-        auto exitAdjust = this->getChildByIDRecursive("back-menu");
+        CCNode* exitAdjust = this->getChildByIDRecursive("back-menu");
         if (!exitAdjust) return false;
         exitAdjust->setPosition(24, 254.5);
         exitAdjust->setContentWidth(32.5);
         exitAdjust->setContentHeight(125);
         exitAdjust->updateLayout();
+
+        CCNode* topRightMenu = this->getChildByIDRecursive("top-right-menu");
+        if (!topRightMenu) return false;
+        topRightMenu->setPosition(director->getScreenRight() - 24, 254.5);
+        topRightMenu->setContentHeight(125);
 
         return true;
     }
@@ -278,45 +283,45 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void setupGauntlets() {
         GauntletSelectLayer::setupGauntlets();
 
-        auto director = CCDirector::sharedDirector();
-        auto winSize = director->getWinSize();
+        CCDirector* director = CCDirector::sharedDirector();
+        CCSize winSize = director->getWinSize();
 
         m_fields->m_dots.clear();
         if (m_fields->m_dotsMenu)
             m_fields->m_dotsMenu->removeFromParent();
 
-        auto packPage = CCMenu::create();
-        packPage->setPosition(CCDirector::sharedDirector()->getWinSize() / 2);
-        packPage->setContentSize({220.f, 220.f});
-        packPage->setID(fmt::format("gauntlet-page-{}", m_scrollLayer->getTotalPages() + 1));
+        auto creatorPage = CCMenu::create();
+        creatorPage->setPosition(CCDirector::sharedDirector()->getWinSize() / 2);
+        creatorPage->setContentSize({220, 220.f});
+        creatorPage->setID(fmt::format("gauntlet-page-{}", m_scrollLayer->getTotalPages() + 1));
 
         auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
-        auto packBtn = CCMenuItemSpriteExtra::create(
+        auto creatorBtn = CCMenuItemSpriteExtra::create(
             btnSpr,
             this,
             menu_selector(RedesignedGauntletSelectLayer::onCreator)
         );
 
-        packBtn->setPosition(winSize.width / 2, winSize.height / 2 - 20.f);
+        creatorBtn->setPosition(winSize.width / 2, winSize.height / 2 - 20);
 
         auto creatorBG = CCScale9Sprite::create("GJ_squareB_01.png");
         creatorBG->setColor(ccc3(0, 0, 0));
         creatorBG->setOpacity(80);
-        creatorBG->setContentSize({110.f, 220.f});
-        creatorBG->setPosition(packBtn->getPosition());
+        creatorBG->setContentSize({110, 220.f});
+        creatorBG->setPosition(creatorBtn->getPosition());
         creatorBG->setID("creator-bg"_spr);
-        creatorBG->setZOrder(packBtn->getZOrder() - 1);
+        creatorBG->setZOrder(creatorBtn->getZOrder() - 1);
 
-        packPage->addChild(packBtn);
-        packPage->addChild(creatorBG);
+        creatorPage->addChild(creatorBtn);
+        creatorPage->addChild(creatorBG);
 
-        m_scrollLayer->addPage(packPage);
+        m_scrollLayer->addPage(creatorPage);
         m_scrollLayer->updatePages();
 
         m_fields->m_dotsMenu = CCMenu::create();
         m_fields->m_dotsMenu->setLayout(AxisLayout::create());
-        m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15.f);
-        m_fields->m_dotsMenu->setContentWidth(winSize.width - 100.f);
+        m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15);
+        m_fields->m_dotsMenu->setContentWidth(winSize.width - 100);
         m_fields->m_dotsMenu->setID("page-navigation"_spr);
         addChild(m_fields->m_dotsMenu);
 
@@ -364,17 +369,14 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         #endif
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {            
-            auto pages = static_cast<CCMenu*>(getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
-            if (!pages) continue;
-
-            auto dots = static_cast<CCSpriteBatchNode*>(getChildByIDRecursive("page-buttons"));
-            if (!dots) continue;
-
-            auto menu = pages->getChildByIDRecursive("gauntlet-menu");
-            if (!menu) continue;
+            CCMenu* pages = static_cast<CCMenu*>(getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
+            CCSpriteBatchNode* dots = static_cast<CCSpriteBatchNode*>(getChildByIDRecursive("page-buttons"));
+            CCNode* menu = pages->getChildByIDRecursive("gauntlet-menu");
+            
+            if (!pages || !dots || !menu) continue;
 
             menu->setPosition(ccp(0, -3));
-            // menu->setScale(0.9f);
+            dots->setVisible(false);
 
             auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
             if (GDUtils) {
@@ -383,9 +385,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     menu->setScale(0.85f);
                 }
             }
-
-            dots->setVisible(false);
-
             std::vector<CCSprite*> gauntletBtns;
             for (int b = 0; b < 3; b++) {
                 auto gauntletBtn = static_cast<CCSprite*>(menu->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1)));
@@ -395,9 +394,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     if (btnNode) {
                         btnNode->setContentSize({110, 220});
                     }
-
                     // // Gauntlet Info Nodes // //
-
                     // Info Node
                     auto infoNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("gauntlet-info-node"));
                     auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
@@ -409,9 +406,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     } else {
                         infoNode->setPositionY(-2.5f);
                     }
-
                     // // Name Nodes // //
-
                     // Name Label
                     auto nameLabel = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-label"));
                     if (nameLabel) {
@@ -432,9 +427,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     if (gauntletShadowLabel) {
                         gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2));
                     }
-
                     // // Reward Nodes // //
-
                     // Chest Sprite
                     auto chestSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-sprite"));
                     if (chestSpr) {
@@ -462,7 +455,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     }
                 }
             }
-
             int buttonCount = gauntletBtns.size();
             if (buttonCount > 0) {
                 for (int i = 0; i < buttonCount; i++) {
@@ -470,23 +462,21 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
                     gauntletBtns[i]->setPosition(ccp(startX + i * 115, posY));
 
-                    auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
-                    if (GDUtils) {
-                        auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
-                        if (settingVal) {
-                            float startX = winSize.width / 2 - (buttonCount - 1) * 69;
-                            gauntletBtns[i]->setPosition(ccp(startX + i * 138, posY));
-                        }
-                    }
+                    // auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                    // if (GDUtils) {
+                    //     auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                    //     if (settingVal) {
+                    //         float startX = winSize.width / 2 - (buttonCount - 1) * 69;
+                    //         gauntletBtns[i]->setPosition(ccp(startX + i * 138, posY));
+                    //     }
+                    // }
                 }
             }
         }
     }
-
     void onCreator(CCObject* sender) {
     GauntletCreator::create()->show();
     }
-
     void onDot(CCObject* sender) {
         auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), sender) - m_fields->m_dots.begin();
 
@@ -494,7 +484,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         m_scrollLayer->updatePages();
         m_scrollLayer->repositionPagesLooped();
     }
-
     #ifndef GEODE_IS_IOS
         void defineKeybind(const char* id, std::function<void()> callback) {
             this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
@@ -505,7 +494,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             }, id);
         }
     #endif
-
     void findCurrentGauntletPageUsing(CCArray* pageButtons) {
         int i = 0;
         for (CCSprite* ccSprite : CCArrayExt<CCSprite*>(pageButtons)) {
@@ -516,7 +504,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             i++;
         }
     }
-
     void pressGauntlet(int desiredGauntlet) {
         if (const auto theGauntletPage = getChildByIDRecursive(fmt::format("gauntlet-page-{}", m_fields->currentGauntletPage))) {
             if (const auto theGauntlet = theGauntletPage->getChildByIDRecursive(fmt::format("gauntlet-button-{}", desiredGauntlet))) {
@@ -524,7 +511,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             }
         }
     }
-    
     #ifndef GEODE_IS_ANDROID
     void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1) {
         GauntletSelectLayer::scrollLayerWillScrollToPage(p0, p1);
@@ -546,7 +532,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         updateDots();
     }
     #endif
-
     void onBack(cocos2d::CCObject* sender){
         m_fields->currentGauntletPage = 0;
         GauntletSelectLayer::onBack(sender);

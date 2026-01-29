@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editTreasureGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 42;
 
-    editGauntletSingle("Treasure", ccc3(29, 39, 33), ccc3(255, 255, 155), ccc3(255, 140, 73));
+    editGauntletLayer("Treasure", ccc3(29, 39, 33), ccc3(255, 255, 155), ccc3(255, 140, 73));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editMysteryGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 49;
 
-    editGauntletSingle("Mystery", ccc3(75, 51, 1), ccc3(255, 233, 23), ccc3(255, 146, 0));
+    editGauntletLayer("Mystery", ccc3(75, 51, 1), ccc3(255, 233, 23), ccc3(255, 146, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

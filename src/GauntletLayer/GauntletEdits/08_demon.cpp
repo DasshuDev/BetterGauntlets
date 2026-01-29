@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editDemonGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 38;
 
-    editGauntletSingle("Demon", ccc3(29, 29, 29), ccc3(202, 81, 81), ccc3(99, 3, 3));
+    editGauntletLayer("Demon", ccc3(29, 29, 29), ccc3(202, 81, 81), ccc3(99, 3, 3));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

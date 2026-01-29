@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editSpikeGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 15;
 
-    editGauntletSingle("Spike", ccc3(54, 37, 4), ccc3(255, 222, 92), ccc3(177, 116, 43));
+    editGauntletLayer("Spike", ccc3(54, 37, 4), ccc3(255, 222, 92), ccc3(177, 116, 43));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

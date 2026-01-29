@@ -1,7 +1,3 @@
-A Geometry Dash mod made by **[DasshuDev](https://dasshu.dev)**
-
----
-
 Gauntlets as they are don't get the love they deserve. *Let's change that.*
 
 ## Mod Overview
@@ -21,17 +17,16 @@ Head to my **[Discord Server](https://discord.gg/F94qat6N3D)** if you find any b
 
 ## Notes
 - LGBTQIA+ Rights are human rights. You are not alone in this fight. Stay strong.
-- Thank you for *125,000+ downloads!* <cr><3</c>
+- Thank you for *150,000+ downloads!* <cr><3</c>
 
 ---
 
 ## Special Thanks
 Coding:
-- **[Capeling](https://bsky.app/profile/capeling.bsky.social)**
+- **[Dasshu](https://dasshu.dev)**
+- **[Capeling](https://twitter.com/capelingg)**
 - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**
-- **[LimeGradient](https://bsky.app/profile/limegradient.xyz)**
+- **[LimeGradient](https://twitter.com/limegradient)**
 Support:
-- **SeasickK** - This wouldn't have been possible without you.
-    - ([main](https://twitter.com/seasickkpt2)) ([art acc](https://twitter.com/sm0kemach1ne))
 - **The Globed Staff Team** - For being great friends and overall supportive.
 - **The Geode Discord** - For answering my REALLY stupid and simple-minded questions.

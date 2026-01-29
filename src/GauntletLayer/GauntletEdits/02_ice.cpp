@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editIceGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 36;
 
-    editGauntletSingle("Ice", ccc3(8, 68, 83), ccc3(192, 236, 255), ccc3(0, 174, 255));
+    editGauntletLayer("Ice", ccc3(8, 68, 83), ccc3(192, 236, 255), ccc3(0, 174, 255));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

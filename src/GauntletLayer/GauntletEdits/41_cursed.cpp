@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editCursedGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 37;
 
-    editGauntletSingle("Cursed", ccc3(46, 14, 43), ccc3(81, 255, 0), ccc3(8, 121, 4));
+    editGauntletLayer("Cursed", ccc3(46, 14, 43), ccc3(81, 255, 0), ccc3(8, 121, 4));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editChristmasGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 29;
 
-    editGauntletSingle("Christmas", ccc3(19, 43, 68), ccc3(231, 255, 254), ccc3(86, 202, 255));
+    editGauntletLayer("Christmas", ccc3(19, 43, 68), ccc3(231, 255, 254), ccc3(86, 202, 255));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

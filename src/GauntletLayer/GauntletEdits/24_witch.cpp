@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editWitchGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 26;
 
-    editGauntletSingle("Witch", ccc3(0, 44, 25), ccc3(66, 99, 125), ccc3(35, 13, 46));
+    editGauntletLayer("Witch", ccc3(0, 44, 25), ccc3(66, 99, 125), ccc3(35, 13, 46));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

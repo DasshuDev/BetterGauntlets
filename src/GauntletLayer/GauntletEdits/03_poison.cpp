@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editPoisonGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 31;
 
-    editGauntletSingle("Poison", ccc3(20, 63, 9), ccc3(229, 255, 0), ccc3(80, 179, 0));
+    editGauntletLayer("Poison", ccc3(20, 63, 9), ccc3(229, 255, 0), ccc3(80, 179, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

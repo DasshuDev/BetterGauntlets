@@ -9,7 +9,7 @@ void RedesignedGauntletLayer::editRandomGauntlet() {
     int randomNum = rand() % 60; // <-- Number of backgrounds available + 1
     int backgroundValue = randomNum;
 
-    editGauntletSingle("Random", ccc3(129, 100, 18), ccc3(255, 254, 4), ccc3(253, 159, 1));
+    editGauntletLayer("Random", ccc3(129, 100, 18), ccc3(255, 254, 4), ccc3(253, 159, 1));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editCrystalGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 29;
 
-    editGauntletSingle("Crystal", ccc3(28, 0, 7), ccc3(248, 223, 255), ccc3(246, 58, 218));
+    editGauntletLayer("Crystal", ccc3(28, 0, 7), ccc3(248, 223, 255), ccc3(246, 58, 218));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

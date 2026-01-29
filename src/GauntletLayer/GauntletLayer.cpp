@@ -1,4 +1,3 @@
-#include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <cocos2d.h>
@@ -7,11 +6,15 @@
 #include <Geode/ui/BasedButtonSprite.hpp>
 #include <Geode/ui/MDTextArea.hpp>
 #include <Geode/utils/cocos.hpp>
+#include <Geode/binding/GJGameLevel.hpp>
 #include "GauntletLayer.hpp"
+#include "LevelInfoPopup.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
 #include <UIBuilder.hpp>
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
 using namespace geode::prelude;
+using namespace alpha::prelude;
 
 #ifndef GEODE_IS_IOS
 	#include <geode.custom-keybinds/include/Keybinds.hpp>
@@ -46,68 +49,65 @@ void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 	}
 }
 
-void RedesignedGauntletLayer::setupInfoButton() {
-    auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
+void RedesignedGauntletLayer::setupInfo() {
+    CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
 
     auto infoBtnSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
 
     auto infoBtn = CCMenuItemSpriteExtra::create(
-        infoBtnSpr, this, menu_selector(RedesignedGauntletLayer::onInfoButtonClick)
+        infoBtnSpr, this, menu_selector(RedesignedGauntletLayer::onInfo)
     );
 
     infoBtn->setPosition(ccp(director->getScreenLeft() + 30, director->getScreenBottom() + 30));
 
     auto infoMenu = CCMenu::create();
-    infoMenu->setPosition({0.f, 0.f});
+    infoMenu->setPosition(0, 0);
     infoMenu->addChild(infoBtn);
     infoMenu->setID("gauntlet-info-menu"_spr);
 
     this->addChild(infoMenu);
 }
 
-void RedesignedGauntletLayer::onInfoButtonClick(CCObject* sender) {
-	auto director = CCDirector::sharedDirector();
-    auto winSize = director->getWinSize();
+void RedesignedGauntletLayer::onInfo(CCObject* sender) {
+	CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
 
 	std::string gauntletName = GauntletNode::nameForType(m_gauntletType);
 	std::string gauntletDesc = getGauntletInfo(GauntletType (m_gauntletType));
 
-	auto popup = MDPopup::create(
+	MDPopup* popup = MDPopup::create(
 		("The " + gauntletName + " Gauntlet").c_str(),
 		gauntletDesc.c_str(),
 		"OK"
 	);
 	
-	auto date = fmt::format("Release Date: {}", getGauntletDate(GauntletType (m_gauntletType)));
-
-	auto releaseDate = CCLabelBMFont::create(date.c_str(), "chatFont.fnt");
-	releaseDate->setPosition({383.5, 25});
+	std::string date = fmt::format("Released on: {}", getGauntletDate(GauntletType (m_gauntletType)));
+	std::string version = fmt::format("Version: {}", getGauntletVersion(GauntletType (m_gauntletType)));
+	std::string infoCredit = fmt::format("Description by: {}", getGauntletInfoCredits(GauntletType (m_gauntletType)));
+	
+	CCLabelBMFont* releaseDate = CCLabelBMFont::create(date.c_str(), "chatFont.fnt");
+	releaseDate->setPosition(383.5, 25);
 	releaseDate->setScale(0.5f);
 	releaseDate->setAnchorPoint(ccp(1, 0));
 	releaseDate->setOpacity(51);
-
-	auto version = fmt::format("Version: {}", getGauntletVersion(GauntletType (m_gauntletType)));
-
-	auto releaseVer = CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
-	releaseVer->setPosition({383.5, 15});
+	
+	CCLabelBMFont* releaseVer = CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
+	releaseVer->setPosition(383.5, 15);
 	releaseVer->setScale(0.5f);
 	releaseVer->setAnchorPoint(ccp(1, 0));
 	releaseVer->setOpacity(51);
-
-	auto infoCredit = fmt::format("Description by: {}", getGauntletInfoCredits(GauntletType (m_gauntletType)));
-
-	auto credit = CCLabelBMFont::create(infoCredit.c_str(), "chatFont.fnt");
-	credit->setPosition({15.5, 15});
+	
+	CCLabelBMFont* credit = CCLabelBMFont::create(infoCredit.c_str(), "chatFont.fnt");
+	credit->setPosition(15.5, 15);
 	credit->setScale(0.5f);
 	credit->setAnchorPoint(ccp(0, 0));
 	credit->setOpacity(51);
 
-	auto popupChildren = popup->getChildren();
-	auto child = static_cast<CCNode*>(popupChildren->objectAtIndex(0));
-	child->setID("popup-child");
-	log::info("Popup child: {} scaleY", child->getScaledContentHeight());
-
+	CCArray* popupChildren = popup->getChildren();
+	CCNode* child = static_cast<CCNode*>(popupChildren->objectAtIndex(0));
+	
+	child->setID("info"_spr);
 	child->addChild(releaseDate);
 	child->addChild(releaseVer);
 	child->addChild(credit);
@@ -129,19 +129,26 @@ inline void limitLabelWidth(CCLabelBMFont* label, float maxWidth, float original
 }
 
 bool RedesignedGauntletLayer::init(GauntletType type) {
-	if (!GauntletLayer::init(type)) return false;
+	if (!GauntletLayer::init(type)) {
+		Notification::create("Failed to gather Gauntlet data, reloading...", NotificationIcon::Loading)->show();
+		return false;
+	}
+
+	this->setTouchEnabled(true);
+    this->setTouchMode(cocos2d::kCCTouchesOneByOne);
+    this->setTouchPriority(-128); // Adjust priority as needed
 
 	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
-		auto removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
+		CCNode* removeOGVaultBtn = getChildByIDRecursive("jacob375.gauntletlevelvault/gauntlet-levels");
 		if (removeOGVaultBtn) {
 			removeOGVaultBtn->removeFromParent();
 		}
 	}
 
-	auto director = CCDirector::sharedDirector();
-	auto winSize = CCDirector::sharedDirector()->getWinSize();
+	CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
 
 	auto exitAdjust = this->getChildByIDRecursive("exit-menu");
 	if (!exitAdjust) return false;
@@ -150,17 +157,24 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	exitAdjust->setContentHeight(125);
 	exitAdjust->updateLayout();
 
-	auto gauntletShadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
-	gauntletShadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
-	gauntletShadowText->setColor(ccc3(0, 0, 0));
-	gauntletShadowText->setScale(0.750);
-	gauntletShadowText->setPosition(ccp(winSize.width / 2 + 1, director->getScreenTop() - 32.5));
+	auto shadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
+	shadowText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
+	shadowText->setColor(ccc3(0, 0, 0));
+	shadowText->setScale(0.750);
+	shadowText->setPosition(ccp(winSize.width / 2 + 1, director->getScreenTop() - 32.5));
 
-	auto gauntletTitleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
-	gauntletTitleText->setFntFile("GR_OxygeneFont.fnt"_spr);
-	gauntletTitleText->setColor(ccc3(255, 255, 255));
-	gauntletTitleText->setScale(0.750);
-	gauntletTitleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
+	auto titleText = static_cast<CCLabelBMFont*>(this->getChildByID("title-shadow"));
+	titleText->setFntFile("GR_OxygeneFont.fnt"_spr);
+	titleText->setColor(ccc3(255, 255, 255));
+	titleText->setScale(0.750);
+	titleText->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 30)); 
+
+	CCSprite* floorLine = CCSprite::createWithSpriteFrameName("floorLine_001.png");
+	floorLine->setID("floor-line");
+	floorLine->setPosition({winSize.width / 2, titleText->getPositionY() - 25});
+	floorLine->setScaleX(.85);
+	floorLine->setOpacity(100);
+	this->addChild(floorLine);
 
 	auto bgLayer = getChildByID("background");
 	bgLayer->setZOrder(-99);
@@ -394,6 +408,22 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 		// 	editCosmosGauntlet();
 		// 	break;
 		// }
+		// case GauntletType::Love: { // 57
+		// 	editLoveGauntlet();
+		// 	break;
+		// }
+		// case GauntletType::Cinema: { // 58
+		// 	editCinemaGauntlet();
+		// 	break;
+		// }
+		// case GauntletType::Future: { // 59
+		// 	editFutureGauntlet();
+		// 	break;
+		// }
+		// case GauntletType::Utopia: { // 60
+		// 	editUtopiaGauntlet();
+		// 	break;
+		// }
 	}
 
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
@@ -431,61 +461,36 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		});
 	#endif
 
-	auto pathParent = CCLayerRGBA::create();
+	auto pathParent = CCNode::create();
 	if (!pathParent) return;
+	
 	pathParent->setID("gauntlet-path"_spr);
+	
 	this->addChild(pathParent);
 
-	std::vector<CCSprite*> pathVector = {};
-
 	for (int d = 0; d < 32; d++) {
-		auto dot = this->getChildByType<CCSprite>(d + 2);
-
+		auto dot = this->getChildBySpriteFrameNameRecursive(this, "uiDot_001.png");
 		if (!dot) continue;
-
-		auto pathEdit = Mod::get()->getSettingValue<bool>("enable-path-edits");
-		if (pathEdit) {
-			auto dotBlending = Mod::get()->getSettingValue<std::string>("path-blending");
-			if (dotBlending == "Default") {
-				dot->setBlendFunc({ GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA });
-			}
-			else if (dotBlending == "Additive") {
-				dot->setBlendFunc({ GL_SRC_ALPHA, GL_ONE });
-			}
-
-		}
-
-		dot->setID(fmt::format("path-dot-{}", d + 1));
-		pathVector.push_back(dot);
-
-		if (d % 2 == 1) {
-			dot->setColor(ccc3(210, 210, 210));
-		} else {
-			dot->setColor(ccc3(255, 255, 255));
-		}
-	}
-	for (auto dot : pathVector) {
+		
 		dot->retain();
 		dot->removeFromParentAndCleanup(false);
+		dot->setVisible(false);
+		
 		pathParent->addChild(dot);
 	}
 
-	if (!Mod::get()->getSettingValue<bool>("toggle-paths")) {
-		auto pathParent = this->getChildByID("gauntlet-path"_spr);
-		pathParent->setVisible(false);
-	}
-
-	auto director = CCDirector::sharedDirector();
-	auto winSize = CCDirector::sharedDirector()->getWinSize();
+	CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
 
 	if (Loader::get()->getLoadedMod("jacob375.gauntletlevelvault")) {
+		auto type = m_gauntletType;
 		auto vaultMenu = CCMenu::create();
 		if (!vaultMenu) return;
+		
 		vaultMenu->setID("level-vault-menu"_spr);
 		vaultMenu->setPosition({0, 0});
+		
 		this->addChild(vaultMenu);
-
-		auto type = m_gauntletType;
 
 		auto vaultBtnSpr = CircleButtonSprite::createWithSpriteFrameName(
 			GauntletNode::frameForType(static_cast<GauntletType>(type)).c_str(), 1.0f
@@ -507,13 +512,14 @@ void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
 		vaultMenu->addChild(vaultBtn);
 	}
 	
-	setupInfoButton();
+	setupInfo();
 }
 
 void RedesignedGauntletLayer::editGauntlets() {
 
-	auto director = CCDirector::sharedDirector();
-	auto winSize = CCDirector::sharedDirector()->getWinSize();
+	CCDirector* director = CCDirector::sharedDirector();
+    CCSize winSize = director->getWinSize();
+	GauntletType type = m_gauntletType;
 
 	auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
 	if (refreshSpr) {
@@ -521,156 +527,228 @@ void RedesignedGauntletLayer::editGauntlets() {
 		loadCircle->setScale(refreshSpr);
 	}
 
-	if (m_fields->m_loaded == true) {
-		log::debug("Connected to Gauntlet #{}", static_cast<int>(m_gauntletType));
-	} else {
-		log::error("Failed to connect to server");
-	}
+	CCMenu* levelsMenu = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
+	if (!levelsMenu) log::error("error loading levels menu");
+	levelsMenu->setPosition(0, 0);
+	levelsMenu->setVisible(false);
+	levelsMenu->setPositionY(-1000);
 
-	auto levelMenuPos = static_cast<CCMenu*>(this->getChildByIDRecursive("levels-menu"));
-	if (!levelMenuPos) return;
-	levelMenuPos->setPosition(0.f, 0.f);
+	m_fields->m_levelsMenu = CCMenu::create();
+	m_fields->m_levelsMenu->setPosition(0, 0);
+	m_fields->m_levelsMenu->setID("level-array"_spr);
+	m_fields->m_levelsMenu->setAnchorPoint(ccp(0, 0));
+	m_fields->m_levelsMenu->setContentSize({winSize.width * 2, winSize.height - 90});
+	m_fields->m_levelsMenu->setScale(1.15);
+	this->addChild(m_fields->m_levelsMenu);
 
-	auto levelOne = static_cast<CCSprite*>(this->getChildByIDRecursive("level-1"));
-	levelOne->setPosition({winSize.width / 2 - 180, winSize.height / 2 - 67});
-
-	auto levelTwo = static_cast<CCSprite*>(this->getChildByIDRecursive("level-2"));
-	levelTwo->setPosition({winSize.width / 2 - 90, winSize.height / 2 + 37});
-
-	auto levelThree = static_cast<CCSprite*>(this->getChildByIDRecursive("level-3"));
-	levelThree->setPosition({winSize.width / 2, winSize.height / 2 - 67});
-
-	auto levelFour = static_cast<CCSprite*>(this->getChildByIDRecursive("level-4"));
-	levelFour->setPosition({winSize.width / 2 + 90, winSize.height / 2 + 37});
-
-	auto levelFive = static_cast<CCSprite*>(this->getChildByIDRecursive("level-5"));
-	levelFive->setPosition({winSize.width / 2 + 180, winSize.height / 2 - 67});
-		
-	for (int g = 0; g < 5; g++) {
-		auto gauntletLevel = getChildByIDRecursive(fmt::format("level-{}", g + 1));
-		if (gauntletLevel) {
-			for (int i = 0; i < 5; i++) {
-				auto sprite = static_cast<CCSprite*>(gauntletLevel->getChildByTag(i + 1));
-				if (sprite) {
-					sprite->setID(fmt::format("gauntlet-island-{}"_spr, g + 1));
-					CCArray* children = sprite->getChildren();
-					if (children && children->count() > 0) {
-
-						auto levelNode = static_cast<GJGameLevel*>(m_levels->objectAtIndex(g));
-						auto nameString = levelNode->m_levelName;
-						std::string author = levelNode->m_creatorName;
-						
-						if (levelNode) {
-							log::info("Level {}: {} by {}", g + 1, nameString, author);
-						}
-						auto shadow = static_cast<CCSprite*>(children->objectAtIndex(2));
-						if (shadow) {
-							shadow->setID("gauntlet-shadow"_spr);
-						}
-						auto island = static_cast<CCSprite*>(children->objectAtIndex(0));
-						if (island) {
-							island->setID("gauntlet-level"_spr);
-						}
-						auto stats = static_cast<CCSprite*>(children->objectAtIndex(1));
-						if (stats) {
-							stats->setID("gauntlet-stats"_spr);
-							CCArray* statsChildren = stats->getChildren();
-							if (statsChildren && statsChildren->count() > 0) {								
-								auto starPos = static_cast<CCSprite*>(statsChildren->objectAtIndex(2));
-								bool hasCompletedLevel = GameStatsManager::sharedState()->hasCompletedLevel(static_cast<GJGameLevel*>(m_levels->objectAtIndex(g)));
-								if (starPos) {
-									starPos->setID("star-icon"_spr);
-									starPos->setAnchorPoint(ccp(0.5, 0.5));
-									starPos->setPositionX(5);
-								}								
-								auto starLabel = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(1));
-								if (starLabel) {
-									starLabel->setID("star-label"_spr);
-									if (hasCompletedLevel) {
-										starLabel->setColor(ccc3(255, 255, 50));
-										auto star = CCParticleSystemQuad::create();
-										if (star) {
-											CCParticleSystemQuad* starParticles = GameToolbox::particleFromString(
-												"30a-1a2a0a8a180a180a0a0a25a50a0a5a-8a0a0a10a5a0a0a0a1a0a1a0a0.25a0a1a0.05a0a0a0a0a1a0a1a0a1a0a0a0a0a0a0.35a0a0a0a20a0a0a0a1a2a1a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
-												NULL,
-												false
-											);
-											starParticles->setZOrder(1);
-											starParticles->setPositionX(starPos->getPositionX());
-											starParticles->setPositionY(starPos->getPositionY());
-											stats->addChild(starParticles);
-										}
-									}
-								}								
-								auto nameModify = static_cast<CCLabelBMFont*>(statsChildren->objectAtIndex(0));
-								if (nameModify) {
-									nameModify->setID("level-name"_spr);
-									nameModify->setPositionY(-11.5);
-								}
-								auto authorName = CCLabelBMFont::create(author.c_str(), "goldFont.fnt");
-								if (authorName) {
-									authorName->setID("creator-name"_spr);
-									authorName->setAlignment(kCCTextAlignmentCenter);
-									authorName->setPositionY(nameModify->getPositionY() - 11);
-									authorName->setScale(0.4f);
-									stats->addChild(authorName);
-								}
-								auto checkmarkSpr = this->getChildBySpriteFrameNameRecursive(stats, "GJ_completesIcon_001.png");
-								if (checkmarkSpr) {
-									checkmarkSpr->setID("checkmark-icon"_spr);
-									checkmarkSpr->setAnchorPoint(ccp(0.5, 0.5));
-									checkmarkSpr->setPosition(ccp(25.f, 2.f));
-								}
-								auto skullSpr = typeinfo_cast<CCSprite*>(getChildBySpriteFrameNameRecursive(stats, "miniSkull_001.png"));
-								if (skullSpr) {
-
-									auto skullNode = CCNode::create();
-									skullNode->setID("skull-node"_spr);
-									stats->addChild(skullNode);
-
-									if (skullSpr->getParent()) {
-										skullSpr->retain();
-										skullSpr->removeFromParentAndCleanup(false);
-										skullNode->addChild(skullSpr);
-										skullSpr->release();
-									}
-									
-									skullSpr->setID("skull-icon"_spr);
-									skullSpr->setPositionY(10.f);
-									if (hasCompletedLevel) {
-										skullSpr->setColor(ccc3(128, 128, 128));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+    
+    for (int i = 1; i < 6; i++) {
+		CCNode* level = getChildByIDRecursive(fmt::format("level-{}", i));
+		if (!level) {
+			log::warn("level-{} not found!", i);
+			continue;
 		}
+
+		// Sprites    
+		CCNode* levelBtn = getChildByIDRecursive(fmt::format("level-{}", i));
+		CCSprite* island = static_cast<CCSprite*>(level->getChildByTag(1));
+		if (!levelBtn) continue;
+		if (!island) continue;
+
+		// Island Children
+		CCArray* children = island->getChildren();
+		if (!children || children->count() == 0) continue;
+		
+		// Stats
+		GJGameLevel* levelNode = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 1));
+		bool hasCompletedLevel = GameStatsManager::sharedState()->hasCompletedLevel(levelNode);
+		int id = levelNode->m_levelID.value();
+		gd::string name = levelNode->m_levelName;
+		gd::string user = levelNode->m_creatorName;
+		GJGameLevel* savedLevel = GameLevelManager::sharedState()->getSavedGauntletLevel(id);
+		
+		// Percentage
+		int percent = 0;
+		if (savedLevel) {
+			percent = savedLevel->m_normalPercent.value();
+		}
+		// Log level info
+		log::info("#{}: {} by {}; {}%", i, name, user, percent);
+
+		// ===== Button Creation =====
+
+		// Island Nodes
+		CCNode* levelSpr = CCNode::create();
+		levelSpr->setID(fmt::format("gauntlet-{}", i));
+		levelSpr->setAnchorPoint({0.5, 0.5});
+		levelSpr->setContentSize({70, 80});
+
+		CCSprite* islandSpr = CCSprite::createWithSpriteFrameName(
+			GauntletNode::frameForType(m_gauntletType).c_str()
+		);
+		islandSpr->setPosition(levelSpr->getContentSize() / 2);
+		
+		CCSprite* shadowSpr = CCSprite::createWithSpriteFrameName(
+			GauntletNode::frameForType(m_gauntletType).c_str()
+		);
+		shadowSpr->setColor(ccc3(0, 0, 0));
+		shadowSpr->setOpacity(75);
+		shadowSpr->setScaleY(1.2);
+		shadowSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
+		shadowSpr->setZOrder(islandSpr->getZOrder() - 1);
+
+		levelSpr->addChild(islandSpr);
+		levelSpr->addChild(shadowSpr);
+
+		// ===== Node Children =====
+
+		// Stats
+		CCLabelBMFont* levelName = CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
+		limitLabelWidth(levelName, 120.0f, 0.4f, 0.3f);
+		// levelName->setPositionY(-11.5);
+		levelName->setID("level-name"_spr);
+		levelName->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
+
+		CCLabelBMFont* authorName = CCLabelBMFont::create(user.c_str(), "goldFont.fnt");
+		limitLabelWidth(authorName, 120.0f, 0.4f, 0.25f);
+		// authorName->setPositionY(levelName->getPositionY() - 11);
+		authorName->setID("creator-name"_spr);
+		authorName->setAlignment(kCCTextAlignmentCenter);
+		authorName->setPosition({levelName->getPositionX(), levelName->getPositionY() - 10});
+
+		// Star Icon and Count
+		CCLabelBMFont* starCount = CCLabelBMFont::create(
+			fmt::format("{}", levelNode->m_stars.value()).c_str(),
+			"bigFont.fnt"
+		);
+		starCount->setID("star-count"_spr);
+		starCount->setPositionX(5);
+		starCount->setScale(0.5);
+
+		CCSprite* starSpr = CCSprite::createWithSpriteFrameName("GJ_bigStar_001.png");
+		starSpr->setID("star-icon"_spr);
+		starSpr->setAnchorPoint(ccp(0.5, 0.5));
+		starSpr->setPositionX(5);
+		starSpr->setScale(0.5);
+		
+		// On Level Completion
+		if (hasCompletedLevel) {
+			starCount->setColor(ccc3(255, 255, 50));
+			
+			// Checkmark icon
+			CCSprite* checkmarkSpr = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
+			checkmarkSpr->setID("checkmark-icon"_spr);
+			checkmarkSpr->setAnchorPoint(ccp(0.5, 0.5));
+			checkmarkSpr->setPosition(ccp(25, 2));
+			levelSpr->addChild(checkmarkSpr);
+
+		}
+		levelSpr->addChild(levelName);
+		levelSpr->addChild(authorName);
+		levelSpr->addChild(starCount);
+		levelSpr->addChild(starSpr);
+
+		// Skull icon
+		CCSprite* skullSpr = CCSprite::createWithSpriteFrameName("miniSkull_001.png");
+		if (m_fields->m_levelsMenu->getChildByTag(4)) {
+			skullSpr->setID("skull-icon"_spr);
+			skullSpr->setPositionY(10);
+			levelSpr->addChild(skullSpr);
+		}
+
+		// Is Level Locked?
+		GJGameLevel* lockNode = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 1));
+		bool isLocked = false;
+		if (i > 1) {
+			GJGameLevel* previousLevel = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 2));
+			isLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
+		}
+		if (isLocked) {
+			CCSprite* lockSpr = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
+			lockSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15});
+			lockSpr->setScale(0.75);
+			levelSpr->addChild(lockSpr);
+			islandSpr->setColor(ccc3(128, 128, 128));
+
+			levelName->setVisible(false);
+			authorName->setVisible(false);
+			starCount->setVisible(false);
+			starSpr->setVisible(false);
+			skullSpr->setVisible(false);
+		}
+
+		CCMenuItemSpriteExtra* btn = CCMenuItemSpriteExtra::create(
+			levelSpr,
+			this,
+			isLocked 
+			? menu_selector(RedesignedGauntletLayer::onLocked) 
+			: menu_selector(RedesignedGauntletLayer::onLevelInfo)
+		);
+		btn->setUserObject(levelNode);
+		btn->setTag(i - 1);
+		btn->setID(fmt::format("level-{}", i));
+
+		m_fields->m_levelsMenu->addChild(btn);
+		
+		CCNode* btnPos = m_fields->m_levelsMenu->getChildByID(fmt::format("level-{}", i));
+		CCNode* previousPosX = m_fields->m_levelsMenu->getChildByID(fmt::format("level-{}", i - 1));
+
+		if (i == 1) btn->setPosition(winSize.width / 5, 90);
+		if (i == 2) btn->setPosition(previousPosX->getPositionX() + 150, 160);
+		if (i == 3) btn->setPosition(previousPosX->getPositionX() + 150, 100);
+		if (i == 4) btn->setPosition(previousPosX->getPositionX() + 150, 150);
+		if (i == 5) btn->setPosition(previousPosX->getPositionX() + 150, 110);
+
 	}
-
-	auto hover = Mod::get()->getSettingValue<bool>("islands-float");
+	
+	bool hover = Mod::get()->getSettingValue<bool>("level-hover");
 	if (hover) {
-
 		std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
+		
 		for (int i = 0; i < 5; i++) {
-			auto levelMenu = getChildByIDRecursive(fmt::format("level-{}", i + 1));
-			if (levelMenu) {
-				float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
-				float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
-				auto moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
-				auto moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
-				auto easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
-				auto easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
-				auto hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
-				auto levelHover = CCRepeatForever::create(hoverSequence);
-				levelMenu->runAction(levelHover);
-			}
+			CCNode* levels = m_fields->m_levelsMenu->getChildByIDRecursive(fmt::format("level-{}", i + 1));
+			if (!levels) log::error("Levels node missing!");
+			
+			float randomMoveUp = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+			float randomMoveDown = 2.0f + static_cast<float>(std::rand() % 15) / 10.0f;
+
+			CCMoveBy* moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
+			CCMoveBy* moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
+			
+			CCEaseInOut* easeMoveUp = CCEaseInOut::create(moveUp, 2.0f);
+			CCEaseInOut* easeMoveDown = CCEaseInOut::create(moveDown, 2.0f);
+			
+			CCSequence* hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
+			
+			CCRepeatForever* levelHover = CCRepeatForever::create(hoverSequence);
+			
+			levelHover->setTag(999);
+			levels->runAction(levelHover);
 		}
 	}
 }
 
+void RedesignedGauntletLayer::onLocked(CCObject* sender) {
+    auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
+    auto levelSpr = static_cast<CCNode*>(button->getNormalImage());
+    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildren()->objectAtIndex(1));
+    if (!islandSpr) return;
+	
+    ccColor3B originalColor = ccc3(128, 128, 128);
+    
+    islandSpr->stopActionByTag(100);
+    
+    auto turnRed = CCTintTo::create(0, 192, 128, 128);
+    auto resetColor = CCTintTo::create(0.25f, originalColor.r, originalColor.g, originalColor.b);
+    
+    auto sequence = CCSequence::create(turnRed, resetColor, nullptr);
+    sequence->setTag(100);
+    islandSpr->runAction(sequence);
+    
+    log::error("Level locked!");
+}
+
+// Gauntlet Level Vault
 void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
     auto savedGauntlets = GameLevelManager::sharedState()->m_savedGauntlets;
     auto getGauntletType = savedGauntlets->objectForKey(std::to_string(static_cast<int>(m_gauntletType)));
@@ -681,4 +759,99 @@ void RedesignedGauntletLayer::gauntletVault(CCObject* obj) {
     scene->addChild(browserLayer);
     auto transition = CCTransitionFade::create(0.5, scene);
     CCDirector::sharedDirector()->pushScene(transition);
+}
+
+void RedesignedGauntletLayer::onLevelInfo(CCObject* sender) {
+    auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
+    auto level = static_cast<GJGameLevel*>(button->getUserObject());
+    LevelInfoPopup::create(level)->show();
+}
+
+bool RedesignedGauntletLayer::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
+    if (!m_fields->m_levelsMenu) {
+		log::error("m_levelsMenu not found");
+		return false;
+	}
+    
+	log::info("touching");
+
+    auto touchLoc = touch->getLocation();
+    auto local = m_fields->m_levelsMenu->convertToNodeSpace(touchLoc);
+    auto size = m_fields->m_levelsMenu->getContentSize();
+    
+    if (local.x >= 0 && local.x <= size.width && local.y >= 0 && local.y <= size.height) {
+        m_fields->m_dragging = true;
+        m_fields->m_touchStartLoc = touchLoc;
+        m_fields->m_menuStartPos = m_fields->m_levelsMenu->getPosition();
+        m_fields->m_touchLastLoc = touchLoc;
+        m_fields->m_touchLastTime = std::chrono::steady_clock::now();
+        m_fields->m_velocity = ccp(0, 0);
+        m_fields->m_flinging = false;
+        return true;
+    }
+    return false;
+}
+
+void RedesignedGauntletLayer::ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
+    if (m_fields->m_dragging) {
+        // Just use the 'touch' parameter directly
+
+	log::info("dragging");
+
+        auto touchLoc = touch->getLocation();
+        auto now = std::chrono::steady_clock::now();
+        std::chrono::duration<float> dt = now - m_fields->m_touchLastTime;
+        float secs = dt.count();
+        if (secs <= 0.0f) secs = 1e-6f;
+        
+        CCPoint delta = ccpSub(touchLoc, m_fields->m_touchStartLoc);
+        CCPoint newPos = ccpAdd(m_fields->m_menuStartPos, delta);
+        
+        // Compute velocity
+        m_fields->m_velocity = ccp(
+            (touchLoc.x - m_fields->m_touchLastLoc.x) / secs,
+            (touchLoc.y - m_fields->m_touchLastLoc.y) / secs
+        );
+        m_fields->m_touchLastLoc = touchLoc;
+        m_fields->m_touchLastTime = now;
+        
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+        auto content = m_fields->m_levelsMenu->getContentSize();
+        
+        float minX = std::min(0.0f, winSize.width - content.width);
+        float maxX = std::max(0.0f, winSize.width - content.width);
+        float minY = std::min(0.0f, winSize.height - content.height);
+        float maxY = std::max(0.0f, winSize.height - content.height);
+        
+        newPos.x = std::max(minX, std::min(maxX, newPos.x));
+        newPos.y = std::max(minY, std::min(maxY, newPos.y));
+        
+        m_fields->m_levelsMenu->setPosition(newPos);
+        updateParallax(newPos);
+    }
+}
+
+void RedesignedGauntletLayer::ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
+    if (m_fields->m_dragging) {
+        m_fields->m_dragging = false;
+
+		log::info("stopped");
+        
+        float speed = std::hypotf(m_fields->m_velocity.x, m_fields->m_velocity.y);
+        if (speed > 300.0f) {
+            m_fields->m_flinging = true;
+        } else {
+            m_fields->m_velocity = ccp(0, 0);
+            m_fields->m_flinging = false;
+        }
+    }
+}
+
+void RedesignedGauntletLayer::updateParallax(CCPoint const& menuPos) {
+    if (!m_fields->m_bgSprite || !m_fields->m_bgSprite2) return;
+    
+    CCPoint offset = ccpSub(menuPos, m_fields->m_menuOriginPos);
+    CCPoint parallaxOffset = ccpMult(offset, m_fields->m_parallax);
+    
+    m_fields->m_bgSprite->setPosition(ccpAdd(m_fields->m_bgStartPos, parallaxOffset));
 }

@@ -66,9 +66,9 @@ CCMenu* GauntletCreator::createColorSetting(const std::string& title, const std:
     CCSprite* colorPreview = CCSprite::createWithSpriteFrameName("GJ_colorBtn_001.png");
         colorPreview->setScale(0.75);
 
-    auto color = mod->getSettingValue<ccColor4B>(key);
+    ccColor4B color = mod->getSettingValue<ccColor4B>(key);
         colorPreview->setColor(ccc3(color.r, color.g, color.b));
-        colorPreview->setOpacity(color.a);
+        colorPreview->setOpacity(255);
     
     CCMenuItemSpriteExtra* colorBtn = Build<CCMenuItemSpriteExtra>::create(
             colorPreview,
@@ -176,8 +176,8 @@ bool GauntletCreator::setup() {
 
 // Popup Visuals
 GauntletCreator* GauntletCreator::create() {
-    auto ret = new GauntletCreator();
-    if (ret && ret->initAnchored(380.f, 280.f, "GJ_square05.png")) {
+    GauntletCreator* ret = new GauntletCreator();
+    if (ret && ret->initAnchored(380, 280, "GJ_square05.png")) {
         ret->autorelease();
         return ret;
     }
@@ -190,7 +190,7 @@ void GauntletCreator::onCreatorInfoPressed(CCObject* sender) {
 }
 
 void GauntletCreator::onColorSetting(CCObject*) {
-    auto popup = ColorPickPopup::create(true);
+    ColorPickPopup* popup = ColorPickPopup::create(false);
     popup->setDelegate(this);
     popup->show();
 }

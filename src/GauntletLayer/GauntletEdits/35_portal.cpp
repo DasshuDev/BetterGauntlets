@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editPortalGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 57;
 
-    editGauntletSingle("Portal", ccc3(31, 49, 77), ccc3(255, 50, 140), ccc3(109, 34, 86));
+    editGauntletLayer("Portal", ccc3(31, 49, 77), ccc3(255, 50, 140), ccc3(109, 34, 86));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

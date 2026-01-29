@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editMonsterGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 38;
 
-    editGauntletSingle("Monster", ccc3(23, 58, 28), ccc3(65, 214, 35), ccc3(8, 110, 13));
+    editGauntletLayer("Monster", ccc3(23, 58, 28), ccc3(65, 214, 35), ccc3(8, 110, 13));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

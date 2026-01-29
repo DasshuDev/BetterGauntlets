@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editHauntedGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 16;
 
-    editGauntletSingle("Haunted", ccc3(28, 36, 33), ccc3(255, 255, 180), ccc3(255, 247, 98));
+    editGauntletLayer("Haunted", ccc3(28, 36, 33), ccc3(255, 255, 180), ccc3(255, 247, 98));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

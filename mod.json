@@ -1,5 +1,5 @@
 {
-	"geode": "4.10.0",
+	"geode": "4.10.2",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -14,7 +14,7 @@
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
 		"community": "https://discord.gg/F94qat6N3D",
-		"homepage": "https://dasshu.dev"
+		"homepage": "https://dasshu.dev/"
 	},
 	"issues": {
 		"info": "https://github.com/DasshuDev/BetterGauntlets/issues"
@@ -100,7 +100,7 @@
 			"description": "Settings that affect only the GauntletLayer (the Gauntlet Levels page)."
 		},
 
-		"islands-float": {
+		"level-hover": {
 			"name": "Islands Hover",
 			"description": "Gauntlet Islands will have a <cg>hovering animation</c>.",
 			"type": "bool",
@@ -119,32 +119,6 @@
 			"type": "title",
 			"description": "Settings that affect only the <cg>pathway dots</c> in between the Gauntlet Levels."
 		},
-
-		"toggle-paths": {
-			"name": "Enable Paths",
-			"description": "<cg>Toggles</c> the paths in between Gauntlet Levels.",
-			"type": "bool",
-			"default": true
-		},
-		
-		"enable-path-edits": {
-			"name": "Path Color Editing",
-			"type": "bool",
-			"description": "Enables the <cg>editing</c> of the Gauntlet Paths' <cy>color values</c>.",
-			"default": false,
-			"enable-if": "toggle-paths"
-		},
-		
-		"path-blending": {
-			"name": "Path Blending",
-			"description": "Sets the <cg>blending</c> of the path dots in between the Gauntlet Levels.",
-			"type": "string",
-			"default": "Default",
-			"match": "[A-Z][a-z]+",
-			"filter": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			"one-of": ["Default", "Additive"],
-			"enable-if": "enable-path-edits"
-		},
 		
 		"experimental": {
 			"name": "Experimental Settings",
@@ -161,13 +135,13 @@
 		"testColor1": {
 			"name": "main",
 			"type": "rgba",
-			"default": [0, 255, 0, 255]
+			"default": [255, 255, 255, 255]
 		},
 
 		"testColor2": {
 			"name": "secondary",
 			"type": "rgba",
-			"default": [0, 255, 255, 255]
+			"default": [255, 255, 255, 255]
 		}
 	}
 }

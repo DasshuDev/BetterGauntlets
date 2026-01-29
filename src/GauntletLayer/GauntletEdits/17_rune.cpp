@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editRuneGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 15;
 
-    editGauntletSingle("Rune", ccc3(46, 18, 0), ccc3(255, 195, 83), ccc3(180, 94, 24));
+    editGauntletLayer("Rune", ccc3(46, 18, 0), ccc3(255, 195, 83), ccc3(180, 94, 24));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

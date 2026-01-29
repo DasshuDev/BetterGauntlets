@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editLavaGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 57;
 
-    editGauntletSingle("Lava", ccc3(63, 9, 9), ccc3(255, 209, 56), ccc3(255, 51, 0));
+    editGauntletLayer("Lava", ccc3(63, 9, 9), ccc3(255, 209, 56), ccc3(255, 51, 0));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editDragonGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 30;
 
-    editGauntletSingle("Dragon", ccc3(46, 0, 0), ccc3(201, 33, 33), ccc3(92, 35, 35));
+    editGauntletLayer("Dragon", ccc3(46, 0, 0), ccc3(201, 33, 33), ccc3(92, 35, 35));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

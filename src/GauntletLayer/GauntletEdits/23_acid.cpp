@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editAcidGauntlet() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 24;
 
-    editGauntletSingle("Acid", ccc3(45, 38, 17), ccc3(208, 255, 0), ccc3(162, 255, 24));
+    editGauntletLayer("Acid", ccc3(45, 38, 17), ccc3(208, 255, 0), ccc3(162, 255, 24));
     GameManager::get()->loadBackground(backgroundValue);
     
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

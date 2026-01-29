@@ -11,10 +11,8 @@
 #include "LevelInfoPopup.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
 #include <UIBuilder.hpp>
-#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
 using namespace geode::prelude;
-using namespace alpha::prelude;
 
 #ifndef GEODE_IS_IOS
 	#include <geode.custom-keybinds/include/Keybinds.hpp>

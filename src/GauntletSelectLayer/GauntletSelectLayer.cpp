@@ -78,12 +78,12 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 }
             }
         }
-        auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
-        if (refreshSpr) {
-            auto loadCircle = getChildByIDRecursive("loading-circle");
-            loadCircle->setPositionY(-18.5f);
-            loadCircle->setScale(refreshSpr);
-        }
+        // auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
+        // if (refreshSpr) {
+        //     auto loadCircle = getChildByIDRecursive("loading-circle");
+        //     loadCircle->setPositionY(-18.5f);
+        //     loadCircle->setScale(refreshSpr);
+        // }
         auto title = this->getChildByID("title"); 
         if (title) {
             title->setVisible(false);

@@ -1,11 +1,11 @@
 ## <cg>v2.0.0-alpha.1</c>
 I actually thought about what I needed this time!
-- <cj>**Bump**</c> to Geode 4.10.1 and GD 2.2081
+- <cj>**Bump**</c> to Geode 5.0.0-alpha.1 and GD 2.2081.
 - <cg>**Added**</c> iOS Jit-less support!
 - <cy>**Updated**</c> Gauntlet Levels to follow a more GD World-like principle.
     - Levels are now draggable for more immersive navigation!
-- <cy>**Updated**</c> the following Gauntlets' particles:
-  - `Chaos, Time, etc.`
+- <cy>**Updated**</c> the following Gauntlets' visuals:
+  - `Chaos, Time, Force, etc.`
 - <cy>**Updated**</c> keybinds' placement in the keybind tree
 - <cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
 - <cr>**Removed**</c> the following bloat code:
@@ -15,7 +15,7 @@ I actually thought about what I needed this time!
   - "Toggle Paths" setting
   - Reload Button (this was added to vanilla)
 - **In Progress**:
-  - Gauntlet Creator
+  - Custom Gauntlet Support via webserver shenanigans (ArcticWoof and LimeGradient pls cook)
   - Particle support for all gauntlets
   - Backend rewrite
 

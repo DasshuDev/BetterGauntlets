@@ -1,16 +1,17 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
+#include <Geode/ui/Popup.hpp>
 
 using namespace geode::prelude;
 
-class LevelInfoPopup : public geode::Popup<GJGameLevel*> {
+class LevelInfoPopup : public Popup {
 protected:
     GJGameLevel* m_level;
     
-    bool setup(GJGameLevel* level) override;
+    bool init(GJGameLevel* level);
+    void onPlay(CCObject* sender);
 
 public:
     static LevelInfoPopup* create(GJGameLevel* level);
-    void onPlay(CCObject* sender);
 };

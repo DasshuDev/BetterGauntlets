@@ -14,10 +14,10 @@
 
 using namespace geode::prelude;
 
-#ifndef GEODE_IS_IOS
-	#include <geode.custom-keybinds/include/Keybinds.hpp>
-	using namespace keybinds;
-#endif
+// #ifndef GEODE_IS_IOS
+// 	#include <geode.custom-keybinds/include/Keybinds.hpp>
+// 	using namespace keybinds;
+// #endif
 
 CCNode* RedesignedGauntletLayer::getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name) {
 	return findFirstChildRecursive<cocos2d::CCNode>(parent, [=](auto* spr) {
@@ -25,16 +25,16 @@ CCNode* RedesignedGauntletLayer::getChildBySpriteFrameNameRecursive(cocos2d::CCN
 	});
 }
 
-#ifndef GEODE_IS_IOS
-	void RedesignedGauntletLayer::defineKeybind(const char* id, std::function<void()> callback) {
-		this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
-			if (event->isDown()) {
-				callback();
-			}
-			return ListenerResult::Propagate;
-		}, id);
-	}
-#endif
+// #ifndef GEODE_IS_IOS
+// 	void RedesignedGauntletLayer::defineKeybind(const char* id, std::function<void()> callback) {
+// 		this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
+// 			if (event->isDown()) {
+// 				callback();
+// 			}
+// 			return ListenerResult::Propagate;
+// 		}, id);
+// 	}
+// #endif
 
 void RedesignedGauntletLayer::gauntletLevel(int desiredLevel) {
 	if (const auto gauntletLevel = getChildByIDRecursive("levels-menu")->getChildByIDRecursive(fmt::format("level-{}", desiredLevel))) {
@@ -398,30 +398,30 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editCosmosGauntlet();
 			break;
 		}
-		// case GauntletType::Random: { // 55
-		// 	editCosmosGauntlet();
-		// 	break;
-		// }
-		// case GauntletType::Chance: { // 56
-		// 	editCosmosGauntlet();
-		// 	break;
-		// }
-		// case GauntletType::Love: { // 57
-		// 	editLoveGauntlet();
-		// 	break;
-		// }
-		// case GauntletType::Cinema: { // 58
-		// 	editCinemaGauntlet();
-		// 	break;
-		// }
-		// case GauntletType::Future: { // 59
-		// 	editFutureGauntlet();
-		// 	break;
-		// }
-		// case GauntletType::Utopia: { // 60
-		// 	editUtopiaGauntlet();
-		// 	break;
-		// }
+		case GauntletType::Random: { // 55
+			editRandomGauntlet();
+			break;
+		}
+		case GauntletType::Chance: { // 56
+			editChanceGauntlet();
+			break;
+		}
+		case GauntletType::Love: { // 57
+			editLoveGauntlet();
+			break;
+		}
+		case GauntletType::Cinema: { // 58
+			editCinemaGauntlet();
+			break;
+		}
+		case GauntletType::Future: { // 59
+			editFutureGauntlet();
+			break;
+		}
+		case GauntletType::Utopia: { // 60
+			editUtopiaGauntlet();
+			break;
+		}
 	}
 
 	if (this->m_levels != nullptr && !m_fields->m_loaded)
@@ -441,23 +441,23 @@ void RedesignedGauntletLayer::loadLevelsFinished(CCArray* p0, char const* p1, in
 void RedesignedGauntletLayer::setupGauntlet(CCArray* levels) {
     GauntletLayer::setupGauntlet(levels);
 
-	#ifndef GEODE_IS_IOS
-		this->defineKeybind("first-gauntlet-level"_spr, [this]() {
-		RedesignedGauntletLayer::gauntletLevel(1); // default: numrow 1
-		});
-		this->defineKeybind("second-gauntlet-level"_spr, [this]() {
-			RedesignedGauntletLayer::gauntletLevel(2); // default: numrow 2
-		});
-		this->defineKeybind("third-gauntlet-level"_spr, [this]() {
-			RedesignedGauntletLayer::gauntletLevel(3); // default: numrow 3
-		});
-		this->defineKeybind("fourth-gauntlet-level"_spr, [this]() {
-			RedesignedGauntletLayer::gauntletLevel(4); // default: numrow 4
-		});
-		this->defineKeybind("fifth-gauntlet-level"_spr, [this]() {
-			RedesignedGauntletLayer::gauntletLevel(5); // default: numrow 5
-		});
-	#endif
+	// #ifndef GEODE_IS_IOS
+	// 	this->defineKeybind("first-gauntlet-level"_spr, [this]() {
+	// 	RedesignedGauntletLayer::gauntletLevel(1); // default: numrow 1
+	// 	});
+	// 	this->defineKeybind("second-gauntlet-level"_spr, [this]() {
+	// 		RedesignedGauntletLayer::gauntletLevel(2); // default: numrow 2
+	// 	});
+	// 	this->defineKeybind("third-gauntlet-level"_spr, [this]() {
+	// 		RedesignedGauntletLayer::gauntletLevel(3); // default: numrow 3
+	// 	});
+	// 	this->defineKeybind("fourth-gauntlet-level"_spr, [this]() {
+	// 		RedesignedGauntletLayer::gauntletLevel(4); // default: numrow 4
+	// 	});
+	// 	this->defineKeybind("fifth-gauntlet-level"_spr, [this]() {
+	// 		RedesignedGauntletLayer::gauntletLevel(5); // default: numrow 5
+	// 	});
+	// #endif
 
 	auto pathParent = CCNode::create();
 	if (!pathParent) return;

@@ -3,15 +3,16 @@
 
 using namespace geode::prelude;
 
-bool LevelInfoPopup::setup(GJGameLevel* level) {
+bool LevelInfoPopup::init(GJGameLevel* level) {
+    // Initialize the popup with width=350, height=250
+    if (!Popup::init(350.f, 250.f))
+        return false;
+    
     m_level = level;
     
     auto winSize = this->m_mainLayer->getContentSize();
 
-        // ===== Name/Author =====
-    
-    // Title
-    // this->setTitle(level->m_levelName);
+    // ===== Name/Author =====
     
     // Level Name Label
     CCLabelBMFont* levelName = CCLabelBMFont::create(
@@ -105,16 +106,16 @@ bool LevelInfoPopup::setup(GJGameLevel* level) {
 }
 
 LevelInfoPopup* LevelInfoPopup::create(GJGameLevel* level) {
-    LevelInfoPopup* ret = new LevelInfoPopup();
-    if (ret && ret->initAnchored(350, 250, level, "GJ_square05.png")) {
-        ret->autorelease();
-        return ret;
+    auto popup = new LevelInfoPopup();
+    if (popup->init(level)) {
+        popup->autorelease();
+        return popup;
     }
-    CC_SAFE_DELETE(ret);
+    delete popup;
     return nullptr;
 }
 
 void LevelInfoPopup::onPlay(CCObject* sender) {
-    GameLevelManager::sharedState()->downloadLevel(m_level->m_levelID.value(), true);
+    GameLevelManager::sharedState()->downloadLevel(m_level->m_levelID.value(), true, 0);
     this->onClose(sender);
 }

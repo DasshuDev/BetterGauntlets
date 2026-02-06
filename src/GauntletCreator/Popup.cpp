@@ -97,7 +97,11 @@ CCMenu* GauntletCreator::createColorSetting(const std::string& title, const std:
 }
 
 // Popup Setup
-bool GauntletCreator::setup() {
+bool GauntletCreator::init() {
+    // Initialize the popup with width=380, height=280
+    if (!Popup::init(380.f, 280.f))
+        return false;
+    
     this->setTitle("Gauntlet Creator");
 
     auto winSize = m_mainLayer->getContentSize();
@@ -160,8 +164,6 @@ bool GauntletCreator::setup() {
         .parent(settingsMenu)
         .collect();
         gauntletName->setMaxCharCount(20);
-    
-
 
     // Create Settings
     settingsMenu->addChild(createToggleSetting("Toggle Setting", "testBool"));
@@ -171,17 +173,16 @@ bool GauntletCreator::setup() {
     settingsMenu->updateLayout();
 
     return true;
-
 }
 
 // Popup Visuals
 GauntletCreator* GauntletCreator::create() {
-    GauntletCreator* ret = new GauntletCreator();
-    if (ret && ret->initAnchored(380, 280, "GJ_square05.png")) {
-        ret->autorelease();
-        return ret;
+    auto popup = new GauntletCreator();
+    if (popup->init()) {
+        popup->autorelease();
+        return popup;
     }
-    CC_SAFE_DELETE(ret);
+    delete popup;
     return nullptr;
 }
 
@@ -191,7 +192,7 @@ void GauntletCreator::onCreatorInfoPressed(CCObject* sender) {
 
 void GauntletCreator::onColorSetting(CCObject*) {
     ColorPickPopup* popup = ColorPickPopup::create(false);
-    popup->setDelegate(this);
+    // popup->setDelegate(this);
     popup->show();
 }
 

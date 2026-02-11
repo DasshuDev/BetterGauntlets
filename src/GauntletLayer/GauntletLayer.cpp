@@ -135,6 +135,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 	this->setTouchEnabled(true);
     this->setTouchMode(cocos2d::kCCTouchesOneByOne);
     this->setTouchPriority(-128); // Adjust priority as needed
+    this->scheduleUpdate(); // Enable the update loop for momentum
 
 	log::debug("Opened Gauntlet #{}", static_cast<int>(m_gauntletType));
 
@@ -767,27 +768,31 @@ void RedesignedGauntletLayer::onLevelInfo(CCObject* sender) {
 
 bool RedesignedGauntletLayer::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
     if (!m_fields->m_levelsMenu) {
-		log::error("m_levelsMenu not found");
-		return false;
-	}
+        log::error("m_levelsMenu not found");
+        return false;
+    }
     
-	log::info("touching");
+    log::info("touching");
 
     auto touchLoc = touch->getLocation();
-    auto local = m_fields->m_levelsMenu->convertToNodeSpace(touchLoc);
-    auto size = m_fields->m_levelsMenu->getContentSize();
     
-    if (local.x >= 0 && local.x <= size.width && local.y >= 0 && local.y <= size.height) {
-        m_fields->m_dragging = true;
-        m_fields->m_touchStartLoc = touchLoc;
-        m_fields->m_menuStartPos = m_fields->m_levelsMenu->getPosition();
-        m_fields->m_touchLastLoc = touchLoc;
-        m_fields->m_touchLastTime = std::chrono::steady_clock::now();
-        m_fields->m_velocity = ccp(0, 0);
-        m_fields->m_flinging = false;
-        return true;
-    }
-    return false;
+    // Always allow dragging - remove the bounds check that was preventing dragging
+    m_fields->m_dragging = true;
+    m_fields->m_touchStartLoc = touchLoc;
+    m_fields->m_menuStartPos = m_fields->m_levelsMenu->getPosition();
+    m_fields->m_touchLastLoc = touchLoc;
+    m_fields->m_touchLastTime = std::chrono::steady_clock::now();
+    m_fields->m_velocity = ccp(0, 0);
+    m_fields->m_flinging = false;
+    return true;
+}
+
+void RedesignedGauntletLayer::registerWithTouchDispatcher() {
+    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(
+        this, 
+        -128,  // Priority (lower = higher priority, -128 is high)
+        true   // Swallow touches
+    );
 }
 
 void RedesignedGauntletLayer::ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
@@ -852,4 +857,44 @@ void RedesignedGauntletLayer::updateParallax(CCPoint const& menuPos) {
     CCPoint parallaxOffset = ccpMult(offset, m_fields->m_parallax);
     
     m_fields->m_bgSprite->setPosition(ccpAdd(m_fields->m_bgStartPos, parallaxOffset));
+}
+
+void RedesignedGauntletLayer::update(float dt) {
+    GauntletLayer::update(dt);
+    
+    // Handle momentum/flinging after touch ends
+    if (m_fields->m_flinging && !m_fields->m_dragging) {
+        // Apply velocity
+        CCPoint currentPos = m_fields->m_levelsMenu->getPosition();
+        CCPoint newPos = ccpAdd(currentPos, ccpMult(m_fields->m_velocity, dt));
+        
+        // Apply bounds
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+        auto content = m_fields->m_levelsMenu->getContentSize();
+        
+        float minX = std::min(0.0f, winSize.width - content.width);
+        float maxX = std::max(0.0f, winSize.width - content.width);
+        float minY = std::min(0.0f, winSize.height - content.height);
+        float maxY = std::max(0.0f, winSize.height - content.height);
+        
+        newPos.x = std::max(minX, std::min(maxX, newPos.x));
+        newPos.y = std::max(minY, std::min(maxY, newPos.y));
+        
+        m_fields->m_levelsMenu->setPosition(newPos);
+        updateParallax(newPos);
+        
+        // Decelerate
+        float decel = m_fields->m_deceleration * dt;
+        float speed = std::hypotf(m_fields->m_velocity.x, m_fields->m_velocity.y);
+        
+        if (speed > decel) {
+            // Reduce velocity
+            float factor = (speed - decel) / speed;
+            m_fields->m_velocity = ccpMult(m_fields->m_velocity, factor);
+        } else {
+            // Stop
+            m_fields->m_velocity = ccp(0, 0);
+            m_fields->m_flinging = false;
+        }
+    }
 }

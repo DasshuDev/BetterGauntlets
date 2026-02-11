@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-alpha.1",
+	"geode": "5.0.0-alpha.2",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -103,12 +103,6 @@
 			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\n<cr>Must have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed</c>.",
 			"type": "bool",
 			"default": true
-		},
-
-		"GauntletPaths": {
-			"name": "Gauntlet Paths",
-			"type": "title",
-			"description": "Settings that affect only the <cg>pathway dots</c> in between the Gauntlet Levels."
 		},
 		
 		"experimental": {

@@ -1,15 +1,9 @@
 #include <vector>
-#include <cstdlib>
-#include <ctime>
 #include <Geode/Geode.hpp>
 #include <Geode/Loader.hpp>
 #include <Geode/ui/Layout.hpp>
 #include <Geode/ui/GeodeUI.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
-#include <Geode/modify/GauntletNode.hpp>
-#include <UIBuilder.hpp>
-#include <cue/Util.hpp>
-#include "../GauntletCreator/Popup.hpp"
 
 using namespace geode::prelude;
 
@@ -31,24 +25,28 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
     };
 
     bool init(int gauntletType) {
-
-        if (!GauntletSelectLayer::init(gauntletType)) return false;
+    
+        if (!GauntletSelectLayer::init(gauntletType)) {
+            
+            Notification::create(
+                "Gauntlets failed to load",
+                NotificationIcon::Error,
+                1.5
+            )->show();
+            
+            return false;
+        }
         
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto director = CCDirector::sharedDirector();
 
         CCSprite* settingsSpr = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
-        settingsSpr->setScale(1.25f);
+        settingsSpr->setScale(1.25);
         m_fields->settingsButton = CCMenuItemSpriteExtra::create(settingsSpr, this, menu_selector(GauntletSelectLayerHook::onSettingsButton));
 
         if (PlatformToolbox::isControllerConnected()) {
             auto controllerBtn = getChildByID("controller-back-hint");
             controllerBtn->setZOrder(1);
-        }
-        auto refreshBtn = getChildByIDRecursive("refresh-button");
-        if (refreshBtn) {
-            refreshBtn->setVisible(true);
-            refreshBtn->setScale(1.25);
         }
         auto BRMenu = getChildByID("bottom-right-menu");
         if (BRMenu) {
@@ -72,18 +70,18 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
                 if (setupBtn && setupBtn->count() > 0) {
                     auto settingsBtn = static_cast<CCSprite*>(setupBtn->objectAtIndex(0));
                     if (settingsBtn) {
-                        settingsBtn->setScale(0.5);
+                        settingsBtn->setScale(0.75);
                         settingsBtn->setPosition(ccp(button->getContentWidth() / 2, button->getContentHeight() / 2));
                     }
                 }
             }
         }
-        // auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
-        // if (refreshSpr) {
-        //     auto loadCircle = getChildByIDRecursive("loading-circle");
-        //     loadCircle->setPositionY(-18.5f);
-        //     loadCircle->setScale(refreshSpr);
-        // }
+        auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
+        if (refreshSpr) {
+            auto loadCircle = getChildByIDRecursive("loading-circle");
+            loadCircle->setPositionY(-18.5f);
+            loadCircle->setScale(refreshSpr);
+        }
         auto title = this->getChildByID("title"); 
         if (title) {
             title->setVisible(false);
@@ -157,7 +155,8 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         auto decoParentNode = CCNode::create();
         if (decoParentNode) {
             decoParentNode->setID("background-decoration"_spr);
-            decoParentNode->setPosition(0, 0);
+            decoParentNode->setPosition(0, 0); 
+            
             decoParentNode->setZOrder(-1);
             this->addChild(decoParentNode);
         
@@ -289,34 +288,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         m_fields->m_dots.clear();
         if (m_fields->m_dotsMenu)
             m_fields->m_dotsMenu->removeFromParent();
-
-        auto creatorPage = CCMenu::create();
-        creatorPage->setPosition(CCDirector::sharedDirector()->getWinSize() / 2);
-        creatorPage->setContentSize({220, 220.f});
-        creatorPage->setID(fmt::format("gauntlet-page-{}", m_scrollLayer->getTotalPages() + 1));
-
-        auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
-        auto creatorBtn = CCMenuItemSpriteExtra::create(
-            btnSpr,
-            this,
-            menu_selector(RedesignedGauntletSelectLayer::onCreator)
-        );
-
-        creatorBtn->setPosition(winSize.width / 2, winSize.height / 2 - 20);
-
-        auto creatorBG = CCScale9Sprite::create("GJ_squareB_01.png");
-        creatorBG->setColor(ccc3(0, 0, 0));
-        creatorBG->setOpacity(80);
-        creatorBG->setContentSize({110, 220.f});
-        creatorBG->setPosition(creatorBtn->getPosition());
-        creatorBG->setID("creator-bg"_spr);
-        creatorBG->setZOrder(creatorBtn->getZOrder() - 1);
-
-        creatorPage->addChild(creatorBtn);
-        creatorPage->addChild(creatorBG);
-
-        m_scrollLayer->addPage(creatorPage);
-        m_scrollLayer->updatePages();
 
         m_fields->m_dotsMenu = CCMenu::create();
         m_fields->m_dotsMenu->setLayout(AxisLayout::create());
@@ -461,22 +432,11 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     float posY = winSize.height / 2 - 17.5;
                     float startX = winSize.width / 2 - (buttonCount - 1) * 57.5;
                     gauntletBtns[i]->setPosition(ccp(startX + i * 115, posY));
-
-                    // auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
-                    // if (GDUtils) {
-                    //     auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
-                    //     if (settingVal) {
-                    //         float startX = winSize.width / 2 - (buttonCount - 1) * 69;
-                    //         gauntletBtns[i]->setPosition(ccp(startX + i * 138, posY));
-                    //     }
-                    // }
                 }
             }
         }
     }
-    void onCreator(CCObject* sender) {
-    GauntletCreator::create()->show();
-    }
+    
     void onDot(CCObject* sender) {
         auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), sender) - m_fields->m_dots.begin();
 

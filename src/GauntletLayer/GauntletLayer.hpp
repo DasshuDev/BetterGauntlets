@@ -44,19 +44,21 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     //     void defineKeybind(const char*, std::function<void()>);
     // #endif
 
-    void loadLevelsFinished(cocos2d::CCArray*, char const*, int);
+    void loadLevelsFinished(cocos2d::CCArray*, char const*, int) override;
     void editGauntlets();
     void editGauntletLayer(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
     void gauntletVault(cocos2d::CCObject* obj);
     void setupGauntlet(cocos2d::CCArray* levels);
     void setupInfo();
     void onInfo(cocos2d::CCObject* obj);
-    bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
-    void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
-    void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event);
+    bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
+    void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
+    void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
     void onLevelInfo(CCObject* sender);
     void onLocked(CCObject* sender);
     void updateParallax(CCPoint const& menuPos);
+    void registerWithTouchDispatcher() override;
+    void update(float dt) override;
 
     bool init(GauntletType);
 

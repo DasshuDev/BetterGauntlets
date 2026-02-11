@@ -124,8 +124,5 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editFutureGauntlet();
     void editUtopiaGauntlet();
     void editLoveGauntlet();
-
-    // Custom Gauntlets
-    void editStarGauntlet();
 };
 #endif

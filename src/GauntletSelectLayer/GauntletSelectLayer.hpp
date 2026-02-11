@@ -10,8 +10,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         std::vector<CCMenuItemSpriteExtra*> m_dots = {};
         CCMenu* m_dotsMenu = nullptr;
         int currentGauntletPage = 0;
-        CCMenuItemSpriteExtra* settingsButton;
-        int m_retryCount = 0;  // <-- ADD THIS
     };
 
     bool init(int type);

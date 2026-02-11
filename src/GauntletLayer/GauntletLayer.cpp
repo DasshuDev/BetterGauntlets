@@ -604,13 +604,11 @@ void RedesignedGauntletLayer::editGauntlets() {
 		// Stats
 		CCLabelBMFont* levelName = CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
 		limitLabelWidth(levelName, 120.0f, 0.4f, 0.3f);
-		// levelName->setPositionY(-11.5);
 		levelName->setID("level-name"_spr);
 		levelName->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
 
 		CCLabelBMFont* authorName = CCLabelBMFont::create(user.c_str(), "goldFont.fnt");
 		limitLabelWidth(authorName, 120.0f, 0.4f, 0.25f);
-		// authorName->setPositionY(levelName->getPositionY() - 11);
 		authorName->setID("creator-name"_spr);
 		authorName->setAlignment(kCCTextAlignmentCenter);
 		authorName->setPosition({levelName->getPositionX(), levelName->getPositionY() - 10});
@@ -690,13 +688,13 @@ void RedesignedGauntletLayer::editGauntlets() {
 		m_fields->m_levelsMenu->addChild(btn);
 		
 		CCNode* btnPos = m_fields->m_levelsMenu->getChildByID(fmt::format("level-{}", i));
-		CCNode* previousPosX = m_fields->m_levelsMenu->getChildByID(fmt::format("level-{}", i - 1));
+		// CCNode* previousPosX = m_fields->m_levelsMenu->getChildByID(fmt::format("level-{}", i - 1));
 
-		if (i == 1) btn->setPosition(winSize.width / 5, 90);
-		if (i == 2) btn->setPosition(previousPosX->getPositionX() + 150, 160);
-		if (i == 3) btn->setPosition(previousPosX->getPositionX() + 150, 100);
-		if (i == 4) btn->setPosition(previousPosX->getPositionX() + 150, 150);
-		if (i == 5) btn->setPosition(previousPosX->getPositionX() + 150, 110);
+		if (i == 1) btn->setPosition(winSize.width / 2, winSize.height / 2);
+		if (i == 2) btn->setPosition(winSize.width / 2, winSize.height / 2);
+		if (i == 3) btn->setPosition(winSize.width / 2, winSize.height / 2);
+		if (i == 4) btn->setPosition(winSize.width / 2, winSize.height / 2);
+		if (i == 5) btn->setPosition(winSize.width / 2, winSize.height / 2);
 
 	}
 	
@@ -764,137 +762,4 @@ void RedesignedGauntletLayer::onLevelInfo(CCObject* sender) {
     auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto level = static_cast<GJGameLevel*>(button->getUserObject());
     LevelInfoPopup::create(level)->show();
-}
-
-bool RedesignedGauntletLayer::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
-    if (!m_fields->m_levelsMenu) {
-        log::error("m_levelsMenu not found");
-        return false;
-    }
-    
-    log::info("touching");
-
-    auto touchLoc = touch->getLocation();
-    
-    // Always allow dragging - remove the bounds check that was preventing dragging
-    m_fields->m_dragging = true;
-    m_fields->m_touchStartLoc = touchLoc;
-    m_fields->m_menuStartPos = m_fields->m_levelsMenu->getPosition();
-    m_fields->m_touchLastLoc = touchLoc;
-    m_fields->m_touchLastTime = std::chrono::steady_clock::now();
-    m_fields->m_velocity = ccp(0, 0);
-    m_fields->m_flinging = false;
-    return true;
-}
-
-void RedesignedGauntletLayer::registerWithTouchDispatcher() {
-    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(
-        this, 
-        -128,  // Priority (lower = higher priority, -128 is high)
-        true   // Swallow touches
-    );
-}
-
-void RedesignedGauntletLayer::ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
-    if (m_fields->m_dragging) {
-        // Just use the 'touch' parameter directly
-
-	log::info("dragging");
-
-        auto touchLoc = touch->getLocation();
-        auto now = std::chrono::steady_clock::now();
-        std::chrono::duration<float> dt = now - m_fields->m_touchLastTime;
-        float secs = dt.count();
-        if (secs <= 0.0f) secs = 1e-6f;
-        
-        CCPoint delta = ccpSub(touchLoc, m_fields->m_touchStartLoc);
-        CCPoint newPos = ccpAdd(m_fields->m_menuStartPos, delta);
-        
-        // Compute velocity
-        m_fields->m_velocity = ccp(
-            (touchLoc.x - m_fields->m_touchLastLoc.x) / secs,
-            (touchLoc.y - m_fields->m_touchLastLoc.y) / secs
-        );
-        m_fields->m_touchLastLoc = touchLoc;
-        m_fields->m_touchLastTime = now;
-        
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        auto content = m_fields->m_levelsMenu->getContentSize();
-        
-        float minX = std::min(0.0f, winSize.width - content.width);
-        float maxX = std::max(0.0f, winSize.width - content.width);
-        float minY = std::min(0.0f, winSize.height - content.height);
-        float maxY = std::max(0.0f, winSize.height - content.height);
-        
-        newPos.x = std::max(minX, std::min(maxX, newPos.x));
-        newPos.y = std::max(minY, std::min(maxY, newPos.y));
-        
-        m_fields->m_levelsMenu->setPosition(newPos);
-        updateParallax(newPos);
-    }
-}
-
-void RedesignedGauntletLayer::ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
-    if (m_fields->m_dragging) {
-        m_fields->m_dragging = false;
-
-		log::info("stopped");
-        
-        float speed = std::hypotf(m_fields->m_velocity.x, m_fields->m_velocity.y);
-        if (speed > 300.0f) {
-            m_fields->m_flinging = true;
-        } else {
-            m_fields->m_velocity = ccp(0, 0);
-            m_fields->m_flinging = false;
-        }
-    }
-}
-
-void RedesignedGauntletLayer::updateParallax(CCPoint const& menuPos) {
-    if (!m_fields->m_bgSprite || !m_fields->m_bgSprite2) return;
-    
-    CCPoint offset = ccpSub(menuPos, m_fields->m_menuOriginPos);
-    CCPoint parallaxOffset = ccpMult(offset, m_fields->m_parallax);
-    
-    m_fields->m_bgSprite->setPosition(ccpAdd(m_fields->m_bgStartPos, parallaxOffset));
-}
-
-void RedesignedGauntletLayer::update(float dt) {
-    GauntletLayer::update(dt);
-    
-    // Handle momentum/flinging after touch ends
-    if (m_fields->m_flinging && !m_fields->m_dragging) {
-        // Apply velocity
-        CCPoint currentPos = m_fields->m_levelsMenu->getPosition();
-        CCPoint newPos = ccpAdd(currentPos, ccpMult(m_fields->m_velocity, dt));
-        
-        // Apply bounds
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        auto content = m_fields->m_levelsMenu->getContentSize();
-        
-        float minX = std::min(0.0f, winSize.width - content.width);
-        float maxX = std::max(0.0f, winSize.width - content.width);
-        float minY = std::min(0.0f, winSize.height - content.height);
-        float maxY = std::max(0.0f, winSize.height - content.height);
-        
-        newPos.x = std::max(minX, std::min(maxX, newPos.x));
-        newPos.y = std::max(minY, std::min(maxY, newPos.y));
-        
-        m_fields->m_levelsMenu->setPosition(newPos);
-        updateParallax(newPos);
-        
-        // Decelerate
-        float decel = m_fields->m_deceleration * dt;
-        float speed = std::hypotf(m_fields->m_velocity.x, m_fields->m_velocity.y);
-        
-        if (speed > decel) {
-            // Reduce velocity
-            float factor = (speed - decel) / speed;
-            m_fields->m_velocity = ccpMult(m_fields->m_velocity, factor);
-        } else {
-            // Stop
-            m_fields->m_velocity = ccp(0, 0);
-            m_fields->m_flinging = false;
-        }
-    }
 }

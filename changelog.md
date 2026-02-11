@@ -13,7 +13,8 @@ I actually thought about what I needed this time!
   - "Disconnect Button" setting
   - "Path Blending" setting
   - "Toggle Paths" setting
-  - Reload Button (this was added to vanilla)
+  - Settings button in `GauntletSelectLayer`
+  - Custom Reload Button (this was added to vanilla)
 - **In Progress**:
   - Custom Gauntlet Support via webserver shenanigans (ArcticWoof and LimeGradient pls cook)
   - Particle support for all gauntlets

@@ -8,7 +8,7 @@ void RedesignedGauntletLayer::editGauntletFallback() {
     CCSize winSize = director->getWinSize();
     int backgroundValue = 1;
 
-    editGauntletLayer("Unnamed", ccc3(40, 125, 225), ccc3(199, 252, 89), ccc3(125, 234, 49));
+    editGauntletLayer("Unknown", ccc3(70, 70, 70), ccc3(233, 233, 233),{ 168, 168, 168 });
     GameManager::get()->loadBackground(backgroundValue);
 
     m_backgroundSprite->setTexture(CCTextureCache::sharedTextureCache()->textureForKey(GameManager::get()->getBGTexture(backgroundValue)));

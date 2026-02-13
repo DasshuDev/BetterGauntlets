@@ -2,7 +2,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/Loader.hpp>
 #include <Geode/ui/Layout.hpp>
-#include <Geode/ui/GeodeUI.hpp>
+#include <Geode/ui/SimpleAxisLayout.hpp>
 #include <Geode/modify/GauntletSelectLayer.hpp>
 
 using namespace geode::prelude;
@@ -12,7 +12,13 @@ using namespace geode::prelude;
 // 	using namespace keybinds;
 // #endif
 
-class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
+class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
+    struct Fields {
+        std::vector<CCMenuItemSpriteExtra*> m_dots = {};
+        CCMenu* m_dotsMenu = nullptr;
+        int currentGauntletPage = 0;
+        bool showingCustomList = false;
+    };
 
     cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name) {
         return findFirstChildRecursive<cocos2d::CCNode>(parent, [=](auto* spr) {
@@ -46,20 +52,30 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
             controllerBtn->setZOrder(1);
         }
         auto BRMenu = getChildByID("bottom-right-menu");
-        if (BRMenu) {
-            BRMenu->setContentSize(ccp(23.25, 103));
-            BRMenu->setLayout(
-                ColumnLayout::create()
-                ->setAxisReverse(false)
-                ->setAxisAlignment(AxisAlignment::Start)
-                ->setGap(-15.0f)
-            );
-            BRMenu->updateLayout();
-        }
+        if (!BRMenu) return false;     
+
+        BRMenu->setContentSize(ccp(23.25, 103));
+        BRMenu->setLayout(
+            ColumnLayout::create()
+            ->setAxisReverse(false)
+            ->setAxisAlignment(AxisAlignment::Start)
+            ->setGap(5.0)
+        );
+
+        CCMenuItemToggler* toggleSpr = CCMenuItemToggler::create(
+            CCSpriteGrayscale::createWithSpriteFrameName("GJ_bigStar_001.png"),
+            CCSprite::createWithSpriteFrameName("GJ_bigStar_001.png"),
+            this, menu_selector(RedesignedGauntletSelectLayer::toggleList)
+        );
+        toggleSpr->setID("toggle-list-button");
+        BRMenu->addChild(toggleSpr);
+
+        BRMenu->updateLayout();
+
         auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
         if (refreshSpr) {
             auto loadCircle = getChildByIDRecursive("loading-circle");
-            loadCircle->setPositionY(-18.5f);
+            loadCircle->setPositionY(-18.5);
             loadCircle->setScale(refreshSpr);
         }
         auto title = this->getChildByID("title"); 
@@ -219,18 +235,28 @@ class $modify(GauntletSelectLayerHook, GauntletSelectLayer) {
         return true;
     }
 
-    void onSettingsButton(CCObject* sender) {
-        geode::openSettingsPopup(Mod::get(), false);
+    void toggleList(CCObject* sender) {
+        CCNode* gauntletList = getChildByIDRecursive("gauntlets-list");
+        CCNode* serverList = getChildByIDRecursive("server-gauntlets-list"_spr);
+        CCNode* dotsMenu = getChildByIDRecursive("page-navigation"_spr);
+        CCNode* arrowBtns = getChildByIDRecursive("scroll-buttons-menu");
+        
+        if (gauntletList && serverList) {
+            bool showingVanilla = !gauntletList->isVisible();
+            
+            gauntletList->setVisible(showingVanilla);
+            dotsMenu->setVisible(showingVanilla);
+            arrowBtns->setVisible(showingVanilla);
+            serverList->setVisible(!showingVanilla);
+            
+            if (m_scrollLayer) {
+                m_scrollLayer->setTouchEnabled(showingVanilla);
+            }
+            
+            m_fields->showingCustomList = !showingVanilla;
+        }
     }
-};
-
-class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
-    struct Fields {
-        std::vector<CCMenuItemSpriteExtra*> m_dots = {};
-        CCMenu* m_dotsMenu = nullptr;
-        int currentGauntletPage = 0;
-    };
-
+    
     void updateDots() {
         auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
 
@@ -267,7 +293,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
         for (int i = 0; i < m_scrollLayer->getTotalPages(); i++) {
             auto spr = CCSprite::createWithSpriteFrameName("gj_navDotBtn_off_001.png");
-            spr->setScale(0.8f);
+            spr->setScale(0.8);
 
             auto dot = CCMenuItemSpriteExtra::create(
                 spr,
@@ -286,6 +312,50 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         // thank you ery :3
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
+        }
+        //
+
+        CCMenu* serverList = CCMenu::create();
+        serverList->setID("server-gauntlets-list"_spr);
+        serverList->setPosition({winSize.width / 2, winSize.height / 2 - 17.5f});
+
+        serverList->setLayout(geode::RowLayout::create()
+            ->setGap(71)
+            ->setAxisAlignment(AxisAlignment::Center)
+        );
+
+        serverList->setVisible(false);
+        this->addChild(serverList);
+        
+        for (int btn = 0; btn < 3; btn++) {
+            CCMenuItemSpriteExtra* serverGauntletBtn = CCMenuItemSpriteExtra::create(
+                CCSprite::createWithSpriteFrameName("GJ_safeBtn_001.png"),
+                this, nullptr
+            );
+            serverGauntletBtn->setID(fmt::format("server-gauntlet-button-{}", btn + 1));
+            serverList->addChild(serverGauntletBtn);
+            serverList->updateLayout();
+        }
+
+        if (m_fields->showingCustomList) {
+            if (m_scrollLayer) {
+                m_scrollLayer->setVisible(false);
+                m_scrollLayer->setTouchEnabled(false);  // Disable touch
+            }
+            if (m_fields->m_dotsMenu) m_fields->m_dotsMenu->setVisible(false);
+            
+            auto serverList = getChildByID("server-gauntlets-list");
+            if (serverList) serverList->setVisible(true);
+            
+        } else {
+            if (m_scrollLayer) {
+                m_scrollLayer->setVisible(true);
+                m_scrollLayer->setTouchEnabled(true);  // Enable touch
+            }
+            if (m_fields->m_dotsMenu) m_fields->m_dotsMenu->setVisible(true);
+            
+            auto serverList = getChildByID("server-gauntlets-list");
+            if (serverList) serverList->setVisible(false);
         }
         
         // #ifndef GEODE_IS_IOS
@@ -320,7 +390,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             if (GDUtils) {
                 auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
                 if (settingVal) {
-                    menu->setScale(0.85f);
+                    menu->setScale(0.85);
                 }
             }
             std::vector<CCSprite*> gauntletBtns;
@@ -339,12 +409,11 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     if (GDUtils) {
                         auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
                         if (!settingVal) {
-                            infoNode->setPositionY(-2.5f);
+                            infoNode->setPositionY(-2.5);
                         }
                     } else {
-                        infoNode->setPositionY(-2.5f);
+                        infoNode->setPositionY(-2.5);
                     }
-                    // // Name Nodes // //
                     // Name Label
                     auto nameLabel = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-label"));
                     if (nameLabel) {
@@ -369,27 +438,27 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
                     // Chest Sprite
                     auto chestSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-sprite"));
                     if (chestSpr) {
-                        chestSpr->setPositionY(-64.5f);
-                        chestSpr->setScale(0.3f);
+                        chestSpr->setPositionY(-64.5);
+                        chestSpr->setScale(0.3);
                     }
                     // Chest Shadow Sprite
                     auto chestShadowSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-shadow-sprite"));
                     if (chestShadowSpr) {
                         chestShadowSpr->setPosition(ccp(chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2));
-                        chestShadowSpr->setScale(0.3f);
+                        chestShadowSpr->setScale(0.3);
                     }
                     // Reward Label
                     auto rewardLabel = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("reward-label"));
                     if (rewardLabel) {
-                        rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5f);
-                        rewardLabel->setScale(0.5f);
+                        rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5);
+                        rewardLabel->setScale(0.5);
                         rewardLabel->setZOrder(3);
                     }
                     // Reward Shadow Label
                     auto rewardShadowLabel = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("reward-shadow-label"));
                     if (rewardShadowLabel) {
                         rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 2));
-                        rewardShadowLabel->setScale(0.5f);
+                        rewardShadowLabel->setScale(0.5);
                     }
                 }
             }

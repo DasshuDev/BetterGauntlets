@@ -18,10 +18,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void gauntletLevel(int);
     cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode*, char const*);
 
-    // #ifndef GEODE_IS_IOS
-    //     void defineKeybind(const char*, std::function<void()>);
-    // #endif
-
     void loadLevelsFinished(cocos2d::CCArray*, char const*, int) override;
     void editGauntlets();
     void editGauntletLayer(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
@@ -29,8 +25,6 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void setupGauntlet(cocos2d::CCArray* levels);
     void setupInfo();
     void onInfo(cocos2d::CCObject* obj);
-    void onLevelInfo(CCObject* sender);
-    void onLocked(CCObject* sender);
 
     bool init(GauntletType);
 
@@ -92,9 +86,9 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editCosmosGauntlet();
     void editRandomGauntlet();
     void editChanceGauntlet();
+    void editLoveGauntlet();
     void editCinemaGauntlet();
     void editFutureGauntlet();
     void editUtopiaGauntlet();
-    void editLoveGauntlet();
 };
 #endif

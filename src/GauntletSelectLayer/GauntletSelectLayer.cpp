@@ -62,16 +62,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             ->setGap(5.0)
         );
 
-        CCMenuItemToggler* toggleSpr = CCMenuItemToggler::create(
-            CCSpriteGrayscale::createWithSpriteFrameName("GJ_bigStar_001.png"),
-            CCSprite::createWithSpriteFrameName("GJ_bigStar_001.png"),
-            this, menu_selector(RedesignedGauntletSelectLayer::toggleList)
-        );
-        toggleSpr->setID("toggle-list-button");
-        BRMenu->addChild(toggleSpr);
-
-        BRMenu->updateLayout();
-
         auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
         if (refreshSpr) {
             auto loadCircle = getChildByIDRecursive("loading-circle");
@@ -234,28 +224,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
         return true;
     }
-
-    void toggleList(CCObject* sender) {
-        CCNode* gauntletList = getChildByIDRecursive("gauntlets-list");
-        CCNode* serverList = getChildByIDRecursive("server-gauntlets-list"_spr);
-        CCNode* dotsMenu = getChildByIDRecursive("page-navigation"_spr);
-        CCNode* arrowBtns = getChildByIDRecursive("scroll-buttons-menu");
-        
-        if (gauntletList && serverList) {
-            bool showingVanilla = !gauntletList->isVisible();
-            
-            gauntletList->setVisible(showingVanilla);
-            dotsMenu->setVisible(showingVanilla);
-            arrowBtns->setVisible(showingVanilla);
-            serverList->setVisible(!showingVanilla);
-            
-            if (m_scrollLayer) {
-                m_scrollLayer->setTouchEnabled(showingVanilla);
-            }
-            
-            m_fields->showingCustomList = !showingVanilla;
-        }
-    }
     
     void updateDots() {
         auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
@@ -309,72 +277,9 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
         m_fields->m_dotsMenu->updateLayout();
 
-        // thank you ery :3
         if (const auto pageButtons = m_scrollLayer->m_dots) {
             RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(pageButtons);
         }
-        //
-
-        CCMenu* serverList = CCMenu::create();
-        serverList->setID("server-gauntlets-list"_spr);
-        serverList->setPosition({winSize.width / 2, winSize.height / 2 - 17.5f});
-
-        serverList->setLayout(geode::RowLayout::create()
-            ->setGap(71)
-            ->setAxisAlignment(AxisAlignment::Center)
-        );
-
-        serverList->setVisible(false);
-        this->addChild(serverList);
-        
-        for (int btn = 0; btn < 3; btn++) {
-            CCMenuItemSpriteExtra* serverGauntletBtn = CCMenuItemSpriteExtra::create(
-                CCSprite::createWithSpriteFrameName("GJ_safeBtn_001.png"),
-                this, nullptr
-            );
-            serverGauntletBtn->setID(fmt::format("server-gauntlet-button-{}", btn + 1));
-            serverList->addChild(serverGauntletBtn);
-            serverList->updateLayout();
-        }
-
-        if (m_fields->showingCustomList) {
-            if (m_scrollLayer) {
-                m_scrollLayer->setVisible(false);
-                m_scrollLayer->setTouchEnabled(false);  // Disable touch
-            }
-            if (m_fields->m_dotsMenu) m_fields->m_dotsMenu->setVisible(false);
-            
-            auto serverList = getChildByID("server-gauntlets-list");
-            if (serverList) serverList->setVisible(true);
-            
-        } else {
-            if (m_scrollLayer) {
-                m_scrollLayer->setVisible(true);
-                m_scrollLayer->setTouchEnabled(true);  // Enable touch
-            }
-            if (m_fields->m_dotsMenu) m_fields->m_dotsMenu->setVisible(true);
-            
-            auto serverList = getChildByID("server-gauntlets-list");
-            if (serverList) serverList->setVisible(false);
-        }
-        
-        // #ifndef GEODE_IS_IOS
-        //     this->defineKeybind("next-gauntlet"_spr, [this]() {
-        //         GauntletSelectLayer::onNext(nullptr); // default: right arrow
-        //     });
-        //     this->defineKeybind("previous-gauntlet"_spr, [this]() {
-        //         GauntletSelectLayer::onPrev(nullptr); // default: left arrow
-        //     });
-        //     this->defineKeybind("first-visible-gauntlet"_spr, [this]() {
-        //         RedesignedGauntletSelectLayer::pressGauntlet(1); // default: numkey 1
-        //     });
-        //     this->defineKeybind("second-visible-gauntlet"_spr, [this]() {
-        //         RedesignedGauntletSelectLayer::pressGauntlet(2); // default: numkey 2
-        //     });
-        //     this->defineKeybind("third-visible-gauntlet"_spr, [this]() {
-        //         RedesignedGauntletSelectLayer::pressGauntlet(3); // default: numkey 3
-        //     });
-        // #endif
 
         for (int p = 0; p < m_scrollLayer->getTotalPages(); p++) {            
             CCMenu* pages = static_cast<CCMenu*>(getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1)));
@@ -480,17 +385,6 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         m_scrollLayer->updatePages();
         m_scrollLayer->repositionPagesLooped();
     }
-
-    // #ifndef GEODE_IS_IOS
-    //     void defineKeybind(const char* id, std::function<void()> callback) {
-    //         this->template addEventListener<InvokeBindFilter>([=](InvokeBindEvent* event) {
-    //             if (event->isDown()) {
-    //                 callback();
-    //             }
-    //             return ListenerResult::Propagate;
-    //         }, id);
-    //     }
-    // #endif
 
     void findCurrentGauntletPageUsing(CCArray* pageButtons) {
         int i = 0;

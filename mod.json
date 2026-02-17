@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-alpha.2",
+	"geode": "5.0.0-beta.2",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v2.0.0-alpha.1",
+	"version": "v1.7.0",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {

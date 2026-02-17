@@ -1,13 +1,12 @@
-## <cg>v2.0.0-alpha.1</c>
-I actually thought about what I needed this time!
-- <cj>**Bump**</c> to Geode 5.0.0-alpha.1 and GD 2.2081.
+  ## <cg>v1.7.0</c>
+- <cj>**Bump**</c> to Geode v5.0.0 and GD 2.2081
 - <cg>**Added**</c> iOS Jit-less support!
-- <cy>**Updated**</c> Gauntlet Levels to follow a more GD World-like principle.
-    - Levels are now draggable for more immersive navigation!
+- <cg>**Added**</c> a Level Safe!
+  - Shows every level found within the Gauntlet, unlocked or not.
+  - Inspired by Jacob375's "Gauntlet Level Vault" mod!
 - <cy>**Updated**</c> the following Gauntlets' visuals:
   - `Chaos, Time, Force, etc.`
-- <cy>**Updated**</c> keybinds' placement in the keybind tree
-- <cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
+  - <cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
 - <cr>**Removed**</c> the following bloat code:
   - "Path Opacity" setting
   - "Disconnect Button" setting
@@ -15,15 +14,11 @@ I actually thought about what I needed this time!
   - "Toggle Paths" setting
   - Settings button in `GauntletSelectLayer`
   - Custom Reload Button (this was added to vanilla)
-- **In Progress**:
-  - Custom Gauntlet Support via webserver shenanigans (ArcticWoof and LimeGradient pls cook)
-  - Particle support for all gauntlets
-  - Backend rewrite
 
 ---
 
 ## v1.6.11
-- <cl>**Fixed**</c> **another** layering issue with GDUtils' "New Gauntlets Design" setting enabled.
+- <cl>**Fixed**</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled, for real this time.
 
 ---
 

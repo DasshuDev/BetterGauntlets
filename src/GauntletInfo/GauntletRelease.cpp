@@ -1,10 +1,10 @@
 #include "GauntletInfo.hpp"
 
 std::string getGauntletDate(GauntletType gauntletType) {
+
+    std::string date = "Unknown Release Date";
+
     switch (gauntletType) {
-        default: {
-            return "Unknown Release Date";
-        }
         case GauntletType::Fire: {
             return "February 5, 2017";
         }
@@ -54,7 +54,7 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "July 18, 2024";
         }
         case GauntletType::Rune: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Force: {
             return "December 2, 2024";
@@ -63,7 +63,7 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "October 31, 2025";
         }
         case GauntletType::Dragon: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Water: {
             return "March 18, 2024";
@@ -72,22 +72,22 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "October 31, 2024";
         }
         case GauntletType::Acid: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Witch: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Power: {
             return "January 26, 2025";
         }
         case GauntletType::Potion: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Snake: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Toxic: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Halloween: {
             return "October 31, 2024";
@@ -96,10 +96,10 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "June 17, 2025";
         }
         case GauntletType::Ghost: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Spider: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Gem: {
             return "September 1, 2025";
@@ -120,7 +120,7 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "December 25, 2024";
         }
         case GauntletType::Surprise: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Mystery: {
             return "June 20, 2024";
@@ -135,10 +135,10 @@ std::string getGauntletDate(GauntletType gauntletType) {
             return "January 25, 2024";
         }
         case GauntletType::Grave: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::Temple: {
-            [[fallthrough]];
+            return date;
         }
         case GauntletType::World: {
             return "December 19, 2023";
@@ -167,11 +167,23 @@ std::string getGauntletDate(GauntletType gauntletType) {
         case GauntletType::Cosmos: {
             return "April 5, 2025";
         }
-        // case GauntletType::Random: {
-        //     [[fallthrough]];
-        // }
-        // case GauntletType::Chance: {
-        //     [[fallthrough]];
-        // }
+        case GauntletType::Random: {
+            return "January 19, 2026";
+        }
+        case GauntletType::Chance: {
+            return "January 19, 2026";
+        }
+        case GauntletType::Love: {
+            return "February 14, 2026";
+        }
+        case GauntletType::Cinema: {
+            return date;
+        }
+        case GauntletType::Future: {
+            return date;
+        }
+        case GauntletType::Utopia: {
+            return date;
+        }
     }
 }

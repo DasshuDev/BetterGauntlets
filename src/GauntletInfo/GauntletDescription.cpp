@@ -167,11 +167,23 @@ std::string getGauntletInfo(GauntletType gauntletType) {
         case GauntletType::Cosmos: {
             return "An awe-inspiring expanse where the mysteries of the universe unfold. Nebulae shimmer with vibrant colors, stars are born and die in cosmic dances, and black holes twist the very fabric of reality. The beauty is breathtaking, but the dangers are immense.";
         }
-        // case GauntletType::Random: {
-        //     return "An ever-changing gauntlet assembled from a mix of biomes and hazards, ensuring every run feels unique and unpredictable.";
+        case GauntletType::Random: {
+            return "An ever-changing gauntlet assembled from a mix of biomes and hazards, ensuring every run feels unique and unpredictable.";
+        }
+        case GauntletType::Chance: {
+            return "A gauntlet governed by luck, where rewards and dangers appear unpredictably and fortunes shift with every step.";
+        }
+        case GauntletType::Love: {
+            return "A heartwarming world where love and affection are the central themes. The landscape is filled with romantic settings, adorable creatures, and a sense of warmth and happiness.";
+        }
+        // case GauntletType::Cinema: {
+        //     return date;
         // }
-        // case GauntletType::Chance: {
-        //     return "A gauntlet governed by luck, where rewards and dangers appear unpredictably and fortunes shift with every step.";
+        // case GauntletType::Future: {
+        //     return date;
+        // }
+        // case GauntletType::Utopia: {
+        //     return date;
         // }
     }
 }

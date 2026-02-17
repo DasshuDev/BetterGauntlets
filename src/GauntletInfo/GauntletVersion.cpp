@@ -4,10 +4,9 @@
 using namespace geode::prelude;
 
 std::string getGauntletVersion(GauntletType gauntletType) {
+
+    std::string version = "Unknown Version";
     switch (gauntletType) {
-        default: {
-            return Loader::get()->getVersion().toVString();
-        }
         case GauntletType::Fire: {
             return "2.1";
         }
@@ -57,7 +56,7 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.2";
         }
         case GauntletType::Rune: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Force: {
             return "2.2";
@@ -66,7 +65,7 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.207";
         }
         case GauntletType::Dragon: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Water: {
             return "2.2";
@@ -75,22 +74,22 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.2";
         }
         case GauntletType::Acid: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Witch: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Power: {
             return "2.2";
         }
         case GauntletType::Potion: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Snake: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Toxic: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Halloween: {
             return "2.2";
@@ -99,13 +98,13 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.207";
         }
         case GauntletType::Ghost: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Spider: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Gem: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Inferno: {
             return "2.2";
@@ -123,7 +122,7 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.2";
         }
         case GauntletType::Surprise: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Mystery: {
             return "2.2";
@@ -138,10 +137,10 @@ std::string getGauntletVersion(GauntletType gauntletType) {
             return "2.2";
         }
         case GauntletType::Grave: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::Temple: {
-            [[fallthrough]];
+            return version;
         }
         case GauntletType::World: {
             return "2.2";
@@ -170,11 +169,23 @@ std::string getGauntletVersion(GauntletType gauntletType) {
         case GauntletType::Cosmos: {
             return "2.207";
         }
-        // case GauntletType::Random: {
-        //     [[fallthrough]];
-        // }
-        // case GauntletType::Chance: {
-        //     [[fallthrough]];
-        // }
+        case GauntletType::Random: {
+            return "2.208";
+        }
+        case GauntletType::Chance: {
+            return "2.208";
+        }
+        case GauntletType::Love: {
+            return "2.208";
+        }
+        case GauntletType::Cinema: {
+            return version;
+        }
+        case GauntletType::Future: {
+            return version;
+        }
+        case GauntletType::Utopia: {
+            return version;
+        }
     }
 }

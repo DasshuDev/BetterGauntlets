@@ -7,6 +7,4 @@ using namespace geode::prelude;
 class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
 
     bool init(int type);
-    
-    void toggleList(CCObject* sender);
 };

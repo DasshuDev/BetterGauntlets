@@ -7,6 +7,7 @@
 - <cy>**Updated**</c> the following Gauntlets' visuals:
   - `Chaos, Time, Force, etc.`
   - <cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
+- <cr>**Removed**</c> Custom Keybinds functionality as the mod is <cr>not yet supported</c> for 2.2081
 - <cr>**Removed**</c> the following bloat code:
   - "Path Opacity" setting
   - "Disconnect Button" setting

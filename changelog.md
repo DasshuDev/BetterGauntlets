@@ -4,8 +4,10 @@
 - <cg>**Added**</c> a Level Safe!
   - Shows every level found within the Gauntlet, unlocked or not.
   - Inspired by Jacob375's "Gauntlet Level Vault" mod!
+- <cg>**Added**</c> additional* support to the following Gauntlets:
+  - `Random, Chance, Love, Cinema, Future, Utopia`
 - <cy>**Updated**</c> the following Gauntlets' visuals:
-  - `Chaos, Time, Force, etc.`
+  - `Chaos, Time, Force`
   - <cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
 - <cr>**Removed**</c> Custom Keybinds functionality as the mod is <cr>not yet supported</c> for 2.2081
 - <cr>**Removed**</c> the following bloat code:

@@ -38,5 +38,17 @@ void RedesignedGauntletLayer::editForestGauntlet() {
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
+        // leaves 3
+        auto bgParticleNode3 = CCParticleSystemQuad::create();
+        if (bgParticleNode3) {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
+                "14a-1a3a0.45a4a-118a0a294a0a400a0a0a0a0a0a0a56a200a50a0a50a0.25a0.25a0.5a0.35a0a0a0.25a0.05a100a0a0a53a0.054902a0a0.45098a0a0a0a0.1a0a0a0a0.15a0a0a0a0a0a0a0a0a2a1a0a0a0a25a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+            );
+            bgParticles->setPosition(ccp(director->getScreenRight() - 45, director->getScreenTop() + 100));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
     }
 }

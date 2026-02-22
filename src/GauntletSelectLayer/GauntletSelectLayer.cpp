@@ -7,11 +7,6 @@
 
 using namespace geode::prelude;
 
-// #ifndef GEODE_IS_IOS
-// 	#include <geode.custom-keybinds/include/Keybinds.hpp>
-// 	using namespace keybinds;
-// #endif
-
 class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     struct Fields {
         std::vector<CCMenuItemSpriteExtra*> m_dots = {};
@@ -59,8 +54,17 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
             ColumnLayout::create()
             ->setAxisReverse(false)
             ->setAxisAlignment(AxisAlignment::Start)
-            ->setGap(5.0)
+            ->setGap(10.0)
         );
+
+        CCMenuItemSpriteExtra* lockBtn = CCMenuItemSpriteExtra::create(
+            CCSpriteGrayscale::createWithSpriteFrameName("GJ_lock_001.png"),
+            this,
+            menu_selector(RedesignedGauntletSelectLayer::onLock)
+        );
+        lockBtn->setOpacity(75);
+        lockBtn->setColor(ccc3(128, 128, 128));
+        BRMenu->addChild(lockBtn);
 
         auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
         if (refreshSpr) {
@@ -221,6 +225,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         if (!topRightMenu) return false;
         topRightMenu->setPosition(director->getScreenRight() - 24, 254.5);
         topRightMenu->setContentHeight(125);
+
+        BRMenu->updateLayout();
 
         return true;
     }
@@ -433,5 +439,39 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onBack(cocos2d::CCObject* sender){
         m_fields->currentGauntletPage = 0;
         GauntletSelectLayer::onBack(sender);
+    }
+
+    void onLock(CCObject* sender) {
+        std::vector<std::string> messages = {
+            "...",
+            "Nothing to see here, move along.",
+            "You are not supposed to be here...",
+            "Nice try, but this is as far as you go for now.",
+            "You are messing with forces you don't understand.",
+            "Now is not the time. Come back later.",
+            "Leave here, at once.",
+            "Do not disturb the <cy>Gauntlet Keeper</c>.",
+            "Don't you have something better to do?",
+            "Move aside.",
+            "Stop. Just stop.",
+            "This is locked. <cr>Go away.</c>",
+        };
+        
+        int randomIndex = rand() % messages.size();
+        std::string randomMessage = messages[randomIndex];
+
+        DialogObject* dialogObj = DialogObject::create(
+            "The Gauntlet Keeper",
+            randomMessage,
+            15,
+            1.f,
+            false,
+            ccWHITE
+        );
+        if (dialogObj) {
+            auto dialog = DialogLayer::createDialogLayer(dialogObj, nullptr, 5);
+            dialog->addToMainScene();
+            dialog->animateInRandomSide();
+        }
     }
 };

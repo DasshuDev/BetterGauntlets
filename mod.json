@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-beta.3",
+	"geode": "5.0.0-beta.4",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.7.0",
+	"version": "v1.7.1",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -22,8 +22,7 @@
 	"tags": [
 		"customization",
 		"enhancement",
-		"interface",
-		"online"
+		"interface"
 	],
 	"resources": {
 		"files": [
@@ -100,7 +99,7 @@
 
 		"vault-tooltip": {
 			"name": "Toggle Vault Tooltip",
-			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.\n\n<cr>Must have <cy>Gauntlet Level Vault</c> by <cj>Jacob375</c> installed</c>.",
+			"description": "<cg>Toggles</c> the tooltip for the Gauntlet's Vault Levels.",
 			"type": "bool",
 			"default": true
 		},
@@ -109,24 +108,6 @@
 			"name": "Experimental Settings",
 			"type": "title",
 			"description": "Category used for <cr>experimental features/settings</c>."
-		},
-
-		"testBool": {
-			"name": "bool",
-			"type": "bool",
-			"default": false
-		},
-
-		"testColor1": {
-			"name": "main",
-			"type": "rgba",
-			"default": [255, 255, 255, 255]
-		},
-
-		"testColor2": {
-			"name": "secondary",
-			"type": "rgba",
-			"default": [255, 255, 255, 255]
 		}
 	}
 }

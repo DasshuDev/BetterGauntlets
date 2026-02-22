@@ -18,11 +18,11 @@ void RedesignedGauntletLayer::editWaterGauntlet() {
 		auto bgParticleNode1 = CCParticleSystemQuad::create();
         if (bgParticleNode1) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "85a-1a2a0.45a35a45a180a0a0a350a0a0a0a11a0a0a0a200a10a45a0a0.270588a0a0.662745a0a0.658824a0a0.3a0.05a1000a20a45a0a0a0a0.0666667a0a0.482353a0a0.1a0.15a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a31a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "50a-1a2a0.45a20a0a0a0a50a500a0a0a0a11a0a0a0a750a150a0a0a0.411765a0a0.513726a0a1a0.4a0.3a0.05a500a100a0a0a0a0a0a0a0.34902a0a0.1a0.15a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a188a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );
-            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 10));
+            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() + 30));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }

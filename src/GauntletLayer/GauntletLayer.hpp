@@ -4,7 +4,6 @@
 #pragma once
 
 #include <Geode/modify/GauntletLayer.hpp>
-#include <Geode/ui/Popup.hpp>
 #include <UIBuilder.hpp>
 
 using namespace geode::prelude;

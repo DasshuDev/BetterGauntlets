@@ -1,10 +1,10 @@
 #include "GauntletInfo.hpp"
 
 std::string getGauntletInfo(GauntletType gauntletType) {
+
+    std::string desc = "No info available for this gauntlet yet.";
+
     switch (gauntletType) {
-        default: {
-            return "No info available for this gauntlet yet.";
-        }
         case GauntletType::Fire: {
             return "A fiery landscape where the skies are filled with intense embers, and the charred ground radiates an unusual warmth.";
         }
@@ -176,14 +176,14 @@ std::string getGauntletInfo(GauntletType gauntletType) {
         case GauntletType::Love: {
             return "A heartwarming world where love and affection are the central themes. The landscape is filled with romantic settings, adorable creatures, and a sense of warmth and happiness.";
         }
-        // case GauntletType::Cinema: {
-        //     return date;
-        // }
-        // case GauntletType::Future: {
-        //     return date;
-        // }
-        // case GauntletType::Utopia: {
-        //     return date;
-        // }
+        case GauntletType::Cinema: {
+            return desc;
+        }
+        case GauntletType::Future: {
+            return desc;
+        }
+        case GauntletType::Utopia: {
+            return desc;
+        }
     }
 }

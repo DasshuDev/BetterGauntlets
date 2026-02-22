@@ -274,7 +274,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editHauntedGauntlet();
 			break;
 		}
-		case GauntletType::Acid: { // 23 UNFINISHED
+		case GauntletType::Acid: { // 23 
 			editAcidGauntlet();
 			break;
 		}
@@ -282,7 +282,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editWitchGauntlet();
 			break;
 		}
-		case GauntletType::Power: { // 25 UNFINISHED
+		case GauntletType::Power: { // 25 
 			editPowerGauntlet();
 			break;
 		}
@@ -302,7 +302,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editHalloweenGauntlet();
 			break;
 		}
-		case GauntletType::Treasure: { // 30 UNFINISHED
+		case GauntletType::Treasure: { // 30 
 			editTreasureGauntlet();
 			break;
 		}
@@ -378,7 +378,7 @@ bool RedesignedGauntletLayer::init(GauntletType type) {
 			editUniverseGauntlet();
 			break;
 		}
-		case GauntletType::Discord: { // 49 UNFINISHED
+		case GauntletType::Discord: { // 49
 			editDiscordGauntlet();
 			break;
 		}
@@ -612,17 +612,6 @@ void RedesignedGauntletLayer::editGauntlets() {
 								}
 							}
 						}
-						// auto grayscaleSpr = typeinfo_cast<CCSpriteGrayscale*>(island);
-						// if (grayscaleSpr) {
-						// 	auto authorName = CCLabelBMFont::create(author.c_str(), "goldFont.fnt");
-						// 	if (authorName) {
-						// 		authorName->setID("creator-name"_spr);
-						// 		authorName->setAlignment(kCCTextAlignmentCenter);
-						// 		authorName->setPositionY(nameModify->getPositionY() - 11);
-						// 		authorName->setScale(0.4f);
-						// 		stats->addChild(authorName);
-						// 	}
-						// }
 					}
 				}
 			}

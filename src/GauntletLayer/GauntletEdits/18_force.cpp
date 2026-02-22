@@ -30,7 +30,7 @@ void RedesignedGauntletLayer::editForceGauntlet() {
         auto bgParticleNode2 = CCParticleSystemQuad::create();
         if (bgParticleNode2) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "10a-1a2a0.45a4a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a360a0a1a0.2a0a1a0a0.2a0.1a10000a0a0a360a1a0a0a0a0.811765a0a0.05a0a0a0a0.45a0.15a0a0a0a0a0a0a0a2a1a0a0a0a192a0a0a0a0a0a0a0a0a0a0a3.75a1a5a0",
+                "8a-1a2a0.45a3a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a360a0a1a0.2a0a1a0a0.2a0.1a10000a0a0a360a1a0a0a0a0.811765a0a0.05a0a0a0a0.45a0.15a0a0a0a0a0a0a0a2a1a0a0a0a192a0a0a0a0a0a0a0a0a0a0a2.5a1a5a0",
                 NULL,
                 false
             );

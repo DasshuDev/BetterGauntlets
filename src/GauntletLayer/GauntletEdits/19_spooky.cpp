@@ -30,7 +30,7 @@ void RedesignedGauntletLayer::editSpookyGauntlet() {
         auto bgParticleNode2 = CCParticleSystemQuad::create();
         if (bgParticleNode2) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "8a-1a2a0.45a3a90a20a155a40a300a0a0a0a0a0a0a39a30a15a0a0a1a0a1a0a1a0a0.3a0.15a3a0a0a0a1a0a1a0a1a0a0a0a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a1a34a0a1a0.3a0a0a0a0a0a0a0a0a0a0a0",
+                "8a-1a2a0.45a3a90a20a303a40a300a0a0a-260a0a0a0a39a20a5a0a0a1a0a1a0a1a0a0.3a0.15a15a0a0a92a1a0a1a0a1a0a0a0a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a34a0a1a0.3a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );

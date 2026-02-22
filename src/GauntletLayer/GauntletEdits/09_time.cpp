@@ -18,7 +18,7 @@ void RedesignedGauntletLayer::editTimeGauntlet() {
 		auto bgParticleNode1 = CCParticleSystemQuad::create();
         if (bgParticleNode1) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "10a-1a2a0.45a4a0a0a0a0a0a0a0a0a0a0a0a0a1000a0a0a360a0a1a0.2a0a1a0a0.2a0.1a0a0a0a360a1a0a1a0a1a0a0.05a0a0.6a0.2a0a0a0a0a0a0a0a0a0a2a1a0a0a0a190a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "10a-1a2a0.45a4a0a0a0a0a0a0a0a0a0a0a0a0a1000a0a0a0a0a1a0.2a0a1a0a0.2a0.1a0a0a720a0a1a0a0.75a0.25a1a0a0.05a0a0.6a0.2a0a0a0a0a0a0a0a0a0a2a1a0a0a0a190a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );
@@ -30,7 +30,7 @@ void RedesignedGauntletLayer::editTimeGauntlet() {
 		auto bgParticleNode2 = CCParticleSystemQuad::create();
         if (bgParticleNode2) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "2a-1a2a0.45a1a0a0a0a0a0a0a0a0a0a0a0a0a1500a0a0a100a0a0a0.2a0a1a0a0.25a0.05a0a0a0a100a1a0a1a0a1a0a0.1a0.05a1a0a0a0a0a0a0a0a0a0a0a2a1a0a0a0a95a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "2a-1a2a0.45a1a0a0a0a0a0a0a0a0a0a0a0a0a1500a0a0a100a0a0a0.2a0a1a0a0.25a0.05a0a0a0a100a1a0a1a0a1a0a0.1a0.05a1a0a0a0a0a0a0a0a0a0a0a2a1a0a0a0a43a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );

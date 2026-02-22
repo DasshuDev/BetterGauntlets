@@ -30,11 +30,11 @@ void RedesignedGauntletLayer::editRuneGauntlet() {
         auto bgParticleNode2 = CCParticleSystemQuad::create();
         if (bgParticleNode2) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "50a-1a4a2a8a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a60a0.564706a0a0.372549a0a0a0a0.1a0a400a0a90a67a0.247059a0a0.145098a0a0a0a0a0a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
+                "50a-1a4a2a8a90a90a0a0a0a0a402a-25a0a60a0a0a400a0a90a60a0.564706a0a0.372549a0a0a0a0.1a0a400a0a90a67a0.247059a0a0.145098a0a0a0a0a0a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a183a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );
-            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 10));
+            bgParticles->setPosition(ccp(director->getScreenLeft() - 15, director->getScreenBottom() - 50));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
@@ -42,11 +42,11 @@ void RedesignedGauntletLayer::editRuneGauntlet() {
         auto bgParticleNode3 = CCParticleSystemQuad::create();
         if (bgParticleNode3) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "10a-1a2a0.45a4a90a90a0a0a0a200a0a0a11a0a0a0a350a10a45a0a0.411765a0a0.984314a0a1a0.4a0.3a0.05a500a20a45a0a0a0a0a0a0.34902a0a0.1a0.15a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a188a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "40a-1a2a0.45a16a90a90a0a0a0a200a0a0a11a0a0a0a350a10a0a0a0.411765a0a0.984314a0a1a0.4a0.15a0.05a500a20a0a0a0a0a0a0a0.752941a0a0.05a0.05a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a27a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );
-            bgParticles->setPosition(ccp(director->getScreenLeft() - 10, winSize.height / 2));
+            bgParticles->setPosition(ccp(director->getScreenLeft() - 5, winSize.height / 2));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
@@ -54,11 +54,11 @@ void RedesignedGauntletLayer::editRuneGauntlet() {
         auto bgParticleNode4 = CCParticleSystemQuad::create();
         if (bgParticleNode4) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "10a-1a2a0.45a4a90a90a0a0a0a200a0a0a11a0a0a0a350a10a45a0a0.411765a0a0.984314a0a1a0.4a0.3a0.05a500a20a45a0a0a0a0a0a0.34902a0a0.1a0.15a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a188a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "40a-1a2a0.45a16a90a90a0a0a0a200a0a0a11a0a0a0a350a10a0a0a0.411765a0a0.984314a0a1a0.4a0.15a0.05a500a20a0a0a0a0a0a0a0.752941a0a0.05a0.05a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a27a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );
-            bgParticles->setPosition(ccp(director->getScreenRight() - 10, winSize.height / 2));
+            bgParticles->setPosition(ccp(director->getScreenRight() + 5, winSize.height / 2));
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }

@@ -1,6 +1,13 @@
 # <cc>Changelog</c>
 
-## <cc>v1.7.1</c>
+## <cc>v1.7.2</c>
+- <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
+  - `Split`
+- <c-c4ebff><cl>**Fixed**</c> particles not sppearing in the <c-f9e6aa>**Power**</c> Gauntlet.
+
+---
+
+## <c-ffffff>v1.7.1
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
   - `Bonus, Time, Doom, Death, Forest, Rune, Force, Spooky, Water, Power, Toxic, Treasure, Random, Chance, Love, Cinema, Future, Utopia`
 - <c-c4ebff><cl>**Fixed**</c> unintentional particles in the <c-31ff00>**Monster**</c> Gauntlet.

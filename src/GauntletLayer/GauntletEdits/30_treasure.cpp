@@ -31,7 +31,7 @@ void RedesignedGauntletLayer::editTreasureGauntlet() {
         auto bgParticleNode2 = CCParticleSystemQuad::create();
         if (bgParticleNode2) {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
-                "85a-1a2a0.45a35a90a90a0a0a300a0a0a0a11a0a0a0a200a100a0a0a1a0a0.996078a0a0.596078a0a0.15a0.05a900a200a0a0a0.482353a0a0.447059a0a0a0a0.05a0a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a27a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                "85a-1a2a0.45a35a90a90a0a0a300a0a0a0a11a0a0a0a200a100a45a0a1a0a0.996078a0a0.596078a0a0.15a0.05a900a200a45a0a0.482353a0a0.447059a0a0a0a0.05a0a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );

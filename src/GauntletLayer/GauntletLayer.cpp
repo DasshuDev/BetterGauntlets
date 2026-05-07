@@ -9,7 +9,7 @@
 #include <Geode/binding/GJGameLevel.hpp>
 #include "GauntletLayer.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
-#include <UIBuilder.hpp>
+// #include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 

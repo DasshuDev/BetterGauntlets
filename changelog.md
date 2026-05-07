@@ -3,7 +3,7 @@
 ## <cc>v1.7.2</c>
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
   - `Split`
-- <c-c4ebff><cl>**Fixed**</c> particles not sppearing in the <c-f9e6aa>**Power**</c> Gauntlet.
+- <c-c4ebff><cl>**Fixed**</c> particles not appearing in the <c-f9e6aa>**Power**</c> Gauntlet.
 
 ---
 

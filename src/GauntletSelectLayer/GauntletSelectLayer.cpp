@@ -270,7 +270,7 @@ void RedesignedGauntletSelectLayer::setupGauntlets() {
     m_fields->m_dotsMenu = CCMenu::create();
     m_fields->m_dotsMenu->setLayout(AxisLayout::create());
     m_fields->m_dotsMenu->setPositionY(director->getScreenBottom() + 15);
-    m_fields->m_dotsMenu->setContentWidth(winSize.width - 100);
+    m_fields->m_dotsMenu->setContentWidth(winSize.width - 200);
     m_fields->m_dotsMenu->setID("page-navigation"_spr);
     addChild(m_fields->m_dotsMenu);
 
@@ -438,24 +438,15 @@ void RedesignedGauntletSelectLayer::onBack(cocos2d::CCObject* sender) {
 
 void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
 
-    // Dialog Icons
-    int dialogIcon1 = 1;
-    int dialogIcon2 = 2;
-    int dialogIcon3 = 3;
-    int dialogIcon4 = 4;
-    int dialogIcon5 = 5;
-    int dialogIcon6 = 6;
-    int dialogIcon7 = 7;
-    int dialogIcon8 = 8;
-
     // Dialog Responses
     CCArray* DialogResponses = CCArray::create();
     switch (m_fields->m_dialogIndex) {
         case 0: {
+            m_fields->m_dialogSprite = 1;
             DialogObject* response01A = DialogObject::create(
                 "The Gauntlet Keeper",
                 "<cr>HALT</c>! Who goes there!?",
-                dialogIcon1,
+                m_fields->m_dialogSprite,
                 1,
                 true,
                 ccWHITE
@@ -464,7 +455,7 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
             DialogObject* response01B = DialogObject::create(
                 "The Gauntlet Keeper",
                 "Oh. It's just a player.",
-                dialogIcon2,
+                m_fields->m_dialogSprite,
                 1,
                 false,
                 ccWHITE
@@ -472,8 +463,16 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
 
             DialogObject* response01C = DialogObject::create(
                 "The Gauntlet Keeper",
-                "Unfortunately for you, this is as far as you go. These next gauntlets are not <cy>meant for you</c>.",
-                dialogIcon3,
+                "Unfortunately for you, this is as far as you go.",
+                m_fields->m_dialogSprite,
+                1,
+                false,
+                ccWHITE
+            );
+            DialogObject* response01D = DialogObject::create(
+                "The Gauntlet Keeper",
+                "These next gauntlets are not <cy>meant for you</c>.",
+                m_fields->m_dialogSprite,
                 1,
                 false,
                 ccWHITE
@@ -482,6 +481,7 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
             DialogResponses->addObject(response01A);
             DialogResponses->addObject(response01B);
             DialogResponses->addObject(response01C);
+            DialogResponses->addObject(response01D);
 
             m_fields->m_dialogIndex++;
 
@@ -492,7 +492,7 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
             DialogObject* response02A = DialogObject::create(
                 "The Gauntlet Keeper",
                 "You again?",
-                dialogIcon2,
+                m_fields->m_dialogSprite,
                 1,
                 true,
                 ccWHITE
@@ -501,7 +501,7 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
             DialogObject* response02B = DialogObject::create(
                 "The Gauntlet Keeper",
                 "I already told you, these gauntlets are locked.",
-                dialogIcon2,
+                m_fields->m_dialogSprite,
                 1,
                 false,
                 ccWHITE
@@ -509,8 +509,8 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
 
             DialogObject* response02C = DialogObject::create(
                 "The Gauntlet Keeper",
-                "Go away.",
-                dialogIcon2,
+                "<cr>Go away</c>.",
+                m_fields->m_dialogSprite,
                 1,
                 false,
                 ccWHITE
@@ -528,23 +528,7 @@ void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
     DialogLayer* dialog = DialogLayer::createWithObjects(DialogResponses, 5);
     dialog->addToMainScene();
     dialog->animateInRandomSide();
-
-    switch (m_fields->m_dialogSprite) {
-        case 0:
-            DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_1.png"_spr);
-            break;
-        case 1:
-            DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_2.png"_spr);
-            break;
-        case 2:
-            DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_3.png"_spr);
-            break;
-        case 3:
-            DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_4.png"_spr);
-            break;
-        default:
-            DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_1.png"_spr);
-    }
+    DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_1.png"_spr);
 }
 
 void RedesignedGauntletSelectLayer::onNewInfo(CCObject* sender) {

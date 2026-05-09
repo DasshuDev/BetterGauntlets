@@ -21,6 +21,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onDot(CCObject* sender);
     void findCurrentGauntletPageUsing(CCArray* pageButtons);
     void pressGauntlet(int desiredGauntlet);
+    void editGauntletButton();
     
     #ifndef GEODE_IS_ANDROID
     void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1);
@@ -29,7 +30,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void updateArrows();
     #endif
     
-    void onBack(cocos2d::CCObject* sender);
+    void onBack(CCObject* sender);
     void onLock(CCObject* sender);
     void onNewInfo(CCObject* sender);
+    // void onRefresh(CCObject* sender);
 };

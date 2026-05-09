@@ -1,5 +1,11 @@
 # <cc>Changelog</c>
 
+## <cc>1.8.0</c>
+- <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
+- <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
+  - `Split`
+
+
 ## <cc>v1.7.2</c>
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
   - `Split`

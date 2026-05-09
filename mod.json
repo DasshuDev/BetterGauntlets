@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.7.3-beta.2",
+	"version": "v1.8.0-beta.1",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -47,7 +47,8 @@
 		}
 	},
 	"dependencies": {
-		"geode.node-ids": ">=v1.19.0"
+		"geode.node-ids": ">=v1.19.0",
+		"alphalaneous.alphas-ui-pack": ">=v1.0.0"
 	},
 	"settings": {
 

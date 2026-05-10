@@ -230,6 +230,8 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     topRightMenu->setPosition(director->getScreenRight() - 24, 254.5);
     topRightMenu->setContentHeight(125);
 
+    editGauntletButton();
+
     return true;
 }
 
@@ -280,6 +282,33 @@ void RedesignedGauntletSelectLayer::setupGauntlets() {
             ->setAutoGrowAxis(true)
             ->setPadding({60, 0, 60, 0})
         );
+
+        /*
+        
+        SAVE STATE --> USE PERCENTAGE
+
+            1a. when moving the slider, store the percentage of
+            how far along the slider is (0.0 - 100.0)
+
+            1b. use a slider node, or create an invisible node
+            that moves with the slider, to get the position of
+            the slider handle, and use that to calculate the
+            percentage, so that it works even if the slider is
+            resized or repositioned by other mods.
+
+            2. when loading the slider, move it to the percentage
+            of the total width of the content
+            (contentWidth * (percentage / 100.0))
+
+            3. save and load percentage value on layer enter/
+            exit, and when slider is moved.
+
+            4. delete saved percentage when leaving the layer,
+            or set it to 0.0, so that it starts at the
+            beginning when re-entering the layer (only
+            applicable to GauntletSelectLayer -> CreatorLayer)
+        
+        */
 
         auto scrollLayer = alpha::ui::AdvancedScrollLayer::create(btnContainer->getContentSize());
         scrollLayer->setHorizontalScroll(true);

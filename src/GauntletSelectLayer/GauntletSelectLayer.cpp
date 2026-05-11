@@ -44,6 +44,8 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     if (!BRMenu) return false;
 
     BRMenu->setContentSize(ccp(23.25, 103));
+    BRMenu->setAnchorPoint({1.0, 0});
+    BRMenu->setPosition(ccp(director->getScreenRight() - 15, director->getScreenBottom() + 15));
     BRMenu->setLayout(
         ColumnLayout::create()
         ->setAxisReverse(false)
@@ -55,6 +57,10 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
     auto BLMenu = getChildByID("bottom-left-menu");
     if (!BLMenu) return false;
+
+    BLMenu->setContentSize(ccp(23.25, 103));
+    BLMenu->setAnchorPoint({0, 0});
+    BLMenu->setPosition(ccp(director->getScreenLeft() + 15, director->getScreenBottom() + 15));
 
     auto infoBtnSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
     infoBtnSpr->setScale(0.75);
@@ -229,6 +235,16 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     if (!topRightMenu) return false;
     topRightMenu->setPosition(director->getScreenRight() - 24, 254.5);
     topRightMenu->setContentHeight(125);
+
+    /*
+    
+    INIT SLIDER
+
+        1. create AdvcancedScrollLayer and AdvancedScrollBar,
+        set horizontal scroll to true, and position them
+        appropriately (fix and use editGauntletButton)
+    
+    */
 
     editGauntletButton();
 

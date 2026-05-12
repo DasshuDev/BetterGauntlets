@@ -16,20 +16,7 @@ cocos2d::CCNode* RedesignedGauntletSelectLayer::getChildBySpriteFrameNameRecursi
 
 bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
-    if (!GauntletSelectLayer::init(gauntletType)) {
-        auto tryAgainText = getChildByID("try-again-text");
-        if (tryAgainText) {
-            tryAgainText->setPositionY(-1000);
-        }
-        
-        Notification::create(
-            "Gauntlets failed to load",
-            NotificationIcon::Error,
-            1.5
-        )->show();
-        
-        return false;
-    }
+    if (!GauntletSelectLayer::init(gauntletType)) return false;
     
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto director = CCDirector::sharedDirector();
@@ -242,7 +229,7 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     exitAdjust->setContentHeight(125);
     exitAdjust->updateLayout();
 
-    setupCustomNavigation();
+    setupNavigation();
     
     return true;
 }
@@ -267,10 +254,25 @@ void RedesignedGauntletSelectLayer::updateDots() {
 void RedesignedGauntletSelectLayer::loadLevelsFinished(CCArray* gauntlets, char const* key, int type) {
     GauntletSelectLayer::loadLevelsFinished(gauntlets, key, type);
     
-    setupCustomNavigation();
+    setupNavigation();
+}
+
+void RedesignedGauntletSelectLayer::loadLevelsFailed(char const* key, int type) {
+    GauntletSelectLayer::loadLevelsFailed(key, type);
+    
+    auto tryAgainText = getChildByID("try-again-text");
+    if (tryAgainText) {
+        tryAgainText->setPositionY(-1000);
+    }
+    
+    Notification::create(
+        "Gauntlets failed to load",
+        NotificationIcon::Error,
+        1.5
+    )->show();
 }
  
-void RedesignedGauntletSelectLayer::setupCustomNavigation() {
+void RedesignedGauntletSelectLayer::setupNavigation() {
     if (!m_scrollLayer) return;
     
     if (m_scrollLayer->getTotalPages() == 0) return;
@@ -333,11 +335,12 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
     );
     m_fields->m_customScrollLayer->setHorizontalScroll(true);
     m_fields->m_customScrollLayer->setVerticalScroll(false);
+    // m_fields->m_customScrollLayer->setMinVelocity(0);
     m_fields->m_customScrollLayer->setPosition(winSize.width / 2, winSize.height / 2 - 19);
     m_fields->m_customScrollLayer->setContentWidth(winSize.width);
     m_fields->m_customScrollLayer->setID("gauntlet-buttons"_spr);
     m_fields->m_customScrollLayer->ignoreAnchorPointForPosition(false);
-    this->addChild(m_fields->m_customScrollLayer); // High z-order
+    this->addChild(m_fields->m_customScrollLayer);
  
     m_fields->m_customScrollBar = alpha::ui::AdvancedScrollBar::create(
         m_fields->m_customScrollLayer, 
@@ -349,7 +352,7 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
     });
     m_fields->m_customScrollBar->setContentSize({12, winSize.height + 125});
     m_fields->m_customScrollBar->setID("gauntlet-scrollbar"_spr);
-    this->addChild(m_fields->m_customScrollBar); // High z-order
+    this->addChild(m_fields->m_customScrollBar);
     
     std::vector<CCNode*> gauntletBtns;
     
@@ -601,7 +604,7 @@ void RedesignedGauntletSelectLayer::onNewInfo(CCObject* sender) {
 
 void RedesignedGauntletSelectLayer::styleGauntletButtons() {
 
-    log::info("called styleGauntletButtons");
+    // log::info("called styleGauntletButtons");
 
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
@@ -638,7 +641,7 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
                 continue;
             }
 
-            log::info("btn {:02} | tag {:02}", btn, gauntletBtn->getTag());
+            // log::info("btn {:02} | tag {:02}", btn, gauntletBtn->getTag());
 
             auto btnNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("background"));
 
@@ -689,8 +692,24 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
 
             btn++;
             total++;
-        }    
+        }
     }
 
-    log::info("found {}/{} buttons", total, scrollLayer->getContentLayer()->getChildByID("gauntlet-btns")->getChildrenCount());
+    // log::info("found {}/{} buttons", total, scrollLayer->getContentLayer()->getChildByID("gauntlet-btns")->getChildrenCount());
 }
+
+// void RedesignedGauntletSelectLayer::onRefresh(CCObject* sender) {
+//     if (m_fields->m_customScrollLayer) {
+//         m_fields->m_customScrollLayer->removeFromParent();
+//         m_fields->m_customScrollLayer = nullptr;
+//     }
+//     if (m_fields->m_customScrollBar) {
+//         m_fields->m_customScrollBar->removeFromParent();
+//         m_fields->m_customScrollBar = nullptr;
+//     }
+//     if (m_fields->m_gauntletBtnContainer) {
+//         m_fields->m_gauntletBtnContainer->removeFromParent();
+//         m_fields->m_gauntletBtnContainer = nullptr;
+//     }
+//     setupNavigation();
+// }

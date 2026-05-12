@@ -1,12 +1,13 @@
-# <cc>Changelog</c>
-
-## <cc>1.8.0</c>
+# <cc>1.8.0</c>
 - <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
+  - Must have the [Alphas UI Pack](mod:alphalaneous.alphas-ui-pack) mod installed.
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
-  - `Split`
 
+<c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but will soon return.*
 
-## <cc>v1.7.2</c>
+---
+
+## <c-ffffff>v1.7.2
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
   - `Split`
 - <c-c4ebff><cl>**Fixed**</c> particles not appearing in the <c-f9e6aa>**Power**</c> Gauntlet.

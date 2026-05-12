@@ -1,13 +1,30 @@
-## Mod Overview
+# <c-be9000>B</c><c-c29710>e</c><c-c69e1b>t</c><c-caa525>t</c><c-ceab2d>e</c><c-d2b236>r</c> <c-d6b93e>G</c><c-dac045>a</c><c-dec74d>u</c><c-e2ce55>n</c><c-e6d55d>t</c><c-eadc64>l</c><c-eee36c>e</c><c-f2ea74>t</c><c-f6f17c>s</c>
 This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL tweaks, and more, truly a <c-fcee76>**Better Gauntlet**</c> experience!
 
+---
+
 ## Features
-- <cg>New</c> backgrounds!
-- <cg>New</c> keybinds!
-- <cg>New</c> particles!
 - <cy>Reworked</c> UI!
-- <cy>Reworked</c> Navigation Menu!
+- <cy>Brand new</c> Navigation!
+- 
 - And much more!
+
+---
+
+## Recommendations
+These mods are recommended you download to <cp>further enhance</c> the liveliness of the Gauntlets:
+
+---
+
+<mod:alphalaneous.alphas-ui-pack>
+
+Alphalaneous' **Alphas UI Pack** API enables for some more <cg>freedom of movement</c> in the <cc>Gauntlets</c>.
+
+---
+
+<mod:arcticwoof.gauntlets_deluxe>
+
+ArcticWoof's **Gauntlets Deluxe** mod adds Gauntlets made by the <cy>community</c>, and there are more being added <cl>every day</c>!
 
 ---
 
@@ -16,12 +33,14 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 
 ---
 
-## Credits and Special Thanks:
-- Coding:
-    - **[Dasshu](user:1975253)**
-    - **[LimeGradient](user:7214334)**
-    - **[Capeling](user:18226543)**
-    - **[Erymanthus](user:1941705)**
-- Support:
-    - **The Globed Staff Team** - For being great friends and overall supportive.
-    - **The Geode Discord** - For answering my REALLY stupid and simple-minded questions.
+## Credits
+- **[Dasshu](user:1975253)**: Coding the mod
+- **[LimeGradient](user:7214334)**: Initial setup and help
+- **[Capeling](user:18226543)**: Early backend development and bugfixes
+- **[Erymanthus](user:1941705)**: Bugfixes
+
+---
+
+## Special Thanks
+- **The Globed Staff Team** - For being great friends and overall supportive of my endeavors.
+- **The Geode Discord** - For answering my REALLY stupid and simple-minded questions.

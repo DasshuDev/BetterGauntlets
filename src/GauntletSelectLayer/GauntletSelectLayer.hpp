@@ -39,5 +39,5 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onBack(CCObject* sender);
     void onLock(CCObject* sender);
     void onNewInfo(CCObject* sender);
-    void refreshUI();
+    void setupCustomNavigation();
 };

@@ -11,18 +11,8 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 
 ## Recommendations
 These mods are recommended you download to *further enhance* the liveliness of the Gauntlets:
-
----
-
-<mod:alphalaneous.alphas-ui-pack>
-
-__Alphalaneous'__ **Alphas UI Pack** API enables for some more freedom of movement in the Gauntlets.
-
----
-
-<mod:arcticwoof.gauntlets_deluxe>
-
-__ArcticWoof's__ **Gauntlets Deluxe** mod adds Gauntlets made by the community, and there are more being added every day!
+- **Alphas UI Pack** by __Alphalaneous__ enables for some more freedom of movement in the Gauntlets.
+- **Gauntlets Deluxe** by __ArcticWoof__ adds Gauntlets made by the community, and there are more being added every day!
 
 ---
 

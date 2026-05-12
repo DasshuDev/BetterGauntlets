@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Geode/modify/GauntletSelectLayer.hpp>
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
 using namespace geode::prelude;
 
@@ -12,16 +13,21 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         bool showingCustomList = false;
         int m_dialogIndex = 0;
         int m_dialogSprite = 0;
+        alpha::ui::AdvancedScrollLayer* m_customScrollLayer = nullptr;
+        alpha::ui::AdvancedScrollBar* m_customScrollBar = nullptr;
+        CCMenu* m_gauntletBtnContainer = nullptr;
     };
 
     cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name);
     bool init(int gauntletType);
     void updateDots();
-    void setupGauntlets();
+    void loadLevelsFinished(CCArray* gauntlets, char const* key, int type);
+    void setupScrollMode();
+    void setupDotMode();
+    void styleGauntletButtons();
     void onDot(CCObject* sender);
     void findCurrentGauntletPageUsing(CCArray* pageButtons);
     void pressGauntlet(int desiredGauntlet);
-    void editGauntletButton();
     
     #ifndef GEODE_IS_ANDROID
     void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1);
@@ -33,5 +39,5 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onBack(CCObject* sender);
     void onLock(CCObject* sender);
     void onNewInfo(CCObject* sender);
-    // void onRefresh(CCObject* sender);
+    void refreshUI();
 };

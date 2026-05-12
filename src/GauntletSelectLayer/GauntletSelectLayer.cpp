@@ -2,9 +2,9 @@
 #include <Geode/Loader.hpp>
 #include <Geode/ui/Layout.hpp>
 #include <Geode/ui/SimpleAxisLayout.hpp>
-#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "../Hooks/DialogIcons/DialogIcons.h"
 #include "GauntletSelectLayer.hpp"
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
 using namespace geode::prelude;
 
@@ -15,6 +15,7 @@ cocos2d::CCNode* RedesignedGauntletSelectLayer::getChildBySpriteFrameNameRecursi
 }
 
 bool RedesignedGauntletSelectLayer::init(int gauntletType) {
+
     if (!GauntletSelectLayer::init(gauntletType)) {
         auto tryAgainText = getChildByID("try-again-text");
         if (tryAgainText) {
@@ -40,6 +41,34 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
         auto controllerBtn = getChildByID("controller-back-hint");
         controllerBtn->setZOrder(1);
     }
+    auto TRMenu = this->getChildByIDRecursive("top-right-menu");
+    if (!TRMenu) return false;
+    TRMenu->setPosition(director->getScreenRight() - 24, 254.5);
+    TRMenu->setContentHeight(125);
+
+    auto BLMenu = getChildByID("bottom-left-menu");
+    if (!BLMenu) return false;
+
+    auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
+    infoSpr->setScale(0.75);
+
+    CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(
+        infoSpr,
+        this,
+        menu_selector(RedesignedGauntletSelectLayer::onNewInfo)
+    );
+    infoBtn->setID("info-button"_spr);
+
+    BLMenu->addChild(infoBtn);
+    BLMenu->removeChildByID("info-button");
+    BLMenu->updateLayout();
+
+    auto topMenu = CCMenu::create();
+    if (!topMenu) return false;
+    topMenu->setPosition({winSize.width / 2, director->getScreenTop() - 39});
+    topMenu->setID("top-menu"_spr);
+    this->addChild(topMenu, 1);
+
     auto BRMenu = getChildByID("bottom-right-menu");
     if (!BRMenu) return false;
 
@@ -53,54 +82,24 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
     BRMenu->updateLayout();
 
-    auto BLMenu = getChildByID("bottom-left-menu");
-    if (!BLMenu) return false;
-
-    auto infoBtnSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
-    infoBtnSpr->setScale(0.75);
-
-    CCMenuItemSpriteExtra* infoBtn = CCMenuItemSpriteExtra::create(
-        infoBtnSpr,
-        this,
-        menu_selector(RedesignedGauntletSelectLayer::onNewInfo)
-    );
-    infoBtn->setID("info-button"_spr);
-
-    BLMenu->addChild(infoBtn);
-    BLMenu->removeChildByID("info-button");
-    BLMenu->updateLayout();
+    auto title = this->getChildByID("title");
+    auto TLCorner = this->getChildByID("top-left-corner");
+    auto TRCorner = this->getChildByID("top-right-corner");
+    auto BLCorner = this->getChildByID("bottom-left-corner");
+    auto BRCorner = this->getChildByID("bottom-right-corner");
+    if (title &&TLCorner && TRCorner && BLCorner && BRCorner) {
+        title->setVisible(false);
+        TLCorner->setVisible(false);
+        TRCorner->setVisible(false);
+        BLCorner->setVisible(false);
+        BRCorner->setVisible(false);
+    }
 
     auto refreshSpr = Mod::get()->getSettingValue<double>("rescale-refresh-spr");
     if (refreshSpr) {
         auto loadCircle = getChildByIDRecursive("loading-circle");
         loadCircle->setPositionY(-18.5);
         loadCircle->setScale(refreshSpr);
-    }
-    auto title = this->getChildByID("title");
-    if (title) {
-        title->setVisible(false);
-    }
-    auto TLCorner = this->getChildByID("top-left-corner");
-    if (TLCorner) {
-        TLCorner->setVisible(false);
-    }
-    auto TRCorner = this->getChildByID("top-right-corner");
-    if (TRCorner) {
-        TRCorner->setVisible(false);
-    }
-    auto BLCorner = this->getChildByID("bottom-left-corner");
-    if (BLCorner) {
-        BLCorner->setVisible(false);
-    }
-    auto BRCorner = this->getChildByID("bottom-right-corner");
-    if (BRCorner) {
-        BRCorner->setVisible(false);
-    }
-    auto topMenu = CCMenu::create();
-    if (topMenu) {
-        topMenu->setPosition({winSize.width / 2, director->getScreenTop() - 39});
-        topMenu->setID("top-menu"_spr);
-        this->addChild(topMenu, 1);
     }
     auto floor = CCSprite::createWithSpriteFrameName("gauntletGround_001.png"_spr);
     if (floor) {
@@ -242,11 +241,6 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     exitAdjust->setContentWidth(32.5);
     exitAdjust->setContentHeight(125);
     exitAdjust->updateLayout();
-
-    CCNode* topRightMenu = this->getChildByIDRecursive("top-right-menu");
-    if (!topRightMenu) return false;
-    topRightMenu->setPosition(director->getScreenRight() - 24, 254.5);
-    topRightMenu->setContentHeight(125);
 
     setupCustomNavigation();
     

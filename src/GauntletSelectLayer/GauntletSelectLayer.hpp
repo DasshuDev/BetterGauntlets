@@ -22,6 +22,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     bool init(int gauntletType);
     void updateDots();
     void loadLevelsFinished(CCArray* gauntlets, char const* key, int type);
+    void setupCustomNavigation();
     void setupScrollMode();
     void setupDotMode();
     void styleGauntletButtons();
@@ -39,5 +40,4 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onBack(CCObject* sender);
     void onLock(CCObject* sender);
     void onNewInfo(CCObject* sender);
-    void setupCustomNavigation();
 };

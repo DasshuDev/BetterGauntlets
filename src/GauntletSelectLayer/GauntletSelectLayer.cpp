@@ -133,7 +133,6 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     auto titleRedesign = CCSprite::create("gauntletTitle_001.png"_spr);
     if (titleRedesign) {
         titleRedesign->setID("title"_spr);
-        // titleRedesign->setPosition(ccp(winSize.width / 2 + 2, director->getScreenTop() - 39));
         titleRedesign->setAnchorPoint(ccp(0.5, 0.5));
         titleRedesign->setZOrder(10);
         topMenu->addChild(titleRedesign);
@@ -335,7 +334,6 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
     );
     m_fields->m_customScrollLayer->setHorizontalScroll(true);
     m_fields->m_customScrollLayer->setVerticalScroll(false);
-    // m_fields->m_customScrollLayer->setMinVelocity(0);
     m_fields->m_customScrollLayer->setPosition(winSize.width / 2, winSize.height / 2 - 19);
     m_fields->m_customScrollLayer->setContentWidth(winSize.width);
     m_fields->m_customScrollLayer->setID("gauntlet-buttons"_spr);
@@ -381,13 +379,24 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
     m_fields->m_gauntletBtnContainer->updateLayout();
  
     m_fields->m_customScrollLayer->getContentLayer()->addChild(m_fields->m_gauntletBtnContainer);
-    m_fields->m_customScrollLayer->getContentLayer()->setContentWidth(
-        m_fields->m_gauntletBtnContainer->getContentWidth()
-    );
+    m_fields->m_customScrollLayer->getContentLayer()->setContentWidth(m_fields->m_gauntletBtnContainer->getContentWidth());
 
+    m_fields->m_sliderLabel = CCLabelBMFont::create("", "chatFont.fnt");
+    m_fields->m_sliderLabel->setScale(0.5f);
+    m_fields->m_sliderLabel->setPosition({winSize.width / 2, director->getScreenBottom() + 6.5f});
+    this->addChild(m_fields->m_sliderLabel);
+
+    // End of setupScrollMode — replace the last two lines with:
     styleGauntletButtons();
+
+    this->runAction(CCSequence::create(
+        CCDelayTime::create(0.1f),
+        CCCallFunc::create(this, callfunc_selector(RedesignedGauntletSelectLayer::loadScrollPos)),
+        nullptr
+    ));
 }
- 
+
+
 void RedesignedGauntletSelectLayer::setupDotMode() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
@@ -445,6 +454,7 @@ void RedesignedGauntletSelectLayer::setupDotMode() {
     styleGauntletButtons();
 }
 
+
 void RedesignedGauntletSelectLayer::onDot(CCObject* sender) {
     auto btnIdx = std::find(m_fields->m_dots.begin(), m_fields->m_dots.end(), sender) - m_fields->m_dots.begin();
     m_scrollLayer->instantMoveToPage(btnIdx);
@@ -493,11 +503,6 @@ void RedesignedGauntletSelectLayer::updateArrows() {
     updateDots();
 }
 #endif
-
-void RedesignedGauntletSelectLayer::onBack(cocos2d::CCObject* sender) {
-    m_fields->currentGauntletPage = 0;
-    GauntletSelectLayer::onBack(sender);
-}
 
 void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
     CCArray* DialogResponses = CCArray::create();
@@ -604,8 +609,6 @@ void RedesignedGauntletSelectLayer::onNewInfo(CCObject* sender) {
 
 void RedesignedGauntletSelectLayer::styleGauntletButtons() {
 
-    // log::info("called styleGauntletButtons");
-
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
@@ -640,8 +643,6 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
                 log::warn("node {} invalid", btn);
                 continue;
             }
-
-            // log::info("btn {:02} | tag {:02}", btn, gauntletBtn->getTag());
 
             auto btnNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("background"));
 
@@ -694,22 +695,83 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
             total++;
         }
     }
-
-    // log::info("found {}/{} buttons", total, scrollLayer->getContentLayer()->getChildByID("gauntlet-btns")->getChildrenCount());
 }
 
-// void RedesignedGauntletSelectLayer::onRefresh(CCObject* sender) {
-//     if (m_fields->m_customScrollLayer) {
-//         m_fields->m_customScrollLayer->removeFromParent();
-//         m_fields->m_customScrollLayer = nullptr;
-//     }
-//     if (m_fields->m_customScrollBar) {
-//         m_fields->m_customScrollBar->removeFromParent();
-//         m_fields->m_customScrollBar = nullptr;
-//     }
-//     if (m_fields->m_gauntletBtnContainer) {
-//         m_fields->m_gauntletBtnContainer->removeFromParent();
-//         m_fields->m_gauntletBtnContainer = nullptr;
-//     }
-//     setupNavigation();
-// }
+// SAVE AND LOAD SCROLL POSITION
+
+void RedesignedGauntletSelectLayer::saveScrollPos() {
+    if (m_fields->m_customScrollLayer) {
+        float max = m_fields->m_customScrollLayer->getHorizontalMax();
+        if (max > 0.f) {
+            m_scrollLocation = m_fields->m_customScrollLayer->getScrollPoint().x;
+            log::debug("saved scrollPoint.x: {:.4f}", m_scrollLocation);
+        }
+    }
+}
+
+void RedesignedGauntletSelectLayer::loadScrollPos() {
+    float maxScroll = m_fields->m_customScrollLayer->getHorizontalMax();
+
+    if (maxScroll > 0.f && m_scrollLocation > 0.f) {
+        // Clamp in case gauntlet count changed since last save
+        float restoredX = std::min(m_scrollLocation, maxScroll);
+        m_fields->m_customScrollLayer->setScrollX(restoredX, false);
+        m_fields->m_customScrollBar->handleScroll(restoredX, false);
+        log::debug("restored scrollPoint.x: {:.4f} of max {:.4f}", restoredX, maxScroll);
+    }
+
+    if (m_fields->m_sliderLabel) {
+        m_fields->m_sliderLabel->setString(
+            fmt::format("{:.4f} / {:.4f}", m_scrollLocation, maxScroll).c_str()
+        );
+    }
+
+    styleGauntletButtons();
+
+}
+
+// VANILLA CALLBACKS
+
+void RedesignedGauntletSelectLayer::onPlay(CCObject* sender) {
+    saveScrollPos();
+    GauntletSelectLayer::onPlay(sender);
+}
+
+void RedesignedGauntletSelectLayer::onBack(CCObject* sender) {
+    m_scrollLocation = 0.f;
+    m_fields->currentGauntletPage = 0;
+    GauntletSelectLayer::onBack(sender);
+}
+
+void RedesignedGauntletSelectLayer::onRefresh(CCObject* sender) {
+
+    saveScrollPos();
+
+    if (m_fields->m_sliderLabel) {
+        m_fields->m_sliderLabel->removeFromParent();
+        m_fields->m_sliderLabel = nullptr;
+    }
+
+    if (m_fields->m_customScrollLayer) {
+        log::info("{}", m_fields->m_customScrollLayer->getHorizontalScrollPercent());
+        m_fields->m_customScrollLayer->removeFromParent();
+        m_fields->m_customScrollLayer = nullptr;
+    }
+    if (m_fields->m_customScrollBar) {
+        m_fields->m_customScrollBar->removeFromParent();
+        m_fields->m_customScrollBar = nullptr;
+    }
+    if (m_fields->m_gauntletBtnContainer) {
+
+        m_fields->m_gauntletBtnContainer = nullptr;
+    }
+
+    if (m_fields->m_dotsMenu) {
+        m_fields->m_dotsMenu->removeFromParent();
+        m_fields->m_dotsMenu = nullptr;
+    }
+    m_fields->m_dots.clear();
+
+    GauntletSelectLayer::onRefresh(sender);
+}
+

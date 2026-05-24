@@ -27,6 +27,7 @@ These mods are recommended you download to *further enhance* the liveliness of t
 - **[LimeGradient](https://twitter.com/limegradient)**: Initial setup and help
 - **[Capeling](https://twitter.com/capelingg)**: Early backend development and bugfixes
 - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**: Bugfixes
+- **[Alphalaneous](https://twitter.com/alphalaneous)**: Bugfixes
 
 ---
 

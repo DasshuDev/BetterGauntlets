@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.8.0-beta.26",
+	"version": "v1.8.0-beta.31",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -41,13 +41,17 @@
 			],
 			"DialogIconSheet_001":[
 				"resources/DialogIcons/*.png"
+			],
+			"BadgeSheet_001":[
+				"resources/Badges/*.png"
 			]
 		}
 	},
 	"dependencies": {
-		"geode.node-ids": {"version": ">=1.19.0", "required": true},
+		"geode.node-ids": {"version": ">=1.23.3", "required": true},
 		"alphalaneous.alphas-ui-pack": {"version": ">=1.0.0", "required": true},
-		"arcticwoof.gauntlets_deluxe": {"version": ">=1.0.0", "required": false}
+		"arcticwoof.gauntlets_deluxe": {"version": ">=1.0.0", "required": false},
+		"jouca.badgesapi": {"version": ">=1.4.2", "required": true}
 	},
 	"settings": {
 
@@ -113,10 +117,26 @@
 			"default": true
 		},
 		
-		"experimental": {
-			"name": "Experimental Settings",
+		"developer": {
+			"name": "Developer Settings",
 			"type": "title",
-			"description": "Category used for <cr>experimental features/settings</c>."
+			"description": "Category used for <cr>experimental features/settings</c>. Best used if you are a developer or want to enable features that may cause issues. <c>Use with caution</c>!"
+		},
+
+		"advscroll-pos-label": {
+			"name": "AdvScrollLayer Pos Label",
+			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer. Useful for debugging scroll-related issues.",
+			"type": "bool",
+			"default": false
+		},
+		
+		"server-url": {
+			"name": "Gauntlet Server URL",
+			"description": "URL used for fetching custom Gauntlet data. <cg>Change this if you want to use a custom server</c>! Make sure the server follows the same API as the default one, otherwise things may break.",
+			"type": "string",
+			"match": "[A-Z][a-z]+",
+			"filter": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+			"default": "https://bettergauntlets.dev"
 		}
 	}
 }

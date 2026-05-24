@@ -1,4 +1,4 @@
-# <cc>1.8.0</c>
+# <cc>v1.8.0?? v2.0.0?????</c>
 - <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
   - Must have the [Alphas UI Pack](mod:alphalaneous.alphas-ui-pack) mod installed.
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:

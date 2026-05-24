@@ -2,9 +2,15 @@
 #include <Geode/Loader.hpp>
 #include <Geode/ui/Layout.hpp>
 #include <Geode/ui/SimpleAxisLayout.hpp>
+#include <argon/argon.hpp>
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "../Hooks/DialogIcons/DialogIcons.h"
 #include "GauntletSelectLayer.hpp"
-#include <alphalaneous.alphas-ui-pack/include/API.hpp>
+#include "../Managers/GauntletManagerPopup.hpp"
+#include "../Managers/GauntletManagerAPI.hpp"
+// #include "../CustomGauntlets/CustomGauntletManager.hpp"
+// #include "../CustomGauntlets/CustomGauntletNode.hpp"
+// #include "../CustomGauntlets/CustomGauntletLayer.hpp"
 
 using namespace geode::prelude;
 
@@ -35,6 +41,28 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
     auto BLMenu = getChildByID("bottom-left-menu");
     if (!BLMenu) return false;
+    BLMenu->setAnchorPoint({0.5, 0});
+    BLMenu->setPosition({director->getScreenLeft() + 30, 12.5});
+    BLMenu->setLayout(ColumnLayout::create()
+        ->setAutoGrowAxis(true)
+    );
+
+    auto discordIcon = CCSprite::create("GR_discord_02_001.png"_spr);
+    discordIcon->setScale(0.65);
+
+    auto discordSpr = CircleButtonSprite::create(
+        discordIcon,
+        CircleBaseColor::Green,
+        CircleBaseSize::Medium
+    );
+    discordSpr->setScale(0.75);
+
+    auto discordBtn = CCMenuItemSpriteExtra::create(
+        discordSpr,
+        this,
+        menu_selector(RedesignedGauntletSelectLayer::onDiscord)
+    );
+    discordBtn->setID("discord-button"_spr);
 
     auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
     infoSpr->setScale(0.75);
@@ -47,27 +75,29 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     infoBtn->setID("info-button"_spr);
 
     BLMenu->addChild(infoBtn);
+    BLMenu->addChild(discordBtn);
     BLMenu->removeChildByID("info-button");
     BLMenu->updateLayout();
+
+    auto BRMenu = getChildByID("bottom-right-menu");
+    if (!BRMenu) return false;
+    BRMenu->setAnchorPoint({0.5, 0});
+    BRMenu->setPosition({director->getScreenRight() - 30, 12.5});
+    BRMenu->setLayout(
+        ColumnLayout::create()
+        ->setAxisReverse(false)
+        ->setAxisAlignment(AxisAlignment::Start)
+        ->setGap(10.0)
+        ->setAutoGrowAxis(true)
+    );
+
+    BRMenu->updateLayout();
 
     auto topMenu = CCMenu::create();
     if (!topMenu) return false;
     topMenu->setPosition({winSize.width / 2, director->getScreenTop() - 39});
     topMenu->setID("top-menu"_spr);
     this->addChild(topMenu, 1);
-
-    auto BRMenu = getChildByID("bottom-right-menu");
-    if (!BRMenu) return false;
-
-    BRMenu->setContentSize(ccp(23.25, 103));
-    BRMenu->setLayout(
-        ColumnLayout::create()
-        ->setAxisReverse(false)
-        ->setAxisAlignment(AxisAlignment::Start)
-        ->setGap(10.0)
-    );
-
-    BRMenu->updateLayout();
 
     auto title = this->getChildByID("title");
     auto TLCorner = this->getChildByID("top-left-corner");
@@ -130,12 +160,22 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
         backgroundColor->setColor(ccc3(34, 34, 34));
         backgroundColor->setZOrder(-99);
     }
-    auto titleRedesign = CCSprite::create("gauntletTitle_001.png"_spr);
-    if (titleRedesign) {
-        titleRedesign->setID("title"_spr);
-        titleRedesign->setAnchorPoint(ccp(0.5, 0.5));
-        titleRedesign->setZOrder(10);
-        topMenu->addChild(titleRedesign);
+    m_fields->m_vanillaTitle = CCSprite::create("GR_gauntletTitle_01_001.png"_spr);
+    if (m_fields->m_vanillaTitle) {
+        m_fields->m_vanillaTitle->setID("title"_spr);
+        m_fields->m_vanillaTitle->setAnchorPoint(ccp(0.5, 0.5));
+        m_fields->m_vanillaTitle->setZOrder(10);
+        m_fields->m_vanillaTitle->setScale(0.575);
+        topMenu->addChild(m_fields->m_vanillaTitle);
+    }
+    m_fields->m_betterTitle = CCSprite::create("GR_gauntletTitle_02_001.png"_spr);
+    if (m_fields->m_betterTitle) {
+        m_fields->m_betterTitle->setID("better-title"_spr);
+        m_fields->m_betterTitle->setAnchorPoint(ccp(0.5, 0.5));
+        m_fields->m_betterTitle->setZOrder(10);
+        m_fields->m_betterTitle->setScale(0.575);
+        m_fields->m_betterTitle->setVisible(false);
+        topMenu->addChild(m_fields->m_betterTitle);
     }
     if (Mod::get()->getVersion() >= VersionInfo::parse("2.0.0").unwrap()) {
         auto lockBtn = CCMenuItemSpriteExtra::create(
@@ -150,6 +190,23 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
         lockBtn->setOpacity(80);
         topMenu->addChild(lockBtn);
     }
+
+    auto toggleOff = CCSpriteGrayscale::create("GR_gauntletStar_001.png"_spr);
+    toggleOff->setOpacity(80);
+    toggleOff->setColor(ccc3(128, 128, 128));
+    auto toggleOn = CCSprite::create("GR_gauntletStar_001.png"_spr);
+
+    auto toggleSpr = CCMenuItemToggler::create(
+        toggleOff,
+        toggleOn,
+        this, menu_selector(RedesignedGauntletSelectLayer::toggleList)
+    );
+    toggleSpr->setID("toggle-list-button");
+    toggleSpr->setPosition({102, 17.5});
+    toggleSpr->setScale(0.65);
+    toggleSpr->setOpacity(80);
+    topMenu->addChild(toggleSpr);
+
 
     auto decoParentNode = CCNode::create();
     if (decoParentNode) {
@@ -229,6 +286,60 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     exitAdjust->updateLayout();
 
     setupNavigation();
+
+    // Test manager IDs — remove this block and uncomment the server check below when ready for production
+    static const std::unordered_set<int> s_testManagerIDs = {
+        1975253
+    };
+
+    auto accountID = GJAccountManager::sharedState()->m_accountID;
+    bool isManager = s_testManagerIDs.contains(accountID);
+
+    if (isManager) {
+        auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
+        if (!BLMenu) return true;
+
+        auto manageSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
+        manageSpr->setScale(0.7f);
+
+        auto manageBtn = CCMenuItemExt::createSpriteExtra(manageSpr, [](CCMenuItemSpriteExtra*) {
+            GauntletManagerPopup::create()->show();
+        });
+        manageBtn->setID("manager-button"_spr);
+        static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
+        static_cast<CCMenu*>(BLMenu)->updateLayout();
+    }
+
+    /*
+    // Check if this player is a manager and show the button if so
+    auto accountID = GJAccountManager::get()->m_accountID;
+    m_fields->m_managerCheckHolder.spawn(
+        web::WebRequest().get(fmt::format(
+            "{}/ismanager?accountId={}",
+            Mod::get()->getSettingValue<std::string>("server-url-base"),
+            accountID
+        )),
+        [this](web::WebResponse res) {
+            if (!res.ok()) return;
+            auto json       = res.json().unwrapOr(matjson::Value());
+            bool isManager  = json["isManager"].asBool().unwrapOr(false);
+            if (!isManager) return;
+
+            auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
+            if (!BLMenu) return;
+
+            auto manageSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
+            manageSpr->setScale(0.7f);
+
+            auto manageBtn = CCMenuItemExt::createSpriteExtra(manageSpr, [](CCMenuItemSpriteExtra*) {
+                GauntletManagerPopup::create()->show();
+            });
+            manageBtn->setID("manager-button"_spr);
+            static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
+            static_cast<CCMenu*>(BLMenu)->updateLayout();
+        }
+    );
+    */
     
     return true;
 }
@@ -386,14 +497,8 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
     m_fields->m_sliderLabel->setPosition({winSize.width / 2, director->getScreenBottom() + 6.5f});
     this->addChild(m_fields->m_sliderLabel);
 
-    // End of setupScrollMode — replace the last two lines with:
     styleGauntletButtons();
-
-    this->runAction(CCSequence::create(
-        CCDelayTime::create(0.1f),
-        CCCallFunc::create(this, callfunc_selector(RedesignedGauntletSelectLayer::loadScrollPos)),
-        nullptr
-    ));
+    loadScrollPos();
 }
 
 
@@ -607,31 +712,38 @@ void RedesignedGauntletSelectLayer::onNewInfo(CCObject* sender) {
     popup->show();
 }
 
+void RedesignedGauntletSelectLayer::onDiscord(CCObject* sender) {
+    createQuickPopup(
+        "Join the Community",
+        "Come join and talk about the <cc>Gauntlets</c>, <cg>Geometry Dash</c>, or <cy>anything at all</c>!\n\nWe're happy to have you!",
+        "Decline",
+        "Accept",
+        [](FLAlertLayer*, bool accepted) {
+            if (accepted) {
+                web::openLinkInBrowser("https://discord.gg/fuz6JDpncq");
+            }
+        }
+    );
+}
+
 void RedesignedGauntletSelectLayer::styleGauntletButtons() {
 
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
-
-    CCSpriteBatchNode* pageDots = static_cast<CCSpriteBatchNode*>(getChildByIDRecursive("page-buttons"));
-    alpha::ui::AdvancedScrollLayer* scrollLayer = static_cast<alpha::ui::AdvancedScrollLayer*>(getChildByIDRecursive("gauntlet-buttons"_spr));
-
-    if (!pageDots || !scrollLayer) {
-        log::error("pageDots {}, scrollLayer {}", pageDots != nullptr, scrollLayer != nullptr);
-        return;
-    }
     
     int btn = 1;
     int total = 0;
 
+    auto pageDots = static_cast<CCSpriteBatchNode*>(getChildByIDRecursive("page-buttons"));
+    auto scrollLayer = static_cast<alpha::ui::AdvancedScrollLayer*>(getChildByIDRecursive("gauntlet-buttons"_spr));
+
     if (scrollLayer) {
     
         std::vector<CCSprite*> gauntletBtns;
-        auto btnContainer = scrollLayer->getContentLayer()->getChildByID("gauntlet-btns")->getChildren();
-
-        if (!btnContainer) {
-            log::error("gauntlet-btns missing");
-            return;
-        }
+        
+        auto btnNode = scrollLayer->getContentLayer()->getChildByID("gauntlet-btns");
+        if (!btnNode) { log::error("gauntlet-btns missing"); return; }
+        auto btnContainer = btnNode->getChildren();
 
         auto obj = nullptr;
 
@@ -649,26 +761,19 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
             if (btnNode) btnNode->setContentSize({110, 220});
 
             auto infoNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("gauntlet-info-node"));
-
-            auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
-            if (GDUtils) {
-                auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
-                if (!settingVal) infoNode->setPositionY(-2.5);
-            }
+            if (infoNode) infoNode->setPositionY(-2.5);
             
-            else infoNode->setPositionY(-2.5);
-
             auto nameLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-label"));
             if (nameLabel) nameLabel->setPositionY(84);
 
             auto gauntletLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-label"));
-            if (gauntletLabel) gauntletLabel->setPositionY(nameLabel->getPositionY() - 15);
+            if (gauntletLabel && nameLabel) gauntletLabel->setPositionY(nameLabel->getPositionY() - 15);
 
             auto nameShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-shadow-label"));
-            if (nameShadowLabel) nameShadowLabel->setPosition(ccp(nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2));
+            if (nameShadowLabel && nameLabel) nameShadowLabel->setPosition(ccp(nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2));
 
             auto gauntletShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-shadow-label"));
-            if (gauntletShadowLabel) gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2));
+            if (gauntletShadowLabel && gauntletLabel) gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2));
 
             auto chestSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-sprite"));
             auto chestShadowSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-shadow-sprite"));
@@ -681,7 +786,7 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
 
             auto rewardLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("reward-label"));
             auto rewardShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("reward-shadow-label"));
-            if (rewardLabel && rewardShadowLabel) {
+            if (rewardLabel && rewardShadowLabel && chestSpr) {
                 rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5);
                 rewardLabel->setScale(0.5);
                 rewardLabel->setZOrder(3);
@@ -689,13 +794,232 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
                 rewardShadowLabel->setScale(0.5);
             }
 
-            gauntletBtn->setID(fmt::format("gauntlet-{}", total));
+            gauntletBtn->setID(fmt::format("gauntlet-button-{}", btn));
 
             btn++;
             total++;
         }
     }
+    else {
+        auto gauntletPages = getChildByIDRecursive("gauntlet-pages")->getChildren();
+
+        for (int p = 0; p < gauntletPages->count(); p++) {
+            auto page = getChildByIDRecursive(fmt::format("gauntlet-page-{}", p + 1));
+            if (!page) continue;
+
+            for (int b = 0; b < 3; b++) {
+                auto gauntletBtn = page->getChildByIDRecursive(fmt::format("gauntlet-button-{}", b + 1));
+
+                auto btnNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("background"));
+                if (btnNode) btnNode->setContentSize({110, 220});
+
+                auto infoNode = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("gauntlet-info-node"));
+
+                auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+                if (GDUtils) {
+                    auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+                    if (!settingVal) infoNode->setPositionY(-2.5);
+                }
+                
+                else infoNode->setPositionY(-2.5);
+
+                auto nameLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-label"));
+                if (nameLabel) nameLabel->setPositionY(84);
+
+                auto gauntletLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-label"));
+                if (gauntletLabel) gauntletLabel->setPositionY(nameLabel->getPositionY() - 15);
+
+                auto nameShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-name-shadow-label"));
+                if (nameShadowLabel) nameShadowLabel->setPosition(ccp(nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2));
+
+                auto gauntletShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("gauntlet-shadow-label"));
+                if (gauntletShadowLabel) gauntletShadowLabel->setPosition(ccp(gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2));
+
+                auto chestSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-sprite"));
+                auto chestShadowSpr = static_cast<CCSprite*>(gauntletBtn->getChildByIDRecursive("chest-shadow-sprite"));
+                if (chestSpr && chestShadowSpr) {
+                    chestSpr->setPositionY(-64.5);
+                    chestSpr->setScale(0.3);
+                    chestShadowSpr->setPosition(ccp(chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2));
+                    chestShadowSpr->setScale(0.3);
+                }
+
+                auto rewardLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("reward-label"));
+                auto rewardShadowLabel = static_cast<CCLabelBMFont*>(gauntletBtn->getChildByIDRecursive("reward-shadow-label"));
+                if (rewardLabel && rewardShadowLabel) {
+                    rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5);
+                    rewardLabel->setScale(0.5);
+                    rewardLabel->setZOrder(3);
+                    rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 2));
+                    rewardShadowLabel->setScale(0.5);
+                }
+
+                btn++;
+                total++;
+            }
+        }
+    }
 }
+
+// BETTER GAUNTLETS SERVER LIST
+
+void RedesignedGauntletSelectLayer::toggleList(CCObject* sender) {
+    m_fields->showingCustomList = !m_fields->showingCustomList;
+
+    // Vanilla UI visibility
+    if (m_fields->m_customScrollLayer)
+        m_fields->m_customScrollLayer->setVisible(!m_fields->showingCustomList);
+    if (m_fields->m_customScrollBar)
+        m_fields->m_customScrollBar->setVisible(!m_fields->showingCustomList);
+    if (m_fields->m_vanillaTitle)
+        m_fields->m_vanillaTitle->setVisible(!m_fields->showingCustomList);
+
+    if (m_fields->showingCustomList) {
+
+        log::debug("build custom list");
+
+        m_refreshButton->setVisible(false);
+        m_fields->m_vanillaTitle->setVisible(false);
+        m_fields->m_betterTitle->setVisible(true);
+
+        startAuth();
+    } else {
+
+        if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
+            existing->removeFromParent();
+        if (auto existing = getChildByIDRecursive("custom-gauntlet-bar"_spr))
+            existing->removeFromParent();
+
+        log::debug("build vanilla list");
+
+        m_refreshButton->setVisible(true);
+        m_fields->m_vanillaTitle->setVisible(true);
+        m_fields->m_betterTitle->setVisible(false);
+    }
+}
+
+void RedesignedGauntletSelectLayer::startAuth() {
+    m_fields->m_listener.spawn(
+        argon::startAuth(),
+        [](Result<std::string> result) {
+            if (result.isOk()) {
+                auto token = std::move(result).unwrap();
+                log::info("Got token: {}", token);
+            } else {
+                log::error("Failed to authenticate: {}", result.unwrapErr());
+            }
+        }
+    );
+}
+
+/*
+void RedesignedGauntletSelectLayer::buildCustomList() {
+    auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+    if (CustomGauntletManager::get()->hasCached()) {
+        populateCustomList(CustomGauntletManager::get()->getCached());
+        return;
+    }
+
+    auto loadingCircle = LoadingCircle::create();
+    loadingCircle->setID("custom-list-loading"_spr);
+    loadingCircle->setPosition(winSize / 2);
+    loadingCircle->ignoreAnchorPointForPosition(false);
+    loadingCircle->show();
+    this->addChild(loadingCircle, 10);
+
+    m_loadingCircle = loadingCircle;
+
+    m_fields->m_fetchHolder.spawn(
+        CustomGauntletManager::get()->fetchGauntlets(),
+        [this, loadingCircle](web::WebResponse res) {
+            if (loadingCircle->getParent()) this->removeChild(loadingCircle);
+
+            if (!res.ok()) {
+                Notification::create(
+                    fmt::format("Failed to load custom gauntlets: HTTP {}", res.code()),
+                    NotificationIcon::Error, 2.f
+                )->show();
+                m_fields->showingCustomList = false;
+                if (m_fields->m_customScrollLayer)
+                    m_fields->m_customScrollLayer->setVisible(true);
+                if (m_fields->m_customScrollBar)
+                    m_fields->m_customScrollBar->setVisible(true);
+                if (m_refreshButton)
+                    m_refreshButton->setVisible(false);
+                return;
+            }
+
+            auto body = res.string().unwrapOr("");
+            if (body.empty() || body == "-1") {
+                Notification::create(
+                    "Server returned an empty response.",
+                    NotificationIcon::Error, 2.f
+                )->show();
+                return;
+            }
+
+            auto gauntlets = CustomGauntletManager::get()->parse(body);
+            populateCustomList(gauntlets);
+        }
+    );
+}
+
+void RedesignedGauntletSelectLayer::populateCustomList(
+    std::vector<CustomGauntletData> const& gauntlets
+) {
+    if (!m_fields->showingCustomList) return;
+
+    auto winSize = CCDirector::sharedDirector()->getWinSize();
+
+    if (auto scrollLayer = getChildByIDRecursive("custom-gauntlet-scroll"_spr)) scrollLayer->removeFromParent();
+    if (auto scrollBar = getChildByIDRecursive("custom-gauntlet-bar"_spr)) scrollBar->removeFromParent();
+    if (m_loadingCircle) m_loadingCircle->removeFromParent();
+
+    auto container = CCMenu::create();
+    container->setAnchorPoint({0, 0.5});
+    container->setLayout(
+        RowLayout::create()
+        ->setAxisAlignment(AxisAlignment::Start)
+        ->setGap(3)
+        ->setAutoGrowAxis(true)
+        ->setPadding({60, 0, 60, 0})
+    );
+    container->setID("custom-gauntlet-btns"_spr);
+
+    for (auto const& data : gauntlets) {
+        auto node = CustomGauntletNode::create(data, [](CustomGauntletData const& tapped) {
+            auto scene = CustomGauntletLayer::scene(tapped);
+            CCDirector::sharedDirector()->pushScene(
+                CCTransitionFade::create(0.5f, scene)
+            );
+        });
+        if (node) container->addChild(node);
+    }
+
+    container->updateLayout();
+
+    auto scrollLayer = alpha::ui::AdvancedScrollLayer::create(container->getContentSize());
+    scrollLayer->setHorizontalScroll(true);
+    scrollLayer->setVerticalScroll(false);
+    scrollLayer->setPosition(winSize.width / 2, winSize.height / 2 - 19);
+    scrollLayer->setContentWidth(winSize.width);
+    scrollLayer->setID("custom-gauntlet-scroll"_spr);
+    scrollLayer->ignoreAnchorPointForPosition(false);
+    this->addChild(scrollLayer);
+
+    scrollLayer->getContentLayer()->addChild(container);
+    scrollLayer->getContentLayer()->setContentWidth(container->getContentWidth());
+
+    auto scrollBar = alpha::ui::AdvancedScrollBar::create(
+        scrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL
+    );
+    scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
+    scrollBar->setContentSize({12, winSize.height + 125});
+    scrollBar->setID("custom-gauntlet-bar"_spr);
+    this->addChild(scrollBar, 1);
+}
+*/
 
 // SAVE AND LOAD SCROLL POSITION
 
@@ -704,25 +1028,22 @@ void RedesignedGauntletSelectLayer::saveScrollPos() {
         float max = m_fields->m_customScrollLayer->getHorizontalMax();
         if (max > 0.f) {
             m_scrollLocation = m_fields->m_customScrollLayer->getScrollPoint().x;
-            log::debug("saved scrollPoint.x: {:.4f}", m_scrollLocation);
         }
     }
 }
 
 void RedesignedGauntletSelectLayer::loadScrollPos() {
-    float maxScroll = m_fields->m_customScrollLayer->getHorizontalMax();
 
-    if (maxScroll > 0.f && m_scrollLocation > 0.f) {
+    if (m_scrollLocation > 0.f) {
         // Clamp in case gauntlet count changed since last save
-        float restoredX = std::min(m_scrollLocation, maxScroll);
+        float restoredX = m_scrollLocation;
         m_fields->m_customScrollLayer->setScrollX(restoredX, false);
-        m_fields->m_customScrollBar->handleScroll(restoredX, false);
-        log::debug("restored scrollPoint.x: {:.4f} of max {:.4f}", restoredX, maxScroll);
+        log::debug("restored scrollPoint.x: {:.4f} of max {:.4f}", restoredX, m_fields->m_customScrollLayer->getHorizontalMax());
     }
 
-    if (m_fields->m_sliderLabel) {
+    if (Mod::get()->getSettingValue<bool>("advscroll-pos-label") && m_fields->m_sliderLabel) {
         m_fields->m_sliderLabel->setString(
-            fmt::format("{:.4f} / {:.4f}", m_scrollLocation, maxScroll).c_str()
+            fmt::format("{:.4f} / {:.4f}", m_scrollLocation, m_fields->m_customScrollLayer->getHorizontalMax()).c_str()
         );
     }
 
@@ -753,7 +1074,6 @@ void RedesignedGauntletSelectLayer::onRefresh(CCObject* sender) {
     }
 
     if (m_fields->m_customScrollLayer) {
-        log::info("{}", m_fields->m_customScrollLayer->getHorizontalScrollPercent());
         m_fields->m_customScrollLayer->removeFromParent();
         m_fields->m_customScrollLayer = nullptr;
     }

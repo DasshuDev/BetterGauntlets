@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Geode/utils/web.hpp>
+#include <Geode/loader/Event.hpp>
+// #include "../CustomGauntlets/CustomGauntletManager.hpp"
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
@@ -17,8 +20,13 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         int m_dialogSprite = 0;
         alpha::ui::AdvancedScrollLayer* m_customScrollLayer = nullptr;
         alpha::ui::AdvancedScrollBar* m_customScrollBar = nullptr;
+        CCSprite* m_vanillaTitle = nullptr;
+        CCSprite* m_betterTitle = nullptr;
         CCMenu* m_gauntletBtnContainer = nullptr;
         CCLabelBMFont* m_sliderLabel = nullptr;
+        LoadingCircle* m_loadingCircle = nullptr;
+        async::TaskHolder<Result<std::string>> m_listener;
+        async::TaskHolder<web::WebResponse> m_managerCheckHolder;
     };
 
     // Pre-setup
@@ -27,6 +35,11 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onLock(CCObject* sender);
     void onBack(CCObject* sender);
     void onNewInfo(CCObject* sender);
+    void onDiscord(CCObject* sender);
+    void toggleList(CCObject* sender);
+    void startAuth();
+    // void buildCustomList();
+    // void populateCustomList(std::vector<CustomGauntletData> const& gauntlets);
 
     // Level loading
     void updateDots();

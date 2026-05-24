@@ -38,6 +38,7 @@ ArcticWoof's **Gauntlets Deluxe** mod adds Gauntlets made by the <cy>community</
 - **[LimeGradient](user:7214334)**: Initial setup and help
 - **[Capeling](user:18226543)**: Early backend development and bugfixes
 - **[Erymanthus](user:1941705)**: Bugfixes
+- **[Alphalaneous](user:1139015)**: Bugfixes
 
 ---
 

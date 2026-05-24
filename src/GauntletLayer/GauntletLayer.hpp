@@ -4,7 +4,7 @@
 #pragma once
 
 #include <Geode/modify/GauntletLayer.hpp>
-// #include <UIBuilder.hpp>
+#include <Geode/ui/Popup.hpp>
 
 using namespace geode::prelude;
 
@@ -12,6 +12,12 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     struct Fields {
         bool m_loaded = false;
         CCMenu* m_levelsMenu = nullptr;
+        CCLabelBMFont* m_levelName = nullptr;
+        CCLabelBMFont* m_creatorName = nullptr;
+        CCLabelBMFont* m_starCount = nullptr;
+        CCSprite* m_starSprite = nullptr;
+        CCSprite* m_lockSprite = nullptr;
+        CCSprite* m_skullSprite = nullptr;
     };
 
     void gauntletLevel(int);
@@ -24,6 +30,9 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void setupGauntlet(cocos2d::CCArray* levels);
     void setupInfo();
     void onInfo(cocos2d::CCObject* obj);
+    void onLevelInfo(CCObject* sender);
+    void onLocked(CCObject* sender);
+    void onLevel(CCObject* sender);
 
     bool init(GauntletType);
 
@@ -85,9 +94,9 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editCosmosGauntlet();
     void editRandomGauntlet();
     void editChanceGauntlet();
-    void editLoveGauntlet();
     void editCinemaGauntlet();
     void editFutureGauntlet();
     void editUtopiaGauntlet();
+    void editLoveGauntlet();
 };
 #endif

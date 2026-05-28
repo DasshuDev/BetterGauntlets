@@ -4,13 +4,10 @@
 #include <Geode/ui/SimpleAxisLayout.hpp>
 #include <argon/argon.hpp>
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
-#include "../Hooks/DialogIcons/DialogIcons.h"
+// #include "../Hooks/DialogIcons/DialogIcons.h"
 #include "GauntletSelectLayer.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
-#include "../Managers/GauntletManagerAPI.hpp"
-// #include "../CustomGauntlets/CustomGauntletManager.hpp"
-// #include "../CustomGauntlets/CustomGauntletNode.hpp"
-// #include "../CustomGauntlets/CustomGauntletLayer.hpp"
+// #include "../Managers/GauntletManagerAPI.hpp"
 
 using namespace geode::prelude;
 
@@ -177,19 +174,19 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
         m_fields->m_betterTitle->setVisible(false);
         topMenu->addChild(m_fields->m_betterTitle);
     }
-    if (Mod::get()->getVersion() >= VersionInfo::parse("2.0.0").unwrap()) {
-        auto lockBtn = CCMenuItemSpriteExtra::create(
-            CCSpriteGrayscale::createWithSpriteFrameName("GJ_lock_001.png"),
-            this,
-            menu_selector(RedesignedGauntletSelectLayer::onLock)
-        );
-        lockBtn->setID("secret-button"_spr);
-        lockBtn->setPosition({115, 15});
-        lockBtn->m_baseScale = 0.75;
-        lockBtn->setScale(0.75);
-        lockBtn->setOpacity(80);
-        topMenu->addChild(lockBtn);
-    }
+    // if (Mod::get()->getVersion() >= VersionInfo::parse("2.0.0").unwrap()) {
+    //     auto lockBtn = CCMenuItemSpriteExtra::create(
+    //         CCSpriteGrayscale::createWithSpriteFrameName("GJ_lock_001.png"),
+    //         this,
+    //         menu_selector(RedesignedGauntletSelectLayer::onLock)
+    //     );
+    //     lockBtn->setID("secret-button"_spr);
+    //     lockBtn->setPosition({115, 15});
+    //     lockBtn->m_baseScale = 0.75;
+    //     lockBtn->setScale(0.75);
+    //     lockBtn->setOpacity(80);
+    //     topMenu->addChild(lockBtn);
+    // }
 
     auto toggleOff = CCSpriteGrayscale::create("GR_gauntletStar_001.png"_spr);
     toggleOff->setOpacity(80);
@@ -199,14 +196,14 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
     auto toggleSpr = CCMenuItemToggler::create(
         toggleOff,
         toggleOn,
-        this, menu_selector(RedesignedGauntletSelectLayer::toggleList)
+        this,
+        menu_selector(RedesignedGauntletSelectLayer::toggleList)
     );
     toggleSpr->setID("toggle-list-button");
     toggleSpr->setPosition({102, 17.5});
     toggleSpr->setScale(0.65);
     toggleSpr->setOpacity(80);
     topMenu->addChild(toggleSpr);
-
 
     auto decoParentNode = CCNode::create();
     if (decoParentNode) {
@@ -287,59 +284,34 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
     setupNavigation();
 
-    // Test manager IDs — remove this block and uncomment the server check below when ready for production
-    static const std::unordered_set<int> s_testManagerIDs = {
-        1975253
-    };
+    // // Check if this player is a manager and show the button if so
+    // auto accountID = GJAccountManager::get()->m_accountID;
+    // m_fields->m_managerCheckHolder.spawn(
+    //     web::WebRequest().get(fmt::format(
+    //         "https://bettergauntlets.dev/ismanager?accountId={}",
+    //         Mod::get()->getSettingValue<std::string>("server-url-base"),
+    //         accountID
+    //     )),
+    //     [this](web::WebResponse res) {
+    //         if (!res.ok()) return;
+    //         auto json       = res.json().unwrapOr(matjson::Value());
+    //         bool isManager  = json["isManager"].asBool().unwrapOr(false);
+    //         if (!isManager) log::info("User is a manager");
 
-    auto accountID = GJAccountManager::sharedState()->m_accountID;
-    bool isManager = s_testManagerIDs.contains(accountID);
+    //         auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
+    //         if (!BLMenu) return;
 
-    if (isManager) {
-        auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
-        if (!BLMenu) return true;
+    //         auto manageSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
+    //         manageSpr->setScale(0.7f);
 
-        auto manageSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
-        manageSpr->setScale(0.7f);
-
-        auto manageBtn = CCMenuItemExt::createSpriteExtra(manageSpr, [](CCMenuItemSpriteExtra*) {
-            GauntletManagerPopup::create()->show();
-        });
-        manageBtn->setID("manager-button"_spr);
-        static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
-        static_cast<CCMenu*>(BLMenu)->updateLayout();
-    }
-
-    /*
-    // Check if this player is a manager and show the button if so
-    auto accountID = GJAccountManager::get()->m_accountID;
-    m_fields->m_managerCheckHolder.spawn(
-        web::WebRequest().get(fmt::format(
-            "{}/ismanager?accountId={}",
-            Mod::get()->getSettingValue<std::string>("server-url-base"),
-            accountID
-        )),
-        [this](web::WebResponse res) {
-            if (!res.ok()) return;
-            auto json       = res.json().unwrapOr(matjson::Value());
-            bool isManager  = json["isManager"].asBool().unwrapOr(false);
-            if (!isManager) return;
-
-            auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
-            if (!BLMenu) return;
-
-            auto manageSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
-            manageSpr->setScale(0.7f);
-
-            auto manageBtn = CCMenuItemExt::createSpriteExtra(manageSpr, [](CCMenuItemSpriteExtra*) {
-                GauntletManagerPopup::create()->show();
-            });
-            manageBtn->setID("manager-button"_spr);
-            static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
-            static_cast<CCMenu*>(BLMenu)->updateLayout();
-        }
-    );
-    */
+    //         auto manageBtn = CCMenuItemExt::createSpriteExtra(manageSpr, [](CCMenuItemSpriteExtra*) {
+    //             GauntletManagerPopup::create()->show();
+    //         });
+    //         manageBtn->setID("manager-button"_spr);
+    //         static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
+    //         static_cast<CCMenu*>(BLMenu)->updateLayout();
+    //     }
+    // );
     
     return true;
 }
@@ -609,100 +581,6 @@ void RedesignedGauntletSelectLayer::updateArrows() {
 }
 #endif
 
-void RedesignedGauntletSelectLayer::onLock(CCObject* sender) {
-    CCArray* DialogResponses = CCArray::create();
-    switch (m_fields->m_dialogIndex) {
-        case 0: {
-            m_fields->m_dialogSprite = 1;
-            DialogObject* response01A = DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cr>HALT</c>! Who goes there!?",
-                m_fields->m_dialogSprite,
-                1,
-                true,
-                ccWHITE
-            );
-
-            DialogObject* response01B = DialogObject::create(
-                "The Gauntlet Keeper",
-                "Oh. It's just a player.",
-                m_fields->m_dialogSprite,
-                1,
-                false,
-                ccWHITE
-            );
-
-            DialogObject* response01C = DialogObject::create(
-                "The Gauntlet Keeper",
-                "Unfortunately for you, this is as far as you go.",
-                m_fields->m_dialogSprite,
-                1,
-                false,
-                ccWHITE
-            );
-            DialogObject* response01D = DialogObject::create(
-                "The Gauntlet Keeper",
-                "These next gauntlets are not <cy>meant for you</c>.",
-                m_fields->m_dialogSprite,
-                1,
-                false,
-                ccWHITE
-            );
-
-            DialogResponses->addObject(response01A);
-            DialogResponses->addObject(response01B);
-            DialogResponses->addObject(response01C);
-            DialogResponses->addObject(response01D);
-
-            m_fields->m_dialogIndex++;
-
-            break;
-        }
-        
-        case 1: {
-            DialogObject* response02A = DialogObject::create(
-                "The Gauntlet Keeper",
-                "You again?",
-                m_fields->m_dialogSprite,
-                1,
-                true,
-                ccWHITE
-            );
-
-            DialogObject* response02B = DialogObject::create(
-                "The Gauntlet Keeper",
-                "I already told you, these gauntlets are locked.",
-                m_fields->m_dialogSprite,
-                1,
-                false,
-                ccWHITE
-            );
-
-            DialogObject* response02C = DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cr>Go away</c>.",
-                m_fields->m_dialogSprite,
-                1,
-                false,
-                ccWHITE
-            );
-
-            DialogResponses->addObject(response02A);
-            DialogResponses->addObject(response02B);
-            DialogResponses->addObject(response02C);
-
-            m_fields->m_dialogIndex++;
-
-            break;
-        }
-    }
-
-    DialogLayer* dialog = DialogLayer::createWithObjects(DialogResponses, 5);
-    dialog->addToMainScene();
-    dialog->animateInRandomSide();
-    DialogIcon::setDialogObjectCustomIcon(dialog, "GauntletKeeper_1.png"_spr);
-}
-
 void RedesignedGauntletSelectLayer::onNewInfo(CCObject* sender) {
     MDPopup* popup = MDPopup::create(
         "The Lost Gauntlets",
@@ -883,11 +761,57 @@ void RedesignedGauntletSelectLayer::toggleList(CCObject* sender) {
         m_fields->m_betterTitle->setVisible(true);
 
         startAuth();
+
+        // Check if this player is a manager and show the button if so
+        auto accountID = GJAccountManager::get()->m_accountID;
+
+        log::debug("Checking Manager access...");
+
+        m_fields->m_managerCheckHolder.spawn(
+            web::WebRequest().get(fmt::format(
+                "https://bettergauntlets.dev/ismanager?accountId={}",
+                accountID
+            )),
+            [this](web::WebResponse res) {
+                if (!res.ok()) return;
+                auto json = res.json().unwrapOr(matjson::Value());
+                bool isManager = json["isManager"].asBool().unwrapOr(false);
+                if (!isManager) {
+                    log::info("User is not a Gauntlet manager");
+                    return;
+                }
+                log::info("User is a Gauntlet manager!");
+
+                auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
+                if (!BLMenu) return;
+
+                auto manageSpr = CCSprite::create("GR_gauntletStar_001.png"_spr);
+                manageSpr->setScale(0.7);
+
+                auto managerBtnSpr = CircleButtonSprite::createWithSprite(
+                    "GR_gauntletStar_001.png"_spr,
+                    1,
+                    CircleBaseColor::DarkPurple,
+                    CircleBaseSize::Medium
+                );
+                managerBtnSpr->setScale(0.75);
+
+                auto manageBtn = CCMenuItemExt::createSpriteExtra(managerBtnSpr, [](CCMenuItemSpriteExtra*) {
+                    GauntletManagerPopup::create()->show();
+                });
+                manageBtn->setID("manager-button"_spr);
+                static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
+                static_cast<CCMenu*>(BLMenu)->updateLayout();
+            }
+        );
+
     } else {
 
         if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
             existing->removeFromParent();
         if (auto existing = getChildByIDRecursive("custom-gauntlet-bar"_spr))
+            existing->removeFromParent();
+        if (auto existing = getChildByIDRecursive("manager-button"_spr))
             existing->removeFromParent();
 
         log::debug("build vanilla list");

@@ -482,7 +482,7 @@ void RedesignedGauntletLayer::editGauntlets() {
 	levelsMenu->setPositionY(-1000);
 
 	m_fields->m_levelsMenu = CCMenu::create();
-	m_fields->m_levelsMenu->setPosition(winSize / 2);
+	m_fields->m_levelsMenu->setPosition({winSize.width / 2, winSize.height / 2 - 15});
 	m_fields->m_levelsMenu->setID("level-array"_spr);
 	m_fields->m_levelsMenu->ignoreAnchorPointForPosition(false);
 	// m_fields->m_levelsMenu->setLayout(
@@ -651,7 +651,16 @@ void RedesignedGauntletLayer::editGauntlets() {
 		btn->setUserObject(levelNode);
 		btn->setTag(i - 1);
 		btn->setID(fmt::format("level-{}", i));
-		// btn->setPosition(startX + (i - 1) * buttonSpacing, winSize.height / 2.f);
+
+		float posFarX = 185.f;
+		float posCloseX = posFarX / 2.f;
+		float posY = 50.f;
+		
+		if 		(i == 1) btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY);
+		else if (i == 2) btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY);
+		else if (i == 3) btn->setPosition(winSize.width / 2, winSize.height / 2 - posY);
+		else if (i == 4) btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY);
+		else if (i == 5) btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY);
 
 		m_fields->m_levelsMenu->addChild(btn);
 

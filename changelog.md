@@ -1,4 +1,4 @@
-# <cc>v1.8.0?? v2.0.0?????</c>
+# <cc>v2.0.0</c>
 - <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
   - Must have the [Alphas UI Pack](mod:alphalaneous.alphas-ui-pack) mod installed.
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
@@ -29,7 +29,7 @@
 - <c-c4ffc4><cg>**Added**</c> a Level Safe!
   - Shows every level found within the Gauntlet, unlocked or not.
     - Inspired by Jacob375's "Gauntlet Level Vault" mod!
-- <c-ffffc4><cy>**Updated**</c>  the following Gauntlets' visuals:
+- <c-ffffc4><cy>**Updated**</c> the following Gauntlets' visuals:
   - `Ice, Chaos, Time, Force, Random, Chance, Love, Cinema, Future, Utopia`
 - <c-c4ebff><cl>**Fixed**</c> incorrect UI placement on `GauntletSelectLayer`
 - <c-ffc4c4><cr>**Removed**</c> Custom Keybinds functionality

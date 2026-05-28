@@ -2,7 +2,8 @@ MAKE YOUR LIFE EASIER, DUMBASS
 
 ----------
 
-Parse a json file to server to signal manager accountIDs, let server apply automatically.
+Parse a json file to server to signal manager accountIDs, let server apply
+automatically.
 
 --> create a json file locally with manager accountIDs,
     (comment out username (#Dasshu), 1975253)
@@ -14,8 +15,10 @@ Parse a json file to server to signal manager accountIDs, let server apply autom
                                                     1975253;
 
 --> use Argon (https://github.com/GlobedGD/argon) to capture user tokens and allow
-    for Gauntlet management on button press using Argon auth tokens
+    for Gauntlet management on button press using Argon auth tokens, thus removing
+    dependency for passwords entirely!
 
---> connect in-game Gauntlet management panel to https://bettergauntlets.dev/login, gauntlets, ismanager, etc.
+--> connect in-game Gauntlet management panel to
+https://bettergauntlets.dev/login, gauntlets, ismanager, etc.
 
 ----------

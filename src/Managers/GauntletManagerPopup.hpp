@@ -1,38 +1,34 @@
 #pragma once
 #include <Geode/Geode.hpp>
+#include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
-#include "GauntletManagerAPI.hpp"
+// #include "GauntletManagerAPI.hpp"
+#include "../Data/CustomGauntletData.hpp"
 
 using namespace geode::prelude;
 
-class GauntletManagerPopup : public FLAlertLayer, public TextInputDelegate {
-public:
-    static GauntletManagerPopup* create();
-    bool init();
+class GauntletManagerPopup : public Popup {
+protected:
+    bool init(float width, float height, char const* bg);
 
-private:
     std::vector<CustomGauntletData> m_gauntlets;
     CCLayer*       m_listLayer     = nullptr;
+    CCLayer*       m_panelLayer    = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
 
-    CCTextInputNode* m_usernameInput = nullptr;
-    CCTextInputNode* m_passwordInput = nullptr;
-    CCLayer*         m_loginLayer    = nullptr;
-    CCLayer*         m_panelLayer    = nullptr;
-
-    async::TaskHolder<web::WebResponse> m_loginHolder;
+    async::TaskHolder<geode::Result<std::string>> m_argonHolder;
     async::TaskHolder<web::WebResponse> m_fetchHolder;
     async::TaskHolder<web::WebResponse> m_deleteHolder;
 
-    void buildLoginView();
     void buildPanelView();
     void buildGauntletList();
     void buildGauntletRow(CustomGauntletData const& g, float yPos);
-
-    void onLogin(CCObject* sender);
-    void onClose(CCObject* sender);
+    void startArgonAuth();
+    void fetchGauntlets();
     void onCreateNew(CCObject* sender);
     void onEdit(int gauntletId);
     void onDelete(int gauntletId);
-    void fetchGauntlets();
+
+public:
+    static GauntletManagerPopup* create();
 };

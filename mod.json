@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.8.0-beta.31",
+	"version": "v2.0.0-alpha.38",
 	"developer": "DasshuDev",
 	"description": "Bring the Gauntlets to life!",
 	"links": {
@@ -95,7 +95,7 @@
 			"type": "bool",
 			"default": false,
 			"enable-if": "loaded:alphalaneous.alphas-ui-pack",
-			"enable-if-description": "This feature requires the Alphas UI Pack API."
+			"enable-if-description": "This feature requires the Alphas UI Pack."
 		},
 
 		"GauntletLayer": {
@@ -120,23 +120,14 @@
 		"developer": {
 			"name": "Developer Settings",
 			"type": "title",
-			"description": "Category used for <cr>experimental features/settings</c>. Best used if you are a developer or want to enable features that may cause issues. <c>Use with caution</c>!"
+			"description": "Category used for <cr>experimental features/settings</c>. Best used if you are a developer or want to enable features that may cause issues. <cr>Use with caution</c>!"
 		},
 
 		"advscroll-pos-label": {
 			"name": "AdvScrollLayer Pos Label",
-			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer. Useful for debugging scroll-related issues.",
+			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer.",
 			"type": "bool",
 			"default": false
-		},
-		
-		"server-url": {
-			"name": "Gauntlet Server URL",
-			"description": "URL used for fetching custom Gauntlet data. <cg>Change this if you want to use a custom server</c>! Make sure the server follows the same API as the default one, otherwise things may break.",
-			"type": "string",
-			"match": "[A-Z][a-z]+",
-			"filter": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-			"default": "https://bettergauntlets.dev"
 		}
 	}
 }

@@ -6,10 +6,10 @@ using namespace geode::prelude;
 
 using LevelPickCallback = std::function<void(SlotLevel const&)>;
 
-class GauntletLevelSearchPopup : public FLAlertLayer, public TextInputDelegate, public LevelManagerDelegate {
+class GauntletLevelSearchPopup : public Popup, public TextInputDelegate, public LevelManagerDelegate {
 public:
     static GauntletLevelSearchPopup* create(int slotIndex, LevelPickCallback callback);
-    bool init(int slotIndex, LevelPickCallback callback);
+    bool init(float width, float height, char const* bg, int slotIndex, LevelPickCallback callback);
 
 private:
     int               m_slotIndex;
@@ -19,7 +19,6 @@ private:
     LoadingCircle*    m_loadingCircle = nullptr;
 
     void onSearch(CCObject* sender);
-    void onClose(CCObject* sender);
     void buildResultRow(GJGameLevel* level, float yPos);
 
     // LevelManagerDelegate overrides

@@ -6,6 +6,8 @@ This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL twea
 ## Features
 - **Reworked** UI!
 - **Brand new** Navigation!
+- **New** Gauntlets!
+- And more to come!
 
 ---
 

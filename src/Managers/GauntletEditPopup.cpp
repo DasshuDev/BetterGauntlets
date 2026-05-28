@@ -69,10 +69,29 @@ bool GauntletEditPopup::init(
         menu_selector(GauntletEditPopup::onPickNameColor)
     );
 
+    auto btnMenu = CCMenu::create();
+    btnMenu->setPosition({nameContainer->getPositionX(), nameContainer->getPositionY() - 25});
+
+    auto applyNameInput = CCMenuItemSpriteExtra::create(
+        ButtonSprite::create(
+            "Apply Name",
+            "goldFont.fnt",
+            "GJ_button_05.png"
+        ),
+        this,
+        menu_selector(GauntletEditPopup::updatePreviewName)
+    );
+    applyNameInput->setID("apply-name-button");
+    applyNameInput->setScale(0.6);
+    applyNameInput->m_baseScale = 0.6;
+    applyNameInput->m_scaleMultiplier = 1.15;
+    btnMenu->addChild(applyNameInput);
+
     nameContainer->addChild(m_nameInput);
     nameContainer->addChild(colorBtn);
     nameContainer->updateLayout();
 
+    m_mainLayer->addChild(btnMenu);
     m_mainLayer->addChild(nameLabel);
     m_mainLayer->addChild(nameContainer);
 
@@ -106,7 +125,7 @@ bool GauntletEditPopup::init(
 
     // >> Icon
     auto spriteContainer = CCMenu::create();
-    spriteContainer->setPosition({75, nameContainer->getPositionY() - 45});
+    spriteContainer->setPosition({75, nameContainer->getPositionY() - 72.5f});
     spriteContainer->setContentSize({100, 50});
     spriteContainer->setID("sprite-container");
 
@@ -115,7 +134,15 @@ bool GauntletEditPopup::init(
     spriteLabel->setScale(0.52);
 
     auto addSpriteBtn = CCMenuItemSpriteExtra::create(
-        ButtonSprite::create("Upload Icon", 100.f, 80.f, 1.f, true, "goldFont.fnt", "GJ_button_05.png"),
+        ButtonSprite::create(
+            "Upload Icon",
+            100.f,
+            80.f,
+            1.f,
+            true,
+            "goldFont.fnt",
+            "GJ_button_05.png"
+        ),
         this,
         menu_selector(GauntletEditPopup::onPickIcon)
     );
@@ -136,7 +163,7 @@ bool GauntletEditPopup::init(
         ->setGap(10)
         ->setAxisAlignment(AxisAlignment::Center)
     );
-    bgContainer->setPosition({75, spriteContainer->getPositionY() - 60});
+    bgContainer->setPosition({75, spriteContainer->getPositionY() - 65});
     bgContainer->setContentSize({100, 50});
     bgContainer->setID("bg-container");
 
@@ -153,12 +180,12 @@ bool GauntletEditPopup::init(
     );
     bgBtn->m_scaleMultiplier = 1.15;
 
-    m_bgColorSpr = NineSlice::create("GJ_squareB_01.png");
-    m_bgColorSpr->setContentHeight(140);
-    m_bgColorSpr->setScale(0.3);
+    m_bgColorPick = NineSlice::create("GJ_squareB_01.png");
+    m_bgColorPick->setContentHeight(140);
+    m_bgColorPick->setScale(0.3);
 
     auto bgColorBtn = CCMenuItemSpriteExtra::create(
-        m_bgColorSpr,
+        m_bgColorPick,
         this,
         menu_selector(GauntletEditPopup::onPickBGColor)
     );
@@ -186,30 +213,69 @@ bool GauntletEditPopup::init(
     previewContainer->setPosition({m_mainLayer->getContentWidth() - 58, 90});
     previewContainer->setID("preview-container");
 
-    auto previewBG = NineSlice::create("GJ_squareB_01.png");
-    previewBG->setID("preview-background");
-    previewBG->setContentSize({110, 220});
-    previewBG->setColor({m_selectedBGColor.r, m_selectedBGColor.g, m_selectedBGColor.b});
-    previewBG->setScale(0.6);
+    m_previewBG = NineSlice::create("GJ_squareB_01.png");
+    m_previewBG->setID("preview-background");
+    m_previewBG->setContentSize({110, 220});
+    m_previewBG->setColor({m_selectedBGColor.r, m_selectedBGColor.g, m_selectedBGColor.b});
+    m_previewBG->setScale(0.6);
 
     auto previewLabel = CCLabelBMFont::create("Preview", "goldFont.fnt");
-    previewLabel->setPosition(previewBG->getPositionX(), previewBG->getScaledContentHeight() / 2 + 15);
+    previewLabel->setPosition(m_previewBG->getPositionX(), m_previewBG->getScaledContentHeight() / 2 + 15);
     previewLabel->setScale(0.52);
 
-    m_previewTitle = CCLabelBMFont::create("", "bigFont.fnt");
-    m_previewTitle->setString(m_nameInput->getString().c_str());
-    m_previewTitle->updateLabel();
-    m_previewTitle->setPosition(previewBG->getPositionX(), previewBG->getScaledContentHeight() / 2);
+    m_previewTitle = CCLabelBMFont::create("Unknown", "bigFont.fnt");
+    m_previewTitle->setPosition({m_previewBG->getContentWidth() / 2, m_previewBG->getContentHeight() / 2 + 84});
+    m_previewTitle->setScale(0.7);
+
+    m_gauntletText = CCLabelBMFont::create("Gauntlet", "bigFont.fnt");
+    m_gauntletText->setPosition({m_previewBG->getContentWidth() / 2, m_previewBG->getContentHeight() / 2 + 69});
+    m_gauntletText->setScale(0.45);
 
     previewContainer->addChild(previewLabel);
-    previewContainer->addChild(previewBG);
-    previewContainer->addChild(m_previewTitle);
+    previewContainer->addChild(m_previewBG);
+    m_previewBG->addChild(m_previewTitle, 1);
+    m_previewBG->addChild(m_gauntletText, 1);
 
     m_mainLayer->addChild(previewContainer);
 
     //////////
 
+    // >> Save
+    /*
+    auto saveContainer = CCMenu::create();
+    saveContainer->setPosition({m_mainLayer->getContentWidth() / 2, 0});
+
+    auto saveBtn = CCMenuItemSpriteExtra::create(
+        ButtonSprite::create(
+            "Save",
+            "bigFont.fnt",
+            "GJ_button_01.png"
+        ),
+        this,
+        menu_selector(GauntletEditPopup::onSave)
+    );
+    saveBtn->setScale(0.75);
+    saveBtn->m_baseScale = 0.75;
+    saveBtn->m_scaleMultiplier = 1.15;
+
+    saveContainer->addChild(saveBtn);
+
+    m_mainLayer->addChild(saveContainer);
+    */
+
     return true;
+}
+
+void GauntletEditPopup::updatePreviewName(CCObject* sender) {
+    if (m_previewTitle) {
+        m_previewTitle->setString(m_nameInput->getString().c_str());
+        m_previewTitle->updateLabel();
+        if (m_nameInput->getString().empty()) {
+            m_previewTitle->setString("Unknown");
+            m_previewTitle->updateLabel();
+        }
+    m_previewTitle->limitLabelWidth(116, 0.7, 0.00001);
+    }
 }
 
 void GauntletEditPopup::onPickIcon(CCObject*) {
@@ -228,13 +294,11 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
             m_pendingIconPath = path;
 
             queueInMainThread([this, path]() {
-                // Show the selected filename as confirmation
                 Notification::create(
                     fmt::format("Icon selected: {}", path.filename().string()),
                     NotificationIcon::Success
                 )->show();
 
-                // Load it as a local sprite for preview
                 auto container = m_mainLayer->getChildByIDRecursive("preview-background");
 
                 auto previewIcon = CCSprite::create(path.string().c_str());
@@ -274,7 +338,7 @@ void GauntletEditPopup::onPickBackground(CCObject* sender) {
     if (!layer) {
         return;
     }
-
+    layer->m_delegate = this;
     layer->show();
 }
 
@@ -288,17 +352,16 @@ void GauntletEditPopup::selectArtClosed(SelectArtLayer* layer) {
 }
 
 void GauntletEditPopup::updateBgIcon() {
-    if (!m_bgIndexButton) {
+    if (!m_bgIconSpr)
         return;
-    }
 
-    auto icon = CCSprite::createWithSpriteFrameName(getBgIconSpriteName(m_bgIndex).c_str());
-    if (!icon) {
+    auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()
+        ->spriteFrameByName(getBgIconSpriteName(m_bgIndex).c_str());
+
+    if (!frame)
         return;
-    }
 
-    m_bgIconSpr = icon;
-    m_bgIndexButton->setNormalImage(icon);
+    m_bgIconSpr->setDisplayFrame(frame);
 }
 
 void GauntletEditPopup::onPickNameColor(CCObject* sender) {
@@ -308,9 +371,9 @@ void GauntletEditPopup::onPickNameColor(CCObject* sender) {
             m_selectedColor.r = color.r;
             m_selectedColor.g = color.g;
             m_selectedColor.b = color.b;
-            if (m_colorSpr) {
-                m_colorSpr->setColor({color.r, color.g, color.b});
-            }
+            if (m_colorSpr) m_colorSpr->setColor({color.r, color.g, color.b});
+            if (m_previewTitle) m_previewTitle->setColor({color.r, color.g, color.b});
+            if (m_gauntletText) m_gauntletText->setColor({color.r, color.g, color.b});
         });
         m_colorPopup->show();
     }
@@ -323,44 +386,46 @@ void GauntletEditPopup::onPickBGColor(CCObject* sender) {
             m_selectedBGColor.r = color.r;
             m_selectedBGColor.g = color.g;
             m_selectedBGColor.b = color.b;
-            if (m_bgColorSpr) {
-                m_bgColorSpr->setColor({color.r, color.g, color.b});
-            }
+            if (m_bgColorPick) m_bgColorPick->setColor({color.r, color.g, color.b});
+            if (m_previewBG) m_previewBG->setColor({color.r, color.g, color.b});
         });
         m_colorPopup->show();
     }
 }
 
-void GauntletEditPopup::onSave(CCObject*) {
-    m_data.name = m_nameInput->getString();
-    m_data.description = m_descInput->getString();
+void GauntletEditPopup::onSave(CCObject* sender) {
 
-    if (m_data.name.empty()) {
-        Notification::create("Name is required.", NotificationIcon::Warning)->show();
+    // m_data.name = m_nameInput->getString().c_str();
+    // m_data.description = m_descInput->getString().c_str();
+
+    if (m_nameInput->getString().empty() || m_descInput->getString().empty() || m_pendingIconPath->empty()) {
+        Notification::create("Not all fields are completed. Please try again.", NotificationIcon::Warning)->show();
+        log::warn("Gauntlet fields are incomplete.");
         return;
     }
 
-    m_loadingCircle->setVisible(true);
-
-    // If a local icon was selected, upload it first then save
-    if (m_pendingIconPath.has_value()) {
-        m_uploadHolder.spawn(
-            GauntletManagerAPI::get()->uploadIcon(m_pendingIconPath.value()),
-            [this](web::WebResponse res) {
-                if (!res.ok()) {
-                    m_loadingCircle->setVisible(false);
-                    Notification::create("Icon upload failed.", NotificationIcon::Error)->show();
-                    return;
-                }
-                auto url = res.json().unwrapOr(matjson::Value())["url"].asString().unwrapOr("");
-                if (!url.empty()) m_data.iconURL = url;
-                m_pendingIconPath.reset();
-                doSave();
-            }
-        );
-    } else {
-        doSave();
+    else {
+        log::info("saved");
     }
+
+    // m_loadingCircle->setVisible(true);
+
+    // if (m_pendingIconPath.has_value()) {
+    //     m_uploadHolder.spawn(
+    //         GauntletManagerAPI::get()->uploadIcon(m_pendingIconPath.value()),
+    //         [this](web::WebResponse res) {
+    //             if (!res.ok()) {
+    //                 // m_loadingCircle->setVisible(false);
+    //                 Notification::create("Icon upload failed.", NotificationIcon::Error)->show();
+    //                 return;
+    //             }
+    //             auto url = res.json().unwrapOr(matjson::Value())["url"].asString().unwrapOr("");
+    //             if (!url.empty()) m_data.iconURL = url;
+    //             m_pendingIconPath.reset();
+    //             doSave();
+    //         }
+    //     );
+    // }
 }
 
 void GauntletEditPopup::doSave() {

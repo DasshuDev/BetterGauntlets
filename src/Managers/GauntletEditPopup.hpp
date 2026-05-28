@@ -9,10 +9,9 @@ using namespace geode::prelude;
 
 using EditSavedCallback = std::function<void()>;
 
-class GauntletEditPopup : public Popup, public TextInputDelegate {
+class GauntletEditPopup : public Popup, public TextInputDelegate, public SelectArtDelegate {
 protected:
-    bool init(float width, float height, char const* bg,
-              GauntletEditData const& existing, EditSavedCallback onSaved);
+    bool init(float width, float height, char const* bg, GauntletEditData const& existing, EditSavedCallback onSaved);
 
     GauntletEditData  m_data;
     EditSavedCallback m_onSaved;
@@ -21,6 +20,7 @@ protected:
     TextInput* m_descInput = nullptr;
     TextInput* m_urlInput = nullptr;
     CCLabelBMFont* m_previewTitle = nullptr;
+    CCLabelBMFont* m_gauntletText = nullptr;
 
     std::array<CCMenuItemSpriteExtra*, 5> m_slotBtns;
     std::array<CCLabelBMFont*, 5> m_slotLabels;
@@ -33,7 +33,8 @@ protected:
     ccColor3B m_selectedColor = {255, 255, 255};
     ccColor3B m_selectedBGColor = {255, 255, 255};
     CCSprite* m_colorSpr = nullptr;
-    NineSlice* m_bgColorSpr = nullptr;
+    NineSlice* m_bgColorPick = nullptr;
+    NineSlice* m_previewBG = nullptr;
 
     async::TaskHolder<geode::Result<std::optional<std::filesystem::path>>> m_pickHolder;
     std::optional<std::filesystem::path> m_pendingIconPath;
@@ -53,6 +54,7 @@ protected:
     void onPickBackground(CCObject* sender);
     void selectArtClosed(SelectArtLayer* layer);
     void updateBgIcon();
+    void updatePreviewName(CCObject* sender);
     void onSave(CCObject* sender);
     void doSave();
 

@@ -1,27 +1,42 @@
 #pragma once
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
-#include "../Data/CustomGauntletData.hpp"
+// #include "../Data/CustomGauntletData.hpp"
 
 using namespace geode::prelude;
 
 // Represents a level picked from search to fill a slot
 struct SlotLevel {
-    int         id      = 0;
+    int id = 0;
     std::string name;
     std::string creator;
-    int         stars   = 0;
+    int stars = 0;
+};
+
+struct GauntletUserInfo {
+    int accountId = 0;
+    std::string username;
+
+    static GauntletUserInfo fromJson(const matjson::Value& val) {
+        GauntletUserInfo info;
+        info.accountId = val["accountId"].asInt().unwrapOr(0);
+        info.username = val["username"].asString().unwrapOr("Unknown");
+        return info;
+    }
 };
 
 // Full data for creating/editing a gauntlet from the in-game panel
 struct GauntletEditData {
-    int         id          = 0;   // 0 = new gauntlet
+    int id = 0;
     std::string name;
     std::string description;
     std::string iconURL;
-    ccColor3B   nameColor   = {255, 255, 255};
-    ccColor3B   bgColor     = {255, 255, 255};
-    std::array<SlotLevel, 5> slots;
+    ccColor3B nameColor = {255, 255, 255};
+    ccColor3B bgColor = {255, 255, 255};
+    std::array<SlotLevel, 5> levels;
+    GauntletUserInfo accID;
+    std::string releaseDate;
+    std::string version;
 };
 
 class GauntletManagerAPI {

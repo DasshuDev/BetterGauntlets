@@ -35,7 +35,7 @@ web::WebFuture GauntletManagerAPI::fetchAll() {
 
 static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     auto levels = matjson::Value::array();
-    for (auto const& slot : data.slots) {
+    for (auto const& slot : data.levels) {
         auto lvl = matjson::Value();
         lvl["level_id"]   = slot.id;
         lvl["level_name"] = slot.name;

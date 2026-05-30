@@ -19,12 +19,12 @@ protected:
     NineSlice*     m_listBG        = nullptr;
     CCMenu*        m_gauntletList  = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
-    CCMenu*        m_actionMenu    = nullptr;
 
     async::TaskHolder<geode::Result<std::string>> m_argonHolder;
     async::TaskHolder<web::WebResponse> m_fetchHolder;
     async::TaskHolder<web::WebResponse> m_deleteHolder;
     async::TaskHolder<web::WebResponse> m_pushHolder;
+    std::vector<async::TaskHolder<web::WebResponse>> m_rowIconHolders;
 
     void buildPanelView();
     void buildGauntletList();
@@ -32,6 +32,8 @@ protected:
     void buildStagedRow(GauntletEditData const& g, int index);
     void startArgonAuth();
     void fetchGauntlets();
+    void saveStaged();
+    void loadStaged();
     void onCreateNew(CCObject* sender);
     void onEdit(int gauntletId);
     void onEditStaged(int index);

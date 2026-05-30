@@ -30,9 +30,11 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
     m_mainLayer->addChild(m_loadingCircle, 10);
 
     if (GauntletManagerAPI::get()->isLoggedIn()) {
+        loadStaged();
         buildPanelView();
         fetchGauntlets();
     } else {
+        loadStaged();
         startArgonAuth();
     }
 
@@ -110,6 +112,106 @@ void GauntletManagerPopup::startArgonAuth() {
             );
         }
     );
+}
+
+void GauntletManagerPopup::saveStaged() {
+    auto arr = matjson::Value::array();
+    for (auto const& g : m_staged) {
+        auto levels = matjson::Value::array();
+        for (auto const& slot : g.levels) {
+            auto lvl = matjson::Value();
+            lvl["id"]      = slot.id;
+            lvl["name"]    = slot.name;
+            lvl["creator"] = slot.creator;
+            lvl["stars"]   = slot.stars;
+            levels.push(lvl);
+        }
+        auto obj = matjson::Value();
+        obj["id"]              = g.id;
+        obj["name"]            = g.name;
+        obj["description"]     = g.description;
+        obj["iconURL"]         = g.iconURL;
+        obj["nameColor_r"]     = (int)g.nameColor.r;
+        obj["nameColor_g"]     = (int)g.nameColor.g;
+        obj["nameColor_b"]     = (int)g.nameColor.b;
+        obj["nodeColor_r"]     = (int)g.nodeColor.r;
+        obj["nodeColor_g"]     = (int)g.nodeColor.g;
+        obj["nodeColor_b"]     = (int)g.nodeColor.b;
+        obj["bgColor_r"]       = (int)g.bgColor.r;
+        obj["bgColor_g"]       = (int)g.bgColor.g;
+        obj["bgColor_b"]       = (int)g.bgColor.b;
+        obj["accentColor1_r"]  = (int)g.accentColor1.r;
+        obj["accentColor1_g"]  = (int)g.accentColor1.g;
+        obj["accentColor1_b"]  = (int)g.accentColor1.b;
+        obj["accentColor2_r"]  = (int)g.accentColor2.r;
+        obj["accentColor2_g"]  = (int)g.accentColor2.g;
+        obj["accentColor2_b"]  = (int)g.accentColor2.b;
+        obj["infoDate"]        = g.infoDate;
+        obj["infoVersion"]     = g.infoVersion;
+        obj["infoSuggester"]   = g.infoSuggester;
+        obj["infoAccID"]       = g.infoAccID;
+        obj["levels"]          = levels;
+        arr.push(obj);
+    }
+    Mod::get()->setSavedValue("staged-gauntlets", arr);
+}
+
+void GauntletManagerPopup::loadStaged() {
+    m_staged.clear();
+    auto saved = Mod::get()->getSavedValue<matjson::Value>(
+        "staged-gauntlets", matjson::Value::array()
+    );
+    if (!saved.isArray()) return;
+
+    for (auto const& obj : saved) {
+        GauntletEditData g;
+        g.id          = obj["id"].asInt().unwrapOr(0);
+        g.name        = obj["name"].asString().unwrapOr("");
+        g.description = obj["description"].asString().unwrapOr("");
+        g.iconURL     = obj["iconURL"].asString().unwrapOr("");
+        g.nameColor   = {
+            (GLubyte)obj["nameColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["nameColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["nameColor_b"].asInt().unwrapOr(255)
+        };
+        g.nodeColor   = {
+            (GLubyte)obj["nodeColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["nodeColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["nodeColor_b"].asInt().unwrapOr(255)
+        };
+        g.bgColor     = {
+            (GLubyte)obj["bgColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["bgColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["bgColor_b"].asInt().unwrapOr(255)
+        };
+        g.accentColor1 = {
+            (GLubyte)obj["accentColor1_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor1_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor1_b"].asInt().unwrapOr(255)
+        };
+        g.accentColor2 = {
+            (GLubyte)obj["accentColor2_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor2_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor2_b"].asInt().unwrapOr(255)
+        };
+        g.infoDate      = obj["infoDate"].asString().unwrapOr("");
+        g.infoVersion   = obj["infoVersion"].asString().unwrapOr("");
+        g.infoSuggester = obj["infoSuggester"].asString().unwrapOr("");
+        g.infoAccID     = obj["infoAccID"].asInt().unwrapOr(0);
+
+        if (obj.contains("levels") && obj["levels"].isArray()) {
+            int i = 0;
+            for (auto const& lvl : obj["levels"]) {
+                if (i >= 5) break;
+                g.levels[i].id      = lvl["id"].asInt().unwrapOr(0);
+                g.levels[i].name    = lvl["name"].asString().unwrapOr("");
+                g.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+                g.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+                i++;
+            }
+        }
+        m_staged.push_back(g);
+    }
 }
 
 void GauntletManagerPopup::buildPanelView() {
@@ -195,6 +297,7 @@ void GauntletManagerPopup::fetchGauntlets() {
 
 void GauntletManagerPopup::buildGauntletList() {
     if (!m_listLayer) return;
+    m_rowIconHolders.clear();
     m_listLayer->removeAllChildren();
 
     m_gauntletList = CCMenu::create();
@@ -207,7 +310,11 @@ void GauntletManagerPopup::buildGauntletList() {
         ->setAutoScale(false)
         ->setAxisAlignment(AxisAlignment::End)
     );
-    m_listLayer->addChild(m_gauntletList);
+
+    auto scroll = ScrollLayer::create(m_gauntletList->getContentSize(), true, true);
+    scroll->m_contentLayer->addChild(m_gauntletList);
+
+    m_listLayer->addChild(scroll);
     // float yPos = m_size.height - 55;
 
     // Staged rows first
@@ -238,6 +345,8 @@ void GauntletManagerPopup::buildGauntletList() {
     // }
 }
 
+// Already added Gauntlets
+
 void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto row = CCNode::create();
     row->setContentSize({m_gauntletList->getContentWidth(), 60});
@@ -249,52 +358,92 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     rowBg->setAnchorPoint({0, 0});
     row->addChild(rowBg);
 
-    // Color swatch
-    auto swatch = CCScale9Sprite::create("square02_001.png");
-    swatch->setContentSize({10, 10});
-    swatch->setColor(g.color);
-    swatch->setPosition({12, row->getContentHeight() / 2});
-    row->addChild(swatch);
+    // Icon placeholder — filled async below
+    auto iconNode = CCNode::create();
+    iconNode->setID("icon-node");
+    iconNode->setContentSize({50, 50});
+    iconNode->setPosition({30, row->getContentHeight() / 2});
+    iconNode->setAnchorPoint({0.5f, 0.5f});
 
-    // Name
+    auto iconPlaceholder = CCScale9Sprite::create("square02_001.png");
+    iconPlaceholder->setID("icon-placeholder");
+    iconPlaceholder->setPosition(iconNode->getContentSize() / 2);
+    iconPlaceholder->setContentSize({50, 50});
+    iconPlaceholder->setColor(g.color);
+    iconPlaceholder->setOpacity(120);
+    iconPlaceholder->setAnchorPoint({0.5f, 0.5f});
+    iconNode->addChild(iconPlaceholder);
+    row->addChild(iconNode);
+
+    // Name + color label
     auto nameLabel = CCLabelBMFont::create(
         fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
     nameLabel->setScale(0.38f);
     nameLabel->setAnchorPoint({0, 0.5f});
-    nameLabel->limitLabelWidth(180.f, 0.38f, 0.1f);
-    nameLabel->setPosition({22, row->getContentHeight() / 2 + 6});
+    nameLabel->limitLabelWidth(150.f, 0.38f, 0.1f);
+    nameLabel->setPosition({58, row->getContentHeight() / 2 + 8});
     row->addChild(nameLabel);
 
-    // Buttons
+    auto colorDot = CCScale9Sprite::create("square02_001.png");
+    colorDot->setContentSize({8, 8});
+    colorDot->setColor(g.color);
+    colorDot->setPosition({62, row->getContentHeight() / 2 - 8});
+    row->addChild(colorDot);
+
+    // Buttons — local menu, not m_actionMenu
     int gid = g.id;
-    m_actionMenu = CCMenu::create();
-    m_actionMenu->setPosition({row->getContentWidth() - 45, row->getContentHeight() / 2});
-    m_actionMenu->setLayout(RowLayout::create()
-        ->setGap(5)
-        ->setAxisAlignment(AxisAlignment::End)
-    );
-    row->addChild(m_actionMenu);
+    auto actionMenu = CCMenu::create();
+    actionMenu->setAnchorPoint({1, 0.5f});
+    actionMenu->setPosition({row->getContentWidth() - 5, row->getContentHeight() / 2});
+    actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
-    editSpr->setScale(0.45f);
+    editSpr->setScale(0.85f);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
-        [this, gid](CCMenuItemSpriteExtra*) { onEdit(gid); }
-    );
-    editBtn->setPositionX(-25);
-    
-    auto delSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
-    delSpr->setScale(0.45f);
-    auto delBtn = CCMenuItemExt::createSpriteExtra(delSpr,
-        [this, gid](CCMenuItemSpriteExtra*) { onDelete(gid); }
-    );
-    delBtn->setPositionX(25);
-        
-    m_actionMenu->addChild(editBtn);
-    m_actionMenu->addChild(delBtn);
+        [this, gid](CCMenuItemSpriteExtra*) { onEdit(gid); });
+    actionMenu->addChild(editBtn);
 
-    m_actionMenu->updateLayout();
+    auto delSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+    delSpr->setScale(0.85f);
+    auto delBtn = CCMenuItemExt::createSpriteExtra(delSpr,
+        [this, gid](CCMenuItemSpriteExtra*) { onDelete(gid); });
+    actionMenu->addChild(delBtn);
+
+    actionMenu->updateLayout();
+    row->addChild(actionMenu);
 
     m_gauntletList->addChild(row);
+
+    // Async icon load
+    if (!g.iconURL.empty()) {
+        m_rowIconHolders.emplace_back();
+        m_rowIconHolders.back().spawn(
+            web::WebRequest().get(g.iconURL),
+            [iconNode](web::WebResponse res) {
+                if (!res.ok()) return;
+                auto bytes = res.data();
+                queueInMainThread([iconNode, bytes]() {
+                    if (!iconNode) return;
+                    auto img = new CCImage();
+                    if (!img->initWithImageData(
+                            const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                        delete img; return;
+                    }
+                    auto tex = new CCTexture2D();
+                    tex->initWithImage(img);
+                    delete img;
+                    auto icon = CCSprite::createWithTexture(tex);
+                    tex->release();
+                    icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
+                    icon->setPosition(iconNode->getContentSize() / 2);
+                    icon->setAnchorPoint({0.5f, 0.5f});
+                    if (auto ph = iconNode->getChildByID("icon-placeholder"))
+                        ph->removeFromParent();
+                    iconNode->addChild(icon);
+                });
+            }
+        );
+    }
 }
 
 void GauntletManagerPopup::onEdit(int gauntletId) {
@@ -317,6 +466,7 @@ void GauntletManagerPopup::onCreateNew(CCObject*) {
     GauntletEditData empty;
     GauntletEditPopup::create(empty, [this](GauntletEditData const& data) {
         m_staged.push_back(data);
+        saveStaged();
         buildGauntletList();
         Notification::create(
             fmt::format("\"{}\" staged.", data.name),
@@ -330,79 +480,128 @@ void GauntletManagerPopup::onEditStaged(int index) {
     auto existing = m_staged[index];
     GauntletEditPopup::create(existing, [this, index](GauntletEditData const& data) {
         m_staged[index] = data;
+        saveStaged();
         buildGauntletList();
     })->show();
 }
 
 void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) {
-    auto row = CCNode::create();
-    row->setContentSize({m_gauntletList->getContentWidth(), 38});
+    auto gauntletListItem = CCNode::create();
+    gauntletListItem->setContentSize({m_gauntletList->getContentWidth(), 60});
 
     // Accent 1 background
-    auto rowBg = CCScale9Sprite::create("square02_001.png");
-    rowBg->setContentSize(row->getContentSize());
-    rowBg->setColor(g.accentColor1);
-    rowBg->setOpacity(120);
-    rowBg->setAnchorPoint({0, 0});
-    row->addChild(rowBg);
+    auto accent1 = CCScale9Sprite::create("square.png");
+    accent1->setContentSize(gauntletListItem->getContentSize());
+    accent1->setColor(g.accentColor1);
+    accent1->setOpacity(120);
+    accent1->setAnchorPoint({0, 0});
+    gauntletListItem->addChild(accent1);
 
-    // Accent 2 overlay on right half
-    auto accent2 = CCScale9Sprite::create("square02_001.png");
-    accent2->setContentSize({row->getContentWidth() / 2, row->getContentHeight()});
+    // Accent 2 gradient overlay
+    auto accent2 = CCScale9Sprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+    accent2->setContentSize(gauntletListItem->getContentSize());
     accent2->setColor(g.accentColor2);
     accent2->setOpacity(120);
     accent2->setAnchorPoint({1, 0});
-    accent2->setPosition({row->getContentWidth(), 0});
-    row->addChild(accent2);
+    accent2->setPosition({gauntletListItem->getContentWidth(), 0});
+    gauntletListItem->addChild(accent2);
+
+    // Icon placeholder — filled async below
+    auto iconNode = CCNode::create();
+    iconNode->setID("icon-node");
+    iconNode->setContentSize({50, 50});
+    iconNode->setPosition({30, gauntletListItem->getContentHeight() / 2});
+    iconNode->setAnchorPoint({0.5f, 0.5f});
+
+    auto iconPlaceholder = CCScale9Sprite::create("square02_001.png");
+    iconPlaceholder->setID("icon-placeholder");
+    iconPlaceholder->setContentSize({50, 50});
+    iconPlaceholder->setColor(g.accentColor1);
+    iconPlaceholder->setOpacity(160);
+    iconPlaceholder->setAnchorPoint({0.5f, 0.5f});
+    iconNode->addChild(iconPlaceholder);
+    gauntletListItem->addChild(iconNode);
 
     // STAGED badge
     auto badge = CCLabelBMFont::create("STAGED", "bigFont.fnt");
     badge->setScale(0.25f);
     badge->setColor({255, 220, 50});
     badge->setAnchorPoint({0, 0.5f});
-    badge->setPosition({6, row->getContentHeight() / 2 + 8});
-    row->addChild(badge);
+    badge->setPosition({58, gauntletListItem->getContentHeight() / 2 + 14});
+    gauntletListItem->addChild(badge);
 
     // Name
     auto nameLabel = CCLabelBMFont::create(
         fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
-    nameLabel->setScale(0.35f);
+    nameLabel->setScale(0.5);
     nameLabel->setColor(g.nameColor);
-    nameLabel->setAnchorPoint({0, 0.5f});
-    nameLabel->limitLabelWidth(160.f, 0.35f, 0.1f);
-    nameLabel->setPosition({6, row->getContentHeight() / 2 - 6});
-    row->addChild(nameLabel);
+    nameLabel->setAnchorPoint({0, 0.5});
+    nameLabel->limitLabelWidth(130, 0.35, 0.1);
+    nameLabel->setPosition({58, gauntletListItem->getContentHeight() / 2});
+    gauntletListItem->addChild(nameLabel);
 
-    // Buttons
-    auto rowMenu = CCMenu::create();
-    rowMenu->setPosition({row->getContentWidth() - 55, row->getContentHeight() / 2});
-    row->addChild(rowMenu);
+    // Buttons — local menu
+    auto actionMenu = CCMenu::create();
+    actionMenu->setAnchorPoint({1, 0.5});
+    actionMenu->setPosition({gauntletListItem->getContentWidth() - 5, gauntletListItem->getContentHeight() / 2});
+    actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
 
-    auto deleteSpr = ButtonSprite::create("Del", "bigFont.fnt", "GJ_button_06.png");
-    deleteSpr->setScale(0.4f);
+    auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+    deleteSpr->setScale(0.85f);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
         [this, index](CCMenuItemSpriteExtra*) {
             m_staged.erase(m_staged.begin() + index);
+            saveStaged();
             buildGauntletList();
         });
-    deleteBtn->setPositionX(-38);
-    rowMenu->addChild(deleteBtn);
+    actionMenu->addChild(deleteBtn);
 
-    auto editSpr = ButtonSprite::create("Edit", "bigFont.fnt", "GJ_button_02.png");
-    editSpr->setScale(0.4f);
+    auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
+    editSpr->setScale(0.85f);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
         [this, index](CCMenuItemSpriteExtra*) { onEditStaged(index); });
-    editBtn->setPositionX(0);
-    rowMenu->addChild(editBtn);
+    actionMenu->addChild(editBtn);
 
-    auto pushSpr = ButtonSprite::create("Push", "bigFont.fnt", "GJ_button_01.png");
-    pushSpr->setScale(0.4f);
+    auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
+    pushSpr->setScale(0.85f);
     auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
         [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
-    pushBtn->setPositionX(38);
-    rowMenu->addChild(pushBtn);
+    actionMenu->addChild(pushBtn);
 
-    m_gauntletList->addChild(row);
+    actionMenu->updateLayout();
+    gauntletListItem->addChild(actionMenu);
+
+    m_gauntletList->addChild(gauntletListItem);
+
+    // Async icon load
+    if (!g.iconURL.empty()) {
+        m_rowIconHolders.emplace_back();
+        m_rowIconHolders.back().spawn(
+            web::WebRequest().get(g.iconURL),
+            [iconNode](web::WebResponse res) {
+                if (!res.ok()) return;
+                auto bytes = res.data();
+                queueInMainThread([iconNode, bytes]() {
+                    if (!iconNode) return;
+                    auto img = new CCImage();
+                    if (!img->initWithImageData(
+                            const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                        delete img; return;
+                    }
+                    auto tex = new CCTexture2D();
+                    tex->initWithImage(img);
+                    delete img;
+                    auto icon = CCSprite::createWithTexture(tex);
+                    tex->release();
+                    icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
+                    icon->setAnchorPoint({0.5f, 0.5f});
+                    if (auto ph = iconNode->getChildByID("icon-placeholder"))
+                        ph->removeFromParent();
+                    iconNode->addChild(icon);
+                });
+            }
+        );
+    }
 }
 
 void GauntletManagerPopup::onPushStaged(int index) {
@@ -431,6 +630,7 @@ void GauntletManagerPopup::onPushStaged(int index) {
                     return;
                 }
                 m_staged.erase(m_staged.begin() + index);
+                saveStaged();
                 Notification::create("Gauntlet pushed!", NotificationIcon::Success)->show();
                 fetchGauntlets(); // refresh server list
             });

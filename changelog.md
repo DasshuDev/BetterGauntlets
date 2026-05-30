@@ -2,6 +2,7 @@
 - <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
   - Must have the [Alphas UI Pack](mod:alphalaneous.alphas-ui-pack) mod installed.
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
+- added custom gauntlets 
 
 <c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but will soon return.*
 

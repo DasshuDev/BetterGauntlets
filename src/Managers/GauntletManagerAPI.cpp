@@ -30,6 +30,7 @@ web::WebFuture GauntletManagerAPI::login(
 web::WebFuture GauntletManagerAPI::fetchAll() {
     return web::WebRequest()
         .header("Authorization", "Bearer " + m_token)
+        .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
         .get(baseURL() + "/manage");
 }
 
@@ -44,16 +45,32 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
         levels.push(lvl);
     }
     auto body = matjson::Value();
-    body["name"]         = data.name;
-    body["description"]  = data.description;
-    body["icon_url"]     = data.iconURL;
-    body["color_r"]      = (int)data.bgColor.r;
-    body["color_g"]      = (int)data.bgColor.g;
-    body["color_b"]      = (int)data.bgColor.b;
-    body["name_color_r"] = (int)data.nameColor.r;
-    body["name_color_g"] = (int)data.nameColor.g;
-    body["name_color_b"] = (int)data.nameColor.b;
-    body["levels"]       = levels;
+
+    // general
+    body["name"]            = data.name;
+    body["icon_url"]        = data.iconURL;
+
+    // shown in GauntletSelectLayer
+    body["name_color_r"]    = (int)data.nameColor.r;
+    body["name_color_g"]    = (int)data.nameColor.g;
+    body["name_color_b"]    = (int)data.nameColor.b;
+    body["node_color_r"]    = (int)data.nodeColor.r;
+    body["node_color_g"]    = (int)data.nodeColor.g;
+    body["node_color_b"]    = (int)data.nodeColor.b;
+
+    // shown in GauntletLayer
+    body["description"]     = data.description;
+    body["color_r"]         = (int)data.bgColor.r;
+    body["color_g"]         = (int)data.bgColor.g;
+    body["color_b"]         = (int)data.bgColor.b;
+    body["levels"]          = levels;
+    body["accent_color1_r"] = (int)data.accentColor1.r;
+    body["accent_color1_g"] = (int)data.accentColor1.g;
+    body["accent_color1_b"] = (int)data.accentColor1.b;
+    body["accent_color2_r"] = (int)data.accentColor2.r;
+    body["accent_color2_g"] = (int)data.accentColor2.g;
+    body["accent_color2_b"] = (int)data.accentColor2.b;
+
     return body;
 }
 
@@ -81,12 +98,16 @@ web::WebFuture GauntletManagerAPI::remove(int id) {
 
 web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path) {
     auto bytes = file::readBinary(path);
-    if (!bytes) return web::WebRequest().get("");
+    if (!bytes) {
+        log::error("uploadIcon: failed to read file: {}", bytes.unwrapErr());
+        return web::WebRequest().get(""); // caller must handle this
+    }
 
     return web::WebRequest()
-        .header("Authorization",  "Bearer " + m_token)
-        .header("x-filename",     path.filename().string())
-        .header("x-content-type", "image/png")
+        .header("Authorization", "Bearer " + m_token)
+        .header("Content-Type",  "image/png")
+        .header("x-filename",    path.filename().string())
+        .header("x-account-id",        std::to_string(GJAccountManager::get()->m_accountID))
         .body(bytes.unwrap())
         .post(baseURL() + "/upload");
 }

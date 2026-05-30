@@ -7,14 +7,15 @@
 
 using namespace geode::prelude;
 
-using EditSavedCallback = std::function<void()>;
+using EditSavedCallback = std::function<void(GauntletEditData const&)>;
 
 class GauntletEditPopup :
     public Popup,
     public TextInputDelegate,
     public SelectArtDelegate,
     public LevelManagerDelegate,
-    public UserInfoDelegate
+    public UserInfoDelegate,
+    public FLAlertLayerProtocol
 {
 protected:
     bool init(float width, float height, char const* bg, GauntletEditData const& existing, EditSavedCallback onSaved);
@@ -81,12 +82,14 @@ protected:
     std::optional<std::filesystem::path> m_pendingIconPath;
     async::TaskHolder<web::WebResponse> m_saveHolder;
     async::TaskHolder<web::WebResponse> m_uploadHolder;
+    async::TaskHolder<web::WebResponse> m_webIconHolder;
 
     std::string m_spritePath;
     LoadingCircle* m_loadingCircle = nullptr;
 
     // Methods
     void onClose(CCObject* sender) override;
+    void FLAlert_Clicked(FLAlertLayer* alert, bool btn2) override;
 
     // Level slots
     void onPickSlot(int slotIndex);

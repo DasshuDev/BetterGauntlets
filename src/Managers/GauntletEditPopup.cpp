@@ -61,8 +61,6 @@ bool GauntletEditPopup::init(
     auto toggleLayer = CCMenuItemToggler::create(
         IconButtonSprite::create("GJ_button_01.png", icon, nullptr, nullptr),
         IconButtonSprite::create("GJ_button_02.png", icon, nullptr, nullptr),
-        // CCSprite::createWithSpriteFrameName("GR_editColors_01_001.png"_spr),
-        // CCSprite::createWithSpriteFrameName("GR_editColors_02_001.png"_spr),
         this,
         menu_selector(GauntletEditPopup::onSwapLayer)
     );
@@ -104,7 +102,7 @@ bool GauntletEditPopup::init(
     nameLabel->setScale(0.52);
 
     auto applyNameBtn = CCMenuItemSpriteExtra::create(
-        CCSprite::create("GR_pushBtn_001.png"_spr),
+        CCSprite::createWithSpriteFrameName("GR_pushBtn_001.png"_spr),
         this,
         menu_selector(GauntletEditPopup::updatePreviewName)
     );
@@ -139,7 +137,7 @@ bool GauntletEditPopup::init(
     descLabel->setScale(0.52);
 
     auto applyDescBtn = CCMenuItemSpriteExtra::create(
-        CCSprite::create("GR_pushBtn_001.png"_spr),
+        CCSprite::createWithSpriteFrameName("GR_pushBtn_001.png"_spr),
         this,
         menu_selector(GauntletEditPopup::updateDescription)
     );
@@ -508,7 +506,7 @@ bool GauntletEditPopup::init(
     // push buttons column
     auto makePushBtn = [&](SEL_MenuHandler sel) {
         auto btn = CCMenuItemSpriteExtra::create(
-            CCSprite::create("GR_pushBtn_001.png"_spr), this, sel);
+            CCSprite::createWithSpriteFrameName("GR_pushBtn_001.png"_spr), this, sel);
         btn->setScale(0.6);
         btn->m_baseScale = 0.6f;
         btn->m_scaleMultiplier = 1.15;
@@ -532,16 +530,137 @@ bool GauntletEditPopup::init(
     m_GSLPreview->addChild(infoMenu);
     m_GSLPreview->addChild(pushInfoMenu);
 
+    // Save Button
+    auto saveMenu = CCMenu::create();
+    saveMenu->setPosition(m_mainLayer->getContentWidth() / 2, 3);
+
+    auto saveBtn = CCMenuItemSpriteExtra::create(
+        ButtonSprite::create("Save"),
+        this,
+        menu_selector(GauntletEditPopup::onSave)
+    );
+    saveBtn->setScale(0.75);
+    saveBtn->m_baseScale = 0.75;
+    saveBtn->m_scaleMultiplier = 1.15;
+
+    saveMenu->addChild(saveBtn);
+
+    m_mainLayer->addChild(saveMenu);
+
+    // ── Restore state from existing data ─────────────────────────────────────
+    if (!existing.name.empty()) {
+        m_nameInput->setString(existing.name);
+        updatePreviewName(nullptr);
+    }
+    if (!existing.description.empty()) {
+        m_descInput->setString(existing.description);
+        updateDescription(nullptr);
+    }
+
+    // Restore info strings
+    m_infoDate      = existing.infoDate;
+    m_infoVersion   = existing.infoVersion;
+    m_infoSuggester = existing.infoSuggester;
+    m_infoAccID     = existing.infoAccID;
+    if (!existing.infoDate.empty())      m_infoDateInput->setString(existing.infoDate);
+    if (!existing.infoVersion.empty())   m_infoVersionInput->setString(existing.infoVersion);
+    if (existing.infoAccID != 0)
+        m_infoAccIDInput->setString(std::to_string(existing.infoAccID));
+
+    // Restore colors
+    m_selectedColor = existing.nameColor;
+    if (m_colorSprName) m_colorSprName->setColor(m_selectedColor);
+    if (m_previewTitle) m_previewTitle->setColor(m_selectedColor);
+    if (m_gauntletText) m_gauntletText->setColor(m_selectedColor);
+
+    m_selectedNodeColor = existing.nodeColor;
+    if (m_colorSprNode) m_colorSprNode->setColor(m_selectedNodeColor);
+    if (m_previewBG)    m_previewBG->setColor(m_selectedNodeColor);
+
+    m_selectedBGColor = existing.bgColor;
+    if (m_colorSprBG) m_colorSprBG->setColor(m_selectedBGColor);
+    if (m_bgIconSpr)  m_bgIconSpr->setColor(m_selectedBGColor);
+
+    m_selectedAccentColor1 = existing.accentColor1;
+    if (m_colorAccent1) m_colorAccent1->setColor(m_selectedAccentColor1);
+
+    m_selectedAccentColor2 = existing.accentColor2;
+    if (m_colorAccent2) m_colorAccent2->setColor(m_selectedAccentColor2);
+
+    // Restore icon from URL if we have one and no local file yet
+    if (!existing.iconURL.empty() && !m_pendingIconPath.has_value()) {
+        m_data.iconURL = existing.iconURL;
+        m_webIconHolder.spawn(
+            web::WebRequest().get(existing.iconURL),
+            [this](web::WebResponse res) {
+                if (!res.ok()) return;
+                auto bytes = res.data();
+                queueInMainThread([this, bytes]() {
+                    auto container = m_mainLayer->getChildByIDRecursive("preview-background");
+                    if (!container) return;
+                    auto img = new CCImage();
+                    if (!img->initWithImageData(
+                            const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                        delete img;
+                        return;
+                    }
+                    auto tex = new CCTexture2D();
+                    tex->initWithImage(img);
+                    delete img;
+                    if (auto old = container->getChildByID("preview-icon"))
+                        old->removeFromParent();
+                    if (auto old = container->getChildByID("preview-icon-shadow"))
+                        old->removeFromParent();
+                    auto icon = CCSprite::createWithTexture(tex);
+                    icon->setID("preview-icon");
+                    icon->setPosition(static_cast<CCNode*>(container)->getContentSize() / 2);
+                    icon->setScale(1.1f);
+                    auto shadow = CCSprite::createWithTexture(tex);
+                    shadow->setID("preview-icon-shadow");
+                    shadow->setColor({0, 0, 0});
+                    shadow->setOpacity(50);
+                    shadow->setPosition({
+                        static_cast<CCNode*>(container)->getContentWidth() / 2,
+                        static_cast<CCNode*>(container)->getContentHeight() / 2 - 10
+                    });
+                    shadow->setScaleX(icon->getScaleX());
+                    shadow->setScaleY(icon->getScaleY() * 1.2f);
+                    container->addChild(shadow);
+                    container->addChild(icon);
+                    tex->release();
+                });
+            }
+        );
+    }
+
     return true;
 }
 
 // onClose 
 
 void GauntletEditPopup::onClose(CCObject* sender) {
+    auto alert = FLAlertLayer::create(
+        this,
+        "Hold on!",
+        "Are you sure you want to <cy>close the Gauntlet Creator</c>? All progress will be lost and <cr>cannot be undone</c>!",
+        "Cancel",
+        "Yes"
+    );
+    alert->m_button1->updateBGImage("GJ_button_05.png");
+    alert->m_button2->updateBGImage("GJ_button_06.png");
+    alert->show();
+}
+
+void GauntletEditPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
+    if (!btn2) return;
+
     auto glm = GameLevelManager::get();
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
-    Popup::onClose(sender);
+    if (glm->m_userInfoDelegate == this)
+        glm->m_userInfoDelegate = nullptr;
+
+    Popup::onClose(nullptr);
 }
 
 // Layer swap
@@ -617,9 +736,13 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
     if (input.empty()) {
         auto t = std::time(nullptr);
         std::tm tm{};
+        #ifdef _WIN32
         localtime_s(&tm, &t);
+        #else
+        localtime_r(&t, &tm);
+        #endif
         char buf[32];
-        std::strftime(buf, sizeof(buf), "%m/%d/%Y", &tm);
+        std::strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
         input = buf;
         m_infoDateInput->setString(input);
     }
@@ -894,56 +1017,47 @@ void GauntletEditPopup::refreshSlotLabel(int index) {
 void GauntletEditPopup::onSave(CCObject* sender) {
     if (m_nameInput->getString().empty()
         || m_descInput->getString().empty()
-        || !m_pendingIconPath.has_value()) {
-        Notification::create("Not all fields are completed.", NotificationIcon::Warning)->show();
+        || (!m_pendingIconPath.has_value() && m_data.iconURL.empty())) {
+        Notification::create("Not all fields are completed.",
+                             NotificationIcon::Warning)->show();
         return;
     }
 
-    m_data.name        = m_nameInput->getString();
-    m_data.description = m_descInput->getString();
+    // Pack all state into m_data
+    m_data.name          = m_nameInput->getString();
+    m_data.description   = m_descInput->getString();
+    m_data.nameColor     = m_selectedColor;
+    m_data.nodeColor     = m_selectedNodeColor;
+    m_data.bgColor       = m_selectedBGColor;
+    m_data.accentColor1  = m_selectedAccentColor1;
+    m_data.accentColor2  = m_selectedAccentColor2;
+    m_data.infoDate      = m_infoDate;
+    m_data.infoVersion   = m_infoVersion;
+    m_data.infoSuggester = m_infoSuggester;
+    m_data.infoAccID     = m_infoAccID;
 
     if (m_pendingIconPath.has_value()) {
-        m_loadingCircle->setVisible(true);
         m_uploadHolder.spawn(
             GauntletManagerAPI::get()->uploadIcon(m_pendingIconPath.value()),
             [this](web::WebResponse res) {
                 if (!res.ok()) {
-                    m_loadingCircle->setVisible(false);
                     Notification::create("Icon upload failed.",
                                         NotificationIcon::Error)->show();
                     return;
                 }
-                auto url = res.json().unwrapOr(matjson::Value())["url"]
-                              .asString().unwrapOr("");
-                if (!url.empty()) m_data.iconURL = url;
+                m_data.iconURL = res.json().unwrapOr(matjson::Value())["url"]
+                                    .asString().unwrapOr("");
                 m_pendingIconPath.reset();
                 doSave();
             }
         );
     } else {
+        // iconURL already set from existing data — skip upload
         doSave();
     }
 }
 
 void GauntletEditPopup::doSave() {
-    auto future = m_data.id == 0
-        ? GauntletManagerAPI::get()->create(m_data)
-        : GauntletManagerAPI::get()->update(m_data);
-
-    m_saveHolder.spawn(std::move(future), [this](web::WebResponse res) {
-        m_loadingCircle->setVisible(false);
-        if (!res.ok()) {
-            Notification::create(
-                fmt::format("Save failed: HTTP {}", res.code()),
-                NotificationIcon::Error
-            )->show();
-            return;
-        }
-        Notification::create(
-            m_data.id == 0 ? "Gauntlet created!" : "Gauntlet updated!",
-            NotificationIcon::Success
-        )->show();
-        if (m_onSaved) m_onSaved();
-        this->onClose(nullptr);
-    });
+    if (m_onSaved) m_onSaved(m_data);
+    Popup::onClose(nullptr);
 }

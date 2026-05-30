@@ -47,6 +47,9 @@
 			],
 			"RewardSheet_001":[
 				"resources/GauntletSelectLayer/RewardNode/*.png"
+			],
+			"ManagerSheet":[
+				"resources/Manager/*.png"
 			]
 		}
 	},

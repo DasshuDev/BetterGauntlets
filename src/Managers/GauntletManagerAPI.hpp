@@ -32,11 +32,17 @@ struct GauntletEditData {
     std::string description;
     std::string iconURL;
     ccColor3B nameColor = {255, 255, 255};
+    ccColor3B nodeColor = {255, 255, 255};
     ccColor3B bgColor = {255, 255, 255};
+    ccColor3B accentColor1 = {255, 255, 255};
+    ccColor3B accentColor2 = {255, 255, 255};
     std::array<SlotLevel, 5> levels;
-    GauntletUserInfo accID;
-    std::string releaseDate;
-    std::string version;
+
+    // Info metadata
+    std::string infoDate;
+    std::string infoVersion;
+    std::string infoSuggester;
+    int infoAccID = 0;
 };
 
 class GauntletManagerAPI {

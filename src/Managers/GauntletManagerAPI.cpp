@@ -59,6 +59,7 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     body["node_color_b"]    = (int)data.nodeColor.b;
 
     // shown in GauntletLayer
+    body["background"]      = data.bgIndex;
     body["description"]     = data.description;
     body["color_r"]         = (int)data.bgColor.r;
     body["color_g"]         = (int)data.bgColor.g;
@@ -97,18 +98,20 @@ web::WebFuture GauntletManagerAPI::remove(int id) {
 }
 
 web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path) {
-    auto bytes = file::readBinary(path);
-    if (!bytes) {
-        log::error("uploadIcon: failed to read file: {}", bytes.unwrapErr());
-        return web::WebRequest().get(""); // caller must handle this
+    auto result = file::readBinary(path);
+    if (!result) {
+        log::error("uploadIcon: failed to read file: {}", result.unwrapErr());
+        return web::WebRequest().get("");
     }
 
+    auto bytes = std::move(result).unwrap();
+
     return web::WebRequest()
-        .header("Authorization", "Bearer " + m_token)
-        .header("Content-Type",  "image/png")
-        .header("x-filename",    path.filename().string())
-        .header("x-account-id",        std::to_string(GJAccountManager::get()->m_accountID))
-        .body(bytes.unwrap())
+        .header("Authorization",  "Bearer " + m_token)
+        .header("Content-Type",   "image/png")
+        .header("x-filename",     path.filename().string())
+        .header("x-account-id",   std::to_string(GJAccountManager::get()->m_accountID))
+        .body(std::move(bytes))
         .post(baseURL() + "/upload");
 }
 

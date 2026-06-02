@@ -675,19 +675,19 @@ void GauntletEditPopup::onSwapLayer(CCObject* sender) {
 
 void GauntletEditPopup::updatePreviewName(CCObject* sender) {
     if (!m_previewTitle || !m_previewTitleShadow) return;
-    auto str = m_nameInput->getString().c_str();
-    m_previewTitle->setString(str);
+    auto str = std::string(m_nameInput->getString());
+    m_previewTitle->setString(str.c_str());
     m_previewTitle->updateLabel();
-    m_previewTitle->limitLabelWidth(80, 0.7f, 0.00001f);
-    m_previewTitleShadow->setString(str);
+    m_previewTitle->limitLabelWidth(80, 0.7, 0.00001);
+    m_previewTitleShadow->setString(str.c_str());
     m_previewTitleShadow->updateLabel();
-    m_previewTitleShadow->limitLabelWidth(80, 0.7f, 0.00001f);
+    m_previewTitleShadow->limitLabelWidth(80, 0.7, 0.00001);
 }
 
 // Description
 
 void GauntletEditPopup::updateDescription(CCObject* sender) {
-    if (!m_descInput) return;
+    if (!m_descInput || !m_previewBG) return;
 }
 
 void GauntletEditPopup::onPreviewInfo(CCObject* sender) {
@@ -1029,6 +1029,7 @@ void GauntletEditPopup::onSave(CCObject* sender) {
     m_data.nameColor     = m_selectedColor;
     m_data.nodeColor     = m_selectedNodeColor;
     m_data.bgColor       = m_selectedBGColor;
+    m_data.bgIndex       = m_bgIndex;
     m_data.accentColor1  = m_selectedAccentColor1;
     m_data.accentColor2  = m_selectedAccentColor2;
     m_data.infoDate      = m_infoDate;

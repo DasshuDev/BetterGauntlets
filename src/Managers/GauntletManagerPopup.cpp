@@ -378,7 +378,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     // Name + color label
     auto nameLabel = CCLabelBMFont::create(
         fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
-    nameLabel->setScale(0.38f);
+    nameLabel->setScale(0.5);
     nameLabel->setAnchorPoint({0, 0.5f});
     nameLabel->limitLabelWidth(150.f, 0.38f, 0.1f);
     nameLabel->setPosition({58, row->getContentHeight() / 2 + 8});
@@ -435,7 +435,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
                     auto icon = CCSprite::createWithTexture(tex);
                     tex->release();
                     icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
-                    icon->setPosition(iconNode->getContentSize() / 2);
+                    icon->setPosition(icon->getParent()->getContentSize() / 2);
                     icon->setAnchorPoint({0.5f, 0.5f});
                     if (auto ph = iconNode->getChildByID("icon-placeholder"))
                         ph->removeFromParent();
@@ -493,17 +493,17 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     auto accent1 = CCScale9Sprite::create("square.png");
     accent1->setContentSize(gauntletListItem->getContentSize());
     accent1->setColor(g.accentColor1);
-    accent1->setOpacity(120);
+    // accent1->setOpacity(120);
     accent1->setAnchorPoint({0, 0});
     gauntletListItem->addChild(accent1);
 
     // Accent 2 gradient overlay
     auto accent2 = CCScale9Sprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    accent2->setContentSize(gauntletListItem->getContentSize());
+    accent2->setContentSize({gauntletListItem->getContentWidth(), gauntletListItem->getContentHeight()});
     accent2->setColor(g.accentColor2);
-    accent2->setOpacity(120);
+    // accent2->setOpacity(120);
     accent2->setAnchorPoint({1, 0});
-    accent2->setPosition({gauntletListItem->getContentWidth(), 0});
+    accent2->setPosition({gauntletListItem->getContentWidth() + 75, 0});
     gauntletListItem->addChild(accent2);
 
     // Icon placeholder — filled async below
@@ -534,9 +534,10 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     auto nameLabel = CCLabelBMFont::create(
         fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
     nameLabel->setScale(0.5);
+    nameLabel->setID("gauntlet-name");
     nameLabel->setColor(g.nameColor);
     nameLabel->setAnchorPoint({0, 0.5});
-    nameLabel->limitLabelWidth(130, 0.35, 0.1);
+    // nameLabel->limitLabelWidth(130, 0.35, 0.1);
     nameLabel->setPosition({58, gauntletListItem->getContentHeight() / 2});
     gauntletListItem->addChild(nameLabel);
 
@@ -549,11 +550,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
     deleteSpr->setScale(0.85f);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
-        [this, index](CCMenuItemSpriteExtra*) {
-            m_staged.erase(m_staged.begin() + index);
-            saveStaged();
-            buildGauntletList();
-        });
+        [this, index](CCMenuItemSpriteExtra*) { onDelete(index); });
     actionMenu->addChild(deleteBtn);
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
@@ -594,6 +591,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
                     auto icon = CCSprite::createWithTexture(tex);
                     tex->release();
                     icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
+                    icon->setPosition(iconNode->getContentSize() / 2);
                     icon->setAnchorPoint({0.5f, 0.5f});
                     if (auto ph = iconNode->getChildByID("icon-placeholder"))
                         ph->removeFromParent();
@@ -651,11 +649,13 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
                 [this](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
                     if (!res.ok()) {
-                        Notification::create("Delete failed.", NotificationIcon::Error)->show();
+                        Notification::create(fmt::format("Delete failed. Err {}", res.code()), NotificationIcon::Error)->show();
                         return;
                     }
                     Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
                     fetchGauntlets();
+                    saveStaged();
+                    buildGauntletList();
                 }
             );
         }

@@ -31,6 +31,7 @@ struct GauntletEditData {
     std::string name;
     std::string description;
     std::string iconURL;
+    int bgIndex = 1;
     ccColor3B nameColor = {255, 255, 255};
     ccColor3B nodeColor = {255, 255, 255};
     ccColor3B bgColor = {255, 255, 255};

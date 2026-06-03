@@ -362,7 +362,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto iconNode = CCNode::create();
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
-    iconNode->setPosition({30, row->getContentHeight() / 2});
+    iconNode->setPosition({30, (row->getContentHeight() / 2) - 2.5f});
     iconNode->setAnchorPoint({0.5f, 0.5f});
 
     auto iconPlaceholder = CCScale9Sprite::create("square02_001.png");
@@ -434,7 +434,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
                     delete img;
                     auto icon = CCSprite::createWithTexture(tex);
                     tex->release();
-                    icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
+                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 2);
                     icon->setPosition(icon->getParent()->getContentSize() / 2);
                     icon->setAnchorPoint({0.5f, 0.5f});
                     if (auto ph = iconNode->getChildByID("icon-placeholder"))
@@ -498,19 +498,20 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     gauntletListItem->addChild(accent1);
 
     // Accent 2 gradient overlay
-    auto accent2 = CCScale9Sprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    accent2->setContentSize({gauntletListItem->getContentWidth(), gauntletListItem->getContentHeight()});
+    auto accent2 = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+    accent2->setScaleX(2.5);
+    accent2->setScaleY(0.475);
     accent2->setColor(g.accentColor2);
     // accent2->setOpacity(120);
     accent2->setAnchorPoint({1, 0});
-    accent2->setPosition({gauntletListItem->getContentWidth() + 75, 0});
+    accent2->setPosition({gauntletListItem->getContentWidth(), 0});
     gauntletListItem->addChild(accent2);
 
     // Icon placeholder — filled async below
     auto iconNode = CCNode::create();
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
-    iconNode->setPosition({30, gauntletListItem->getContentHeight() / 2});
+    iconNode->setPosition({30, (gauntletListItem->getContentHeight() / 2) - 2.5f});
     iconNode->setAnchorPoint({0.5f, 0.5f});
 
     auto iconPlaceholder = CCScale9Sprite::create("square02_001.png");
@@ -590,7 +591,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
                     delete img;
                     auto icon = CCSprite::createWithTexture(tex);
                     tex->release();
-                    icon->setScale(iconNode->getContentHeight() / icon->getContentHeight());
+                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
                     icon->setPosition(iconNode->getContentSize() / 2);
                     icon->setAnchorPoint({0.5f, 0.5f});
                     if (auto ph = iconNode->getChildByID("icon-placeholder"))

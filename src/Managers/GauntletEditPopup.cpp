@@ -478,7 +478,7 @@ bool GauntletEditPopup::init(
     // Info inputs (date / version / suggester) 
 
     m_infoDateInput = TextInput::create(100, "Release Date", "chatFont.fnt");
-    m_infoDateInput->setCommonFilter(CommonFilter::Int);
+    m_infoDateInput->setCommonFilter(CommonFilter::Any);
 
     m_infoVersionInput = TextInput::create(100, "Release Version", "chatFont.fnt");
     m_infoVersionInput->setCommonFilter(CommonFilter::Float);
@@ -530,7 +530,29 @@ bool GauntletEditPopup::init(
     m_GSLPreview->addChild(infoMenu);
     m_GSLPreview->addChild(pushInfoMenu);
 
-    // Save Button
+    // GL Preview — Level Search
+
+    auto stencil = NineSlice::create("square02b_001.png");
+    stencil->setContentSize({290, 181});
+    stencil->setPosition({170, 116.5});
+
+    m_clippingNode = CCClippingNode::create(stencil);
+    m_clippingNode->setAlphaThreshold(0);
+    m_clippingNode->setContentSize(stencil->getContentSize());
+    m_clippingNode->setID("preview-clipping-node");
+    m_GLPreview->addChild(m_clippingNode);
+
+    auto glbg = CCSprite::create(fmt::format("game_bg_{:02}_001.png", m_bgIndex).c_str());
+    glbg->setPosition({0, 0});
+    glbg->setAnchorPoint({0, 0});
+    glbg->setScale(0.66);
+    glbg->setColor(m_selectedNodeColor);
+    glbg->setID("preview-gauntletlayer-bg");
+
+    m_clippingNode->addChild(glbg);
+
+    // Save button
+
     auto saveMenu = CCMenu::create();
     saveMenu->setPosition(m_mainLayer->getContentWidth() / 2, 3);
 
@@ -746,7 +768,7 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
         input = buf;
         m_infoDateInput->setString(input);
     }
-    m_infoDate = fmt::format("{}", input);
+    m_infoDate = fmt::format("Released on: {}", input);
     Notification::create("Release date set.", NotificationIcon::Success)->show();
 }
 
@@ -880,10 +902,31 @@ void GauntletEditPopup::selectArtClosed(SelectArtLayer* layer) {
 }
 
 void GauntletEditPopup::updateBgIcon() {
-    if (!m_bgIconSpr) return;
-    auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()
-        ->spriteFrameByName(getBgIconSpriteName(m_bgIndex).c_str());
-    if (frame) m_bgIconSpr->setDisplayFrame(frame);
+    // Update the small icon button in the fields layer
+    if (m_bgIconSpr) {
+        auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()
+            ->spriteFrameByName(getBgIconSpriteName(m_bgIndex).c_str());
+        if (frame) m_bgIconSpr->setDisplayFrame(frame);
+    }
+
+    // Update the GL preview background — replace the sprite entirely
+    if (!m_GLPreview) return;
+    if (auto old = m_GLPreview->getChildByID("preview-gauntletlayer-bg"))
+        old->removeFromParent();
+
+    auto newBg = CCSprite::create(
+        fmt::format("game_bg_{:02d}_001.png", m_bgIndex).c_str()
+    );
+    if (!newBg) return;
+
+    newBg->setID("preview-gauntletlayer-bg");
+    newBg->setPosition({0, 0});
+    newBg->setColor(m_selectedNodeColor);
+    newBg->setScale(0.66);
+    newBg->setAnchorPoint({0, 0});
+    // newBg->setScaleX(m_GLPreview->getContentWidth()  / newBg->getContentWidth());
+    // newBg->setScaleY(m_GLPreview->getContentHeight() / newBg->getContentHeight());
+    m_clippingNode->addChild(newBg, -1);
 }
 
 // Color pickers
@@ -942,84 +985,13 @@ void GauntletEditPopup::onPickAcc2Color(CCObject* sender) {
     m_colorPopup->show();
 }
 
-// Level slot fetch
-
-void GauntletEditPopup::onPickSlot(int slotIndex) {
-    if (!m_levelInput) return;
-    auto idStr = m_levelInput->getString();
-    if (idStr.empty()) {
-        Notification::create("Enter a level ID first!", NotificationIcon::Error)->show();
-        return;
-    }
-    if (m_searchingLevel) return;
-
-    m_pendingSlotIndex = slotIndex;
-    m_searchingLevel = true;
-
-    auto glm = GameLevelManager::get();
-    glm->m_levelManagerDelegate = this;
-
-    auto searchObj = GJSearchObject::create(SearchType::Type19, gd::string(idStr));
-    m_pendingSearchKey = searchObj->getKey();
-    glm->getOnlineLevels(searchObj);
-}
-
-void GauntletEditPopup::loadLevelsFinished(CCArray* levels, char const* key) {
-    if (!m_searchingLevel || m_pendingSearchKey != key) return;
-
-    m_searchingLevel = false;
-    auto glm = GameLevelManager::get();
-    if (glm->m_levelManagerDelegate == this)
-        glm->m_levelManagerDelegate = nullptr;
-
-    if (!levels || levels->count() == 0) {
-        Notification::create("Level not found.", NotificationIcon::Error)->show();
-        return;
-    }
-
-    auto level = static_cast<GJGameLevel*>(levels->objectAtIndex(0));
-    if (!level) return;
-
-    SlotLevel picked;
-    picked.id = level->m_levelID;
-    picked.name = level->m_levelName;
-    picked.creator = level->m_creatorName;
-    picked.stars = level->m_stars;
-
-    m_data.levels[m_pendingSlotIndex] = picked;
-    if (m_levelInput) m_levelInput->setString("");
-    refreshSlotLabel(m_pendingSlotIndex);
-}
-
-void GauntletEditPopup::loadLevelsFailed(char const* key, int) {
-    if (!m_searchingLevel || m_pendingSearchKey != key) return;
-
-    m_searchingLevel = false;
-    auto glm = GameLevelManager::get();
-    if (glm->m_levelManagerDelegate == this)
-        glm->m_levelManagerDelegate = nullptr;
-
-    Notification::create("Failed to fetch level.", NotificationIcon::Error)->show();
-}
-
-void GauntletEditPopup::refreshSlotLabel(int index) {
-    if (index < 0 || index >= 5) return;
-    auto label = m_slotLabels[index];
-    if (!label) return;
-    auto& slot = m_data.levels[index];
-    label->setString(slot.id == 0
-        ? fmt::format("Slot {}", index + 1).c_str()
-        : slot.name.c_str());
-}
-
 // Save
 
 void GauntletEditPopup::onSave(CCObject* sender) {
     if (m_nameInput->getString().empty()
         || m_descInput->getString().empty()
         || (!m_pendingIconPath.has_value() && m_data.iconURL.empty())) {
-        Notification::create("Not all fields are completed.",
-                             NotificationIcon::Warning)->show();
+            Notification::create("Not all fields are completed.", NotificationIcon::Warning)->show();
         return;
     }
 
@@ -1042,12 +1014,10 @@ void GauntletEditPopup::onSave(CCObject* sender) {
             GauntletManagerAPI::get()->uploadIcon(m_pendingIconPath.value()),
             [this](web::WebResponse res) {
                 if (!res.ok()) {
-                    Notification::create("Icon upload failed.",
-                                        NotificationIcon::Error)->show();
+                    Notification::create("Icon upload failed.", NotificationIcon::Error)->show();
                     return;
                 }
-                m_data.iconURL = res.json().unwrapOr(matjson::Value())["url"]
-                                    .asString().unwrapOr("");
+                m_data.iconURL = res.json().unwrapOr(matjson::Value())["url"].asString().unwrapOr("");
                 m_pendingIconPath.reset();
                 doSave();
             }

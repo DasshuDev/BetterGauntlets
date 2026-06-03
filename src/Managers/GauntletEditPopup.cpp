@@ -478,7 +478,7 @@ bool GauntletEditPopup::init(
     // Info inputs (date / version / suggester) 
 
     m_infoDateInput = TextInput::create(100, "Release Date", "chatFont.fnt");
-    m_infoDateInput->setCommonFilter(CommonFilter::Any);
+    m_infoDateInput->setCommonFilter(CommonFilter::Int);
 
     m_infoVersionInput = TextInput::create(100, "Release Version", "chatFont.fnt");
     m_infoVersionInput->setCommonFilter(CommonFilter::Float);
@@ -746,7 +746,7 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
         input = buf;
         m_infoDateInput->setString(input);
     }
-    m_infoDate = fmt::format("Released on: {}", input);
+    m_infoDate = fmt::format("{}", input);
     Notification::create("Release date set.", NotificationIcon::Success)->show();
 }
 

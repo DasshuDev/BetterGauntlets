@@ -37,9 +37,17 @@ protected:
 
     // Level fetch state
     bool m_searchingLevel = false;
+    bool m_searchingByName = false;
     bool m_searchingUser = false;
     int m_pendingSlotIndex = -1;
+    int m_selectedSlot = 0;
     std::string m_pendingSearchKey;
+
+    // Level search UI (in m_GLPreview)
+    TextInput* m_levelSearchInput = nullptr;
+    CCLayer* m_levelResultsLayer = nullptr;
+    std::array<CCMenuItemSpriteExtra*, 5> m_slotSelectBtns;
+    std::array<CCLabelBMFont*, 5> m_slotStatusLabels;
 
     // Preview labels
     CCLabelBMFont* m_previewTitle = nullptr;
@@ -93,7 +101,11 @@ protected:
 
     // Level slots
     void onPickSlot(int slotIndex);
+    void onSelectSlot(int slotIndex);
+    void onSearchLevel(CCObject* sender);
+    void buildLevelResults(CCArray* levels);
     void refreshSlotLabel(int index);
+    void refreshAllSlotStatus();
     void loadLevelsFinished(CCArray* levels, char const* key) override;
     void loadLevelsFailed(char const* key, int p1) override;
 

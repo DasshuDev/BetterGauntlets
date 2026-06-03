@@ -8,3 +8,12 @@ gd::string RedesignedGauntletNode::frameForType(GauntletType type) {
         default: return GauntletNode::frameForType(type);
     }
 }
+
+bool RedesignedGauntletNode::init(GauntletType* type) {
+    if (!GauntletNode::init(type))
+        return false;
+
+    log::info("GauntletNode init for type {}", static_cast<int>(type));
+
+    return true;
+}

@@ -59,8 +59,8 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     body["node_color_b"]    = (int)data.nodeColor.b;
 
     // shown in GauntletLayer
-    body["background"]      = data.bgIndex;
     body["description"]     = data.description;
+    body["background"]      = (int)data.bgIndex;
     body["color_r"]         = (int)data.bgColor.r;
     body["color_g"]         = (int)data.bgColor.g;
     body["color_b"]         = (int)data.bgColor.b;

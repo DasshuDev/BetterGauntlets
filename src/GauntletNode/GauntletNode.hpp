@@ -6,5 +6,7 @@
 
 class $modify(RedesignedGauntletNode, GauntletNode) {
     static gd::string frameForType(GauntletType);
+    void onClaimReward();
+    bool init(GauntletType* type);
 };
 #endif

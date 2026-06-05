@@ -461,8 +461,6 @@ bool GauntletEditPopup::init(
     previewDescBtn->m_scaleMultiplier = 1.15;
     previewDescMenu->addChild(previewDescBtn);
 
-    m_previewLevelCount = CCLabelBMFont::create("0/5", "bigFont.fnt");
-
     m_previewBG->addChild(chestSprShadow);
     m_previewBG->addChild(chestSpr, 1);
     m_previewBG->addChild(rewardLabelShadow);
@@ -637,22 +635,100 @@ bool GauntletEditPopup::init(
     previewLevelLabel->setScale(0.52);
     m_GLPreview->addChild(previewLevelLabel);
 
-    auto listBG = NineSlice::create("GJ_square01.png");
-    listBG->setContentSize({197, 135});
-    listBG->setPosition({170, 100});
-    m_GLPreview->addChild(listBG);
-
     auto listSize = CCSize(290, 181);
     auto listEvenColor = ccc4(255, 255, 255, 50);
     auto listOddColor = ccc4(255, 255, 255, 30);
 
-    m_levelList = cue::ListNode::create(listSize);
-    m_levelList->setCellColors(listEvenColor, listOddColor);
-    m_levelList->setCellHeight(50);
-    m_levelList->setID("preview-level-list");
-    m_levelList->setScale(0.625);
-    m_levelList->setPosition({170, 100});
-    m_GLPreview->addChild(m_levelList);
+    auto levelListMenu = CCMenu::create();
+    levelListMenu->setID("level-list-menu");
+    levelListMenu->setContentSize({255, 135});
+    levelListMenu->setPosition({170, 100});
+    levelListMenu->ignoreAnchorPointForPosition(false);
+    m_GLPreview->addChild(levelListMenu);
+
+    for (int i = 0; i < 5; i++) {
+        auto row = CCNode::create();
+        row->setID(fmt::format("level-node-{}", i).c_str());
+        row->setContentSize({75, 75});
+        row->setAnchorPoint({0.5, 0.5});
+
+        if (!m_data.iconURL.empty()) {
+            m_slotBgHolders[i].spawn(
+                web::WebRequest().get(m_data.iconURL),
+                [row](web::WebResponse res) {
+                    if (!res.ok() || !row) return;
+                    auto bytes = res.data();
+                    queueInMainThread([row, bytes]() {
+                        if (!row) return;
+                        auto img = new CCImage();
+                        if (!img->initWithImageData(const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                            delete img;
+                            return;
+                        }
+                        auto tex = new CCTexture2D();
+                        tex->initWithImage(img);
+                        delete img;
+                        auto icon = CCSprite::createWithTexture(tex);
+                        tex->release();
+                        icon->setScale(0.75);
+                        icon->setPosition({row->getContentWidth() / 2, row->getContentHeight() / 2});
+                        icon->setID("gauntlet-icon-bg");
+                        if (auto old = row->getChildByID("row-bg")) old->removeFromParent();
+                        row->addChild(icon, 1);
+                    });
+                }
+            );
+        }
+
+        // Level info — populated by refreshLevels()
+        auto nameLabel = CCLabelBMFont::create(fmt::format("Level {}", i + 1).c_str(), "bigFont.fnt");
+        nameLabel->setID("level-name");
+        nameLabel->setScale(0.35);
+        nameLabel->setAnchorPoint({0.5, 0.5});
+        nameLabel->limitLabelWidth(110, 0.3, 0.05);
+        nameLabel->setPosition({row->getContentWidth() / 2, row->getContentHeight() / 2 - 5});
+        row->addChild(nameLabel, 2);
+
+        auto creatorLabel = CCLabelBMFont::create("Creator", "goldFont.fnt");
+        creatorLabel->setID("level-creator");
+        creatorLabel->setScale(0.25);
+        creatorLabel->setAnchorPoint({0.5, 0.5});
+        creatorLabel->setPosition({row->getContentWidth() / 2, row->getContentHeight() / 2 - 12.5f});
+        row->addChild(creatorLabel, 2);
+
+        auto starsLabel = CCLabelBMFont::create("", "bigFont.fnt");
+        starsLabel->setID("level-stars");
+        starsLabel->setScale(0.25);
+        starsLabel->setAnchorPoint({0.5, 0.5});
+        starsLabel->setPosition({row->getContentWidth() / 2, row->getContentHeight() / 2 - 22});
+        row->addChild(starsLabel, 2);
+
+        // Remove button
+        auto removeMenu = CCMenu::create();
+        removeMenu->setPosition(row->getContentSize() - 15);
+        row->addChild(removeMenu, 2);
+
+        auto removeSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+        removeSpr->setScale(0.4);
+        auto removeBtn = CCMenuItemExt::createSpriteExtra(removeSpr,
+            [this, i](CCMenuItemSpriteExtra*) {
+                if (i < (int)m_levels.size()) {
+                    m_levels.erase(m_levels.begin() + i);
+                    refreshLevels();
+                }
+            }
+        );
+        removeBtn->m_scaleMultiplier = 1.15;
+        removeMenu->addChild(removeBtn);
+
+        levelListMenu->addChild(row);
+
+        if (i == 0) row->setPosition({25, 35});
+        else if (i == 1) row->setPosition({75, 100});
+        else if (i == 2) row->setPosition({125, 35});
+        else if (i == 3) row->setPosition({175, 100});
+        else if (i == 4) row->setPosition({225, 35});
+    }
 
     // Save button
 
@@ -672,7 +748,7 @@ bool GauntletEditPopup::init(
 
     m_mainLayer->addChild(saveMenu);
 
-    // ── Restore state from existing data ─────────────────────────────────────
+    // Restore state from existing data
     if (!existing.name.empty()) {
         m_nameInput->setString(existing.name);
         updatePreviewName(nullptr);
@@ -717,7 +793,7 @@ bool GauntletEditPopup::init(
     if (m_leftCornerAccent2) m_leftCornerAccent2->setColor(m_selectedAccentColor2);
     if (m_rightCornerAccent2) m_rightCornerAccent2->setColor(m_selectedAccentColor2);
 
-    // Restore icon from URL if we have one and no local file yet
+    // Restore icon from URL
     if (!existing.iconURL.empty() && !m_pendingIconPath.has_value()) {
         m_data.iconURL = existing.iconURL;
         m_webIconHolder.spawn(
@@ -743,7 +819,7 @@ bool GauntletEditPopup::init(
                         old->removeFromParent();
                     auto icon = CCSprite::createWithTexture(tex);
                     icon->setID("preview-icon");
-                    icon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 15});
+                    icon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 10});
                     icon->setScale(1.05);
                     auto shadow = CCSprite::createWithTexture(tex);
                     shadow->setID("preview-icon-shadow");
@@ -779,6 +855,9 @@ void GauntletEditPopup::onClose(CCObject* sender) {
     alert->m_button1->updateBGImage("GJ_button_05.png");
     alert->m_button2->updateBGImage("GJ_button_06.png");
     alert->show();
+
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this) glm->m_levelManagerDelegate = nullptr;
 }
 
 void GauntletEditPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
@@ -966,8 +1045,8 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
 
                 auto container = m_mainLayer->getChildByIDRecursive("preview-background");
                 if (!container) return;
-                auto levels = m_GLPreview->getChildByIDRecursive("island-node");
-                if (!levels) return;
+                // auto listMenu = m_GLPreview->getChildByIDRecursive("level-list-menu");
+                // if (!listMenu) return;
 
                 auto previewIcon = CCSprite::create(path.string().c_str());
                 auto previewIconShadow = CCSprite::create(path.string().c_str());
@@ -977,15 +1056,15 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                     old->removeFromParent();
                 if (auto old = container->getChildByID("preview-icon-shadow"))
                     old->removeFromParent();
-                if (auto old = levels->getChildByID("island-sprite"))
-                    old->removeFromParent();
+                // if (auto old = listMenu->getChildByIDRecursive("gauntlet-icon-bg"))
+                //     old->removeFromParent();
 
                 previewIcon->setID("preview-icon");
-                previewIcon->setPosition(container->getContentSize() / 2);
+                previewIcon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 10});
                 previewIcon->setScale(1.05);
 
                 previewIconShadow->setID("preview-icon-shadow");
-                previewIconShadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 - 10});
+                previewIconShadow->setPosition({previewIcon->getPositionX(), previewIcon->getPositionY() - 10});
                 previewIconShadow->setColor({0, 0, 0});
                 previewIconShadow->setScaleX(previewIcon->getScaleX());
                 previewIconShadow->setScaleY(previewIcon->getScaleY() * 1.2f);
@@ -1101,30 +1180,79 @@ void GauntletEditPopup::onPickAcc2Color(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onAddLevel(CCObject* sender) {
-    m_searchingLevel = true;
-    auto glm = GameLevelManager::get();
-    if (!glm) return;
+void GauntletEditPopup::onAddLevel(CCObject*) {
+    auto idStr = std::string(m_levelSearchInput->getString());
+    if (idStr.empty()) {
+        Notification::create("Enter a level ID", NotificationIcon::Error)->show();
+        return;
+    }
+    if (m_searchingLevel) return;
 
-    auto value = m_levelSearchInput->getString();
-    if (value.empty()) {
-        Notification::create("Please enter a valid level ID", NotificationIcon::Warning);
+    // Max 5 levels
+    if (m_levels.size() >= 5) {
+        Notification::create("Maximum of 5 levels reached!", NotificationIcon::Warning)->show();
         return;
     }
 
-    if (m_levels.size() >= 5) {
-        Notification::create("Maximum level count reached!", NotificationIcon::Error);
+    m_searchingLevel = true;
+
+    auto glm = GameLevelManager::get();
+    glm->m_levelManagerDelegate = this;
+
+    auto searchObj = GJSearchObject::create(SearchType::Type19, gd::string(idStr));
+    m_pendingSearchKey = searchObj->getKey();
+    glm->getOnlineLevels(searchObj);
+}
+
+void GauntletEditPopup::loadLevelsFinished(CCArray* levels, char const* key) {
+    if (!m_searchingLevel || m_pendingSearchKey != key) return;
+
+    m_searchingLevel = false;
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this)
+        glm->m_levelManagerDelegate = nullptr;
+
+    if (!levels || levels->count() == 0) {
+        Notification::create("Level not found.", NotificationIcon::Error)->show();
+        return;
     }
 
-    auto levelID = numFromString<int>(value).unwrapOr(0);
-    auto searchLevel = GJSearchObject::create(SearchType::Type19, gd::string(value));
+    auto level = static_cast<GJGameLevel*>(levels->objectAtIndex(0));
+    if (!level) return;
 
-    m_pendingSearchKey = searchLevel->getKey();
+    // Prevent duplicates
+    for (auto const& e : m_levels) {
+        if (e.levelId == (int)level->m_levelID) {
+            Notification::create("Level already added.", NotificationIcon::Warning)->show();
+            return;
+        }
+    }
 
-    glm->getOnlineLevels(searchLevel);
+    LevelRewardEntry entry;
+    entry.levelId    = level->m_levelID;
+    entry.levelName  = level->m_levelName;
+    entry.creatorName = level->m_creatorName;
+    entry.reward     = level->m_stars;
 
+    m_levels.push_back(entry);
+    m_levelSearchInput->setString("");
+    refreshLevels();
 
-    // log::info("info: \nname: {} \ncreator: {} \nstars {}", arg, arg, arg)
+    Notification::create(
+        fmt::format("Added \"{}\"", entry.levelName),
+        NotificationIcon::Success
+    )->show();
+}
+
+void GauntletEditPopup::loadLevelsFailed(char const* key, int) {
+    if (!m_searchingLevel || m_pendingSearchKey != key) return;
+
+    m_searchingLevel = false;
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this)
+        glm->m_levelManagerDelegate = nullptr;
+
+    Notification::create("Failed to fetch level.", NotificationIcon::Error)->show();
 }
 
 void GauntletEditPopup::onRemoveLevel(CCObject* sender) {
@@ -1132,7 +1260,41 @@ void GauntletEditPopup::onRemoveLevel(CCObject* sender) {
 }
 
 void GauntletEditPopup::refreshLevels() {
-    log::debug("refresh");
+    auto listMenu = m_GLPreview
+        ? m_GLPreview->getChildByID("level-list-menu")
+        : nullptr;
+    if (!listMenu) return;
+
+    auto children = listMenu->getChildren();
+    if (!children) return;
+
+    for (int i = 0; i < 5; i++) {
+        auto row = static_cast<CCNode*>(children->objectAtIndex(i));
+        if (!row) continue;
+
+        bool hasLevel = i < (int)m_levels.size();
+        auto entry = hasLevel ? m_levels[i] : LevelRewardEntry{};
+
+        if (auto lbl = dynamic_cast<CCLabelBMFont*>(row->getChildByID("level-name")))
+            lbl->setString(hasLevel
+                ? entry.levelName.c_str()
+                : fmt::format("Level {}", i + 1).c_str());
+
+        if (auto lbl = dynamic_cast<CCLabelBMFont*>(row->getChildByID("level-creator")))
+            lbl->setString(hasLevel
+                ? fmt::format("by {}", entry.creatorName).c_str() : "Creator");
+
+        if (auto lbl = dynamic_cast<CCLabelBMFont*>(row->getChildByID("level-stars")))
+            lbl->setString(hasLevel
+                ? fmt::format("{} \x02", entry.reward).c_str() : "");
+
+        if (auto bg = dynamic_cast<CCScale9Sprite*>(row->getChildByID("row-bg")))
+            bg->setColor(hasLevel ? ccColor3B{40, 80, 40} : ccColor3B{20, 20, 20});
+    }
+
+    if (m_previewLevelCount)
+        m_previewLevelCount->setString(
+            fmt::format("{}/5", m_levels.size()).c_str());
 }
 
 // Save

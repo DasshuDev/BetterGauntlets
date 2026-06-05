@@ -56,6 +56,7 @@ protected:
     CCSprite* m_rightCornerAccent1 = nullptr;
     CCSprite* m_rightCornerAccent2 = nullptr;
     TextInput* m_levelSearchInput = nullptr;
+    CCSprite* m_islandSpr = nullptr;
 
     // Preview labels
     CCLabelBMFont* m_previewTitle = nullptr;
@@ -64,7 +65,7 @@ protected:
     CCLabelBMFont* m_gauntletTextShadow = nullptr;
     TextArea* m_description = nullptr;
     NineSlice* m_previewBG = nullptr;
-    CCLabelBMFont* m_previewLevelCount;
+    CCLabelBMFont* m_previewLevelCount = nullptr;
 
     // Info strings (set by push buttons)
     std::string m_infoDate;
@@ -100,6 +101,7 @@ protected:
     async::TaskHolder<web::WebResponse> m_saveHolder;
     async::TaskHolder<web::WebResponse> m_uploadHolder;
     async::TaskHolder<web::WebResponse> m_webIconHolder;
+    std::array<async::TaskHolder<web::WebResponse>, 5> m_slotBgHolders;
 
     std::string m_spritePath;
     LoadingCircle* m_loadingCircle = nullptr;
@@ -137,6 +139,8 @@ protected:
     void onAddLevel(CCObject* sender);
     void onRemoveLevel(CCObject* sender);
     void refreshLevels();
+    void loadLevelsFinished(CCArray* levels, char const* key) override;
+    void loadLevelsFailed(char const* key, int p1) override;
 
     // Layer swap
     void onSwapLayer(CCObject* sender);

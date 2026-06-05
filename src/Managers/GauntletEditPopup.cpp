@@ -1,4 +1,5 @@
 #include <ctime>
+#include <cue/ListNode.hpp>
 #include "GauntletEditPopup.hpp"
 
 using namespace geode::prelude;
@@ -460,6 +461,8 @@ bool GauntletEditPopup::init(
     previewDescBtn->m_scaleMultiplier = 1.15;
     previewDescMenu->addChild(previewDescBtn);
 
+    m_previewLevelCount = CCLabelBMFont::create("0/5", "bigFont.fnt");
+
     m_previewBG->addChild(chestSprShadow);
     m_previewBG->addChild(chestSpr, 1);
     m_previewBG->addChild(rewardLabelShadow);
@@ -542,14 +545,114 @@ bool GauntletEditPopup::init(
     m_clippingNode->setID("preview-clipping-node");
     m_GLPreview->addChild(m_clippingNode);
 
-    auto glbg = CCSprite::create(fmt::format("game_bg_{:02}_001.png", m_bgIndex).c_str());
-    glbg->setPosition({0, 0});
-    glbg->setAnchorPoint({0, 0});
-    glbg->setScale(0.66);
-    glbg->setColor(m_selectedNodeColor);
-    glbg->setID("preview-gauntletlayer-bg");
+    auto outline = NineSlice::create("GJ_square07.png");
+    outline->setContentSize(stencil->getContentSize());
+    outline->setPosition(stencil->getPosition());
+    m_GLPreview->addChild(outline, 1);
 
-    m_clippingNode->addChild(glbg);
+    auto leftCornerNode = CCNode::create();
+    leftCornerNode->setPosition({26, 206});
+    leftCornerNode->setScale(0.75);
+    leftCornerNode->setAnchorPoint({0, 1});
+    m_clippingNode->addChild(leftCornerNode, 1);
+
+    auto leftCornerBase = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+    leftCornerBase->setAnchorPoint({0, 1});
+    leftCornerBase->setFlipY(true);
+    leftCornerNode->addChild(leftCornerBase);
+
+    m_leftCornerAccent1 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
+    m_leftCornerAccent1->setAnchorPoint({0, 1});
+    m_leftCornerAccent1->setFlipY(true);
+    m_leftCornerAccent1->setColor(m_selectedAccentColor1);
+    leftCornerNode->addChild(m_leftCornerAccent1);
+
+    m_leftCornerAccent2 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
+    m_leftCornerAccent2->setAnchorPoint({0, 1});
+    m_leftCornerAccent2->setFlipY(true);
+    m_leftCornerAccent2->setColor(m_selectedAccentColor2);
+    leftCornerNode->addChild(m_leftCornerAccent2);
+
+    auto rightCornerNode = CCNode::create();
+    rightCornerNode->setPosition({314, 206});
+    rightCornerNode->setScale(0.75);
+    rightCornerNode->setAnchorPoint({1, 1});
+    m_clippingNode->addChild(rightCornerNode, 1);
+
+    auto rightCornerBase = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+    rightCornerBase->setAnchorPoint({1, 1});
+    rightCornerBase->setFlipY(true);
+    rightCornerBase->setFlipX(true);
+    rightCornerNode->addChild(rightCornerBase);
+
+    m_rightCornerAccent1 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
+    m_rightCornerAccent1->setAnchorPoint({1, 1});
+    m_rightCornerAccent1->setFlipY(true);
+    m_rightCornerAccent1->setFlipX(true);
+    m_rightCornerAccent1->setColor(m_selectedAccentColor1);
+    rightCornerNode->addChild(m_rightCornerAccent1);
+
+    m_rightCornerAccent2 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
+    m_rightCornerAccent2->setAnchorPoint({1, 1});
+    m_rightCornerAccent2->setFlipY(true);
+    m_rightCornerAccent2->setFlipX(true);
+    m_rightCornerAccent2->setColor(m_selectedAccentColor2);
+    rightCornerNode->addChild(m_rightCornerAccent2);
+
+    m_GLBackground = CCSprite::create(fmt::format("game_bg_{:02}_001.png", m_bgIndex).c_str());
+    m_GLBackground->setPosition({0, 0});
+    m_GLBackground->setAnchorPoint({0, 0});
+    m_GLBackground->setScale(0.66);
+    m_GLBackground->setColor(m_selectedBGColor);
+    m_GLBackground->setID("preview-gauntletlayer-bg");
+
+    m_clippingNode->addChild(m_GLBackground);
+
+    // Levels
+
+    auto levelSearchNode = CCMenu::create();
+    levelSearchNode->setPosition(170, 185);
+    levelSearchNode->setLayout(RowLayout::create()
+        ->setGap(10)
+        ->setAxisAlignment(AxisAlignment::Center)
+    );
+    levelSearchNode->setScale(0.7);
+    m_GLPreview->addChild(levelSearchNode);
+
+    m_levelSearchInput = TextInput::create(200, "Level ID", "bigFont.fnt");
+    m_levelSearchInput->setCommonFilter(CommonFilter::Int);
+    
+    auto searchBtn = CCMenuItemSpriteExtra::create(
+        CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr),
+        this,
+        menu_selector(GauntletEditPopup::onAddLevel)
+    );
+    
+    levelSearchNode->addChild(m_levelSearchInput);
+    levelSearchNode->addChild(searchBtn);
+    levelSearchNode->updateLayout();
+
+    auto previewLevelLabel = CCLabelBMFont::create("Levels", "goldFont.fnt");
+    previewLevelLabel->setPosition({outline->getPositionX(), outline->getPositionY() + outline->getContentSize().height / 2 + 12});
+    previewLevelLabel->setScale(0.52);
+    m_GLPreview->addChild(previewLevelLabel);
+
+    auto listBG = NineSlice::create("GJ_square01.png");
+    listBG->setContentSize({197, 135});
+    listBG->setPosition({170, 100});
+    m_GLPreview->addChild(listBG);
+
+    auto listSize = CCSize(290, 181);
+    auto listEvenColor = ccc4(255, 255, 255, 50);
+    auto listOddColor = ccc4(255, 255, 255, 30);
+
+    m_levelList = cue::ListNode::create(listSize);
+    m_levelList->setCellColors(listEvenColor, listOddColor);
+    m_levelList->setCellHeight(50);
+    m_levelList->setID("preview-level-list");
+    m_levelList->setScale(0.625);
+    m_levelList->setPosition({170, 100});
+    m_GLPreview->addChild(m_levelList);
 
     // Save button
 
@@ -602,12 +705,17 @@ bool GauntletEditPopup::init(
     m_selectedBGColor = existing.bgColor;
     if (m_colorSprBG) m_colorSprBG->setColor(m_selectedBGColor);
     if (m_bgIconSpr)  m_bgIconSpr->setColor(m_selectedBGColor);
+    if (m_GLBackground) m_GLBackground->setColor(m_selectedBGColor);
 
     m_selectedAccentColor1 = existing.accentColor1;
     if (m_colorAccent1) m_colorAccent1->setColor(m_selectedAccentColor1);
+    if (m_leftCornerAccent1) m_leftCornerAccent1->setColor(m_selectedAccentColor1);
+    if (m_rightCornerAccent1) m_rightCornerAccent1->setColor(m_selectedAccentColor1);
 
     m_selectedAccentColor2 = existing.accentColor2;
     if (m_colorAccent2) m_colorAccent2->setColor(m_selectedAccentColor2);
+    if (m_leftCornerAccent2) m_leftCornerAccent2->setColor(m_selectedAccentColor2);
+    if (m_rightCornerAccent2) m_rightCornerAccent2->setColor(m_selectedAccentColor2);
 
     // Restore icon from URL if we have one and no local file yet
     if (!existing.iconURL.empty() && !m_pendingIconPath.has_value()) {
@@ -635,15 +743,15 @@ bool GauntletEditPopup::init(
                         old->removeFromParent();
                     auto icon = CCSprite::createWithTexture(tex);
                     icon->setID("preview-icon");
-                    icon->setPosition(static_cast<CCNode*>(container)->getContentSize() / 2);
-                    icon->setScale(1.1f);
+                    icon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 15});
+                    icon->setScale(1.05);
                     auto shadow = CCSprite::createWithTexture(tex);
                     shadow->setID("preview-icon-shadow");
                     shadow->setColor({0, 0, 0});
                     shadow->setOpacity(50);
                     shadow->setPosition({
-                        static_cast<CCNode*>(container)->getContentWidth() / 2,
-                        static_cast<CCNode*>(container)->getContentHeight() / 2 - 10
+                        icon->getPositionX(),
+                        icon->getPositionY() - 10
                     });
                     shadow->setScaleX(icon->getScaleX());
                     shadow->setScaleY(icon->getScaleY() * 1.2f);
@@ -769,7 +877,7 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
         m_infoDateInput->setString(input);
     }
     m_infoDate = fmt::format("Released on: {}", input);
-    Notification::create("Release date set.", NotificationIcon::Success)->show();
+    Notification::create("Release date set", NotificationIcon::Success)->show();
 }
 
 void GauntletEditPopup::updateInfoVersion(CCObject* sender) {
@@ -779,7 +887,7 @@ void GauntletEditPopup::updateInfoVersion(CCObject* sender) {
         m_infoVersionInput->setString(input);
     }
     m_infoVersion = fmt::format("Version: {}", input);
-    Notification::create("Version set.", NotificationIcon::Success)->show();
+    Notification::create("Version set", NotificationIcon::Success)->show();
 }
 
 void GauntletEditPopup::updateInfoAccID(CCObject* sender) {
@@ -790,7 +898,7 @@ void GauntletEditPopup::updateInfoAccID(CCObject* sender) {
         : geode::utils::numFromString<int>(idStr).unwrapOr(0);
 
     if (accID == 0) {
-        Notification::create("Invalid account ID.", NotificationIcon::Error)->show();
+        Notification::create("Invalid account ID", NotificationIcon::Error)->show();
         return;
     }
 
@@ -819,7 +927,7 @@ void GauntletEditPopup::getUserInfoFinished(GJUserScore* score) {
         glm->m_userInfoDelegate = nullptr;
 
     if (!score) {
-        Notification::create("User not found.", NotificationIcon::Error)->show();
+        Notification::create("User not found", NotificationIcon::Error)->show();
         return;
     }
 
@@ -834,7 +942,7 @@ void GauntletEditPopup::getUserInfoFailed(int) {
     if (glm->m_userInfoDelegate == this)
         glm->m_userInfoDelegate = nullptr;
 
-    Notification::create("Failed to fetch user.", NotificationIcon::Error)->show();
+    Notification::create("Failed to fetch user", NotificationIcon::Error)->show();
 }
 
 // Icon picker
@@ -858,6 +966,8 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
 
                 auto container = m_mainLayer->getChildByIDRecursive("preview-background");
                 if (!container) return;
+                auto levels = m_GLPreview->getChildByIDRecursive("island-node");
+                if (!levels) return;
 
                 auto previewIcon = CCSprite::create(path.string().c_str());
                 auto previewIconShadow = CCSprite::create(path.string().c_str());
@@ -867,10 +977,12 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                     old->removeFromParent();
                 if (auto old = container->getChildByID("preview-icon-shadow"))
                     old->removeFromParent();
+                if (auto old = levels->getChildByID("island-sprite"))
+                    old->removeFromParent();
 
                 previewIcon->setID("preview-icon");
                 previewIcon->setPosition(container->getContentSize() / 2);
-                previewIcon->setScale(1.1f);
+                previewIcon->setScale(1.05);
 
                 previewIconShadow->setID("preview-icon-shadow");
                 previewIconShadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 - 10});
@@ -881,6 +993,7 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
 
                 container->addChild(previewIconShadow);
                 container->addChild(previewIcon);
+
             });
         }
     );
@@ -911,22 +1024,20 @@ void GauntletEditPopup::updateBgIcon() {
 
     // Update the GL preview background — replace the sprite entirely
     if (!m_GLPreview) return;
-    if (auto old = m_GLPreview->getChildByID("preview-gauntletlayer-bg"))
+    if (auto old = m_GLPreview->getChildByIDRecursive("preview-gauntletlayer-bg"))
         old->removeFromParent();
 
-    auto newBg = CCSprite::create(
+    m_GLBackground = CCSprite::create(
         fmt::format("game_bg_{:02d}_001.png", m_bgIndex).c_str()
     );
-    if (!newBg) return;
+    if (!m_GLBackground) return;
 
-    newBg->setID("preview-gauntletlayer-bg");
-    newBg->setPosition({0, 0});
-    newBg->setColor(m_selectedNodeColor);
-    newBg->setScale(0.66);
-    newBg->setAnchorPoint({0, 0});
-    // newBg->setScaleX(m_GLPreview->getContentWidth()  / newBg->getContentWidth());
-    // newBg->setScaleY(m_GLPreview->getContentHeight() / newBg->getContentHeight());
-    m_clippingNode->addChild(newBg, -1);
+    m_GLBackground->setID("preview-gauntletlayer-bg");
+    m_GLBackground->setPosition({0, 0});
+    m_GLBackground->setColor(m_selectedBGColor);
+    m_GLBackground->setScale(0.66);
+    m_GLBackground->setAnchorPoint({0, 0});
+    m_clippingNode->addChild(m_GLBackground, -1);
 }
 
 // Color pickers
@@ -961,6 +1072,7 @@ void GauntletEditPopup::onPickBGColor(CCObject* sender) {
         m_selectedBGColor = {color.r, color.g, color.b};
         if (m_colorSprBG) m_colorSprBG->setColor(m_selectedBGColor);
         if (m_bgIconSpr) m_bgIconSpr->setColor(m_selectedBGColor);
+        if (m_GLBackground) m_GLBackground->setColor(m_selectedBGColor);
     });
     m_colorPopup->show();
 }
@@ -971,6 +1083,8 @@ void GauntletEditPopup::onPickAcc1Color(CCObject* sender) {
     m_colorPopup->setCallback([this](ccColor4B const& color) {
         m_selectedAccentColor1 = {color.r, color.g, color.b};
         if (m_colorAccent1) m_colorAccent1->setColor(m_selectedAccentColor1);
+        if (m_leftCornerAccent1) m_leftCornerAccent1->setColor(m_selectedAccentColor1);
+        if (m_rightCornerAccent1) m_rightCornerAccent1->setColor(m_selectedAccentColor1);
     });
     m_colorPopup->show();
 }
@@ -981,16 +1095,50 @@ void GauntletEditPopup::onPickAcc2Color(CCObject* sender) {
     m_colorPopup->setCallback([this](ccColor4B const& color) {
         m_selectedAccentColor2 = {color.r, color.g, color.b};
         if (m_colorAccent2) m_colorAccent2->setColor(m_selectedAccentColor2);
+        if (m_leftCornerAccent2) m_leftCornerAccent2->setColor(m_selectedAccentColor2);
+        if (m_rightCornerAccent2) m_rightCornerAccent2->setColor(m_selectedAccentColor2);
     });
     m_colorPopup->show();
+}
+
+void GauntletEditPopup::onAddLevel(CCObject* sender) {
+    m_searchingLevel = true;
+    auto glm = GameLevelManager::get();
+    if (!glm) return;
+
+    auto value = m_levelSearchInput->getString();
+    if (value.empty()) {
+        Notification::create("Please enter a valid level ID", NotificationIcon::Warning);
+        return;
+    }
+
+    if (m_levels.size() >= 5) {
+        Notification::create("Maximum level count reached!", NotificationIcon::Error);
+    }
+
+    auto levelID = numFromString<int>(value).unwrapOr(0);
+    auto searchLevel = GJSearchObject::create(SearchType::Type19, gd::string(value));
+
+    m_pendingSearchKey = searchLevel->getKey();
+
+    glm->getOnlineLevels(searchLevel);
+
+
+    // log::info("info: \nname: {} \ncreator: {} \nstars {}", arg, arg, arg)
+}
+
+void GauntletEditPopup::onRemoveLevel(CCObject* sender) {
+    log::debug("delete");
+}
+
+void GauntletEditPopup::refreshLevels() {
+    log::debug("refresh");
 }
 
 // Save
 
 void GauntletEditPopup::onSave(CCObject* sender) {
-    if (m_nameInput->getString().empty()
-        || m_descInput->getString().empty()
-        || (!m_pendingIconPath.has_value() && m_data.iconURL.empty())) {
+    if (m_nameInput->getString().empty() || m_descInput->getString().empty() || (!m_pendingIconPath.has_value() && m_data.iconURL.empty() || m_levels.size() != 5)) {
             Notification::create("Not all fields are completed.", NotificationIcon::Warning)->show();
         return;
     }

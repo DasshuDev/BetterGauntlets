@@ -14,6 +14,7 @@ void RedesignedGauntletNode::generateNode() {
     GauntletNode::generateNode();
 
     m_fields->m_gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+    m_fields->m_claimSpr = CCSprite::createWithSpriteFrameName("GJ_rewardBtn_001.png");
 
     auto progress = static_cast<CCLabelBMFont*>(this->getChildByIDRecursive("gauntlet-progress-label"));
     auto bg = static_cast<CCSprite*>(progress->getParent()->getParent()->getChildByIDRecursive("background"));
@@ -29,11 +30,22 @@ void RedesignedGauntletNode::generateNode() {
     bg->getParent()->addChild(gradientClip);
 
     // Nodes are fully constructed after the base call
-    if (m_gauntletInfoNode) m_gauntletInfoNode->setVisible(true);
+    // if (m_gauntletInfoNode) m_gauntletInfoNode->setVisible(true);
     if (m_rewardNode) m_rewardNode->setVisible(false);
 
     if (progress->getString() == std::string("5/5")) {
         progress->setColor({0, 255, 0});
+
+        m_fields->m_gradientParticles = GameToolbox::particleFromString(
+            "15a-1a1.75a0a8a90a0a30a15a55a0a0a0a0a0a0a0a5a3a0a60a0.329412a0a0.968627a0a0.337255a0a1a0a2a0a0a67a0a0a0.321569a0a0.00392157a0a1a0a0a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",
+            NULL,
+            false
+        );
+        m_fields->m_gradientParticles->setPosition({0, -110});
+        gradientClip->addChild(m_fields->m_gradientParticles);
+
+        // bg->getParent()->addChild(m_fields->m_claimSpr);
+
         m_fields->m_gradient->setColor({0, 255, 0});
         m_fields->m_gradient->setOpacity(100);
         m_fields->m_gradient->setPositionY(-35);
@@ -44,29 +56,10 @@ void RedesignedGauntletNode::generateNode() {
     }
 }
 
-// void RedesignedGauntletNode::onClaimReward() {
-//     GauntletNode::onClaimReward();
+void RedesignedGauntletNode::onClaimReward() {
+    GauntletNode::onClaimReward();
 
-//     auto progress = static_cast<CCLabelBMFont*>(this->getChildByIDRecursive("gauntlet-progress-label"));
-//     auto bg = static_cast<CCSprite*>(progress->getParent()->getParent()->getChildByIDRecursive("background"));
-//     auto chestBase = CCSprite::createWithSpriteFrameName("chest_02_04_001.png");
-//     auto chestTop = CCSprite::createWithSpriteFrameName("chest_02_04_back_001.png");
-
-//     auto chestBaseShadow = CCSprite::createWithSpriteFrameName("chest_02_04_001.png");
-//     chestBaseShadow->setColor({0, 0, 0});
-//     chestBaseShadow->setOpacity(50);
-//     chestBaseShadow->setPosition({chestBase->getPositionX() + 2, chestBase->getPositionY() - 3});
-    
-//     auto chestTopShadow = CCSprite::createWithSpriteFrameName("chest_02_04_back_001.png");
-//     chestTopShadow->setColor({0, 0, 0});
-//     chestTopShadow->setOpacity(50);
-//     chestTopShadow->setPosition({chestTop->getPositionX() + 2, chestTop->getPositionY() - 3});
-
-//     if (m_gauntletInfoNode) m_gauntletInfoNode->setVisible(true);
-//     if (m_rewardNode)       m_rewardNode->setVisible(false);
-
-//     bg->getParent()->addChild(chestTopShadow);
-//     bg->getParent()->addChild(chestBaseShadow);
-//     bg->getParent()->addChild(chestTop, 1);
-//     bg->getParent()->addChild(chestBase, 1);
-// }
+    if (!m_fields->m_claimSpr) return;
+    m_fields->m_claimSpr->removeFromParent();
+    m_fields->m_claimSpr = nullptr;
+}

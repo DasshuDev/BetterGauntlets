@@ -1,5 +1,5 @@
 # **Better Gauntlets**
-This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL tweaks, and more, truly a **Better Gauntlet** experience!
+The __ultimate__ Gauntlet rewrite and overhaul, bringing the Gauntlets to life! Truly giving a *Better Gauntlet* experience!
 
 ---
 

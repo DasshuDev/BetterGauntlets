@@ -4,10 +4,8 @@
 #include <Geode/ui/SimpleAxisLayout.hpp>
 #include <argon/argon.hpp>
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
-// #include "../Hooks/DialogIcons/DialogIcons.h"
 #include "GauntletSelectLayer.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
-// #include "../Managers/GauntletManagerAPI.hpp"
 
 using namespace geode::prelude;
 
@@ -26,6 +24,14 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 
     auto textureCache = CCTextureCache::sharedTextureCache();
     auto spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
+
+    auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
+    if (GDUtils) {
+        auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
+        if (settingVal) {
+            GDUtils->setSettingValue<bool>("gauntletDesign", false);
+        }
+    }
 
     if (PlatformToolbox::isControllerConnected()) {
         auto controllerBtn = getChildByID("controller-back-hint");
@@ -317,6 +323,19 @@ bool RedesignedGauntletSelectLayer::init(int gauntletType) {
 }
 
 void RedesignedGauntletSelectLayer::updateDots() {
+
+    if (m_fields->m_dots.empty()) {
+        log::warn("updateDots: no dots exist");
+        return;
+    }
+
+    if (!m_scrollLayer) {
+        log::warn("updateDots: no scroll layer");
+        return;
+    }
+
+    log::info("Dots: {}", m_fields->m_dots.size());
+
     auto sfc = CCSpriteFrameCache::sharedSpriteFrameCache();
 
     for(CCMenuItemSpriteExtra* btn : m_fields->m_dots) {
@@ -363,8 +382,11 @@ void RedesignedGauntletSelectLayer::setupNavigation() {
     
     if (scroll) {
         setupScrollMode();
-    } else {
+        log::info("Using scroll navigation");
+    }
+    if (!scroll) {
         setupDotMode();
+        log::info("Using dot navigation");
     }
     
     styleGauntletButtons();
@@ -475,9 +497,29 @@ void RedesignedGauntletSelectLayer::setupScrollMode() {
 
 
 void RedesignedGauntletSelectLayer::setupDotMode() {
+
+    log::info("Entering dot mode");
+    log::info("Pages: {}", m_scrollLayer ? m_scrollLayer->getTotalPages() : -1);
+
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
- 
+
+    if (auto menu = getChildByIDRecursive("gauntlet-menu")) menu->setVisible(true);
+    else {
+        log::warn("Could not find gauntlet-menu to show");
+        return;
+    }
+    if (auto dots = getChildByIDRecursive("page-buttons")) dots->setVisible(true);
+    else {
+        log::warn("Could not find page-buttons to show");
+        return;
+    }
+    if (auto arrows = getChildByIDRecursive("scroll-buttons-menu")) arrows->setVisible(true);
+    else {
+        log::warn("Could not find scroll-buttons-menu to show");
+        return;
+    }
+
     if (m_fields->m_dotsMenu && m_fields->m_dotsMenu->getParent()) {
         return;
     }
@@ -498,6 +540,7 @@ void RedesignedGauntletSelectLayer::setupDotMode() {
     m_fields->m_dots.clear();
     if (m_fields->m_dotsMenu) {
         m_fields->m_dotsMenu->removeFromParent();
+        m_fields->m_dotsMenu = nullptr;
     }
  
     m_fields->m_dotsMenu = CCMenu::create();
@@ -540,12 +583,23 @@ void RedesignedGauntletSelectLayer::onDot(CCObject* sender) {
 }
 
 void RedesignedGauntletSelectLayer::findCurrentGauntletPageUsing(CCArray* pageButtons) {
+    log::info("pageButtons count = {}", pageButtons->count());
+
     int i = 0;
-    for (CCSprite* ccSprite : CCArrayExt<CCSprite*>(pageButtons)) {
-        if (ccSprite->getDisplayedColor() == ccColor3B({255, 255, 255})) {
-            m_fields->currentGauntletPage = (i + 1);
+
+    for (auto obj : CCArrayExt<CCObject*>(pageButtons)) {
+        auto ccSprite = typeinfo_cast<CCSprite*>(obj);
+
+        if (!ccSprite) {
+            log::error("Dot {} is not a CCSprite", i);
+            continue;
+        }
+
+        if (ccSprite->getDisplayedColor() == ccc3(255, 255, 255)) {
+            m_fields->currentGauntletPage = i + 1;
             break;
         }
+
         i++;
     }
 }
@@ -613,6 +667,11 @@ void RedesignedGauntletSelectLayer::styleGauntletButtons() {
     int total = 0;
 
     auto pageDots = static_cast<CCSpriteBatchNode*>(getChildByIDRecursive("page-buttons"));
+    if (!pageDots) {
+        log::error("page-buttons missing");
+        return;
+    }
+
     auto scrollLayer = static_cast<alpha::ui::AdvancedScrollLayer*>(getChildByIDRecursive("gauntlet-buttons"_spr));
 
     if (scrollLayer) {

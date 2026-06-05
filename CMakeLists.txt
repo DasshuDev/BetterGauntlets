@@ -43,6 +43,9 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 CPMAddPackage("gh:GlobedGD/argon@1.4.9")
 target_link_libraries(${PROJECT_NAME} argon)
 
+CPMAddPackage("gh:dankmeme01/cue#ba0c024")
+target_link_libraries(${PROJECT_NAME} cue)
+
 target_sources(${PROJECT_NAME} PRIVATE
     src/Managers/GauntletManagerAPI.cpp
     src/Managers/GauntletManagerPopup.cpp

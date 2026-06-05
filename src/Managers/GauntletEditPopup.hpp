@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cue/ListNode.hpp>
 #include <Geode/Geode.hpp>
 #include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
@@ -8,6 +9,13 @@
 using namespace geode::prelude;
 
 using EditSavedCallback = std::function<void(GauntletEditData const&)>;
+
+struct LevelRewardEntry {
+    int levelId = 0;
+    std::string levelName;
+    std::string creatorName;
+    int reward = 0;
+};
 
 class GauntletEditPopup :
     public Popup,
@@ -37,10 +45,17 @@ protected:
 
     // Fetch state
     bool m_searchingUser = false;
+    bool m_searchingLevel = false;
+    std::string m_pendingSearchKey;
 
     // Level search UI (in m_GLPreview)
     CCClippingNode* m_clippingNode = nullptr;
     CCSprite* m_GLBackground = nullptr;
+    CCSprite* m_leftCornerAccent1 = nullptr;
+    CCSprite* m_leftCornerAccent2 = nullptr;
+    CCSprite* m_rightCornerAccent1 = nullptr;
+    CCSprite* m_rightCornerAccent2 = nullptr;
+    TextInput* m_levelSearchInput = nullptr;
 
     // Preview labels
     CCLabelBMFont* m_previewTitle = nullptr;
@@ -49,6 +64,7 @@ protected:
     CCLabelBMFont* m_gauntletTextShadow = nullptr;
     TextArea* m_description = nullptr;
     NineSlice* m_previewBG = nullptr;
+    CCLabelBMFont* m_previewLevelCount;
 
     // Info strings (set by push buttons)
     std::string m_infoDate;
@@ -57,8 +73,8 @@ protected:
     int m_infoAccID = 0;
 
     // Level slots
-    std::array<CCMenuItemSpriteExtra*, 5> m_slotBtns;
-    std::array<CCLabelBMFont*, 5> m_slotLabels;
+    cue::ListNode* m_levelList = nullptr;
+    std::vector<LevelRewardEntry> m_levels;
 
     // Background picker
     int m_bgIndex = 1;
@@ -118,6 +134,9 @@ protected:
     void updateInfoAccID(CCObject* sender);
     void getUserInfoFinished(GJUserScore* score) override;
     void getUserInfoFailed(int p1) override;
+    void onAddLevel(CCObject* sender);
+    void onRemoveLevel(CCObject* sender);
+    void refreshLevels();
 
     // Layer swap
     void onSwapLayer(CCObject* sender);

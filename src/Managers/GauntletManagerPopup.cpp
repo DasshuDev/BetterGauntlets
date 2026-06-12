@@ -659,6 +659,7 @@ void GauntletManagerPopup::onPushStaged(int index) {
             m_pushHolder.spawn(std::move(future), [this, index](web::WebResponse res) {
                 m_loadingCircle->setVisible(false);
                 if (!res.ok()) {
+                    log::error("Push failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
                     Notification::create(
                         fmt::format("Push failed: HTTP {}", res.code()),
                         NotificationIcon::Error
@@ -687,6 +688,7 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
                 [this](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
                     if (!res.ok()) {
+                        log::error("Delete failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
                         Notification::create(fmt::format("Delete failed. Err {}", res.code()), NotificationIcon::Error)->show();
                         return;
                     }

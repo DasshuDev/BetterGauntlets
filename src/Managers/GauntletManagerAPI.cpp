@@ -72,28 +72,49 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     body["accent_color2_g"] = (int)data.accentColor2.g;
     body["accent_color2_b"] = (int)data.accentColor2.b;
 
+    // info card
+    body["info_date"]      = data.infoDate;
+    body["info_version"]   = data.infoVersion;
+    body["info_suggester"] = data.infoSuggester;
+    body["info_acc_id"]    = data.infoAccID;
+
     return body;
 }
 
 web::WebFuture GauntletManagerAPI::create(GauntletEditData const& data) {
+    log::debug(
+        "create: token empty={}, accountId={}, body={}",
+        m_token.empty(), GJAccountManager::get()->m_accountID, buildGauntletBody(data).dump()
+    );
     return web::WebRequest()
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer " + m_token)
+        .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
         .bodyString(buildGauntletBody(data).dump())
         .post(baseURL() + "/manage");
 }
 
 web::WebFuture GauntletManagerAPI::update(GauntletEditData const& data) {
+    log::debug(
+        "update: token empty={}, accountId={}, id={}, body={}",
+        m_token.empty(), GJAccountManager::get()->m_accountID, data.id, buildGauntletBody(data).dump()
+    );
     return web::WebRequest()
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer " + m_token)
+        .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
         .bodyString(buildGauntletBody(data).dump())
         .put(baseURL() + fmt::format("/manage?id={}", data.id));
 }
 
 web::WebFuture GauntletManagerAPI::remove(int id) {
+    log::debug(
+        "remove: token empty={}, accountId={}, id={}",
+        m_token.empty(), GJAccountManager::get()->m_accountID, id
+    );
     return web::WebRequest()
         .header("Authorization", "Bearer " + m_token)
+        .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
         .send("DELETE", baseURL() + fmt::format("/manage?id={}", id));
 }
 

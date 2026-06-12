@@ -793,6 +793,24 @@ bool GauntletEditPopup::init(
     if (m_leftCornerAccent2) m_leftCornerAccent2->setColor(m_selectedAccentColor2);
     if (m_rightCornerAccent2) m_rightCornerAccent2->setColor(m_selectedAccentColor2);
 
+    // Restore background index
+    m_bgIndex = existing.bgIndex > 0 ? existing.bgIndex : 1;
+    updateBgIcon();
+
+    // Restore levels
+    m_levels.clear();
+    for (int i = 0; i < 5; i++) {
+        if (existing.levels[i].id != 0) {
+            LevelRewardEntry e;
+            e.levelId     = existing.levels[i].id;
+            e.levelName   = existing.levels[i].name;
+            e.creatorName = existing.levels[i].creator;
+            e.reward      = existing.levels[i].stars;
+            m_levels.push_back(e);
+        }
+    }
+    if (!m_levels.empty()) refreshLevels();
+
     // Restore icon from URL
     if (!existing.iconURL.empty() && !m_pendingIconPath.has_value()) {
         m_data.iconURL = existing.iconURL;
@@ -1056,8 +1074,6 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                     old->removeFromParent();
                 if (auto old = container->getChildByID("preview-icon-shadow"))
                     old->removeFromParent();
-                // if (auto old = listMenu->getChildByIDRecursive("gauntlet-icon-bg"))
-                //     old->removeFromParent();
 
                 previewIcon->setID("preview-icon");
                 previewIcon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 10});
@@ -1072,6 +1088,29 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
 
                 container->addChild(previewIconShadow);
                 container->addChild(previewIcon);
+
+                // Update icon on every level slot
+                auto listMenu = m_GLPreview
+                    ? static_cast<CCNode*>(m_GLPreview->getChildByID("level-list-menu"))
+                    : nullptr;
+                if (listMenu) {
+                    auto rows = listMenu->getChildren();
+                    if (rows) {
+                        for (unsigned int j = 0; j < rows->count(); j++) {
+                            auto rowNode = static_cast<CCNode*>(rows->objectAtIndex(j));
+                            if (!rowNode) continue;
+                            if (auto old = rowNode->getChildByID("gauntlet-icon-bg"))
+                                old->removeFromParent();
+                            auto slotIcon = CCSprite::create(path.string().c_str());
+                            if (!slotIcon) continue;
+                            slotIcon->setID("gauntlet-icon-bg");
+                            slotIcon->setScale(0.75f);
+                            slotIcon->setPosition({rowNode->getContentWidth() / 2,
+                                                   rowNode->getContentHeight() / 2});
+                            rowNode->addChild(slotIcon, 1);
+                        }
+                    }
+                }
 
             });
         }
@@ -1318,6 +1357,18 @@ void GauntletEditPopup::onSave(CCObject* sender) {
     m_data.infoVersion   = m_infoVersion;
     m_data.infoSuggester = m_infoSuggester;
     m_data.infoAccID     = m_infoAccID;
+
+    // Pack level slots
+    for (int i = 0; i < 5; i++) {
+        if (i < (int)m_levels.size()) {
+            m_data.levels[i].id      = m_levels[i].levelId;
+            m_data.levels[i].name    = m_levels[i].levelName;
+            m_data.levels[i].creator = m_levels[i].creatorName;
+            m_data.levels[i].stars   = m_levels[i].reward;
+        } else {
+            m_data.levels[i] = {};
+        }
+    }
 
     if (m_pendingIconPath.has_value()) {
         m_uploadHolder.spawn(

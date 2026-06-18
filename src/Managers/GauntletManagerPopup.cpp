@@ -3,6 +3,91 @@
 #include "../Data/CustomGauntletData.hpp"
 #include <argon/argon.hpp>
 
+static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
+    CustomGauntletData data;
+    data.id          = g["id"].asInt().unwrapOr(0);
+    data.name        = g["name"].asString().unwrapOr("");
+    data.description = g["description"].asString().unwrapOr("");
+    data.iconURL     = g["icon_url"].asString().unwrapOr("");
+    data.bgIndex     = g["background"].asInt().unwrapOr(1);
+    data.nameColor   = {
+        (GLubyte)g["name_color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["name_color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["name_color_b"].asInt().unwrapOr(255)
+    };
+    data.nodeColor   = {
+        (GLubyte)g["node_color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["node_color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["node_color_b"].asInt().unwrapOr(255)
+    };
+    data.bgColor     = {
+        (GLubyte)g["color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["color_b"].asInt().unwrapOr(255)
+    };
+    data.color = data.bgColor;
+    data.accentColor1 = {
+        (GLubyte)g["accent_color1_r"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color1_g"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color1_b"].asInt().unwrapOr(255)
+    };
+    data.accentColor2 = {
+        (GLubyte)g["accent_color2_r"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color2_g"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color2_b"].asInt().unwrapOr(255)
+    };
+    data.infoDate      = g["info_date"].asString().unwrapOr("");
+    data.infoVersion   = g["info_version"].asString().unwrapOr("");
+    data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
+    data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
+
+    if (g.contains("levels") && g["levels"].isArray()) {
+        int i = 0;
+        for (auto const& lvl : g["levels"]) {
+            if (i >= 5) break;
+            log::debug("parseGauntletJson: level[{}] raw json: {}", i, lvl.dump());
+            data.levels[i].id      = lvl["level_id"].asInt().unwrapOr(0);
+            data.levels[i].name    = lvl["level_name"].asString().unwrapOr("");
+            data.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+            data.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+            i++;
+        }
+    } else {
+        log::debug("parseGauntletJson: '{}' has no levels array (contains={})", data.name, g.contains("levels"));
+    }
+    return data;
+}
+
+static std::vector<CustomGauntletData> parseGauntletsResponse(matjson::Value const& json) {
+    std::vector<CustomGauntletData> result;
+
+    // Server returns levels as a separate top-level array keyed by gauntlet_id.
+    // Group them so parseGauntletJson can find them nested under each gauntlet.
+    std::unordered_map<int, std::vector<matjson::Value const*>> levelsByGauntlet;
+    if (json.contains("levels") && json["levels"].isArray()) {
+        for (auto const& lvl : json["levels"]) {
+            int gid = lvl["gauntlet_id"].asInt().unwrapOr(0);
+            if (gid) levelsByGauntlet[gid].push_back(&lvl);
+        }
+    }
+
+    if (json.contains("gauntlets") && json["gauntlets"].isArray()) {
+        for (auto const& g : json["gauntlets"]) {
+            int gid = g["id"].asInt().unwrapOr(0);
+            auto copy = g;
+            if (levelsByGauntlet.count(gid)) {
+                auto arr = matjson::Value::array();
+                for (auto* lvl : levelsByGauntlet[gid]) {
+                    arr.push(*lvl);
+                }
+                copy["levels"] = arr;
+            }
+            result.push_back(parseGauntletJson(copy));
+        }
+    }
+    return result;
+}
+
 GauntletManagerPopup* GauntletManagerPopup::create() {
     auto ret = new GauntletManagerPopup();
     if (ret && ret->init(400, 270, "GJ_square05.png")) {
@@ -91,21 +176,7 @@ void GauntletManagerPopup::startArgonAuth() {
                     GauntletManagerAPI::get()->setToken(token);
 
                     auto json = res.json().unwrapOr(matjson::Value());
-                    m_gauntlets.clear();
-                    if (json.contains("gauntlets") && json["gauntlets"].isArray()) {
-                        for (auto const& g : json["gauntlets"]) {
-                            CustomGauntletData data;
-                            data.id      = g["id"].asInt().unwrapOr(0);
-                            data.name    = g["name"].asString().unwrapOr("");
-                            data.iconURL = g["icon_url"].asString().unwrapOr("");
-                            data.color   = {
-                                (GLubyte)g["color_r"].asInt().unwrapOr(255),
-                                (GLubyte)g["color_g"].asInt().unwrapOr(255),
-                                (GLubyte)g["color_b"].asInt().unwrapOr(255)
-                            };
-                            m_gauntlets.push_back(data);
-                        }
-                    }
+                    m_gauntlets = parseGauntletsResponse(json);
                     buildPanelView();
                     buildGauntletList();
                 }
@@ -217,6 +288,14 @@ void GauntletManagerPopup::loadStaged() {
 }
 
 void GauntletManagerPopup::buildPanelView() {
+    if (m_panelLayer) {
+        m_panelLayer->removeFromParent();
+        m_panelLayer = nullptr;
+        m_listLayer = nullptr;
+        m_listBG = nullptr;
+        m_gauntletList = nullptr;
+    }
+
     m_panelLayer = CCLayer::create();
     m_panelLayer->setPosition({0, 0});
     m_panelLayer->setContentSize(m_mainLayer->getContentSize());
@@ -244,11 +323,11 @@ void GauntletManagerPopup::buildPanelView() {
     m_listBG->setOpacity(80);
     m_panelLayer->addChild(m_listBG);
 
-    // auto listOutline = NineSlice::create("GJ_square07.png");
-    // listOutline->setContentSize({m_size.width - 39, m_size.height - 59});
-    // listOutline->setPosition({m_size.width / 2, m_size.height / 2 - 10});
-    // listOutline->setColor({67, 67, 67});
-    // m_panelLayer->addChild(listOutline, 1);
+    auto listOutline = NineSlice::create("GJ_square07.png");
+    listOutline->setContentSize({m_size.width - 38, m_size.height - 54});
+    listOutline->setPosition({m_size.width / 2, m_size.height / 2 - 10});
+    listOutline->setColor({67, 67, 67});
+    m_panelLayer->addChild(listOutline, 1);
 
     auto listClip = CCClippingNode::create(m_listBG);
     listClip->setAlphaThreshold(0);
@@ -285,22 +364,8 @@ void GauntletManagerPopup::fetchGauntlets() {
             }
 
             auto json = res.json().unwrapOr(matjson::Value());
-            m_gauntlets.clear();
-
-            if (json.contains("gauntlets") && json["gauntlets"].isArray()) {
-                for (auto const& g : json["gauntlets"]) {
-                    CustomGauntletData data;
-                    data.id      = g["id"].asInt().unwrapOr(0);
-                    data.name    = g["name"].asString().unwrapOr("");
-                    data.iconURL = g["icon_url"].asString().unwrapOr("");
-                    data.color   = {
-                        (GLubyte)g["color_r"].asInt().unwrapOr(255),
-                        (GLubyte)g["color_g"].asInt().unwrapOr(255),
-                        (GLubyte)g["color_b"].asInt().unwrapOr(255)
-                    };
-                    m_gauntlets.push_back(data);
-                }
-            }
+            log::debug("fetchGauntlets response: {}", json.dump());
+            m_gauntlets = parseGauntletsResponse(json);
 
             buildGauntletList();
         }
@@ -363,12 +428,22 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto row = CCNode::create();
     row->setContentSize({m_gauntletList->getContentWidth(), 60});
 
-    // Background
-    auto rowBg = CCSprite::createWithSpriteFrameName("d_largeSquare_01_001.png");
-    rowBg->setContentSize(row->getContentSize());
-    rowBg->setOpacity(60);
-    rowBg->setAnchorPoint({0, 0});
-    row->addChild(rowBg);
+    // Background with gauntlet's bg color
+    auto accent1 = CCScale9Sprite::create("square.png");
+    accent1->setContentSize(row->getContentSize());
+    accent1->setColor(g.bgColor);
+    accent1->setAnchorPoint({0, 0});
+    row->addChild(accent1);
+
+    // Gradient overlay with name color
+    auto accent2 = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+    accent2->setScaleX(2.5);
+    accent2->setScaleY(0.475);
+    accent2->setColor(g.nameColor);
+    accent2->setOpacity(120);
+    accent2->setAnchorPoint({1, 0});
+    accent2->setPosition({row->getContentWidth(), 0});
+    row->addChild(accent2);
 
     // Icon placeholder — filled async below
     auto iconNode = CCNode::create();
@@ -381,18 +456,17 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     loadingIcon->setID("loading-circle");
     loadingIcon->setPosition(iconNode->getContentSize() / 2);
     loadingIcon->setContentSize({50, 50});
-    loadingIcon->setColor(g.color);
     loadingIcon->setOpacity(120);
     loadingIcon->setAnchorPoint({0.5f, 0.5f});
     iconNode->addChild(loadingIcon);
     row->addChild(iconNode);
 
-    // Name + color label
+    // Name with gauntlet's name color
     auto nameLabel = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
     nameLabel->setScale(0.575);
+    nameLabel->setColor(g.nameColor);
     nameLabel->setAnchorPoint({0, 0.5f});
-    nameLabel->limitLabelWidth(150.f, 0.38f, 0.1f);
-    nameLabel->setPosition({58, row->getContentHeight() / 2});
+    nameLabel->setPosition({58, row->getContentHeight() / 2 + 17.5f});
     row->addChild(nameLabel, 1);
 
     auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
@@ -403,12 +477,6 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     nameShadow->setAnchorPoint({0, 0.5});
     nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
     row->addChild(nameShadow, 0);
-
-    auto colorDot = CCScale9Sprite::create("square02_001.png");
-    colorDot->setContentSize({8, 8});
-    colorDot->setColor(g.color);
-    colorDot->setPosition({62, row->getContentHeight() / 2 - 8});
-    row->addChild(colorDot);
 
     // Buttons — local menu, not m_actionMenu
     int gid = g.id;
@@ -453,13 +521,21 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
                     tex->initWithImage(img);
                     delete img;
                     auto icon = CCSprite::createWithTexture(tex);
+                    auto iconShadow = CCSprite::createWithTexture(tex);
                     tex->release();
-                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 2);
-                    icon->setPosition(icon->getParent()->getContentSize() / 2);
+                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
+                    icon->setPosition(iconNode->getContentSize() / 2);
                     icon->setAnchorPoint({0.5f, 0.5f});
+                    iconShadow->setScaleX(icon->getScaleX());
+                    iconShadow->setScaleY(icon->getScaleY() * 1.2);
+                    iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
+                    iconShadow->setAnchorPoint({0.5f, 0.5f});
+                    iconShadow->setColor({0, 0, 0});
+                    iconShadow->setOpacity(50);
                     if (auto ph = iconNode->getChildByID("icon-placeholder"))
                         ph->removeFromParent();
-                    iconNode->addChild(icon);
+                    iconNode->addChild(icon, 1);
+                    iconNode->addChild(iconShadow, 0);
                 });
             }
         );
@@ -472,10 +548,34 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
     if (it == m_gauntlets.end()) return;
 
     GauntletEditData data;
-    data.id      = it->id;
-    data.name    = it->name;
-    data.iconURL = it->iconURL;
-    data.bgColor = it->color;
+    data.id            = it->id;
+    data.name          = it->name;
+    data.description   = it->description;
+    data.iconURL       = it->iconURL;
+    data.bgIndex       = it->bgIndex;
+    data.nameColor     = it->nameColor;
+    data.nodeColor     = it->nodeColor;
+    data.bgColor       = it->bgColor;
+    data.accentColor1  = it->accentColor1;
+    data.accentColor2  = it->accentColor2;
+    data.infoDate      = it->infoDate;
+    data.infoVersion   = it->infoVersion;
+    data.infoSuggester = it->infoSuggester;
+    data.infoAccID     = it->infoAccID;
+    for (int i = 0; i < 5; i++) {
+        data.levels[i].id      = it->levels[i].id;
+        data.levels[i].name    = it->levels[i].name;
+        data.levels[i].creator = it->levels[i].creator;
+        data.levels[i].stars   = it->levels[i].stars;
+    }
+    log::debug("onEdit: source levels (CustomGauntletData):");
+    for (int i = 0; i < 5; i++) {
+        log::debug("  src slot {}: id={}", i, it->levels[i].id);
+    }
+    log::debug("onEdit: copied levels (GauntletEditData):");
+    for (int i = 0; i < 5; i++) {
+        log::debug("  dst slot {}: id={}", i, data.levels[i].id);
+    }
 
     GauntletEditPopup::create(data, [this](GauntletEditData const& updated) {
         fetchGauntlets();
@@ -559,7 +659,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     nameLabel->setID("gauntlet-name");
     nameLabel->setColor(g.nameColor);
     nameLabel->setAnchorPoint({0, 0.5});
-    nameLabel->setPosition({58, gauntletListItem->getContentHeight() / 2});
+    nameLabel->setPosition({58, gauntletListItem->getContentHeight() / 2 + 17.5f});
     gauntletListItem->addChild(nameLabel, 1);
 
     auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
@@ -570,6 +670,28 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     nameShadow->setAnchorPoint({0, 0.5});
     nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
     gauntletListItem->addChild(nameShadow, 0);
+
+    auto descBox = NineSlice::create("square02b_small.png");
+    descBox->setContentSize({185, 25});
+    descBox->setAnchorPoint({0, 0});
+    descBox->setPosition(nameLabel->getPositionX(), gauntletListItem->getContentHeight() / 2 - 22.5);
+    descBox->setColor({0, 0, 0});
+    descBox->setOpacity(80);
+    gauntletListItem->addChild(descBox);
+
+    auto description = TextArea::create(
+        g.description,
+        "chatFont.fnt",
+        0.5,
+        160,
+        {0, 0.5},
+        7.5,
+        false
+    );
+    description->setAnchorPoint({0, 0});
+    description->setContentSize({180, 20});
+    description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
+    gauntletListItem->addChild(description);
 
     // Buttons — local menu
     auto actionMenu = CCMenu::create();

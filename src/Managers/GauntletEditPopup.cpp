@@ -799,7 +799,9 @@ bool GauntletEditPopup::init(
 
     // Restore levels
     m_levels.clear();
+    log::debug("Restoring levels for the {} Gauntlet...", existing.name);
     for (int i = 0; i < 5; i++) {
+        log::debug("  slot {}: id={} name='{}' creator='{}' stars={}", i, existing.levels[i].id, existing.levels[i].name, existing.levels[i].creator, existing.levels[i].stars);
         if (existing.levels[i].id != 0) {
             LevelRewardEntry e;
             e.levelId     = existing.levels[i].id;
@@ -809,6 +811,7 @@ bool GauntletEditPopup::init(
             m_levels.push_back(e);
         }
     }
+    log::debug("  loaded {}/5 levels", m_levels.size());
     if (!m_levels.empty()) refreshLevels();
 
     // Restore icon from URL

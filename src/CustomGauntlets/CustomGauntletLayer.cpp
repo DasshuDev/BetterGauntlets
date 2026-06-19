@@ -1,0 +1,694 @@
+#include "CustomGauntletLayer.hpp"
+
+using namespace geode::prelude;
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+static void limitLabel(CCLabelBMFont* lbl, float max, float orig, float minS) {
+    if (!lbl) return;
+    float w = lbl->getContentSize().width * orig;
+    lbl->setScale(w > max ? std::max(max / lbl->getContentSize().width, minS) : orig);
+}
+
+// ── create / scene ────────────────────────────────────────────────────────────
+
+CCScene* BetterGauntletLayer::scene(CustomGauntletData const& data) {
+    auto layer = BetterGauntletLayer::create(data);
+    if (!layer) return nullptr;
+    auto sc = CCScene::create();
+    sc->addChild(layer);
+    return sc;
+}
+
+BetterGauntletLayer* BetterGauntletLayer::create(CustomGauntletData const& data) {
+    auto ret = new BetterGauntletLayer();
+    if (ret && ret->init(data)) {
+        ret->autorelease();
+        return ret;
+    }
+    delete ret;
+    return nullptr;
+}
+
+bool BetterGauntletLayer::init(CustomGauntletData const& data) {
+    if (!CCLayer::init()) return false;
+
+    m_data = data;
+
+    setKeypadEnabled(true);
+
+    buildBackground();
+    buildCorners();
+    buildTitle();
+
+    // Loading circle while levels fetch
+    auto loadCircle = LoadingCircle::create();
+    loadCircle->setID("loading-circle");
+    loadCircle->setPosition(CCDirector::get()->getWinSize() / 2);
+    loadCircle->ignoreAnchorPointForPosition(false);
+    loadCircle->show();
+    addChild(loadCircle, 10);
+
+    // Back button
+    auto backMenu = CCMenu::create();
+    backMenu->setID("exit-menu");
+    backMenu->setPosition({24, CCDirector::get()->getScreenTop() - 30});
+    addChild(backMenu, 5);
+
+    auto backSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+    auto backBtn = CCMenuItemExt::createSpriteExtra(backSpr,
+        [this](CCMenuItemSpriteExtra*) { onBack(nullptr); });
+    backMenu->addChild(backBtn);
+
+    // Info button
+    auto infoMenu = CCMenu::create();
+    infoMenu->setID("gauntlet-info-menu"_spr);
+    infoMenu->setPosition({0, 0});
+    addChild(infoMenu, 5);
+
+    auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
+    auto infoBtn = CCMenuItemSpriteExtra::create(
+        infoSpr, this, menu_selector(BetterGauntletLayer::onInfo));
+    infoBtn->setPosition(
+        ccp(CCDirector::get()->getScreenLeft() + 30,
+            CCDirector::get()->getScreenBottom() + 30));
+    infoMenu->addChild(infoBtn);
+
+    // Load island icon async
+    loadIslandIcon();
+
+    // Kick off level fetch
+    GameLevelManager::get()->m_levelManagerDelegate = this;
+    loadLevels();
+
+    return true;
+}
+
+// ── Background ────────────────────────────────────────────────────────────────
+
+void BetterGauntletLayer::buildBackground() {
+    auto winSize = CCDirector::get()->getWinSize();
+
+    // Solid BG colour
+    auto bg = CCSprite::create(
+        fmt::format("game_bg_{:02d}_001.png", m_data.bgIndex).c_str());
+    if (!bg) bg = CCSprite::create("game_bg_01_001.png");
+
+    if (bg) {
+        bg->setID("background");
+        bg->setColor(m_data.bgColor);
+        bg->setZOrder(-99);
+        bg->setPosition({0, -20});
+        bg->setAnchorPoint({0, 0});
+        float scaleX = winSize.width  / bg->getContentWidth();
+        float scaleY = winSize.height / bg->getContentHeight();
+        bg->setScale(std::max(scaleX, scaleY));
+        addChild(bg);
+    }
+
+    // Floor line
+    auto floorLine = CCSprite::createWithSpriteFrameName("floorLine_001.png");
+    if (floorLine) {
+        floorLine->setID("floor-line");
+        floorLine->setScaleX(0.85f);
+        floorLine->setOpacity(100);
+        floorLine->setPosition({winSize.width / 2, winSize.height - 55.f});
+        this->addChild(floorLine);
+    }
+}
+
+// Corner builder
+
+void BetterGauntletLayer::buildCorners() {
+    auto dir = CCDirector::get();
+
+    auto makeCorner = [&](
+        float x,
+        float y,
+        bool flipX,
+        bool flipY,
+        ccColor3B color,
+        ccColor3B highlight
+    ) {
+
+        auto parent = CCNode::create();
+        parent->setPosition({x, y});
+        addChild(parent, 1);
+
+        auto cornerBase = CCSprite::createWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+        cornerBase->setAnchorPoint({0, 0});
+        if (flipX) cornerBase->setScaleX(cornerBase->getScaleX() * -1);
+        if (flipY) cornerBase->setScaleY(cornerBase->getScaleY() * -1);
+        parent->addChild(cornerBase);
+
+        auto color1 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerColor_001.png"_spr);
+        color1->setAnchorPoint({0, 0});
+        color1->setZOrder(1);
+        color1->setColor(color);
+        if (flipX) color1->setScaleX(color1->getScaleX() * -1);
+        if (flipY) color1->setScaleY(color1->getScaleY() * -1);
+        parent->addChild(color1);
+
+        auto color2 = CCSprite::createWithSpriteFrameName("GR_gauntletCornerHighlight_001.png"_spr);
+        color2->setAnchorPoint({0, 0});
+        color2->setZOrder(1);
+        color2->setColor(highlight);
+        if (flipX) color2->setScaleX(color2->getScaleX() * -1);
+        if (flipY) color2->setScaleY(color2->getScaleY() * -1);
+        parent->addChild(color2);
+    };
+
+    // Top-left
+    makeCorner(
+        dir->getScreenLeft() - 1,
+        dir->getScreenTop() + 1,
+        false,
+        true,
+        m_data.accentColor1,
+        m_data.accentColor2
+    );
+
+    // Top-right
+    makeCorner(
+        dir->getScreenRight() + 1,
+        dir->getScreenTop() + 1,
+        true,
+        true,
+        m_data.accentColor1,
+        m_data.accentColor2
+    );
+}
+
+// Title builder
+
+void BetterGauntletLayer::buildTitle() {
+    auto winSize = CCDirector::get()->getWinSize();
+    std::string title = "The " + m_data.name + " Gauntlet";
+
+    auto titleNode = CCNode::create();
+    titleNode->setPosition({winSize.width / 2 + 1, winSize.height - 32.5f});
+    titleNode->setID("title-node");
+    this->addChild(titleNode);
+
+    // Main title
+    m_titleLabel = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFont.fnt"_spr);
+    m_titleLabel->setID("title");
+    m_titleLabel->setScale(0.75f);
+    m_titleLabel->setColor(m_data.nameColor);
+    m_titleLabel->setPosition({winSize.width / 2, winSize.height - 30.f});
+    m_titleLabel->setZOrder(37);
+    this->addChild(m_titleLabel);
+
+    // Highlight
+    auto highlight = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
+    highlight->setID("title-highlight");
+    highlight->setScale(0.75f);
+    highlight->setColor(m_data.accentColor2);
+    highlight->setPosition({m_titleLabel->getPositionX() + 2, winSize.height - 30.f});
+    highlight->setZOrder(38);
+    this->addChild(highlight);
+
+    // Outline
+    auto outline = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontOutline.fnt"_spr);
+    outline->setID("title-outline");
+    outline->setScale(0.75f);
+    outline->setColor({ 255, 255, 255 });
+    outline->setPosition(m_titleLabel->getPositionX() - 1.5, m_titleLabel->getPositionY());
+    outline->setZOrder(36);
+    this->addChild(outline);
+
+    // Shadow
+    auto shadow = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontOutline.fnt"_spr);
+    shadow->setID("title-shadow");
+    shadow->setScale(0.75f);
+    shadow->setColor({0, 0, 0});
+    shadow->setOpacity(100);
+    shadow->setPosition({outline->getPositionX() + 3.5f, outline->getPositionY() - 3.5f});
+    shadow->setZOrder(35);
+    this->addChild(shadow);
+}
+
+// Icon builder
+
+void BetterGauntletLayer::loadIslandIcon() {
+    if (m_data.iconURL.empty()) return;
+
+    m_iconHolder.spawn(
+        web::WebRequest().get(m_data.iconURL),
+        [this](web::WebResponse res) {
+            if (!res.ok()) return;
+            auto bytes = res.data();
+            Ref<BetterGauntletLayer> self(this);
+            queueInMainThread([self, bytes]() {
+                if (!self->getParent()) return;
+
+                auto img = new CCImage();
+                if (!img->initWithImageData(
+                        const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                    delete img; return;
+                }
+                auto tex = new CCTexture2D();
+                tex->initWithImage(img);
+                delete img;
+
+                if (self->m_levelsMenu) {
+                    for (int i = 1; i <= 5; i++) {
+                        auto btn = self->m_levelsMenu->getChildByID(
+                            fmt::format("level-{}", i).c_str());
+                        if (!btn) continue;
+                        auto levelSpr = static_cast<CCNode*>(
+                            static_cast<CCMenuItemSpriteExtra*>(btn)->getNormalImage());
+                        if (auto island = static_cast<CCSprite*>(
+                                levelSpr->getChildByID(fmt::format("island-{}", i).c_str()))) {
+                            island->setTexture(tex);
+                            // island->setTextureRect({0, 0,
+                            //     (float)tex->getPixelsWide(),
+                            //     (float)tex->getPixelsHigh()});
+                        }
+                        if (auto shadow = static_cast<CCSprite*>(
+                                levelSpr->getChildByID(
+                                    fmt::format("island-{}-shadow", i).c_str()))) {
+                            shadow->setTexture(tex);
+                            // shadow->setTextureRect({0, 0,
+                            //     (float)tex->getPixelsWide(),
+                            //     (float)tex->getPixelsHigh()});
+                        }
+                    }
+                }
+                tex->release();
+            });
+        }
+    );
+}
+
+// Level loader
+
+void BetterGauntletLayer::loadLevels() {
+    // Build comma-separated ID string for Type19 search
+    std::string idList;
+    for (int i = 0; i < 5; i++) {
+        if (m_data.levels[i].id == 0) continue;
+        if (!idList.empty()) idList += ",";
+        idList += std::to_string(m_data.levels[i].id);
+    }
+    if (idList.empty()) return;
+
+    auto searchObj = GJSearchObject::create(SearchType::Type19, gd::string(idList));
+    GameLevelManager::get()->getOnlineLevels(searchObj);
+}
+
+void BetterGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this)
+        glm->m_levelManagerDelegate = nullptr;
+
+    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+
+    // Sort returned levels to match the original slot order
+    CCArray* ordered = CCArray::createWithCapacity(5);
+    for (int i = 0; i < 5; i++) {
+        int wantId = m_data.levels[i].id;
+        if (wantId == 0) { ordered->addObject(CCInteger::create(0)); continue; }
+        GJGameLevel* found = nullptr;
+        for (auto* obj : CCArrayExt<GJGameLevel*>(levels)) {
+            if ((int)obj->m_levelID == wantId) { found = obj; break; }
+        }
+        if (found) {
+            // found->m_gauntletLevel = false;
+            found->m_gauntletLevel2 = true;
+            ordered->addObject(found);
+        }
+        else ordered->addObject(CCInteger::create(0)); // placeholder
+    }
+
+    m_loadedLevels = ordered;
+    m_loadedLevels->retain();
+
+    buildLevelButtons(ordered);
+    loadIslandIcon(); // now that buttons exist, load the icon
+}
+
+void BetterGauntletLayer::loadLevelsFailed(char const*, int) {
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this)
+        glm->m_levelManagerDelegate = nullptr;
+
+    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+
+    Notification::create("Failed to load gauntlet levels.", NotificationIcon::Error)->show();
+}
+
+// Level buttons
+
+void BetterGauntletLayer::buildLevelButtons(CCArray* levels) {
+    auto winSize = CCDirector::get()->getWinSize();
+
+    m_levelsMenu = CCMenu::create();
+    m_levelsMenu->setID("level-array"_spr);
+    m_levelsMenu->setPosition({0, -14});
+    addChild(m_levelsMenu, 4);
+
+    auto gsm = GameStatsManager::sharedState();
+
+    for (int i = 0; i < 5; i++) {
+        auto& slotData = m_data.levels[i];
+        auto obj = levels->objectAtIndex(i);
+        auto level = typeinfo_cast<GJGameLevel*>(obj);
+        // if level is null (placeholder) we still show a locked/empty slot
+
+        bool hasCompleted = level && gsm->hasCompletedLevel(level);
+        bool isLocked = false;
+        if (i > 0) {
+            auto prevObj = levels->objectAtIndex(i - 1);
+            auto prevLevel = typeinfo_cast<GJGameLevel*>(prevObj);
+            isLocked = !prevLevel || !gsm->hasCompletedLevel(prevLevel);
+        }
+
+        // Island Node
+        auto levelSpr = CCNode::create();
+        levelSpr->setContentSize({70, 80});
+        levelSpr->setAnchorPoint({0.5f, 0.5f});
+        levelSpr->setID(fmt::format("level-{}", i + 1).c_str());
+
+        // Sprite PH
+        auto islandSpr = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
+        if (!islandSpr)
+            islandSpr = CCSprite::create(); // bare fallback
+        islandSpr->setID(fmt::format("island-{}", i + 1).c_str());
+        islandSpr->setPosition(levelSpr->getContentSize() / 2);
+        if (isLocked) islandSpr->setColor({128, 128, 128});
+        levelSpr->addChild(islandSpr);
+
+        auto shadowSpr = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
+        if (!shadowSpr) shadowSpr = CCSprite::create();
+        shadowSpr->setID(fmt::format("island-{}-shadow", i + 1).c_str());
+        shadowSpr->setColor({0, 0, 0});
+        shadowSpr->setOpacity(75);
+        shadowSpr->setScaleY(1.2f);
+        shadowSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10.f});
+        levelSpr->addChild(shadowSpr, -1);
+
+        // Info stats
+        std::string levelName    = level ? std::string(level->m_levelName)    : slotData.name;
+        std::string creatorName  = level ? std::string(level->m_creatorName)  : slotData.creator;
+        int         stars        = slotData.stars;
+
+        auto nameLabel = CCLabelBMFont::create(levelName.c_str(), "bigFont.fnt");
+        nameLabel->setID("level-name"_spr);
+        limitLabel(nameLabel, 120.f, 0.4f, 0.3f);
+        nameLabel->setPosition({islandSpr->getPositionX(),
+                                  islandSpr->getPositionY() - 10.f});
+        if (isLocked) nameLabel->setVisible(false);
+        levelSpr->addChild(nameLabel);
+
+        auto authorLabel = CCLabelBMFont::create(creatorName.c_str(), "goldFont.fnt");
+        authorLabel->setID("creator-name"_spr);
+        limitLabel(authorLabel, 120.f, 0.4f, 0.25f);
+        authorLabel->setAlignment(kCCTextAlignmentCenter);
+        authorLabel->setPosition({nameLabel->getPositionX(),
+                                    nameLabel->getPositionY() - 10.f});
+        if (isLocked) authorLabel->setVisible(false);
+        levelSpr->addChild(authorLabel);
+
+        // Stars row
+        auto starNode = CCNode::create();
+        starNode->setID("star-node"_spr);
+        starNode->setScale(0.65f);
+        starNode->setAnchorPoint({0.5f, 0.5f});
+        starNode->setPosition({nameLabel->getPositionX(),
+                                 nameLabel->getPositionY() - 27.5f});
+        starNode->setLayout(RowLayout::create()
+            ->setGap(5)->setAutoGrowAxis(true)
+            ->setAxisAlignment(AxisAlignment::Center));
+
+        auto starCount = CCLabelBMFont::create(fmt::format("{}", stars).c_str(), "bigFont.fnt");
+        starCount->setID("star-count"_spr);
+        starCount->setScale(0.65f);
+        if (hasCompleted) starCount->setColor({255, 255, 50});
+
+        auto starSpr = CCSprite::create("GR_gauntletStar_001.png"_spr);
+        starSpr->setID("star-icon"_spr);
+        starSpr->setAnchorPoint({0.5f, 0.5f});
+        starSpr->setScale(0.45f);
+
+        starNode->addChild(starCount);
+        starNode->addChild(starSpr);
+        starNode->updateLayout();
+        if (isLocked) starNode->setVisible(false);
+        levelSpr->addChild(starNode);
+
+        // Completion checkmark
+        if (hasCompleted) {
+            auto check = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
+            check->setID("checkmark-icon"_spr);
+            check->setAnchorPoint({0.5f, 0.5f});
+            check->setPosition({islandSpr->getPositionX() + 15.f,
+                                  islandSpr->getPositionY() + 15.f});
+            levelSpr->addChild(check);
+        }
+
+        // Lock icon
+        if (isLocked) {
+            auto lockSpr = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
+            lockSpr->setID("gauntlet-lock"_spr);
+            lockSpr->setPosition({islandSpr->getPositionX(),
+                                    islandSpr->getPositionY() - 15.f});
+            levelSpr->addChild(lockSpr);
+        }
+
+        auto btn = CCMenuItemSpriteExtra::create(
+            levelSpr, this,
+            isLocked
+                ? menu_selector(BetterGauntletLayer::onLocked)
+                : menu_selector(BetterGauntletLayer::onLevel)
+        );
+        if (level) btn->setUserObject(level);
+        btn->setTag(i);
+        btn->setID(fmt::format("level-{}", i + 1).c_str());
+
+        // Same zigzag positions as RedesignedGauntletLayer
+        float posFarX = 185.f;
+		float posCloseX = posFarX / 2.f;
+		float posY = 50.f;
+
+		switch (i + 1) {
+			case 1: btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY); break;
+			case 2: btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY); break;
+			case 3: btn->setPosition(winSize.width / 2, winSize.height / 2 - posY); break;
+			case 4: btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY); break;
+			case 5: btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY); break;
+		}
+
+        m_levelsMenu->addChild(btn);
+    }
+
+    // Vault
+    auto dir = CCDirector::sharedDirector();
+
+    auto vaultMenu = CCMenu::create();
+    vaultMenu->setID("level-vault-menu"_spr);
+    vaultMenu->setPosition({0, 0});
+    this->addChild(vaultMenu, 5);
+
+    auto vaultBtn = CCMenuItemSpriteExtra::create(
+        CCSprite::createWithSpriteFrameName("GJ_safeBtn_001.png"),
+        this, menu_selector(BetterGauntletLayer::gauntletVault)
+    );
+    vaultBtn->setPosition(ccp(dir->getScreenRight() - 31, dir->getScreenTop() - 30));
+    vaultMenu->addChild(vaultBtn);
+
+    if (Mod::get()->getSettingValue<bool>("vault-tooltip")) {
+        auto vaultText = CCSprite::createWithSpriteFrameName("vaultText.png"_spr);
+        vaultText->setPosition(ccp(vaultBtn->getPositionX() - 52.5, vaultBtn->getPositionY() - 37.5));
+        vaultText->setScale(0.45);
+        vaultText->setID("vault-text"_spr);
+        vaultMenu->addChild(vaultText);
+    }
+
+    bool hover = Mod::get()->getSettingValue<bool>("level-hover");
+	if (hover) {
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
+		
+		for (int i = 0; i < 5; i++) {
+			CCNode* levels = m_levelsMenu->getChildByIDRecursive(fmt::format("level-{}", i + 1));
+			
+			float randomMoveUp = 2.0 + static_cast<float>(std::rand() % 15) / 10.0;
+			float randomMoveDown = 2.0 + static_cast<float>(std::rand() % 15) / 10.0;
+
+			CCMoveBy* moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
+			CCMoveBy* moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
+			
+			CCEaseInOut* easeMoveUp = CCEaseInOut::create(moveUp, 2.0);
+			CCEaseInOut* easeMoveDown = CCEaseInOut::create(moveDown, 2.0);
+			
+			CCSequence* hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
+			
+			CCRepeatForever* levelHover = CCRepeatForever::create(hoverSequence);
+			levels->runAction(levelHover);
+		}
+	}
+}
+
+void BetterGauntletLayer::onBack(CCObject*) {
+    if (auto glm = GameLevelManager::get())
+        if (glm->m_levelManagerDelegate == this)
+            glm->m_levelManagerDelegate = nullptr;
+    if (m_loadedLevels) { m_loadedLevels->release(); m_loadedLevels = nullptr; }
+    CCDirector::get()->popScene();
+}
+
+void BetterGauntletLayer::onLevel(CCObject* sender) {
+    auto btn   = static_cast<CCMenuItemSpriteExtra*>(sender);
+    auto level = static_cast<GJGameLevel*>(btn->getUserObject());
+    if (!level) return;
+
+    auto lil   = LevelInfoLayer::create(level, false);
+    auto scene  = CCScene::create();
+    scene->addChild(lil);
+    CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
+}
+
+void BetterGauntletLayer::onLocked(CCObject* sender) {
+    auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
+    auto levelSpr = static_cast<CCNode*>(button->getNormalImage());
+    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildren()->objectAtIndex(1));
+    if (!islandSpr) return;
+	
+    ccColor3B originalColor = ccc3(128, 128, 128);
+    
+    auto turnRed = CCTintTo::create(0, 192, 128, 128);
+    auto resetColor = CCTintTo::create(0.25, originalColor.r, originalColor.g, originalColor.b);
+    
+    auto sequence = CCSequence::create(turnRed, resetColor, nullptr);
+    islandSpr->runAction(sequence);
+}
+
+void BetterGauntletLayer::onInfo(CCObject*) {
+    auto title = "The " + m_data.name + " Gauntlet";
+
+    auto popup = MDPopup::create(
+        title.c_str(),
+        m_data.description.c_str(),
+        "OK"
+    );
+
+    // Metadata labels (same layout as RedesignedGauntletLayer::onInfo)
+    auto makeLabel = [](std::string const& text, float x, float y, float scale, CCTextAlignment align) {
+        auto lbl = CCLabelBMFont::create(text.c_str(), "chatFont.fnt");
+        lbl->setPosition(x, y);
+        lbl->setScale(scale);
+        lbl->setAnchorPoint(align == kCCTextAlignmentLeft
+            ? ccp(0, 0) : ccp(1, 0));
+        lbl->setOpacity(51);
+        return lbl;
+    };
+
+    auto children = popup->getChildren();
+    if (children && children->count() > 0) {
+        auto child = static_cast<CCNode*>(children->objectAtIndex(0));
+        if (!m_data.infoDate.empty())
+            child->addChild(makeLabel(
+            "Released on: " + m_data.infoDate, 
+            383.5f, 
+            25.f, 
+            0.5f, 
+            kCCTextAlignmentRight
+        ));
+        if (!m_data.infoVersion.empty())
+            child->addChild(makeLabel(
+            "Version: " + m_data.infoVersion, 
+            383.5f, 
+            15.f, 
+            0.5f, 
+            kCCTextAlignmentRight
+        ));
+        if (!m_data.infoSuggester.empty())
+            child->addChild(makeLabel(
+            "Suggested by: " + m_data.infoSuggester, 
+            15.5f, 
+            15.f, 
+            0.5f, 
+            kCCTextAlignmentLeft
+        ));
+    }
+
+    popup->show();
+}
+
+void BetterGauntletLayer::gauntletVault(CCObject*) {
+    auto director = CCDirector::sharedDirector();
+    auto winSize = director->getWinSize();
+
+    // Build level ID string from custom gauntlet data
+    std::string idList;
+    for (auto const& slot : m_data.levels) {
+        if (slot.id == 0) continue;
+        if (!idList.empty()) idList += ",";
+        idList += std::to_string(slot.id);
+    }
+    if (idList.empty()) return;
+
+    auto searchObject = GJSearchObject::create(SearchType::Type19, gd::string(idList));
+    auto browserLayer = LevelBrowserLayer::create(searchObject);
+
+    auto browserBG = static_cast<CCSprite*>(browserLayer->getChildByIDRecursive("background"));
+    auto browserBL = browserLayer->getChildByIDRecursive("left-corner");
+    auto browserBR = browserLayer->getChildByIDRecursive("right-corner");
+
+    auto grayscaleTL = CCSpriteGrayscale::createWithSpriteFrameName("GJ_sideArt_001.png");
+    grayscaleTL->setPosition({director->getScreenLeft() - 1, director->getScreenTop() + 1});
+    grayscaleTL->setAnchorPoint(ccp(0, 1));
+    grayscaleTL->setColor(ccc3(67, 67, 67));
+    grayscaleTL->setFlipY(true);
+    grayscaleTL->setZOrder(-1);
+    browserLayer->addChild(grayscaleTL);
+
+    auto grayscaleTR = CCSpriteGrayscale::createWithSpriteFrameName("GJ_sideArt_001.png");
+    grayscaleTR->setPosition({director->getScreenRight() + 1, director->getScreenTop() + 1});
+    grayscaleTR->setAnchorPoint(ccp(1, 1));
+    grayscaleTR->setColor(ccc3(67, 67, 67));
+    grayscaleTR->setFlipX(true);
+    grayscaleTR->setFlipY(true);
+    grayscaleTR->setZOrder(-1);
+    browserLayer->addChild(grayscaleTR);
+
+    auto floor = CCSprite::createWithSpriteFrameName("gauntletGround_001.png"_spr);
+    if (floor) {
+        auto floorSize = floor->getContentSize();
+        float scale = std::min(winSize.width / floorSize.width, winSize.height / floorSize.height);
+        floor->setScale(scale);
+        floor->setPosition(ccp(winSize.width / 2, floorSize.height * scale / 2));
+        floor->setAnchorPoint(ccp(0.5, 0.5));
+        floor->setZOrder(-2);
+        floor->setColor(ccc3(175, 175, 175));
+        browserLayer->addChild(floor);
+    }
+
+    if (browserBG) browserBG->setColor(ccc3(34, 34, 34));
+    if (browserBL) browserBL->setVisible(false);
+    if (browserBR) browserBR->setVisible(false);
+
+    auto scene = CCScene::create();
+    scene->addChild(browserLayer);
+    director->pushScene(CCTransitionFade::create(0.5f, scene));
+}
+
+void BetterGauntletLayer::reportCompletion(int levelID, int stars) {
+    auto accountID = GJAccountManager::get()->m_accountID;
+
+    m_completionHolder.spawn(
+        web::WebRequest()
+            .bodyJSON(matjson::makeObject({
+                {"accountId", accountID},
+                {"gauntletId", m_data.id},
+                {"levelId", levelID},
+                {"stars", stars}
+            }))
+            .post("https://bettergauntlets.dev/complete"),
+        [](web::WebResponse res) {
+            if (!res.ok()) {
+                log::error("Failed to report completion: HTTP {}", res.code());
+            }
+        }
+    );
+}

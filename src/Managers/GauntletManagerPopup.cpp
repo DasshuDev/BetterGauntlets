@@ -25,7 +25,6 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
         (GLubyte)g["color_g"].asInt().unwrapOr(255),
         (GLubyte)g["color_b"].asInt().unwrapOr(255)
     };
-    data.color = data.bgColor;
     data.accentColor1 = {
         (GLubyte)g["accent_color1_r"].asInt().unwrapOr(255),
         (GLubyte)g["accent_color1_g"].asInt().unwrapOr(255),
@@ -478,6 +477,28 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
     row->addChild(nameShadow, 0);
 
+    auto descBox = NineSlice::create("square02b_small.png");
+    descBox->setContentSize({185, 25});
+    descBox->setAnchorPoint({0, 0});
+    descBox->setPosition(nameLabel->getPositionX(), row->getContentHeight() / 2 - 22.5);
+    descBox->setColor({0, 0, 0});
+    descBox->setOpacity(80);
+    row->addChild(descBox);
+
+    auto description = TextArea::create(
+        g.description,
+        "chatFont.fnt",
+        0.5,
+        160,
+        {0, 0.5},
+        7.5,
+        false
+    );
+    description->setAnchorPoint({0, 0});
+    description->setContentSize({180, 20});
+    description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
+    row->addChild(description);
+
     // Buttons — local menu, not m_actionMenu
     int gid = g.id;
     auto actionMenu = CCMenu::create();
@@ -699,11 +720,11 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     actionMenu->setPosition({gauntletListItem->getContentWidth() - 12, gauntletListItem->getContentHeight() / 2});
     actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
 
-    auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
-    deleteSpr->setScale(0.85f);
-    auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
-        [this, index](CCMenuItemSpriteExtra*) { onDelete(index); });
-    actionMenu->addChild(deleteBtn);
+    auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
+    pushSpr->setScale(0.85f);
+    auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
+        [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
+    actionMenu->addChild(pushBtn);
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
@@ -711,11 +732,11 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
         [this, index](CCMenuItemSpriteExtra*) { onEditStaged(index); });
     actionMenu->addChild(editBtn);
 
-    auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
-    pushSpr->setScale(0.85f);
-    auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
-        [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
-    actionMenu->addChild(pushBtn);
+    auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+    deleteSpr->setScale(0.85f);
+    auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
+        [this, index](CCMenuItemSpriteExtra*) { onDelete(index); });
+        actionMenu->addChild(deleteBtn);
 
     actionMenu->updateLayout();
     gauntletListItem->addChild(actionMenu);

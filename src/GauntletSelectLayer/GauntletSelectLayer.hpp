@@ -2,7 +2,9 @@
 
 #include <Geode/utils/web.hpp>
 #include <Geode/loader/Event.hpp>
-// #include "../CustomGauntlets/CustomGauntletManager.hpp"
+#include "../CustomGauntlets/CustomGauntletLayer.hpp"
+#include "../CustomGauntlets/CustomGauntletNode.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 #include <Geode/modify/GauntletSelectLayer.hpp>
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 
@@ -27,6 +29,7 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
         LoadingCircle* m_loadingCircle = nullptr;
         async::TaskHolder<Result<std::string>> m_listener;
         async::TaskHolder<web::WebResponse> m_managerCheckHolder;
+        async::TaskHolder<web::WebResponse> m_fetchHolder;
     };
 
     // Pre-setup
@@ -38,8 +41,8 @@ class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
     void onDiscord(CCObject* sender);
     void toggleList(CCObject* sender);
     void startAuth();
-    // void buildCustomList();
-    // void populateCustomList(std::vector<CustomGauntletData> const& gauntlets);
+    void buildCustomList();
+    void populateCustomList(std::vector<CustomGauntletData> const& gauntlets);
 
     // Level loading
     void updateDots();

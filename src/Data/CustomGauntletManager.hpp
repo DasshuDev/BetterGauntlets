@@ -1,5 +1,6 @@
 #pragma once
 #include <Geode/Geode.hpp>
+#include <Geode/utils/web.hpp>
 #include "CustomGauntletData.hpp"
 
 using namespace geode::prelude;
@@ -8,23 +9,21 @@ class CustomGauntletManager {
 public:
     static CustomGauntletManager* get();
 
-    // Fetches from server URL setting and parses response.
-    // Calls onSuccess with parsed gauntlets, or onFailure with error string.
-    void fetch(
-        std::function<void(std::vector<CustomGauntletData>)> onSuccess,
-        std::function<void(std::string)> onFailure
-    );
+    // Fetch all published gauntlets from server
+    web::WebFuture fetchAll();
 
-    // Returns cached result from last successful fetch, empty if never fetched.
-    std::vector<CustomGauntletData> const& getCached() const;
+    // Parse the server's colon-delimited response into a list
+    std::vector<CustomGauntletData> parse(std::string const& body);
 
+    // Cache
     bool hasCached() const;
+    std::vector<CustomGauntletData> const& getCached() const;
+    void clearCache();
 
 private:
     CustomGauntletManager() = default;
     std::vector<CustomGauntletData> m_cache;
     bool m_hasCached = false;
 
-    // Parses raw GD gauntlet response body into a vector of CustomGauntletData.
-    std::vector<CustomGauntletData> parse(std::string const& raw);
+    static std::string baseURL();
 };

@@ -1,32 +1,81 @@
 #pragma once
+#include <Geode/Geode.hpp>
 #include <string>
-#include <array>
+// #include <vector>
 
-struct CustomGauntletLevel {
-    int id = 0;
+using namespace geode::prelude;
+
+// Per-level entry inside a custom gauntlet
+struct CustomSlotLevel {
+    int         id      = 0;
     std::string name;
     std::string creator;
-    int stars = 0;
+    int         stars   = 0;
 };
 
+// Full server-side data for a published custom gauntlet
 struct CustomGauntletData {
-    int id = 0;
+    int         id           = 0;
     std::string name;
     std::string description;
     std::string iconURL;
-    int bgIndex = 1;
-    cocos2d::ccColor3B nameColor  = {255, 255, 255};
-    cocos2d::ccColor3B nodeColor  = {255, 255, 255};
-    cocos2d::ccColor3B bgColor    = {255, 255, 255};
-    cocos2d::ccColor3B accentColor1 = {255, 255, 255};
-    cocos2d::ccColor3B accentColor2 = {255, 255, 255};
-    std::array<CustomGauntletLevel, 5> levels;
+
+    ccColor3B   nameColor    = {255, 255, 255};
+    ccColor3B   nodeColor    = {255, 255, 255};
+    ccColor3B   bgColor      = {34,  34,  34 };
+    ccColor3B   accentColor1 = {255, 255, 255};
+    ccColor3B   accentColor2 = {255, 255, 255};
+
+    int         bgIndex      = 1;
+
+    std::array<CustomSlotLevel, 5> levels;
 
     std::string infoDate;
     std::string infoVersion;
     std::string infoSuggester;
-    int infoAccID = 0;
+    int         infoAccID    = 0;
 
-    // Legacy compat for code that just needs a single color
-    cocos2d::ccColor3B color = {255, 255, 255};
+    // Parse from a single JSON object
+    static CustomGauntletData fromJson(matjson::Value const& obj) {
+        CustomGauntletData d;
+        d.id          = obj["id"].asInt().unwrapOr(0);
+        d.name        = obj["name"].asString().unwrapOr("");
+        d.description = obj["description"].asString().unwrapOr("");
+        d.iconURL     = obj["icon_url"].asString().unwrapOr("");
+
+        d.nameColor    = { (GLubyte)obj["name_color_r"].asInt().unwrapOr(255),
+                           (GLubyte)obj["name_color_g"].asInt().unwrapOr(255),
+                           (GLubyte)obj["name_color_b"].asInt().unwrapOr(255) };
+        d.nodeColor    = { (GLubyte)obj["node_color_r"].asInt().unwrapOr(255),
+                           (GLubyte)obj["node_color_g"].asInt().unwrapOr(255),
+                           (GLubyte)obj["node_color_b"].asInt().unwrapOr(255) };
+        d.bgColor      = { (GLubyte)obj["color_r"].asInt().unwrapOr(34),
+                           (GLubyte)obj["color_g"].asInt().unwrapOr(34),
+                           (GLubyte)obj["color_b"].asInt().unwrapOr(34) };
+        d.accentColor1 = { (GLubyte)obj["accent_color1_r"].asInt().unwrapOr(255),
+                           (GLubyte)obj["accent_color1_g"].asInt().unwrapOr(255),
+                           (GLubyte)obj["accent_color1_b"].asInt().unwrapOr(255) };
+        d.accentColor2 = { (GLubyte)obj["accent_color2_r"].asInt().unwrapOr(255),
+                           (GLubyte)obj["accent_color2_g"].asInt().unwrapOr(255),
+                           (GLubyte)obj["accent_color2_b"].asInt().unwrapOr(255) };
+
+        d.bgIndex       = obj["bg_index"].asInt().unwrapOr(1);
+        d.infoDate      = obj["info_date"].asString().unwrapOr("");
+        d.infoVersion   = obj["info_version"].asString().unwrapOr("");
+        d.infoSuggester = obj["info_suggester"].asString().unwrapOr("");
+        d.infoAccID     = obj["info_acc_id"].asInt().unwrapOr(0);
+
+        if (obj.contains("levels") && obj["levels"].isArray()) {
+            int i = 0;
+            for (auto const& lvl : obj["levels"]) {
+                if (i >= 5) break;
+                d.levels[i].id      = lvl["level_id"].asInt().unwrapOr(0);
+                d.levels[i].name    = lvl["level_name"].asString().unwrapOr("");
+                d.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+                d.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+                i++;
+            }
+        }
+        return d;
+    }
 };

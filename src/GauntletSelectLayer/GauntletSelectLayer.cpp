@@ -6,6 +6,9 @@
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "GauntletSelectLayer.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
+#include "../Data/CustomGauntletManager.hpp"
+#include "../CustomGauntlets/CustomGauntletNode.hpp"
+#include "../CustomGauntlets/CustomGauntletLayer.hpp"
 
 using namespace geode::prelude;
 
@@ -819,7 +822,8 @@ void RedesignedGauntletSelectLayer::toggleList(CCObject* sender) {
         m_fields->m_vanillaTitle->setVisible(false);
         m_fields->m_betterTitle->setVisible(true);
 
-        startAuth();
+        // startAuth();
+        buildCustomList();
 
         // Check if this player is a manager and show the button if so
         auto accountID = GJAccountManager::get()->m_accountID;
@@ -895,7 +899,7 @@ void RedesignedGauntletSelectLayer::startAuth() {
     );
 }
 
-/*
+// /*
 void RedesignedGauntletSelectLayer::buildCustomList() {
     auto winSize = CCDirector::sharedDirector()->getWinSize();
 
@@ -908,15 +912,13 @@ void RedesignedGauntletSelectLayer::buildCustomList() {
     loadingCircle->setID("custom-list-loading"_spr);
     loadingCircle->setPosition(winSize / 2);
     loadingCircle->ignoreAnchorPointForPosition(false);
-    loadingCircle->show();
     this->addChild(loadingCircle, 10);
 
-    m_loadingCircle = loadingCircle;
-
     m_fields->m_fetchHolder.spawn(
-        CustomGauntletManager::get()->fetchGauntlets(),
+        CustomGauntletManager::get()->fetchAll(),
         [this, loadingCircle](web::WebResponse res) {
-            if (loadingCircle->getParent()) this->removeChild(loadingCircle);
+            if (loadingCircle && loadingCircle->getParent())
+                loadingCircle->removeFromParent();
 
             if (!res.ok()) {
                 Notification::create(
@@ -957,10 +959,10 @@ void RedesignedGauntletSelectLayer::populateCustomList(
 
     if (auto scrollLayer = getChildByIDRecursive("custom-gauntlet-scroll"_spr)) scrollLayer->removeFromParent();
     if (auto scrollBar = getChildByIDRecursive("custom-gauntlet-bar"_spr)) scrollBar->removeFromParent();
-    if (m_loadingCircle) m_loadingCircle->removeFromParent();
+    if (auto lc = getChildByIDRecursive("custom-list-loading"_spr)) lc->removeFromParent();
 
     auto container = CCMenu::create();
-    container->setAnchorPoint({0, 0.5});
+    container->setAnchorPoint({0.5, 0.5});
     container->setLayout(
         RowLayout::create()
         ->setAxisAlignment(AxisAlignment::Start)
@@ -968,17 +970,19 @@ void RedesignedGauntletSelectLayer::populateCustomList(
         ->setAutoGrowAxis(true)
         ->setPadding({60, 0, 60, 0})
     );
+    container->setPositionY(117);
     container->setID("custom-gauntlet-btns"_spr);
 
     for (auto const& data : gauntlets) {
-        auto node = CustomGauntletNode::create(data, [](CustomGauntletData const& tapped) {
-            auto scene = CustomGauntletLayer::scene(tapped);
-            CCDirector::sharedDirector()->pushScene(
-                CCTransitionFade::create(0.5f, scene)
-            );
-        });
-        if (node) container->addChild(node);
-    }
+      auto node = CustomGauntletNode::create(data,
+          [](CustomGauntletData const& tapped) {
+              auto sc = BetterGauntletLayer::scene(tapped);
+              if (sc) CCDirector::sharedDirector()->pushScene(
+                  CCTransitionFade::create(0.5f, sc));
+          }
+      );
+      if (node) container->addChild(node);
+  }
 
     container->updateLayout();
 
@@ -1002,7 +1006,7 @@ void RedesignedGauntletSelectLayer::populateCustomList(
     scrollBar->setID("custom-gauntlet-bar"_spr);
     this->addChild(scrollBar, 1);
 }
-*/
+// */
 
 // SAVE AND LOAD SCROLL POSITION
 

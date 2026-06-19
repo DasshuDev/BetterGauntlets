@@ -1,0 +1,156 @@
+#include "CustomGauntletNode.hpp"
+
+using namespace geode::prelude;
+
+CustomGauntletNode* CustomGauntletNode::create(
+    CustomGauntletData const& data,
+    GauntletTapCallback callback
+) {
+    auto ret = new CustomGauntletNode();
+    if (ret && ret->init(data, callback)) {
+        ret->autorelease();
+        return ret;
+    }
+    delete ret;
+    return nullptr;
+}
+
+bool CustomGauntletNode::init(
+    CustomGauntletData const& data,
+    GauntletTapCallback callback
+) {
+    m_data     = data;
+    m_callback = callback;
+
+    auto sprite = CCNode::create();
+    sprite->setContentSize({110, 234});
+    sprite->setAnchorPoint({0.5, 0.5});
+
+    auto node = NineSlice::create("GJ_squareB_01.png");
+    node->setContentSize({110, 220});
+    node->setColor(data.nodeColor);
+    node->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2});
+    node->setAnchorPoint({0.5, 0.5});
+    sprite->addChild(node);
+
+    auto ph = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
+    ph->setID("icon-placeholder");
+    ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2});
+    sprite->addChild(ph);
+
+    // Name
+    auto nameLabel = CCLabelBMFont::create(data.name.c_str(), "bigFont.fnt");
+    nameLabel->setID("gauntlet-name"_spr);
+    nameLabel->limitLabelWidth(80, 0.7, 0.00001);
+    nameLabel->setColor(data.nameColor);
+    nameLabel->setPosition({node->getContentWidth() / 2, node->getContentHeight() - 19});
+    sprite->addChild(nameLabel, 2);
+
+    auto nameShadow = CCLabelBMFont::create(data.name.c_str(), "bigFont.fnt");
+    nameShadow->setID("gauntlet-shadow-label"_spr);
+    nameShadow->setScale(nameLabel->getScale());
+    nameShadow->setColor({0, 0, 0});
+    nameShadow->setOpacity(50);
+    nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
+    sprite->addChild(nameShadow, 1);
+
+    auto gauntletLabel = CCLabelBMFont::create("Gauntlet", "bigFont.fnt");
+    gauntletLabel->setID("gauntlet-label"_spr);
+    gauntletLabel->setScale(0.45);
+    gauntletLabel->setColor(data.nameColor);
+    gauntletLabel->setPosition({node->getContentWidth() / 2, nameLabel->getPositionY() - 15});
+    sprite->addChild(gauntletLabel, 2);
+
+    auto gauntletShadow = CCLabelBMFont::create("Gauntlet", "bigFont.fnt");
+    gauntletShadow->setID("gauntlet-shadow"_spr);
+    gauntletShadow->setScale(gauntletLabel->getScale());
+    gauntletShadow->setColor({0, 0, 0});
+    gauntletShadow->setOpacity(50);
+    gauntletShadow->setPosition({gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2});
+    sprite->addChild(gauntletShadow, 1);
+
+    // Completion Badge
+    int completed = 0;
+    auto glm = GameLevelManager::sharedState();
+    auto gsm = GameStatsManager::sharedState();
+    for (auto const& slot : data.levels) {
+        if (slot.id == 0) continue;
+        auto saved = glm->getSavedGauntletLevel(slot.id);
+        if (saved && gsm->hasCompletedLevel(saved))
+            completed++;
+    }
+
+    auto countLabel = CCLabelBMFont::create(fmt::format("{}/5", completed).c_str(), "bigFont.fnt");
+    countLabel->setScale(0.4);
+    countLabel->setColor(completed == 5 ? ccColor3B{100, 255, 100} : ccColor3B{255, 255, 255});
+    countLabel->setPosition({sprite->getContentWidth() / 2, (sprite->getContentHeight() / 2) - 26.5f});
+    sprite->addChild(countLabel, 2);
+
+    auto countLabelShadow = CCLabelBMFont::create(fmt::format("{}/5", completed).c_str(), "bigFont.fnt");
+    countLabelShadow->setScale(0.4);
+    countLabelShadow->setOpacity(50);
+    countLabelShadow->setColor({0, 0, 0});
+    countLabelShadow->setPosition({sprite->getContentWidth() / 2 + 2, (sprite->getContentHeight() / 2) - 29.5f});
+    sprite->addChild(countLabelShadow, 1);
+
+    if (!CCMenuItemSpriteExtra::init(sprite, nullptr, nullptr, nullptr))
+        return false;
+
+    setTarget(this, menu_selector(CustomGauntletNode::onTap));
+    setID(fmt::format("{}", data.name).c_str());
+    m_scaleMultiplier = 1.05;
+
+    loadIcon();
+    return true;
+}
+
+void CustomGauntletNode::loadIcon() {
+    if (m_data.iconURL.empty()) return;
+
+    m_iconHolder.spawn(
+        web::WebRequest().get(m_data.iconURL),
+        [this](web::WebResponse res) {
+            if (!res.ok()) return;
+            auto bytes = res.data();
+            Ref<CustomGauntletNode> self(this);
+            queueInMainThread([self, bytes]() {
+                if (!self->getParent()) return;
+
+                auto img = new CCImage();
+                if (!img->initWithImageData(
+                        const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                    delete img; return;
+                }
+                auto tex = new CCTexture2D();
+                tex->initWithImage(img);
+                delete img;
+
+                auto icon = CCSprite::createWithTexture(tex);
+                auto shadow = CCSprite::createWithTexture(tex);
+                tex->release();
+                if (!icon || !shadow) return;
+
+                auto container = static_cast<CCNode*>(self->getChildren()->objectAtIndex(0));
+                if (!container) return;
+
+                icon->setID("gauntlet-icon");
+                icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 10});
+
+                shadow->setScaleX(icon->getScaleX());
+                shadow->setScaleY(icon->getScaleY() * 1.2);
+                shadow->setID("gauntlet-icon-shadow");
+                shadow->setColor({0, 0, 0});
+                shadow->setOpacity(50);
+                shadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2});
+
+                if (auto ph = container->getChildByID("icon-placeholder")) ph->removeFromParent();
+                container->addChild(shadow, 0);
+                container->addChild(icon, 0);
+            });
+        }
+    );
+}
+
+void CustomGauntletNode::onTap(CCObject*) {
+    if (m_callback) m_callback(m_data);
+}

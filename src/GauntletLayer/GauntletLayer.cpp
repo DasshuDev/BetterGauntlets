@@ -655,12 +655,14 @@ void RedesignedGauntletLayer::editGauntlets() {
 		float posFarX = 185.f;
 		float posCloseX = posFarX / 2.f;
 		float posY = 50.f;
-		
-		if 		(i == 1) btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY);
-		else if (i == 2) btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY);
-		else if (i == 3) btn->setPosition(winSize.width / 2, winSize.height / 2 - posY);
-		else if (i == 4) btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY);
-		else if (i == 5) btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY);
+
+		switch (i) {
+			case 1: btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY); break;
+			case 2: btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY); break;
+			case 3: btn->setPosition(winSize.width / 2, winSize.height / 2 - posY); break;
+			case 4: btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY); break;
+			case 5: btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY); break;
+		}
 
 		m_fields->m_levelsMenu->addChild(btn);
 

@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editBonusGauntlet() {
+void BetterGauntletLayer::editBonusGauntlet() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     int backgroundValue = 19;

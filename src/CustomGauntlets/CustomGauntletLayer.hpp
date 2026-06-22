@@ -5,9 +5,9 @@
 
 using namespace geode::prelude;
 
-class BetterGauntletLayer : public CCLayer, public LevelManagerDelegate {
+class CustomGauntletLayer : public CCLayer, public LevelManagerDelegate {
 public:
-    static BetterGauntletLayer* create(CustomGauntletData const& data);
+    static CustomGauntletLayer* create(CustomGauntletData const& data);
     static CCScene* scene(CustomGauntletData const& data);
 
 protected:

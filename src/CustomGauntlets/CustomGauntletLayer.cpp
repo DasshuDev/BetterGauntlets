@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers 
 
 static void limitLabel(CCLabelBMFont* lbl, float max, float orig, float minS) {
     if (!lbl) return;
@@ -10,18 +10,18 @@ static void limitLabel(CCLabelBMFont* lbl, float max, float orig, float minS) {
     lbl->setScale(w > max ? std::max(max / lbl->getContentSize().width, minS) : orig);
 }
 
-// ── create / scene ────────────────────────────────────────────────────────────
+// create / scene 
 
-CCScene* BetterGauntletLayer::scene(CustomGauntletData const& data) {
-    auto layer = BetterGauntletLayer::create(data);
+CCScene* CustomGauntletLayer::scene(CustomGauntletData const& data) {
+    auto layer = CustomGauntletLayer::create(data);
     if (!layer) return nullptr;
     auto sc = CCScene::create();
     sc->addChild(layer);
     return sc;
 }
 
-BetterGauntletLayer* BetterGauntletLayer::create(CustomGauntletData const& data) {
-    auto ret = new BetterGauntletLayer();
+CustomGauntletLayer* CustomGauntletLayer::create(CustomGauntletData const& data) {
+    auto ret = new CustomGauntletLayer();
     if (ret && ret->init(data)) {
         ret->autorelease();
         return ret;
@@ -30,7 +30,7 @@ BetterGauntletLayer* BetterGauntletLayer::create(CustomGauntletData const& data)
     return nullptr;
 }
 
-bool BetterGauntletLayer::init(CustomGauntletData const& data) {
+bool CustomGauntletLayer::init(CustomGauntletData const& data) {
     if (!CCLayer::init()) return false;
 
     m_data = data;
@@ -68,7 +68,7 @@ bool BetterGauntletLayer::init(CustomGauntletData const& data) {
 
     auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
     auto infoBtn = CCMenuItemSpriteExtra::create(
-        infoSpr, this, menu_selector(BetterGauntletLayer::onInfo));
+        infoSpr, this, menu_selector(CustomGauntletLayer::onInfo));
     infoBtn->setPosition(
         ccp(CCDirector::get()->getScreenLeft() + 30,
             CCDirector::get()->getScreenBottom() + 30));
@@ -84,9 +84,9 @@ bool BetterGauntletLayer::init(CustomGauntletData const& data) {
     return true;
 }
 
-// ── Background ────────────────────────────────────────────────────────────────
+// Background 
 
-void BetterGauntletLayer::buildBackground() {
+void CustomGauntletLayer::buildBackground() {
     auto winSize = CCDirector::get()->getWinSize();
 
     // Solid BG colour
@@ -119,7 +119,7 @@ void BetterGauntletLayer::buildBackground() {
 
 // Corner builder
 
-void BetterGauntletLayer::buildCorners() {
+void CustomGauntletLayer::buildCorners() {
     auto dir = CCDirector::get();
 
     auto makeCorner = [&](
@@ -181,7 +181,7 @@ void BetterGauntletLayer::buildCorners() {
 
 // Title builder
 
-void BetterGauntletLayer::buildTitle() {
+void CustomGauntletLayer::buildTitle() {
     auto winSize = CCDirector::get()->getWinSize();
     std::string title = "The " + m_data.name + " Gauntlet";
 
@@ -230,7 +230,7 @@ void BetterGauntletLayer::buildTitle() {
 
 // Icon builder
 
-void BetterGauntletLayer::loadIslandIcon() {
+void CustomGauntletLayer::loadIslandIcon() {
     if (m_data.iconURL.empty()) return;
 
     m_iconHolder.spawn(
@@ -238,7 +238,7 @@ void BetterGauntletLayer::loadIslandIcon() {
         [this](web::WebResponse res) {
             if (!res.ok()) return;
             auto bytes = res.data();
-            Ref<BetterGauntletLayer> self(this);
+            Ref<CustomGauntletLayer> self(this);
             queueInMainThread([self, bytes]() {
                 if (!self->getParent()) return;
 
@@ -262,16 +262,16 @@ void BetterGauntletLayer::loadIslandIcon() {
                                 levelSpr->getChildByID(fmt::format("island-{}", i).c_str()))) {
                             island->setTexture(tex);
                             // island->setTextureRect({0, 0,
-                            //     (float)tex->getPixelsWide(),
-                            //     (float)tex->getPixelsHigh()});
+                            //    (float)tex->getPixelsWide(),
+                            //    (float)tex->getPixelsHigh()});
                         }
                         if (auto shadow = static_cast<CCSprite*>(
                                 levelSpr->getChildByID(
                                     fmt::format("island-{}-shadow", i).c_str()))) {
                             shadow->setTexture(tex);
                             // shadow->setTextureRect({0, 0,
-                            //     (float)tex->getPixelsWide(),
-                            //     (float)tex->getPixelsHigh()});
+                            //    (float)tex->getPixelsWide(),
+                            //    (float)tex->getPixelsHigh()});
                         }
                     }
                 }
@@ -283,7 +283,7 @@ void BetterGauntletLayer::loadIslandIcon() {
 
 // Level loader
 
-void BetterGauntletLayer::loadLevels() {
+void CustomGauntletLayer::loadLevels() {
     // Build comma-separated ID string for Type19 search
     std::string idList;
     for (int i = 0; i < 5; i++) {
@@ -297,7 +297,7 @@ void BetterGauntletLayer::loadLevels() {
     GameLevelManager::get()->getOnlineLevels(searchObj);
 }
 
-void BetterGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
+void CustomGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
     auto glm = GameLevelManager::get();
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
@@ -328,7 +328,7 @@ void BetterGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
     loadIslandIcon(); // now that buttons exist, load the icon
 }
 
-void BetterGauntletLayer::loadLevelsFailed(char const*, int) {
+void CustomGauntletLayer::loadLevelsFailed(char const*, int) {
     auto glm = GameLevelManager::get();
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
@@ -340,7 +340,7 @@ void BetterGauntletLayer::loadLevelsFailed(char const*, int) {
 
 // Level buttons
 
-void BetterGauntletLayer::buildLevelButtons(CCArray* levels) {
+void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
     auto winSize = CCDirector::get()->getWinSize();
 
     m_levelsMenu = CCMenu::create();
@@ -459,8 +459,8 @@ void BetterGauntletLayer::buildLevelButtons(CCArray* levels) {
         auto btn = CCMenuItemSpriteExtra::create(
             levelSpr, this,
             isLocked
-                ? menu_selector(BetterGauntletLayer::onLocked)
-                : menu_selector(BetterGauntletLayer::onLevel)
+                ? menu_selector(CustomGauntletLayer::onLocked)
+                : menu_selector(CustomGauntletLayer::onLevel)
         );
         if (level) btn->setUserObject(level);
         btn->setTag(i);
@@ -492,7 +492,7 @@ void BetterGauntletLayer::buildLevelButtons(CCArray* levels) {
 
     auto vaultBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GJ_safeBtn_001.png"),
-        this, menu_selector(BetterGauntletLayer::gauntletVault)
+        this, menu_selector(CustomGauntletLayer::gauntletVault)
     );
     vaultBtn->setPosition(ccp(dir->getScreenRight() - 31, dir->getScreenTop() - 30));
     vaultMenu->addChild(vaultBtn);
@@ -529,7 +529,7 @@ void BetterGauntletLayer::buildLevelButtons(CCArray* levels) {
 	}
 }
 
-void BetterGauntletLayer::onBack(CCObject*) {
+void CustomGauntletLayer::onBack(CCObject*) {
     if (auto glm = GameLevelManager::get())
         if (glm->m_levelManagerDelegate == this)
             glm->m_levelManagerDelegate = nullptr;
@@ -537,7 +537,7 @@ void BetterGauntletLayer::onBack(CCObject*) {
     CCDirector::get()->popScene();
 }
 
-void BetterGauntletLayer::onLevel(CCObject* sender) {
+void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto btn   = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto level = static_cast<GJGameLevel*>(btn->getUserObject());
     if (!level) return;
@@ -548,7 +548,7 @@ void BetterGauntletLayer::onLevel(CCObject* sender) {
     CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
 }
 
-void BetterGauntletLayer::onLocked(CCObject* sender) {
+void CustomGauntletLayer::onLocked(CCObject* sender) {
     auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto levelSpr = static_cast<CCNode*>(button->getNormalImage());
     auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildren()->objectAtIndex(1));
@@ -563,7 +563,7 @@ void BetterGauntletLayer::onLocked(CCObject* sender) {
     islandSpr->runAction(sequence);
 }
 
-void BetterGauntletLayer::onInfo(CCObject*) {
+void CustomGauntletLayer::onInfo(CCObject*) {
     auto title = "The " + m_data.name + " Gauntlet";
 
     auto popup = MDPopup::create(
@@ -615,7 +615,7 @@ void BetterGauntletLayer::onInfo(CCObject*) {
     popup->show();
 }
 
-void BetterGauntletLayer::gauntletVault(CCObject*) {
+void CustomGauntletLayer::gauntletVault(CCObject*) {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
@@ -673,7 +673,7 @@ void BetterGauntletLayer::gauntletVault(CCObject*) {
     director->pushScene(CCTransitionFade::create(0.5f, scene));
 }
 
-void BetterGauntletLayer::reportCompletion(int levelID, int stars) {
+void CustomGauntletLayer::reportCompletion(int levelID, int stars) {
     auto accountID = GJAccountManager::get()->m_accountID;
 
     m_completionHolder.spawn(

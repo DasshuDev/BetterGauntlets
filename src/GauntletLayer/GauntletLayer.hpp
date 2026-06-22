@@ -1,42 +1,50 @@
-#ifndef GAUNTLETLAYER_HPP
-#define GAUNTLETLAYER_HPP
-
 #pragma once
 
-#include <Geode/modify/GauntletLayer.hpp>
-#include <Geode/ui/Popup.hpp>
+#include <Geode/Geode.hpp>
+#include <Geode/utils/web.hpp>
+#include "../GauntletInfo/GauntletInfo.hpp"
 
 using namespace geode::prelude;
 
-class $modify(RedesignedGauntletLayer, GauntletLayer) {
-    struct Fields {
-        bool m_loaded = false;
-        CCMenu* m_levelsMenu = nullptr;
-        CCLabelBMFont* m_levelName = nullptr;
-        CCLabelBMFont* m_creatorName = nullptr;
-        CCLabelBMFont* m_starCount = nullptr;
-        CCSprite* m_starSprite = nullptr;
-        CCSprite* m_lockSprite = nullptr;
-        CCSprite* m_skullSprite = nullptr;
-    };
+class BetterGauntletLayer : public CCLayer, public LevelManagerDelegate {
+public:
+    static BetterGauntletLayer* create(GauntletType type);
+    static CCScene* scene(GauntletType type);
+    ~BetterGauntletLayer() override;
 
-    void gauntletLevel(int);
-    cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode*, char const*);
+    // Core data — named to match what GauntletEdits expect
+    GauntletType m_gauntletType = GauntletType::Fire;
+    CCSprite* m_backgroundSprite = nullptr;
+    CCArray* m_levels = nullptr;
 
-    void loadLevelsFinished(cocos2d::CCArray*, char const*, int) override;
-    void editGauntlets();
-    void editGauntletLayer(std::string, cocos2d::ccColor3B, cocos2d::ccColor3B, cocos2d::ccColor3B);
-    void gauntletVault(cocos2d::CCObject* obj);
+    // UI
+    CCMenu* m_levelsMenu = nullptr;
+    CCSprite* m_lockSprite = nullptr;
+    bool m_loaded = false;
+    bool m_exiting = false;
+
+protected:
+    bool init(GauntletType type);
+    void keyBackClicked() override;
+
+    // LevelManagerDelegate (3-param overload used by GD gauntlet fetching)
+    void loadLevelsFinished(cocos2d::CCArray* levels, char const* key, int type) override;
+    void loadLevelsFailed(char const* key, int type) override;
+
+    // Setup
     void setupGauntlet(cocos2d::CCArray* levels);
+    void editGauntlets();
+    void editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor);
     void setupInfo();
-    void onInfo(cocos2d::CCObject* obj);
-    void onLevelInfo(CCObject* sender);
-    void onLocked(CCObject* sender);
-    void onLevel(CCObject* sender);
 
-    bool init(GauntletType);
+    // Callbacks
+    void onBack(cocos2d::CCObject* sender);
+    void onLevel(cocos2d::CCObject* sender);
+    void onLocked(cocos2d::CCObject* sender);
+    void onInfo(cocos2d::CCObject* sender);
+    void gauntletVault(cocos2d::CCObject* sender);
 
-    // Individual Gauntlet Callbacks
+    // Per-gauntlet theme functions 
     void editGauntletFallback();
     void editFireGauntlet();
     void editIceGauntlet();
@@ -99,4 +107,3 @@ class $modify(RedesignedGauntletLayer, GauntletLayer) {
     void editUtopiaGauntlet();
     void editLoveGauntlet();
 };
-#endif

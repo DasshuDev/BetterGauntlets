@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editRandomGauntlet() {
+void BetterGauntletLayer::editRandomGauntlet() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     int randomNum = rand() % 60; // <-- Number of backgrounds available + 1

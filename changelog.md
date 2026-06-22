@@ -1,14 +1,16 @@
 # <cc>v2.0.0</c>
-- <c-c4ffc4><cg>**Added**</c> Gauntlet Scrolling to GauntletSelectLayer!
+- <c-c4ffc4><cg>**Added**</c> New Gauntlets!
+    - Finally we no longer have to rely on RobTop to add new Gauntlets, as Gauntlet Managers can now create official-quality Gauntlets!
+    - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the Star Gauntlet has been added to the mod! Select the star next to the layer title to see what's up!
 - <c-c4ffc4><cg>**Added**</c>
 - <c-c4ffc4><cg>**Added**</c>
-- <c-c4ffc4><cg>**Added**</c>
-- <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:
-- added custom gauntlets 
+- <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!
+- <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the BetterGauntletLayer` class!
+    - With this change, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode releases!
 - <c-c4ebff><cl>**Fixed**</c>
-- <c-ffc4c4><cr>**Removed**</c>
+- <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.
 
-<c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but will soon return.*
+<c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but may soon return.*
 
 ---
 
@@ -42,7 +44,7 @@
 - <c-ffc4c4><cr>**Removed**</c> Disconnect Button setting
 - <c-ffc4c4><cr>**Removed**</c> Toggle Paths setting
 - <c-ffc4c4><cr>**Removed**</c> Settings button in `GauntletSelectLayer`
-- <c-ffc4c4><cr>**Removed**</c> Custom Reload button (added to vanilla)
+- <c-ffc4c4><cr>**Removed**</c> Custom Reload button (this was added to vanilla)
 
 ---
 

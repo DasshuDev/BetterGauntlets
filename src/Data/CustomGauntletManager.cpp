@@ -18,7 +18,7 @@ web::WebFuture CustomGauntletManager::fetchAll() {
         .get(baseURL() + "/gauntlets");
 }
 
-// ── Helpers for the colon-delimited response format ──────────────────────────
+// Helpers for the colon-delimited response format 
 
 static std::vector<std::string> splitString(std::string const& str, char delim) {
     std::vector<std::string> parts;
@@ -102,7 +102,7 @@ static std::string stripPrefix(std::string const& str, std::string const& prefix
     return str;
 }
 
-// ── parse ────────────────────────────────────────────────────────────────────
+// parse 
 
 std::vector<CustomGauntletData> CustomGauntletManager::parse(std::string const& body) {
     m_cache.clear();

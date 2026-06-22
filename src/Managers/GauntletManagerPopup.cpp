@@ -416,8 +416,8 @@ void GauntletManagerPopup::buildGauntletList() {
     }
 
     // for (auto const& g : m_gauntlets) {
-    //     buildGauntletRow(g, yPos);
-    //     yPos -= 44.f;
+    //    buildGauntletRow(g, yPos);
+    //    yPos -= 44.f;
     // }
 }
 

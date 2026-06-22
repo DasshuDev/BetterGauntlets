@@ -1,75 +1,74 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
 #include <Geode/loader/Event.hpp>
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "../CustomGauntlets/CustomGauntletLayer.hpp"
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../Data/CustomGauntletManager.hpp"
-#include <Geode/modify/GauntletSelectLayer.hpp>
-#include <alphalaneous.alphas-ui-pack/include/API.hpp>
+#include "../GauntletLayer/GauntletLayer.hpp"
 
 using namespace geode::prelude;
 
-class $modify(RedesignedGauntletSelectLayer, GauntletSelectLayer) {
-    inline static float m_scrollLocation = 0.f;
+class BetterGauntletSelectLayer : public CCLayer, public LevelManagerDelegate {
+public:
+    static BetterGauntletSelectLayer* create();
+    static CCScene* scene();
+    ~BetterGauntletSelectLayer() override;
 
-    struct Fields {
-        std::vector<CCMenuItemSpriteExtra*> m_dots = {};
-        CCMenu* m_dotsMenu = nullptr;
-        int currentGauntletPage = 0;
-        bool showingCustomList = false;
-        int m_dialogIndex = 0;
-        int m_dialogSprite = 0;
-        alpha::ui::AdvancedScrollLayer* m_customScrollLayer = nullptr;
-        alpha::ui::AdvancedScrollBar* m_customScrollBar = nullptr;
-        CCSprite* m_vanillaTitle = nullptr;
-        CCSprite* m_betterTitle = nullptr;
-        CCMenu* m_gauntletBtnContainer = nullptr;
-        CCLabelBMFont* m_sliderLabel = nullptr;
-        LoadingCircle* m_loadingCircle = nullptr;
-        async::TaskHolder<Result<std::string>> m_listener;
-        async::TaskHolder<web::WebResponse> m_managerCheckHolder;
-        async::TaskHolder<web::WebResponse> m_fetchHolder;
-    };
+    inline static float s_scrollLocation = 0.f;
 
-    // Pre-setup
-    cocos2d::CCNode* getChildBySpriteFrameNameRecursive(cocos2d::CCNode* parent, char const* name);
-    bool init(int gauntletType);
-    void onLock(CCObject* sender);
-    void onBack(CCObject* sender);
-    void onNewInfo(CCObject* sender);
-    void onDiscord(CCObject* sender);
-    void toggleList(CCObject* sender);
-    void startAuth();
+protected:
+    bool init() override;
+    void keyBackClicked() override;
+    void onEnterTransitionDidFinish() override;
+
+    // LevelManagerDelegate
+    void loadLevelsFinished(cocos2d::CCArray* levels, char const* key, int type) override;
+    void loadLevelsFailed(char const* key, int type) override;
+
+    // UI building
+    void buildBackground();
+    void buildDecorations();
+    void buildMenus();
+    void buildGauntletNodes(cocos2d::CCArray* gauntlets);
+
+    // Navigation
+    void setupScrollMode();
+    void styleGauntletButtons();
+
+    // Scroll position
+    void saveScrollPos();
+    void loadScrollPos();
+
+    // Callbacks
+    void onBack(cocos2d::CCObject* sender);
+    void onRefresh(cocos2d::CCObject* sender);
+    void onPlay(cocos2d::CCObject* sender);
+    void onNewInfo(cocos2d::CCObject* sender);
+    void onDiscord(cocos2d::CCObject* sender);
+    void toggleList(cocos2d::CCObject* sender);
+
+    // Custom gauntlets
     void buildCustomList();
     void populateCustomList(std::vector<CustomGauntletData> const& gauntlets);
 
-    // Level loading
-    void updateDots();
-    void loadLevelsFinished(CCArray* gauntlets, char const* key, int type);
-    void loadLevelsFailed(char const* key, int type);
-    void onRefresh(CCObject* sender);
+    // Members
+    alpha::ui::AdvancedScrollLayer* m_customScrollLayer = nullptr;
+    alpha::ui::AdvancedScrollBar* m_customScrollBar = nullptr;
+    CCMenu* m_gauntletBtnContainer = nullptr;
+    CCLabelBMFont* m_sliderLabel = nullptr;
+    CCSprite* m_vanillaTitle = nullptr;
+    CCSprite* m_betterTitle = nullptr;
+    CCNode* m_loadingCircle = nullptr;
+    CCMenuItemSpriteExtra* m_refreshButton = nullptr;
 
-    // Layer navigation
-    void setupNavigation();
-    void setupScrollMode();
-    void setupDotMode();
-    void saveScrollPos();
-    void loadScrollPos();
-    void styleGauntletButtons();
-    void onDot(CCObject* sender);
-    void findCurrentGauntletPageUsing(CCArray* pageButtons);
+    bool m_showingCustomList = false;
+    bool m_exiting = false;
+    cocos2d::CCArray* m_gauntletPacks = nullptr;
 
-    // Gauntlet opening
-    void pressGauntlet(int desiredGauntlet);
-    void onPlay(CCObject* sender);
-
-    // Android? I think?
-    #ifndef GEODE_IS_ANDROID
-    void scrollLayerWillScrollToPage(BoomScrollLayer* p0, int p1);
-    void scrollLayerScrolledToPage(BoomScrollLayer* p0, int p1);
-    #else
-    void updateArrows();
-    #endif
-    
+    async::TaskHolder<Result<std::string>> m_listener;
+    async::TaskHolder<web::WebResponse> m_managerCheckHolder;
+    async::TaskHolder<web::WebResponse> m_fetchHolder;
 };

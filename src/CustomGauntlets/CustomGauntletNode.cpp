@@ -75,7 +75,8 @@ bool CustomGauntletNode::init(
     auto gsm = GameStatsManager::sharedState();
     for (auto const& slot : data.levels) {
         if (slot.id == 0) continue;
-        auto saved = glm->getSavedGauntletLevel(slot.id);
+        auto saved = glm->getSavedLevel(slot.id);
+        if (!saved) saved = glm->getSavedGauntletLevel(slot.id);
         if (saved && gsm->hasCompletedLevel(saved))
             completed++;
     }
@@ -92,6 +93,41 @@ bool CustomGauntletNode::init(
     countLabelShadow->setColor({0, 0, 0});
     countLabelShadow->setPosition({sprite->getContentWidth() / 2 + 2, (sprite->getContentHeight() / 2) - 29.5f});
     sprite->addChild(countLabelShadow, 1);
+
+    // Completion gradient effect — clip to the NineSlice `node` bounds
+    if (completed == 5) {
+        countLabel->setColor({0, 255, 0});
+
+        auto stencil = NineSlice::create("square04_001.png");
+        stencil->setContentSize({155, 333});
+        stencil->setScale(0.625);
+
+        auto gradientClip = CCClippingNode::create(stencil);
+        gradientClip->setAlphaThreshold(0);
+        gradientClip->setContentSize(stencil->getContentSize());
+        gradientClip->setID("gradient-clip");
+        gradientClip->setPosition({55, 117.5});
+        // gradientClip->setAnchorPoint(node->getAnchorPoint());
+        sprite->addChild(gradientClip);
+
+        auto gradientParticles = GameToolbox::particleFromString(
+            "15a-1a1.75a0a8a90a0a30a15a55a0a0a0a0a0a0a0a5a3a0a60a0.329412a0a0.968627a0a0.337255a0a1a0a2a0a0a67a0a0a0.321569a0a0.00392157a0a1a0a0a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",
+            NULL, false
+        );
+        if (gradientParticles) {
+            gradientParticles->setPosition({0, -110});
+            gradientClip->addChild(gradientParticles);
+        }
+
+        auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+        gradient->setColor({0, 255, 0});
+        gradient->setOpacity(100);
+        gradient->setPositionY(-35);
+        gradient->setScaleX(1.5);
+        gradient->setScaleY(2);
+        gradient->setRotation(67);
+        gradientClip->addChild(gradient);
+    }
 
     if (!CCMenuItemSpriteExtra::init(sprite, nullptr, nullptr, nullptr))
         return false;

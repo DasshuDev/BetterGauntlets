@@ -240,7 +240,7 @@ void BetterGauntletLayer::loadLevelsFailed(char const* key, int type) {
     Notification::create("Failed to load gauntlet levels.", NotificationIcon::Error, 1.5)->show();
 }
 
-// setupGauntlet — builds vault + info, then creates level buttons 
+// setupGauntlet - builds vault + info, then creates level buttons 
 
 void BetterGauntletLayer::setupGauntlet(CCArray* levels) {
     CCDirector* director = CCDirector::sharedDirector();
@@ -523,7 +523,7 @@ void BetterGauntletLayer::onLocked(CCObject* sender) {
     auto button = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto levelSpr = static_cast<CCNode*>(button->getNormalImage());
     if (!levelSpr || !levelSpr->getChildren() || levelSpr->getChildren()->count() < 2) return;
-    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildren()->objectAtIndex(0));
+    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildren()->objectAtIndex(1));
     if (!islandSpr) return;
 
     ccColor3B originalColor = ccc3(128, 128, 128);

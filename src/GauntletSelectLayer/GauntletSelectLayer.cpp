@@ -60,7 +60,7 @@ bool BetterGauntletSelectLayer::init() {
     buildDecorations();
     buildMenus();
 
-    // Loading spinner (avoid LoadingCircle::show — it corrupts the scene tree) 
+    // Loading spinner (avoid LoadingCircle::show - it corrupts the scene tree) 
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto spinner = CCSprite::create("loadingCircle.png");
     spinner->setBlendFunc({GL_SRC_ALPHA, GL_ONE});
@@ -281,7 +281,7 @@ void BetterGauntletSelectLayer::buildMenus() {
     this->addChild(BRMenu, 1);
 
     auto refreshSpr = CCSprite::createWithSpriteFrameName("GJ_updateBtn_001.png");
-    refreshSpr->setScale(0.9);
+    refreshSpr->setScale(0.75);
     m_refreshButton = CCMenuItemSpriteExtra::create(
         refreshSpr, this, menu_selector(BetterGauntletSelectLayer::onRefresh)
     );
@@ -386,7 +386,7 @@ void BetterGauntletSelectLayer::buildGauntletNodes(CCArray* gauntlets) {
         auto gauntletNode = GauntletNode::create(pack);
         if (!gauntletNode) continue;
 
-        // GauntletNode is a raw CCNode with no content size set — sprites
+        // GauntletNode is a raw CCNode with no content size set - sprites
         // overflow its bounds.  Give it a real size so the wrapping button
         // has a clickable hit area, and kill any internal menus that would
         // swallow touches before ours.
@@ -418,9 +418,14 @@ void BetterGauntletSelectLayer::buildGauntletNodes(CCArray* gauntlets) {
 
     styleGauntletButtons();
     loadScrollPos();
+
+    // Restore custom list state (e.g. returning from CustomGauntletLayer)
+    if (s_showCustomList) {
+        toggleList(nullptr);
+    }
 }
 
-// Scroll mode 
+// Scroll mode
 
 void BetterGauntletSelectLayer::setupScrollMode() {
     CCDirector* director = CCDirector::sharedDirector();
@@ -587,38 +592,60 @@ void BetterGauntletSelectLayer::onBack(CCObject* sender) {
     if (m_exiting) return;
     m_exiting = true;
     s_scrollLocation = 0.f;
-    CCDirector::get()->popScene();
+    s_showCustomList = false;
+    auto scene = CreatorLayer::scene();
+    CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
 }
 
 void BetterGauntletSelectLayer::onRefresh(CCObject* sender) {
-    saveScrollPos();
+    if (m_showingCustomList) {
+        // Reload the custom gauntlets list
+        if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
+            existing->removeFromParent();
+        if (auto existing = getChildByIDRecursive("custom-gauntlet-bar"_spr))
+            existing->removeFromParent();
 
-    // Clean up existing UI
-    if (m_sliderLabel) { m_sliderLabel->removeFromParent(); m_sliderLabel = nullptr; }
-    if (m_customScrollLayer) { m_customScrollLayer->removeFromParent(); m_customScrollLayer = nullptr; }
-    if (m_customScrollBar) { m_customScrollBar->removeFromParent(); m_customScrollBar = nullptr; }
-    if (m_gauntletBtnContainer) { m_gauntletBtnContainer->removeFromParent(); m_gauntletBtnContainer = nullptr; }
-    if (m_gauntletPacks) { m_gauntletPacks->release(); m_gauntletPacks = nullptr; }
+        CustomGauntletManager::get()->clearCache();
+        buildCustomList();
+    } else {
+        // Reload the vanilla gauntlets list
+        saveScrollPos();
 
-    // Show loading spinner
-    auto winSize = CCDirector::sharedDirector()->getWinSize();
-    auto spinner = CCSprite::create("loadingCircle.png");
-    spinner->setBlendFunc({GL_SRC_ALPHA, GL_ONE});
-    spinner->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
-    spinner->setPosition(winSize / 2);
-    spinner->setID("loading-circle");
-    m_loadingCircle = spinner;
-    this->addChild(m_loadingCircle, 10);
+        if (m_sliderLabel) { m_sliderLabel->removeFromParent(); m_sliderLabel = nullptr; }
+        if (m_customScrollLayer) { m_customScrollLayer->removeFromParent(); m_customScrollLayer = nullptr; }
+        if (m_customScrollBar) { m_customScrollBar->removeFromParent(); m_customScrollBar = nullptr; }
+        if (m_gauntletBtnContainer) { m_gauntletBtnContainer->removeFromParent(); m_gauntletBtnContainer = nullptr; }
+        if (m_gauntletPacks) { m_gauntletPacks->release(); m_gauntletPacks = nullptr; }
 
-    // Re-fetch
-    GameLevelManager::get()->m_levelManagerDelegate = this;
-    GameLevelManager::get()->getGauntlets();
+        auto winSize = CCDirector::sharedDirector()->getWinSize();
+        auto spinner = CCSprite::create("loadingCircle.png");
+        spinner->setBlendFunc({GL_SRC_ALPHA, GL_ONE});
+        spinner->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+        spinner->setPosition(winSize / 2);
+        spinner->setID("loading-circle");
+        m_loadingCircle = spinner;
+        this->addChild(m_loadingCircle, 10);
+
+        GameLevelManager::get()->m_levelManagerDelegate = this;
+        GameLevelManager::get()->getGauntlets();
+    }
 }
 
 void BetterGauntletSelectLayer::onNewInfo(CCObject* sender) {
     MDPopup* popup = MDPopup::create(
-        "The Lost Gauntlets",
-        "<cy>The Lost Gauntlets</c> are a series of themed collections of five (5) rated levels that grant a <cg>special reward</c> upon completion. They are made by <co>RobTop</c> based on which levels fit the theme, or are placed in by official <cj>Creator Contests</c>.",
+        "The Gauntlets",
+
+        "<cy>The Lost Gauntlets</c> are a series of themed collections "
+        "of five (5) rated levels that grant a <cg>special reward</c> upon completion. "
+        "They are made by <co>RobTop</c> based on which levels fit the theme, or are placed "
+        "in by official <cj>Creator Contests</c>."
+        
+        "\n\n<cc>The Better Gauntlets</c> list is a list made up of <cl>custom Gauntlets</c>. "
+        "These Gauntlets are collections of five (5) rated levels which grant a <cg>custom reward</c> once "
+        "completed. These Gauntlets are made by <co>Gauntlet Managers</c>, and the theme of the "
+        "levels should fit the theme of the Gauntlet itself, or may be placed in via "
+        "<cj>creator contests</c>.",
+
         "OK"
     );
     popup->show();
@@ -627,7 +654,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject* sender) {
 void BetterGauntletSelectLayer::onDiscord(CCObject* sender) {
     createQuickPopup(
         "Join the Community",
-        "Come join and talk about the <cc>Gauntlets</c>, <cg>Geometry Dash</c>, or <cy>anything at all</c>!\n\nWe're happy to have you!",
+        "Come join the community Discord and talk about current and upcoming <cc>Gauntlets</c>, stuff about <cg>Geometry Dash</c>, or <cy>anything at all</c>!\n\nWe'd be happy to have you!",
         "Decline",
         "Accept",
         [](FLAlertLayer*, bool accepted) {
@@ -640,13 +667,13 @@ void BetterGauntletSelectLayer::onDiscord(CCObject* sender) {
 
 void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
     m_showingCustomList = !m_showingCustomList;
+    s_showCustomList = m_showingCustomList;
 
     if (m_customScrollLayer) m_customScrollLayer->setVisible(!m_showingCustomList);
     if (m_customScrollBar) m_customScrollBar->setVisible(!m_showingCustomList);
     if (m_vanillaTitle) m_vanillaTitle->setVisible(!m_showingCustomList);
 
     if (m_showingCustomList) {
-        if (m_refreshButton) m_refreshButton->setVisible(false);
         if (m_vanillaTitle) m_vanillaTitle->setVisible(false);
         if (m_betterTitle) m_betterTitle->setVisible(true);
 
@@ -688,7 +715,6 @@ void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
         if (auto existing = getChildByIDRecursive("manager-button"_spr))
             existing->removeFromParent();
 
-        if (m_refreshButton) m_refreshButton->setVisible(true);
         if (m_vanillaTitle) m_vanillaTitle->setVisible(true);
         if (m_betterTitle) m_betterTitle->setVisible(false);
     }
@@ -721,15 +747,15 @@ void BetterGauntletSelectLayer::buildCustomList() {
                     NotificationIcon::Error, 2.f
                 )->show();
                 m_showingCustomList = false;
+                s_showCustomList = false;
                 if (m_customScrollLayer) m_customScrollLayer->setVisible(true);
                 if (m_customScrollBar) m_customScrollBar->setVisible(true);
-                if (m_refreshButton) m_refreshButton->setVisible(true);
                 return;
             }
 
             auto body = res.string().unwrapOr("");
             if (body.empty() || body == "-1") {
-                Notification::create("Server returned an empty response.", NotificationIcon::Error, 2.f)->show();
+                Notification::create("There are no Gauntlets yet!", NotificationIcon::Warning, 2.f)->show();
                 return;
             }
 

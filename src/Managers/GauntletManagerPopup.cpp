@@ -87,6 +87,16 @@ static std::vector<CustomGauntletData> parseGauntletsResponse(matjson::Value con
     return result;
 }
 
+static bool isReadyToPush(GauntletEditData const& data) {
+    if (data.name.empty()) return false;
+    if (data.description.empty()) return false;
+    if (data.iconURL.empty()) return false;
+    for (int i = 0; i < 5; i++) {
+        if (data.levels[i].id == 0) return false;
+    }
+    return true;
+}
+
 GauntletManagerPopup* GauntletManagerPopup::create() {
     auto ret = new GauntletManagerPopup();
     if (ret && ret->init(400, 270, "GJ_square05.png")) {
@@ -301,7 +311,7 @@ void GauntletManagerPopup::buildPanelView() {
     m_panelLayer->setID("panel");
     m_mainLayer->addChild(m_panelLayer);
 
-    // New gauntlet button — top right of popup
+    // New gauntlet button - top right of popup
     auto createMenu = CCMenu::create();
     createMenu->setPosition({m_size.width - 55, m_size.height - 20});
     m_panelLayer->addChild(createMenu);
@@ -347,7 +357,7 @@ void GauntletManagerPopup::fetchGauntlets() {
         [this](web::WebResponse res) {
             m_loadingCircle->setVisible(false);
 
-            // Token expired — clear it and re-authenticate
+            // Token expired - clear it and re-authenticate
             if (res.code() == 401 || res.code() == 403) {
                 GauntletManagerAPI::get()->setToken("");
                 startArgonAuth();
@@ -393,9 +403,12 @@ void GauntletManagerPopup::buildGauntletList() {
     m_listLayer->addChild(scroll);
     // float yPos = m_size.height - 55;
 
-    // Staged rows first
+    // Staged rows first (only NEW gauntlets - updates to existing ones
+    // show as the update button on the server row instead)
     for (int i = 0; i < (int)m_staged.size(); i++) {
-        buildStagedRow(m_staged[i], i);
+        if (m_staged[i].id == 0) {
+            buildStagedRow(m_staged[i], i);
+        }
     }
 
     // Then server rows
@@ -444,7 +457,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     accent2->setPosition({row->getContentWidth(), 0});
     row->addChild(accent2);
 
-    // Icon placeholder — filled async below
+    // Icon placeholder - filled async below
     auto iconNode = CCNode::create();
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
@@ -499,12 +512,26 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
     row->addChild(description);
 
-    // Buttons — local menu, not m_actionMenu
+    // Buttons - local menu, not m_actionMenu
     int gid = g.id;
     auto actionMenu = CCMenu::create();
     actionMenu->setAnchorPoint({1, 0.5f});
     actionMenu->setPosition({row->getContentWidth() - 12, row->getContentHeight() / 2});
     actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
+
+    // Check if this gauntlet has a staged update pending
+    int stagedIndex = -1;
+    for (int si = 0; si < (int)m_staged.size(); si++) {
+        if (m_staged[si].id == gid) { stagedIndex = si; break; }
+    }
+
+    if (stagedIndex >= 0 && isReadyToPush(m_staged[stagedIndex])) {
+        auto updateSpr = CCSprite::createWithSpriteFrameName("GR_updateBtn_001.png"_spr);
+        updateSpr->setScale(0.85f);
+        auto updateBtn = CCMenuItemExt::createSpriteExtra(updateSpr,
+            [this, stagedIndex](CCMenuItemSpriteExtra*) { onPushStaged(stagedIndex); });
+        actionMenu->addChild(updateBtn);
+    }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
@@ -598,8 +625,21 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
         log::debug("  dst slot {}: id={}", i, data.levels[i].id);
     }
 
-    GauntletEditPopup::create(data, [this](GauntletEditData const& updated) {
-        fetchGauntlets();
+    GauntletEditPopup::create(data, [this, gauntletId](GauntletEditData const& updated) {
+        // Remove any previous staged update for this gauntlet
+        m_staged.erase(
+            std::remove_if(m_staged.begin(), m_staged.end(),
+                [gauntletId](auto const& s) { return s.id == gauntletId; }),
+            m_staged.end()
+        );
+        // Stage the update locally (id != 0 means it's an update, not a create)
+        m_staged.push_back(updated);
+        saveStaged();
+        buildGauntletList();
+        Notification::create(
+            fmt::format("\"{}\" update staged.", updated.name),
+            NotificationIcon::Success
+        )->show();
     })->show();
 }
 
@@ -649,7 +689,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     accent2->setPosition({gauntletListItem->getContentWidth(), 0});
     gauntletListItem->addChild(accent2);
 
-    // Icon placeholder — filled async below
+    // Icon placeholder - filled async below
     auto iconNode = CCNode::create();
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
@@ -714,17 +754,19 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
     gauntletListItem->addChild(description);
 
-    // Buttons — local menu
+    // Buttons - local menu
     auto actionMenu = CCMenu::create();
     actionMenu->setAnchorPoint({1, 0.5});
     actionMenu->setPosition({gauntletListItem->getContentWidth() - 12, gauntletListItem->getContentHeight() / 2});
     actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
 
-    auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
-    pushSpr->setScale(0.85f);
-    auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
-        [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
-    actionMenu->addChild(pushBtn);
+    if (isReadyToPush(g)) {
+        auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
+        pushSpr->setScale(0.85f);
+        auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
+            [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
+        actionMenu->addChild(pushBtn);
+    }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
@@ -735,8 +777,14 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
     deleteSpr->setScale(0.85f);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
-        [this, index](CCMenuItemSpriteExtra*) { onDelete(index); });
-        actionMenu->addChild(deleteBtn);
+        [this, index](CCMenuItemSpriteExtra*) {
+            if (index < 0 || index >= (int)m_staged.size()) return;
+            m_staged.erase(m_staged.begin() + index);
+            saveStaged();
+            buildGauntletList();
+            Notification::create("Staged gauntlet removed.", NotificationIcon::Success)->show();
+        });
+    actionMenu->addChild(deleteBtn);
 
     actionMenu->updateLayout();
     gauntletListItem->addChild(actionMenu);
@@ -828,17 +876,28 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
             m_loadingCircle->setVisible(true);
             m_deleteHolder.spawn(
                 GauntletManagerAPI::get()->remove(gauntletId),
-                [this](web::WebResponse res) {
+                [this, gauntletId](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
                     if (!res.ok()) {
                         log::error("Delete failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
                         Notification::create(fmt::format("Delete failed. Err {}", res.code()), NotificationIcon::Error)->show();
                         return;
                     }
-                    Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
-                    fetchGauntlets();
+                    // Remove from local list immediately so the UI updates
+                    m_gauntlets.erase(
+                        std::remove_if(m_gauntlets.begin(), m_gauntlets.end(),
+                            [gauntletId](auto const& g) { return g.id == gauntletId; }),
+                        m_gauntlets.end()
+                    );
+                    // Also remove any staged updates for this gauntlet
+                    m_staged.erase(
+                        std::remove_if(m_staged.begin(), m_staged.end(),
+                            [gauntletId](auto const& s) { return s.id == gauntletId; }),
+                        m_staged.end()
+                    );
                     saveStaged();
                     buildGauntletList();
+                    Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
                 }
             );
         }

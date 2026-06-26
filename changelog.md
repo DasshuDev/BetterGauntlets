@@ -1,12 +1,13 @@
 # <cc>v2.0.0</c>
 - <c-c4ffc4><cg>**Added**</c> New Gauntlets!
     - Finally we no longer have to rely on RobTop to add new Gauntlets, as Gauntlet Managers can now create official-quality Gauntlets!
-    - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the Star Gauntlet has been added to the mod! Select the star next to the layer title to see what's up!
-- <c-c4ffc4><cg>**Added**</c>
-- <c-c4ffc4><cg>**Added**</c>
+    - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the Star Gauntlet is now available to play! Select the star next to the layer title to see what's up!
+- <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!
+    - All gauntlets now load on one page instead of three per-page, and the page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the layer!
+- <c-c4ffc4><cg>**Added**</c> 
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!
-- <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the BetterGauntletLayer` class!
-    - With this change, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode releases!
+- <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!
+    - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!
 - <c-c4ebff><cl>**Fixed**</c>
 - <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.
 

@@ -34,7 +34,7 @@ void RedesignedGauntletNode::generateNode() {
     if (m_rewardNode) m_rewardNode->setVisible(false);
 
     if (progress->getString() == std::string("5/5")) {
-        progress->setColor({0, 255, 0});
+        progress->setColor({100, 255, 100});
 
         m_fields->m_gradientParticles = GameToolbox::particleFromString(
             "15a-1a1.75a0a8a90a0a30a15a55a0a0a0a0a0a0a0a5a3a0a60a0.329412a0a0.968627a0a0.337255a0a1a0a2a0a0a67a0a0a0.321569a0a0.00392157a0a1a0a0a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",

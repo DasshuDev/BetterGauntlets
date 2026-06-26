@@ -12,7 +12,7 @@ public:
     static CCScene* scene(GauntletType type);
     ~BetterGauntletLayer() override;
 
-    // Core data — named to match what GauntletEdits expect
+    // Core data - named to match what GauntletEdits expect
     GauntletType m_gauntletType = GauntletType::Fire;
     CCSprite* m_backgroundSprite = nullptr;
     CCArray* m_levels = nullptr;

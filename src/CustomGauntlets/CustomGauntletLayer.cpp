@@ -1,4 +1,5 @@
 #include "CustomGauntletLayer.hpp"
+#include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
 
 using namespace geode::prelude;
 
@@ -368,7 +369,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         auto levelSpr = CCNode::create();
         levelSpr->setContentSize({70, 80});
         levelSpr->setAnchorPoint({0.5f, 0.5f});
-        levelSpr->setID(fmt::format("level-{}", i + 1).c_str());
+        levelSpr->setID(fmt::format("gauntlet-{}", i + 1).c_str());
 
         // Sprite PH
         auto islandSpr = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
@@ -421,12 +422,12 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
             ->setGap(5)->setAutoGrowAxis(true)
             ->setAxisAlignment(AxisAlignment::Center));
 
-        auto starCount = CCLabelBMFont::create(fmt::format("{}", stars).c_str(), "bigFont.fnt");
+        auto starCount = CCLabelBMFont::create(fmt::format("{}", stars * 2).c_str(), "bigFont.fnt");
         starCount->setID("star-count"_spr);
         starCount->setScale(0.65f);
         if (hasCompleted) starCount->setColor({255, 255, 50});
 
-        auto starSpr = CCSprite::create("GR_gauntletStar_001.png"_spr);
+        auto starSpr = CCSprite::create("GR_crystal_001.png"_spr);
         starSpr->setID("star-icon"_spr);
         starSpr->setAnchorPoint({0.5f, 0.5f});
         starSpr->setScale(0.45f);
@@ -508,23 +509,24 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
     bool hover = Mod::get()->getSettingValue<bool>("level-hover");
 	if (hover) {
 		std::srand(static_cast<unsigned int>(std::time(nullptr)));
-		
+
 		for (int i = 0; i < 5; i++) {
-			CCNode* levels = m_levelsMenu->getChildByIDRecursive(fmt::format("level-{}", i + 1));
-			
+			CCNode* island = m_levelsMenu->getChildByIDRecursive(fmt::format("gauntlet-{}", i + 1));
+			if (!island) continue;
+
 			float randomMoveUp = 2.0 + static_cast<float>(std::rand() % 15) / 10.0;
 			float randomMoveDown = 2.0 + static_cast<float>(std::rand() % 15) / 10.0;
 
 			CCMoveBy* moveUp = CCMoveBy::create(randomMoveUp, ccp(0, 5));
 			CCMoveBy* moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
-			
+
 			CCEaseInOut* easeMoveUp = CCEaseInOut::create(moveUp, 2.0);
 			CCEaseInOut* easeMoveDown = CCEaseInOut::create(moveDown, 2.0);
-			
+
 			CCSequence* hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
-			
+
 			CCRepeatForever* levelHover = CCRepeatForever::create(hoverSequence);
-			levels->runAction(levelHover);
+			island->runAction(levelHover);
 		}
 	}
 }
@@ -534,7 +536,10 @@ void CustomGauntletLayer::onBack(CCObject*) {
         if (glm->m_levelManagerDelegate == this)
             glm->m_levelManagerDelegate = nullptr;
     if (m_loadedLevels) { m_loadedLevels->release(); m_loadedLevels = nullptr; }
-    CCDirector::get()->popScene();
+    auto scene = BetterGauntletSelectLayer::scene();
+    if (scene) {
+        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    }
 }
 
 void CustomGauntletLayer::onLevel(CCObject* sender) {

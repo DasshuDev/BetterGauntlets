@@ -531,7 +531,7 @@ bool GauntletEditPopup::init(
     m_GSLPreview->addChild(infoMenu);
     m_GSLPreview->addChild(pushInfoMenu);
 
-    // GL Preview — Level Search
+    // GL Preview - Level Search
 
     auto stencil = NineSlice::create("square02b_001.png");
     stencil->setContentSize({290, 181});
@@ -680,7 +680,7 @@ bool GauntletEditPopup::init(
             );
         }
 
-        // Level info — populated by refreshLevels()
+        // Level info - populated by refreshLevels()
         auto nameLabel = CCLabelBMFont::create(fmt::format("Level {}", i + 1).c_str(), "bigFont.fnt");
         nameLabel->setID("level-name");
         nameLabel->setScale(0.35);
@@ -1013,7 +1013,7 @@ void GauntletEditPopup::updateInfoAccID(CCObject* sender) {
         return;
     }
 
-    // Not cached — fetch from server, GD will cache it automatically via storeUserInfo
+    // Not cached - fetch from server, GD will cache it automatically via storeUserInfo
     if (m_searchingUser) return;
     m_searchingUser = true;
     glm->m_userInfoDelegate = this;
@@ -1143,7 +1143,7 @@ void GauntletEditPopup::updateBgIcon() {
         if (frame) m_bgIconSpr->setDisplayFrame(frame);
     }
 
-    // Update the GL preview background — replace the sprite entirely
+    // Update the GL preview background - replace the sprite entirely
     if (!m_GLPreview) return;
     if (auto old = m_GLPreview->getChildByIDRecursive("preview-gauntletlayer-bg"))
         old->removeFromParent();
@@ -1342,8 +1342,8 @@ void GauntletEditPopup::refreshLevels() {
 // Save
 
 void GauntletEditPopup::onSave(CCObject* sender) {
-    if (m_nameInput->getString().empty() || m_descInput->getString().empty() || (!m_pendingIconPath.has_value() && m_data.iconURL.empty() || m_levels.size() != 5)) {
-            Notification::create("Not all fields are completed.", NotificationIcon::Warning)->show();
+    if (m_nameInput->getString().empty()) {
+        Notification::create("A gauntlet name is required.", NotificationIcon::Warning)->show();
         return;
     }
 
@@ -1387,7 +1387,7 @@ void GauntletEditPopup::onSave(CCObject* sender) {
             }
         );
     } else {
-        // iconURL already set from existing data — skip upload
+        // iconURL already set from existing data - skip upload
         doSave();
     }
 }

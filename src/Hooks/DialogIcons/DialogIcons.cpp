@@ -1,6 +1,6 @@
 // all of this was stolen from Rated Layouts by ArcticWoof ( hope you dont mind :3 )
 
-#include "DialogIcons.h"
+#include "DialogIcons.hpp"
 
 namespace DialogIcon {
 

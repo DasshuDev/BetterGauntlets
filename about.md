@@ -6,8 +6,7 @@ The <cy>ultimate</c> Gauntlet rewrite and overhaul, bringing the Gauntlets to <c
 ## Features
 - <c-be9000>Reworked UI</c>!
 - <c-ceab2d>Brand new navigation</c>!
-- <c-dec74d>New Gauntlets</c>!
-- 
+- <c-dec74d>Custom Gauntlets</c>!
 - And more to come!
 
 ---
@@ -25,7 +24,7 @@ Alphalaneous' **Alphas UI Pack** API enables for some more <cg>freedom of moveme
 
 <mod:arcticwoof.gauntlets_deluxe>
 
-ArcticWoof's **Gauntlets Deluxe** mod adds Gauntlets made by the <cy>community</c>, and there are more being added <cl>every day</c>!
+ArcticWoof's **Gauntlets Deluxe** mod adds Gauntlets made by the <cy>community</c>, and there are more being added <cl>every week</c>!
 
 ---
 

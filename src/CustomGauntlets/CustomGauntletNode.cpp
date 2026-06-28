@@ -94,7 +94,6 @@ bool CustomGauntletNode::init(
     countLabelShadow->setPosition({sprite->getContentWidth() / 2 + 2, (sprite->getContentHeight() / 2) - 29.5f});
     sprite->addChild(countLabelShadow, 1);
 
-    // Completion gradient effect — clip to the NineSlice `node` bounds
     if (completed == 5) {
         countLabel->setColor({0, 255, 0});
 

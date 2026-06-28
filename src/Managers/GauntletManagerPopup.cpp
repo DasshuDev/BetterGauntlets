@@ -443,7 +443,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     // Background with gauntlet's bg color
     auto accent1 = CCScale9Sprite::create("square.png");
     accent1->setContentSize(row->getContentSize());
-    accent1->setColor(g.bgColor);
+    accent1->setColor(g.nodeColor);
     accent1->setAnchorPoint({0, 0});
     row->addChild(accent1);
 
@@ -673,7 +673,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     // Accent 1 background
     auto accent1 = CCScale9Sprite::create("square.png");
     accent1->setContentSize(gauntletListItem->getContentSize());
-    accent1->setColor(g.bgColor);
+    accent1->setColor(g.nodeColor);
     // accent1->setOpacity(120);
     accent1->setAnchorPoint({0, 0});
     gauntletListItem->addChild(accent1);

@@ -36,7 +36,7 @@ bool CustomGauntletNode::init(
     auto ph = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
     ph->setID("icon-placeholder");
     ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2});
-    sprite->addChild(ph);
+    sprite->addChild(ph, 10);
 
     // Name
     auto nameLabel = CCLabelBMFont::create(data.name.c_str(), "bigFont.fnt");
@@ -68,6 +68,37 @@ bool CustomGauntletNode::init(
     gauntletShadow->setOpacity(50);
     gauntletShadow->setPosition({gauntletLabel->getPositionX() + 2, gauntletLabel->getPositionY() - 2});
     sprite->addChild(gauntletShadow, 1);
+
+    m_rewardNode = CCNode::create();
+    m_rewardNode->setPosition({node->getContentWidth() / 2, node->getContentHeight() / 2 - 60});
+    sprite->addChild(m_rewardNode, 1);
+
+    m_chestSpr = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
+    m_chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
+    if (m_chestSpr && m_chestSprShadow) {
+        // m_chestSpr->setPositionY(-64.5);
+        m_chestSpr->setScale(0.3);
+        m_chestSprShadow->setPosition(ccp(m_chestSpr->getPositionX() + 2, m_chestSpr->getPositionY() - 2));
+        m_chestSprShadow->setScale(0.3);
+        m_chestSprShadow->setOpacity(60);
+        m_chestSprShadow->setColor({0, 0, 0});
+    }
+    m_rewardNode->addChild(m_chestSpr, 1);
+    m_rewardNode->addChild(m_chestSprShadow, 0);
+
+    m_rewardLabel = CCLabelBMFont::create("Reward", "goldFont.fnt");
+    m_rewardLabelShadow = CCLabelBMFont::create("Reward", "goldFont.fnt");
+    if (m_rewardLabel && m_rewardLabelShadow && m_chestSpr && m_chestSprShadow) {
+        m_rewardLabel->setPositionY(m_chestSpr->getPositionY() - 13.5);
+        m_rewardLabel->setScale(0.5);
+        m_rewardLabel->setZOrder(3);
+        m_rewardLabelShadow->setPosition(ccp(m_rewardLabel->getPositionX() + 2, m_rewardLabel->getPositionY() - 2));
+        m_rewardLabelShadow->setScale(0.5);
+        m_rewardLabelShadow->setOpacity(60);
+        m_rewardLabelShadow->setColor({0, 0, 0});
+    }
+    m_rewardNode->addChild(m_rewardLabel, 1);
+    m_rewardNode->addChild(m_rewardLabelShadow, 0);
 
     // Completion Badge
     int completed = 0;
@@ -108,6 +139,23 @@ bool CustomGauntletNode::init(
         gradientClip->setPosition({55, 117.5});
         // gradientClip->setAnchorPoint(node->getAnchorPoint());
         sprite->addChild(gradientClip);
+
+        auto checkmarkSpr = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
+        checkmarkSpr->setScale(1.1);
+        checkmarkSpr->setPositionY(-5);
+        m_rewardNode->addChild(checkmarkSpr, 1);
+
+        auto checkmarkSprShadow = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
+        checkmarkSprShadow->setScale(1.1);
+        checkmarkSprShadow->setPosition({checkmarkSpr->getPositionX() + 2, checkmarkSpr->getPositionY() - 3});
+        checkmarkSprShadow->setOpacity(60);
+        checkmarkSprShadow->setColor({0, 0, 0});
+        m_rewardNode->addChild(checkmarkSprShadow, 0);
+
+        m_chestSpr->setVisible(false);
+        m_chestSprShadow->setVisible(false);
+        m_rewardLabel->setVisible(false);
+        m_rewardLabelShadow->setVisible(false);
 
         auto gradientParticles = GameToolbox::particleFromString(
             "15a-1a1.75a0a8a90a0a30a15a55a0a0a0a0a0a0a0a5a3a0a60a0.329412a0a0.968627a0a0.337255a0a1a0a2a0a0a67a0a0a0.321569a0a0.00392157a0a1a0a0a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",

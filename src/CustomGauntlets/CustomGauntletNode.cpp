@@ -76,7 +76,6 @@ bool CustomGauntletNode::init(
     m_chestSpr = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
     m_chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
     if (m_chestSpr && m_chestSprShadow) {
-        // m_chestSpr->setPositionY(-64.5);
         m_chestSpr->setScale(0.3);
         m_chestSprShadow->setPosition(ccp(m_chestSpr->getPositionX() + 2, m_chestSpr->getPositionY() - 2));
         m_chestSprShadow->setScale(0.3);
@@ -137,7 +136,6 @@ bool CustomGauntletNode::init(
         gradientClip->setContentSize(stencil->getContentSize());
         gradientClip->setID("gradient-clip");
         gradientClip->setPosition({55, 117.5});
-        // gradientClip->setAnchorPoint(node->getAnchorPoint());
         sprite->addChild(gradientClip);
 
         auto checkmarkSpr = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");

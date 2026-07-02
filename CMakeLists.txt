@@ -49,6 +49,7 @@ target_link_libraries(${PROJECT_NAME} cue)
 target_sources(${PROJECT_NAME} PRIVATE
     src/Managers/GauntletManagerAPI.cpp
     src/Managers/GauntletManagerPopup.cpp
+    src/Managers/GauntletManagerCache.cpp
     src/Managers/GauntletEditPopup.cpp
     src/Data/CustomGauntletManager.cpp
     src/CustomGauntlets/CustomGauntletNode.cpp

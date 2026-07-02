@@ -6,6 +6,7 @@
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "GauntletSelectLayer.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
+#include "../Managers/GauntletManagerCache.hpp"
 #include "../Data/CustomGauntletManager.hpp"
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../CustomGauntlets/CustomGauntletLayer.hpp"
@@ -680,33 +681,27 @@ void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
         buildCustomList();
 
         auto accountID = GJAccountManager::get()->m_accountID;
-        m_managerCheckHolder.spawn(
-            web::WebRequest().get(fmt::format(
-                "https://bettergauntlets.dev/ismanager?accountId={}", accountID
-            )),
-            [this](web::WebResponse res) {
-                if (!res.ok()) return;
-                auto json = res.json().unwrapOr(matjson::Value());
-                bool isManager = json["isManager"].asBool().unwrapOr(false);
-                if (!isManager) return;
+        Ref<BetterGauntletSelectLayer> self(this);
+        GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
+            if (!isManager) return;
+            if (!self->getParent()) return;
 
-                auto BLMenu = this->getChildByIDRecursive("bottom-left-menu");
-                if (!BLMenu) return;
+            auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
+            if (!BLMenu) return;
 
-                auto managerBtnSpr = CircleButtonSprite::createWithSprite(
-                    "GR_gauntletStar_001.png"_spr, 1,
-                    CircleBaseColor::DarkPurple, CircleBaseSize::Medium
-                );
-                managerBtnSpr->setScale(0.75);
+            auto managerBtnSpr = CircleButtonSprite::createWithSprite(
+                "GR_gauntletStar_001.png"_spr, 1,
+                CircleBaseColor::DarkPurple, CircleBaseSize::Medium
+            );
+            managerBtnSpr->setScale(0.75);
 
-                auto manageBtn = CCMenuItemExt::createSpriteExtra(managerBtnSpr, [](CCMenuItemSpriteExtra*) {
-                    GauntletManagerPopup::create()->show();
-                });
-                manageBtn->setID("manager-button"_spr);
-                static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
-                static_cast<CCMenu*>(BLMenu)->updateLayout();
-            }
-        );
+            auto manageBtn = CCMenuItemExt::createSpriteExtra(managerBtnSpr, [](CCMenuItemSpriteExtra*) {
+                GauntletManagerPopup::create()->show();
+            });
+            manageBtn->setID("manager-button"_spr);
+            static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
+            static_cast<CCMenu*>(BLMenu)->updateLayout();
+        });
     } else {
         if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
             existing->removeFromParent();

@@ -70,6 +70,5 @@ protected:
     cocos2d::CCArray* m_gauntletPacks = nullptr;
 
     async::TaskHolder<Result<std::string>> m_listener;
-    async::TaskHolder<web::WebResponse> m_managerCheckHolder;
     async::TaskHolder<web::WebResponse> m_fetchHolder;
 };

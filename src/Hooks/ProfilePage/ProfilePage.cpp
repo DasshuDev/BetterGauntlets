@@ -3,11 +3,10 @@
 #include <Geode/modify/CommentCell.hpp>
 #include <Geode/utils/web.hpp>
 #include <alphalaneous.badgify/include/Badgify.hpp>
+#include "../../Managers/GauntletManagerCache.hpp"
 
 using namespace geode::prelude;
 using namespace alpha::badgify;
-
-static const int MANAGER_ACCOUNT_ID = 1975253; // placeholder until isManager is added by Supernova backend
 
 $execute {
     alpha::badgify::registerBadge(
@@ -22,14 +21,15 @@ $execute {
     );
 
     setProfileCallback("GR_badgeManager_001.png"_spr, [] (const Badge& badge) {
-        if (badge.user->m_accountID == MANAGER_ACCOUNT_ID && badge.location == Location::Profile) {
-            showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_001.png"_spr));
-        }
-        if (badge.user->m_accountID == MANAGER_ACCOUNT_ID && badge.location == Location::Comment) {
-            showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_001.png"_spr));
-        }
-        if (badge.user->m_accountID == MANAGER_ACCOUNT_ID && badge.location == Location::InfoPopup) {
-            showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_large_001.png"_spr));
-        }
+        GauntletManagerCache::get()->isManager(badge.user->m_accountID, [badge](bool isManager) {
+            if (!isManager) return;
+
+            if (badge.location == Location::Profile || badge.location == Location::Comment) {
+                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_001.png"_spr));
+            }
+            if (badge.location == Location::InfoPopup) {
+                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_xlarge_001.png"_spr));
+            }
+        });
     });
 }

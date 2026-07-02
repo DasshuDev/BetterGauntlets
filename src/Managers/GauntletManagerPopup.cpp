@@ -40,20 +40,6 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
     data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
     data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
 
-    if (g.contains("levels") && g["levels"].isArray()) {
-        int i = 0;
-        for (auto const& lvl : g["levels"]) {
-            if (i >= 5) break;
-            log::debug("parseGauntletJson: level[{}] raw json: {}", i, lvl.dump());
-            data.levels[i].id      = lvl["level_id"].asInt().unwrapOr(0);
-            data.levels[i].name    = lvl["level_name"].asString().unwrapOr("");
-            data.levels[i].creator = lvl["creator"].asString().unwrapOr("");
-            data.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
-            i++;
-        }
-    } else {
-        log::debug("parseGauntletJson: '{}' has no levels array (contains={})", data.name, g.contains("levels"));
-    }
     return data;
 }
 
@@ -373,7 +359,6 @@ void GauntletManagerPopup::fetchGauntlets() {
             }
 
             auto json = res.json().unwrapOr(matjson::Value());
-            log::debug("fetchGauntlets response: {}", json.dump());
             m_gauntlets = parseGauntletsResponse(json);
 
             buildGauntletList();
@@ -464,13 +449,13 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     iconNode->setPosition({30, row->getContentHeight() / 2});
     iconNode->setAnchorPoint({0.5f, 0.5f});
 
-    auto loadingIcon = LoadingCircle::create();
-    loadingIcon->setID("loading-circle");
-    loadingIcon->setPosition(iconNode->getContentSize() / 2);
-    loadingIcon->setContentSize({50, 50});
-    loadingIcon->setOpacity(120);
-    loadingIcon->setAnchorPoint({0.5f, 0.5f});
-    iconNode->addChild(loadingIcon);
+    // auto loadingIcon = LoadingCircle::create();
+    // loadingIcon->setID("loading-circle");
+    // loadingIcon->setPosition(iconNode->getContentSize() / 2);
+    // loadingIcon->setContentSize({50, 50});
+    // loadingIcon->setOpacity(120);
+    // loadingIcon->setAnchorPoint({0.5f, 0.5f});
+    // iconNode->addChild(loadingIcon);
     row->addChild(iconNode);
 
     // Name with gauntlet's name color
@@ -616,14 +601,6 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
         data.levels[i].creator = it->levels[i].creator;
         data.levels[i].stars   = it->levels[i].stars;
     }
-    log::debug("onEdit: source levels (CustomGauntletData):");
-    for (int i = 0; i < 5; i++) {
-        log::debug("  src slot {}: id={}", i, it->levels[i].id);
-    }
-    log::debug("onEdit: copied levels (GauntletEditData):");
-    for (int i = 0; i < 5; i++) {
-        log::debug("  dst slot {}: id={}", i, data.levels[i].id);
-    }
 
     GauntletEditPopup::create(data, [this, gauntletId](GauntletEditData const& updated) {
         // Remove any previous staged update for this gauntlet
@@ -696,13 +673,13 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     iconNode->setPosition({30, gauntletListItem->getContentHeight() / 2});
     iconNode->setAnchorPoint({0.5, 0.5});
 
-    auto loadingIcon = LoadingCircle::create();
-    loadingIcon->setID("loading-circle");
-    loadingIcon->setPosition(iconNode->getContentSize() / 2);
-    loadingIcon->setContentSize({50, 50});
-    loadingIcon->setOpacity(120);
-    loadingIcon->setAnchorPoint({0.5, 0.5});
-    iconNode->addChild(loadingIcon);
+    // auto loadingIcon = LoadingCircle::create();
+    // loadingIcon->setID("loading-circle");
+    // loadingIcon->setPosition(iconNode->getContentSize() / 2);
+    // loadingIcon->setContentSize({50, 50});
+    // loadingIcon->setOpacity(120);
+    // loadingIcon->setAnchorPoint({0.5, 0.5});
+    // iconNode->addChild(loadingIcon);
     gauntletListItem->addChild(iconNode);
 
     // STAGED badge

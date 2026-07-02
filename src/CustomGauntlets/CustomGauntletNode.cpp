@@ -35,8 +35,16 @@ bool CustomGauntletNode::init(
 
     auto ph = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
     ph->setID("icon-placeholder");
-    ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2});
+    ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2 + 10});
     sprite->addChild(ph, 10);
+
+    auto phs = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
+    phs->setID("icon-placeholder");
+    phs->setColor({0, 0, 0});
+    phs->setOpacity(50);
+    phs->setScaleY(1.2f);
+    phs->setPosition({ph->getPositionX(), ph->getPositionY() - 10.f});
+    sprite->addChild(phs);
 
     // Name
     auto nameLabel = CCLabelBMFont::create(data.name.c_str(), "bigFont.fnt");
@@ -225,8 +233,8 @@ void CustomGauntletNode::loadIcon() {
                 shadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2});
 
                 if (auto ph = container->getChildByID("icon-placeholder")) ph->removeFromParent();
-                container->addChild(shadow, 0);
-                container->addChild(icon, 0);
+                container->addChild(shadow);
+                container->addChild(icon, 1);
             });
         }
     );

@@ -95,10 +95,6 @@ web::WebFuture GauntletManagerAPI::create(GauntletEditData const& data) {
 }
 
 web::WebFuture GauntletManagerAPI::update(GauntletEditData const& data) {
-    log::debug(
-        "update: token empty={}, accountId={}, id={}, body={}",
-        m_token.empty(), GJAccountManager::get()->m_accountID, data.id, buildGauntletBody(data).dump()
-    );
     return web::WebRequest()
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer " + m_token)

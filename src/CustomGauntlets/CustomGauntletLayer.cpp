@@ -53,7 +53,7 @@ bool CustomGauntletLayer::init(CustomGauntletData const& data) {
     // Back button
     auto backMenu = CCMenu::create();
     backMenu->setID("exit-menu");
-    backMenu->setPosition({24, CCDirector::get()->getScreenTop() - 30});
+    backMenu->setPosition({24, CCDirector::get()->getScreenTop() - 25.5f});
     addChild(backMenu, 5);
 
     auto backSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
@@ -373,8 +373,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 
         // Sprite PH
         auto islandSpr = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
-        if (!islandSpr)
-            islandSpr = CCSprite::create(); // bare fallback
+        if (!islandSpr) islandSpr = CCSprite::create();
         islandSpr->setID(fmt::format("island-{}", i + 1).c_str());
         islandSpr->setPosition(levelSpr->getContentSize() / 2);
         if (isLocked) islandSpr->setColor({128, 128, 128});

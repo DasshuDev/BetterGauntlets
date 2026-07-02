@@ -10,7 +10,10 @@ bool MyCreatorLayer::init() {
     auto gauntletsBtn = static_cast<CCMenuItemSpriteExtra*>(
         this->getChildByIDRecursive("gauntlets-button")
     );
+    auto newSprite = CCSprite::create("GR_gauntletBtn_001.png"_spr);
+    newSprite->setScale(0.8);
     if (gauntletsBtn) {
+        gauntletsBtn->setSprite(newSprite);
         gauntletsBtn->setTarget(this, menu_selector(MyCreatorLayer::onGauntlets));
     } else {
         log::warn("Could not find gauntlets-button");

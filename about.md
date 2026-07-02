@@ -7,7 +7,7 @@ The <cy>ultimate</c> Gauntlet rewrite and overhaul, bringing the Gauntlets to <c
 - <c-be9000>Reworked UI</c>!
 - <c-ceab2d>Brand new navigation</c>!
 - <c-dec74d>Custom Gauntlets</c>!
-- <cg>__And more to come__<cg>!
+- <cg>__And more to come__</c>!
 
 ---
 

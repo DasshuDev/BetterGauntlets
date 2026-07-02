@@ -18,13 +18,7 @@ These mods are recommended you download to <cp>further enhance</c> the livelines
 
 <mod:alphalaneous.alphas-ui-pack>
 
-Alphalaneous' **Alphas UI Pack** API enables for some more <cg>freedom of movement</c> in the <cc>Gauntlets</c>.
-
----
-
 <mod:arcticwoof.gauntlets_deluxe>
-
-ArcticWoof's **Gauntlets Deluxe** mod adds Gauntlets made by the <cy>community</c>, and there are more being added <cl>every week</c>!
 
 ---
 

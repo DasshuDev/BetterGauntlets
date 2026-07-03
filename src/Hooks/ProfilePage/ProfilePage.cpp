@@ -8,6 +8,18 @@
 using namespace geode::prelude;
 using namespace alpha::badgify;
 
+class $modify(GRProfilePage, ProfilePage) {
+    bool init(int accountID, bool ownProfile) {
+        if (!ProfilePage::init(accountID, ownProfile)) return false;
+
+        // Re-fetch the manager list on every profile load/reload so newly
+        // added (or removed) managers show up without restarting the game.
+        GauntletManagerCache::get()->refresh();
+
+        return true;
+    }
+};
+
 $execute {
     alpha::badgify::registerBadge(
         "GR_badgeManager_001.png"_spr, 

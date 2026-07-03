@@ -132,7 +132,6 @@ web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path)
         .post(baseURL() + "/upload");
 }
 
-web::WebFuture GauntletManagerAPI::checkIsManager(int accountID) {
-    return web::WebRequest()
-        .get(baseURL() + fmt::format("/ismanager?accountId={}", accountID));
+web::WebFuture GauntletManagerAPI::fetchManagers() {
+    return web::WebRequest().get(baseURL() + "/managers");
 }

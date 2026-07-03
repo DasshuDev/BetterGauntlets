@@ -62,8 +62,9 @@ public:
     // Upload icon file, returns public URL
     web::WebFuture uploadIcon(std::filesystem::path const& path);
 
-    // Check if current GD account is a manager
-    web::WebFuture checkIsManager(int accountID);
+    // Fetch the full list of managers. Response shape:
+    // { managers: [ { account_id: number, username: string|null }, ... ] }
+    web::WebFuture fetchManagers();
 
     bool isLoggedIn() const;
     void setToken(std::string const& token);

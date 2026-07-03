@@ -6,32 +6,59 @@ GauntletManagerCache* GauntletManagerCache::get() {
     return &instance;
 }
 
-void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> callback) {
-    if (auto it = m_cache.find(accountID); it != m_cache.end()) {
-        callback(it->second);
-        return;
-    }
+void GauntletManagerCache::fetch() {
+    if (m_request.isPending()) return;
 
-    m_waiting[accountID].push_back(std::move(callback));
-    if (m_requests.contains(accountID)) return;
-
-    m_requests[accountID].spawn(
-        GauntletManagerAPI::get()->checkIsManager(accountID),
-        [this, accountID](web::WebResponse res) {
-            bool isManager = false;
+    m_request.spawn(
+        GauntletManagerAPI::get()->fetchManagers(),
+        [this](web::WebResponse res) {
             if (res.ok()) {
-                auto json = res.json().unwrapOr(matjson::Value());
-                isManager = json["isManager"].asBool().unwrapOr(false);
+                std::unordered_set<int> ids;
+                auto json = res.json().unwrapOr(matjson::Value::object());
+                if (json.contains("managers") && json["managers"].isArray()) {
+                    for (auto const& row : json["managers"]) {
+                        if (auto id = row["account_id"].asInt(); id.isOk()) {
+                            ids.insert(id.unwrap());
+                        }
+                    }
+                }
+                // Replace wholesale (not merge) so removed managers actually
+                // lose the badge on the next check instead of sticking around.
+                m_managerIDs = std::move(ids);
+                m_hasFetched = true;
+            } else {
+                // Leave m_hasFetched false so the next isManager() call retries
+                // instead of permanently answering false for the whole session.
+                log::warn(
+                    "[GauntletManagerCache] Failed to fetch manager list (code {}): {}",
+                    res.code(), res.string().unwrapOr("<no body>")
+                );
             }
 
-            m_cache[accountID] = isManager;
-            m_requests.erase(accountID);
-
-            auto callbacks = std::move(m_waiting[accountID]);
-            m_waiting.erase(accountID);
-            for (auto& cb : callbacks) {
-                cb(isManager);
+            auto waiting = std::move(m_waiting);
+            m_waiting.clear();
+            for (auto& [accountID, cb] : waiting) {
+                cb(m_managerIDs.contains(accountID));
             }
         }
     );
+}
+
+void GauntletManagerCache::warm() {
+    if (m_hasFetched) return;
+    fetch();
+}
+
+void GauntletManagerCache::refresh() {
+    fetch();
+}
+
+void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> callback) {
+    if (m_hasFetched) {
+        callback(m_managerIDs.contains(accountID));
+        return;
+    }
+
+    m_waiting.push_back({accountID, std::move(callback)});
+    fetch();
 }

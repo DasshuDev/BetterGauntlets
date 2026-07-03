@@ -40,6 +40,18 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
     data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
     data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
 
+    if (g.contains("levels") && g["levels"].isArray()) {
+        int i = 0;
+        for (auto const& lvl : g["levels"]) {
+            if (i >= 5) break;
+            data.levels[i].id      = lvl["level_id"].asInt().unwrapOr(0);
+            data.levels[i].name    = lvl["level_name"].asString().unwrapOr("");
+            data.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+            data.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+            i++;
+        }
+    }
+
     return data;
 }
 

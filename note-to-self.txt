@@ -1,10 +1,8 @@
 TODO:
 
-- fix bg not saving on creator entry
-- level ids save on exit, load on enter
-- gauntlet level icons not updating with icon picker
-- find *every* field needed to send to server, start working on custom GSL Gauntlets and modded reward types
 - create completion animation for gauntlets, reward player *within* gauntletlayer
 - create animation for level unlocks
+- custom rewards on PlayLayer
+- gauntlet completion sync (?)
 
 lock in, jay

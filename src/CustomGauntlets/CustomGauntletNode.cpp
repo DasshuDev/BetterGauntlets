@@ -39,7 +39,7 @@ bool CustomGauntletNode::init(
     sprite->addChild(ph, 10);
 
     auto phs = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
-    phs->setID("icon-placeholder");
+    phs->setID("icon-placeholder-shadow");
     phs->setColor({0, 0, 0});
     phs->setOpacity(50);
     phs->setScaleY(1.2f);
@@ -232,7 +232,8 @@ void CustomGauntletNode::loadIcon() {
                 shadow->setOpacity(50);
                 shadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2});
 
-                if (auto ph = container->getChildByID("icon-placeholder")) ph->removeFromParent();
+                if (auto ph = container->getChildByIDRecursive("icon-placeholder")) ph->removeFromParent();
+                if (auto phs = container->getChildByIDRecursive("icon-placeholder-shadow")) phs->removeFromParent();
                 container->addChild(shadow);
                 container->addChild(icon, 1);
             });

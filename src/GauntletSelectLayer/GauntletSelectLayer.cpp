@@ -48,6 +48,10 @@ bool BetterGauntletSelectLayer::init() {
     setKeypadEnabled(true);
     setKeyboardEnabled(true);
 
+    // Re-check manager status every time this layer is entered, so the
+    // manage button reflects newly added/removed managers without a restart.
+    GauntletManagerCache::get()->refresh();
+
     auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
     if (GDUtils) {
         auto settingVal = GDUtils->getSettingValue<bool>("gauntletDesign");
@@ -213,7 +217,7 @@ void BetterGauntletSelectLayer::buildMenus() {
     // Back button 
     auto backMenu = CCMenu::create();
     backMenu->setID("back-menu");
-    backMenu->setPosition(24, director->getScreenTop() - 25.5f);
+    backMenu->setPosition(24, director->getScreenTop() - 23);
     backMenu->setContentWidth(32.5);
     backMenu->setContentHeight(125);
     this->addChild(backMenu, 1);

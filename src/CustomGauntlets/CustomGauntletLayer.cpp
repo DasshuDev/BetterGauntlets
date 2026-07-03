@@ -53,7 +53,7 @@ bool CustomGauntletLayer::init(CustomGauntletData const& data) {
     // Back button
     auto backMenu = CCMenu::create();
     backMenu->setID("exit-menu");
-    backMenu->setPosition({24, CCDirector::get()->getScreenTop() - 25.5f});
+    backMenu->setPosition({24, CCDirector::get()->getScreenTop() - 23});
     addChild(backMenu, 5);
 
     auto backSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
@@ -303,7 +303,7 @@ void CustomGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
 
-    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+    if (auto lc = getChildByIDRecursive("loading-circle")) lc->removeFromParent();
 
     // Sort returned levels to match the original slot order
     CCArray* ordered = CCArray::createWithCapacity(5);
@@ -334,7 +334,7 @@ void CustomGauntletLayer::loadLevelsFailed(char const*, int) {
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
 
-    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+    if (auto lc = getChildByIDRecursive("loading-circle")) lc->removeFromParent();
 
     Notification::create("Failed to load gauntlet levels.", NotificationIcon::Error)->show();
 }

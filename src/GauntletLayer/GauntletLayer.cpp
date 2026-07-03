@@ -119,7 +119,7 @@ bool BetterGauntletLayer::init(GauntletType type) {
     // Exit menu 
     auto backMenu = CCMenu::create();
     backMenu->setID("exit-menu");
-    backMenu->setPosition(24, director->getScreenTop() - 25.5f);
+    backMenu->setPosition(24, director->getScreenTop() - 23);
     backMenu->setContentWidth(32.5);
     backMenu->setContentHeight(125);
     this->addChild(backMenu, 5);
@@ -217,7 +217,7 @@ void BetterGauntletLayer::loadLevelsFinished(CCArray* levels, char const* key, i
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
 
-    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+    if (auto lc = getChildByIDRecursive("loading-circle")) lc->removeFromParent();
 
     if (!levels || levels->count() == 0) {
         Notification::create("No levels returned for this gauntlet.", NotificationIcon::Error)->show();
@@ -235,7 +235,7 @@ void BetterGauntletLayer::loadLevelsFailed(char const* key, int type) {
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
 
-    if (auto lc = getChildByID("loading-circle")) lc->removeFromParent();
+    if (auto lc = getChildByIDRecursive("loading-circle")) lc->removeFromParent();
 
     Notification::create("Failed to load gauntlet levels.", NotificationIcon::Error, 1.5)->show();
 }

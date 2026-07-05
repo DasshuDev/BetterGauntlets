@@ -774,7 +774,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
     if (auto lc = getChildByIDRecursive("custom-list-loading"_spr)) lc->removeFromParent();
 
     auto container = CCMenu::create();
-    container->setAnchorPoint({0.5, 0.5});
+    container->setAnchorPoint({0, 0.5});
     container->setLayout(
         RowLayout::create()
         ->setAxisAlignment(AxisAlignment::Start)
@@ -782,6 +782,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
         ->setAutoGrowAxis(true)
         ->setPadding({60, 0, 60, 0})
     );
+    container->setPositionX(0);
     container->setPositionY(117);
     container->setID("custom-gauntlet-btns"_spr);
 

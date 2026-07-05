@@ -18,7 +18,11 @@ protected:
     CCLayer*       m_panelLayer    = nullptr;
     NineSlice*     m_listBG        = nullptr;
     CCMenu*        m_gauntletList  = nullptr;
+    CCMenu*        m_tabMenu       = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
+
+    int   m_activeTab = 0; // 0 = Published, 1 = Staged
+    float m_tabBarY   = 0.f;
 
     async::TaskHolder<geode::Result<std::string>> m_argonHolder;
     async::TaskHolder<web::WebResponse> m_fetchHolder;
@@ -27,6 +31,8 @@ protected:
     std::vector<async::TaskHolder<web::WebResponse>> m_rowIconHolders;
 
     void buildPanelView();
+    void buildTabMenu();
+    void onSwitchTab(int tab);
     void buildGauntletList();
     void buildGauntletRow(CustomGauntletData const& g);
     void buildStagedRow(GauntletEditData const& g, int index);

@@ -301,6 +301,7 @@ void GauntletManagerPopup::buildPanelView() {
         m_listLayer = nullptr;
         m_listBG = nullptr;
         m_gauntletList = nullptr;
+        m_tabMenu = nullptr;
     }
 
     m_panelLayer = CCLayer::create();
@@ -322,17 +323,22 @@ void GauntletManagerPopup::buildPanelView() {
     );
     createMenu->addChild(createBtn);
 
-    // List container with dark background
+    // List container with dark background - shrunk to leave room for the tab bar above it
+    float tabAreaHeight = 22;
+    float listHeight = m_size.height - 60 - tabAreaHeight;
+    float listCenterY = 20 + listHeight / 2;
+    m_tabBarY = 26 + listHeight + tabAreaHeight / 2;
+
     m_listBG = NineSlice::create("square02b_001.png");
-    m_listBG->setContentSize({m_size.width - 40, m_size.height - 60});
-    m_listBG->setPosition({m_size.width / 2, m_size.height / 2 - 10});
+    m_listBG->setContentSize({m_size.width - 40, listHeight});
+    m_listBG->setPosition({m_size.width / 2, listCenterY});
     m_listBG->setColor({ 0, 0, 0 });
     m_listBG->setOpacity(80);
     m_panelLayer->addChild(m_listBG);
 
     auto listOutline = NineSlice::create("GJ_square07.png");
-    listOutline->setContentSize({m_size.width - 38, m_size.height - 54});
-    listOutline->setPosition({m_size.width / 2, m_size.height / 2 - 10});
+    listOutline->setContentSize({m_size.width - 38, listHeight + 6});
+    listOutline->setPosition({m_size.width / 2, listCenterY});
     listOutline->setColor({67, 67, 67});
     m_panelLayer->addChild(listOutline, 1);
 
@@ -345,6 +351,44 @@ void GauntletManagerPopup::buildPanelView() {
     m_listLayer->setID("list");
     m_listLayer->setContentSize(m_listBG->getContentSize());
     listClip->addChild(m_listLayer);
+
+    buildTabMenu();
+}
+
+void GauntletManagerPopup::buildTabMenu() {
+    if (m_tabMenu) {
+        m_tabMenu->removeFromParent();
+        m_tabMenu = nullptr;
+    }
+
+    m_tabMenu = CCMenu::create();
+    m_tabMenu->setID("tab-menu");
+    m_tabMenu->setPosition({m_size.width / 2, m_tabBarY});
+    m_tabMenu->setLayout(RowLayout::create()->setGap(6));
+    m_panelLayer->addChild(m_tabMenu);
+
+    auto makeTabBtn = [this](std::string const& text, int tab) {
+        bool active = (m_activeTab == tab);
+        auto spr = ButtonSprite::create(
+            text.c_str(), "bigFont.fnt",
+            active ? "GJ_button_02.png" : "GJ_button_05.png"
+        );
+        spr->setScale(0.5f);
+        if (!active) spr->setOpacity(180);
+        return CCMenuItemExt::createSpriteExtra(spr, [this, tab](CCMenuItemSpriteExtra*) {
+            onSwitchTab(tab);
+        });
+    };
+
+    m_tabMenu->addChild(makeTabBtn(fmt::format("Published ({})", m_gauntlets.size()), 0));
+    m_tabMenu->addChild(makeTabBtn(fmt::format("Staged ({})", m_staged.size()), 1));
+    m_tabMenu->updateLayout();
+}
+
+void GauntletManagerPopup::onSwitchTab(int tab) {
+    if (m_activeTab == tab) return;
+    m_activeTab = tab;
+    buildGauntletList();
 }
 
 void GauntletManagerPopup::fetchGauntlets() {
@@ -386,7 +430,7 @@ void GauntletManagerPopup::buildGauntletList() {
     m_gauntletList = CCMenu::create();
     m_gauntletList->setID("gauntlet-list");
     m_gauntletList->setContentSize(m_listLayer->getContentSize());
-    m_gauntletList->setPosition({m_size.width / 2 - 20, m_size.height / 2 - 30});
+    m_gauntletList->setPosition({m_size.width / 2 - 20, m_size.height / 2 - 41});
     m_gauntletList->setLayout(ColumnLayout::create()
         ->setGap(0)
         ->setAxisReverse(true)
@@ -398,37 +442,39 @@ void GauntletManagerPopup::buildGauntletList() {
     scroll->m_contentLayer->addChild(m_gauntletList);
 
     m_listLayer->addChild(scroll);
-    // float yPos = m_size.height - 55;
 
-    // Staged rows first (only NEW gauntlets - updates to existing ones
-    // show as the update button on the server row instead)
-    for (int i = 0; i < (int)m_staged.size(); i++) {
-        if (m_staged[i].id == 0) {
+    if (m_activeTab == 0) {
+        // Published tab - server rows only. Rows show an update button
+        // if a staged edit is pending for that gauntlet.
+        for (auto const& g : m_gauntlets) {
+            buildGauntletRow(g);
+        }
+    } else {
+        // Staged tab - both brand-new gauntlets and pending edits to
+        // already-published ones.
+        for (int i = 0; i < (int)m_staged.size(); i++) {
             buildStagedRow(m_staged[i], i);
         }
     }
 
-    // Then server rows
-    for (auto const& g : m_gauntlets) {
-        buildGauntletRow(g);
-    }
-
     m_gauntletList->updateLayout();
 
-    if (m_gauntlets.empty() && m_staged.empty()) {
-        auto label = CCLabelBMFont::create("No gauntlets yet.\nCreate one!", "bigFont.fnt");
+    bool empty = (m_activeTab == 0) ? m_gauntlets.empty() : m_staged.empty();
+    if (empty) {
+        auto label = CCLabelBMFont::create(
+            m_activeTab == 0
+                ? "No published gauntlets yet.\nCreate one!"
+                : "No staged changes.",
+            "bigFont.fnt"
+        );
         label->setScale(0.45);
         label->setAlignment(kCCTextAlignmentCenter);
         label->setColor({180, 180, 180});
         label->setPosition({m_size.width / 2, m_size.height / 2 - 10});
         m_panelLayer->addChild(label);
-        return;
     }
 
-    // for (auto const& g : m_gauntlets) {
-    //    buildGauntletRow(g, yPos);
-    //    yPos -= 44.f;
-    // }
+    buildTabMenu();
 }
 
 // Already added Gauntlets
@@ -694,9 +740,9 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     // iconNode->addChild(loadingIcon);
     gauntletListItem->addChild(iconNode);
 
-    // STAGED badge
-    auto badge = CCSprite::createWithSpriteFrameName("GR_stagedTag_001.png"_spr);
-    // auto badge = CCLabelBMFont::create("STAGED", "bigFont.fnt");
+    // STAGED / update badge - distinguishes a brand-new gauntlet from a pending edit to a published one
+    std::string badgeFrame = g.id != 0 ? "GR_addedTag_001.png"_spr : "GR_stagedTag_001.png"_spr;
+    auto badge = CCSprite::createWithSpriteFrameName(badgeFrame.c_str());
     badge->setScale(0.35);
     // badge->setColor({255, 220, 50});
     badge->setAnchorPoint({0.5, 1});

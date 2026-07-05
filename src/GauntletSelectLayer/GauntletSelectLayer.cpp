@@ -75,9 +75,18 @@ bool BetterGauntletSelectLayer::init() {
     m_loadingCircle = spinner;
     this->addChild(m_loadingCircle, 10);
 
-    // Fetch gauntlets from RobTop servers 
+    // Fetch gauntlets from RobTop servers
     GameLevelManager::get()->m_levelManagerDelegate = this;
     GameLevelManager::get()->getGauntlets();
+
+    // Kick off the custom (server-hosted) gauntlet list fetch in parallel so
+    // it's ready by the time the player toggles to it. Built once, hidden
+    // until toggled - see buildCustomList()/populateCustomList().
+    buildCustomList();
+
+    // Resolved once and added immediately if the player is a manager - not
+    // tied to the custom-list toggle (see m_managerButton in the header).
+    checkManagerStatus();
 
     return true;
 }
@@ -604,11 +613,11 @@ void BetterGauntletSelectLayer::onBack(CCObject* sender) {
 
 void BetterGauntletSelectLayer::onRefresh(CCObject* sender) {
     if (m_showingCustomList) {
-        // Reload the custom gauntlets list
-        if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
-            existing->removeFromParent();
-        if (auto existing = getChildByIDRecursive("custom-gauntlet-bar"_spr))
-            existing->removeFromParent();
+        // Tear down the persistent custom list so buildCustomList() rebuilds
+        // it from scratch instead of treating it as already-built.
+        if (m_customGauntletScrollLayer) { m_customGauntletScrollLayer->removeFromParent(); m_customGauntletScrollLayer = nullptr; }
+        if (m_customGauntletScrollBar) { m_customGauntletScrollBar->removeFromParent(); m_customGauntletScrollBar = nullptr; }
+        if (m_customListLoadingCircle) { m_customListLoadingCircle->removeFromParent(); m_customListLoadingCircle = nullptr; }
 
         CustomGauntletManager::get()->clearCache();
         buildCustomList();
@@ -677,49 +686,23 @@ void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
     if (m_customScrollLayer) m_customScrollLayer->setVisible(!m_showingCustomList);
     if (m_customScrollBar) m_customScrollBar->setVisible(!m_showingCustomList);
     if (m_vanillaTitle) m_vanillaTitle->setVisible(!m_showingCustomList);
+    if (m_betterTitle) m_betterTitle->setVisible(m_showingCustomList);
 
-    if (m_showingCustomList) {
-        if (m_vanillaTitle) m_vanillaTitle->setVisible(false);
-        if (m_betterTitle) m_betterTitle->setVisible(true);
+    // The custom gauntlet list is built once (from init(), or below as a
+    // fallback) and simply shown/hidden here - no rebuilding, no re-fetching
+    // icons.
+    if (m_customGauntletScrollLayer) m_customGauntletScrollLayer->setVisible(m_showingCustomList);
+    if (m_customGauntletScrollBar) m_customGauntletScrollBar->setVisible(m_showingCustomList);
+    if (m_customListLoadingCircle) m_customListLoadingCircle->setVisible(m_showingCustomList);
 
-        buildCustomList();
-
-        auto accountID = GJAccountManager::get()->m_accountID;
-        Ref<BetterGauntletSelectLayer> self(this);
-        GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
-            if (!isManager) return;
-            if (!self->getParent()) return;
-
-            auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
-            if (!BLMenu) return;
-
-            auto managerBtnSpr = CircleButtonSprite::createWithSprite(
-                "GR_gauntletStar_001.png"_spr, 1,
-                CircleBaseColor::DarkPurple, CircleBaseSize::Medium
-            );
-            managerBtnSpr->setScale(0.75);
-
-            auto manageBtn = CCMenuItemExt::createSpriteExtra(managerBtnSpr, [](CCMenuItemSpriteExtra*) {
-                GauntletManagerPopup::create()->show();
-            });
-            manageBtn->setID("manager-button"_spr);
-            static_cast<CCMenu*>(BLMenu)->addChild(manageBtn);
-            static_cast<CCMenu*>(BLMenu)->updateLayout();
-        });
-    } else {
-        if (auto existing = getChildByIDRecursive("custom-gauntlet-scroll"_spr))
-            existing->removeFromParent();
-        if (auto existing = getChildByIDRecursive("custom-gauntlet-bar"_spr))
-            existing->removeFromParent();
-        if (auto existing = getChildByIDRecursive("manager-button"_spr))
-            existing->removeFromParent();
-
-        if (m_vanillaTitle) m_vanillaTitle->setVisible(true);
-        if (m_betterTitle) m_betterTitle->setVisible(false);
-    }
+    // No-op if already built or already in flight.
+    buildCustomList();
 }
 
 void BetterGauntletSelectLayer::buildCustomList() {
+    // Already built, or a fetch is already in flight - safe to call repeatedly.
+    if (m_customGauntletScrollLayer || m_customListLoadingCircle) return;
+
     auto winSize = CCDirector::sharedDirector()->getWinSize();
 
     if (CustomGauntletManager::get()->hasCached()) {
@@ -732,29 +715,43 @@ void BetterGauntletSelectLayer::buildCustomList() {
     loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
     loadingCircle->setID("custom-list-loading"_spr);
     loadingCircle->setPosition(winSize / 2);
+    loadingCircle->setVisible(m_showingCustomList);
     this->addChild(loadingCircle, 10);
+    m_customListLoadingCircle = loadingCircle;
 
     m_fetchHolder.spawn(
         CustomGauntletManager::get()->fetchAll(),
-        [this, loadingCircle](web::WebResponse res) {
-            if (loadingCircle && loadingCircle->getParent())
-                loadingCircle->removeFromParent();
+        [this](web::WebResponse res) {
+            if (m_customListLoadingCircle) {
+                m_customListLoadingCircle->removeFromParent();
+                m_customListLoadingCircle = nullptr;
+            }
 
             if (!res.ok()) {
-                Notification::create(
-                    fmt::format("Failed to load custom gauntlets: HTTP {}", res.code()),
-                    NotificationIcon::Error, 2.f
-                )->show();
-                m_showingCustomList = false;
-                s_showCustomList = false;
-                if (m_customScrollLayer) m_customScrollLayer->setVisible(true);
-                if (m_customScrollBar) m_customScrollBar->setVisible(true);
+                // This can happen from the eager fetch kicked off in init(),
+                // before the player has ever looked at the custom list - only
+                // surface it (and fall back to the vanilla list) if they're
+                // actually on that tab.
+                if (m_showingCustomList) {
+                    Notification::create(
+                        fmt::format("Failed to load custom gauntlets: HTTP {}", res.code()),
+                        NotificationIcon::Error, 2.f
+                    )->show();
+                    m_showingCustomList = false;
+                    s_showCustomList = false;
+                    if (m_customScrollLayer) m_customScrollLayer->setVisible(true);
+                    if (m_customScrollBar) m_customScrollBar->setVisible(true);
+                    if (m_vanillaTitle) m_vanillaTitle->setVisible(true);
+                    if (m_betterTitle) m_betterTitle->setVisible(false);
+                }
                 return;
             }
 
             auto body = res.string().unwrapOr("");
             if (body.empty() || body == "-1") {
-                Notification::create("There are no Gauntlets yet!", NotificationIcon::Warning, 2.f)->show();
+                if (m_showingCustomList) {
+                    Notification::create("There are no Gauntlets yet!", NotificationIcon::Warning, 2.f)->show();
+                }
                 return;
             }
 
@@ -765,16 +762,9 @@ void BetterGauntletSelectLayer::buildCustomList() {
 }
 
 void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletData> const& gauntlets) {
-    if (!m_showingCustomList) return;
-
     auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-    if (auto scrollLayer = getChildByIDRecursive("custom-gauntlet-scroll"_spr)) scrollLayer->removeFromParent();
-    if (auto scrollBar = getChildByIDRecursive("custom-gauntlet-bar"_spr)) scrollBar->removeFromParent();
-    if (auto lc = getChildByIDRecursive("custom-list-loading"_spr)) lc->removeFromParent();
-
     auto container = CCMenu::create();
-    container->setAnchorPoint({0, 0.5});
     container->setLayout(
         RowLayout::create()
         ->setAxisAlignment(AxisAlignment::Start)
@@ -782,7 +772,6 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
         ->setAutoGrowAxis(true)
         ->setPadding({60, 0, 60, 0})
     );
-    container->setPositionX(0);
     container->setPositionY(117);
     container->setID("custom-gauntlet-btns"_spr);
 
@@ -797,6 +786,12 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
         if (node) container->addChild(node);
     }
 
+    if (container->getChildrenCount() < 5) container->setAnchorPoint({0.5, 0.5});
+    else {
+        container->setAnchorPoint({0, 0.5});
+        container->setPositionX(0);
+    }
+
     container->updateLayout();
 
     auto scrollLayer = alpha::ui::AdvancedScrollLayer::create(container->getContentSize());
@@ -806,7 +801,9 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
     scrollLayer->setContentWidth(winSize.width);
     scrollLayer->setID("custom-gauntlet-scroll"_spr);
     scrollLayer->ignoreAnchorPointForPosition(false);
+    scrollLayer->setVisible(m_showingCustomList);
     this->addChild(scrollLayer);
+    m_customGauntletScrollLayer = scrollLayer;
 
     scrollLayer->getContentLayer()->addChild(container);
     scrollLayer->getContentLayer()->setContentWidth(container->getContentWidth());
@@ -817,5 +814,34 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
     scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
     scrollBar->setContentSize({12, winSize.height + 125});
     scrollBar->setID("custom-gauntlet-bar"_spr);
+    scrollBar->setVisible(m_showingCustomList);
     this->addChild(scrollBar, 1);
+    m_customGauntletScrollBar = scrollBar;
+}
+
+void BetterGauntletSelectLayer::checkManagerStatus() {
+    auto accountID = GJAccountManager::get()->m_accountID;
+    Ref<BetterGauntletSelectLayer> self(this);
+    GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
+        if (!isManager) log::info("User is not a Gauntlet Manager");
+        if (!self->getParent()) log::info("BetterGauntletSelectLayer is not in the scene graph");
+        if (self->m_managerButton) log::info("Manager button already exists");
+
+        auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
+        if (!BLMenu) return;
+
+        auto managerBtnSpr = CircleButtonSprite::createWithSprite(
+            "GR_gauntletStar_001.png"_spr, 1,
+            CircleBaseColor::DarkPurple, CircleBaseSize::Medium
+        );
+        managerBtnSpr->setScale(0.75);
+
+        auto manageBtn = CCMenuItemExt::createSpriteExtra(managerBtnSpr, [](CCMenuItemSpriteExtra*) {
+            GauntletManagerPopup::create()->show();
+        });
+        manageBtn->setID("manager-button"_spr);
+        self->m_managerButton = manageBtn;
+        BLMenu->addChild(manageBtn);
+        BLMenu->updateLayout();
+    });
 }

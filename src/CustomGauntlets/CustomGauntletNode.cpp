@@ -223,14 +223,14 @@ void CustomGauntletNode::loadIcon() {
                 if (!container) return;
 
                 icon->setID("gauntlet-icon");
-                icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 10});
+                icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 15});
 
                 shadow->setScaleX(icon->getScaleX());
                 shadow->setScaleY(icon->getScaleY() * 1.2);
                 shadow->setID("gauntlet-icon-shadow");
                 shadow->setColor({0, 0, 0});
                 shadow->setOpacity(50);
-                shadow->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2});
+                shadow->setPosition({icon->getPositionX(), icon->getPositionY() - 10});
 
                 if (auto ph = container->getChildByIDRecursive("icon-placeholder")) ph->removeFromParent();
                 if (auto phs = container->getChildByIDRecursive("icon-placeholder-shadow")) phs->removeFromParent();

@@ -459,21 +459,6 @@ void GauntletManagerPopup::buildGauntletList() {
 
     m_gauntletList->updateLayout();
 
-    bool empty = (m_activeTab == 0) ? m_gauntlets.empty() : m_staged.empty();
-    if (empty) {
-        auto label = CCLabelBMFont::create(
-            m_activeTab == 0
-                ? "No published gauntlets yet.\nCreate one!"
-                : "No staged changes.",
-            "bigFont.fnt"
-        );
-        label->setScale(0.45);
-        label->setAlignment(kCCTextAlignmentCenter);
-        label->setColor({180, 180, 180});
-        label->setPosition({m_size.width / 2, m_size.height / 2 - 10});
-        m_panelLayer->addChild(label);
-    }
-
     buildTabMenu();
 }
 

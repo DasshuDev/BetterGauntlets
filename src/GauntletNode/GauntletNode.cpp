@@ -29,6 +29,16 @@ void RedesignedGauntletNode::generateNode() {
     gradientClip->setID("gradient-clip");
     bg->getParent()->addChild(gradientClip);
 
+    m_fields->m_gradient->setColor(bg->getColor());
+    m_fields->m_gradient->setOpacity(128);
+    m_fields->m_gradient->setPositionY(-35);
+    m_fields->m_gradient->setScaleX(1.5);
+    m_fields->m_gradient->setScaleY(1.65);
+    m_fields->m_gradient->setRotation(67);
+    m_fields->m_gradient->setID("gradient-sprite");
+    m_fields->m_gradient->setBlendFunc({GL_ONE, GL_ONE});
+    gradientClip->addChild(m_fields->m_gradient);
+
     // Nodes are fully constructed after the base call
     // if (m_gauntletInfoNode) m_gauntletInfoNode->setVisible(true);
     if (m_rewardNode) m_rewardNode->setVisible(false);
@@ -45,14 +55,6 @@ void RedesignedGauntletNode::generateNode() {
         gradientClip->addChild(m_fields->m_gradientParticles);
 
         // bg->getParent()->addChild(m_fields->m_claimSpr);
-
-        m_fields->m_gradient->setColor({0, 255, 0});
-        m_fields->m_gradient->setOpacity(100);
-        m_fields->m_gradient->setPositionY(-35);
-        m_fields->m_gradient->setScaleX(1.5);
-        m_fields->m_gradient->setScaleY(1.65);
-        m_fields->m_gradient->setRotation(67);
-        gradientClip->addChild(m_fields->m_gradient);
     }
 }
 

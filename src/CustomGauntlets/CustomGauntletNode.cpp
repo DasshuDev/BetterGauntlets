@@ -132,19 +132,30 @@ bool CustomGauntletNode::init(
     countLabelShadow->setPosition({sprite->getContentWidth() / 2 + 2, (sprite->getContentHeight() / 2) - 29.5f});
     sprite->addChild(countLabelShadow, 1);
 
+    auto stencil = NineSlice::create("square04_001.png");
+    stencil->setContentSize({155, 333});
+    stencil->setScale(0.625);
+
+    auto gradientClip = CCClippingNode::create(stencil);
+    gradientClip->setAlphaThreshold(0);
+    gradientClip->setContentSize(stencil->getContentSize());
+    gradientClip->setID("gradient-clip");
+    gradientClip->setPosition({55, 117.5});
+    sprite->addChild(gradientClip);
+
+    auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
+    gradient->setColor(data.nodeColor);
+    gradient->setOpacity(128);
+    gradient->setPositionY(-35);
+    gradient->setScaleX(1.5);
+    gradient->setScaleY(2);
+    gradient->setRotation(67);
+    gradient->setID("gradient");
+    gradient->setBlendFunc({GL_ONE, GL_ONE});
+    gradientClip->addChild(gradient);
+
     if (completed == 5) {
-        countLabel->setColor({0, 255, 0});
-
-        auto stencil = NineSlice::create("square04_001.png");
-        stencil->setContentSize({155, 333});
-        stencil->setScale(0.625);
-
-        auto gradientClip = CCClippingNode::create(stencil);
-        gradientClip->setAlphaThreshold(0);
-        gradientClip->setContentSize(stencil->getContentSize());
-        gradientClip->setID("gradient-clip");
-        gradientClip->setPosition({55, 117.5});
-        sprite->addChild(gradientClip);
+        countLabel->setColor({100, 255, 100});
 
         auto checkmarkSpr = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
         checkmarkSpr->setScale(1.1);
@@ -171,15 +182,6 @@ bool CustomGauntletNode::init(
             gradientParticles->setPosition({0, -110});
             gradientClip->addChild(gradientParticles);
         }
-
-        auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-        gradient->setColor({0, 255, 0});
-        gradient->setOpacity(100);
-        gradient->setPositionY(-35);
-        gradient->setScaleX(1.5);
-        gradient->setScaleY(2);
-        gradient->setRotation(67);
-        gradientClip->addChild(gradient);
     }
 
     if (!CCMenuItemSpriteExtra::init(sprite, nullptr, nullptr, nullptr))

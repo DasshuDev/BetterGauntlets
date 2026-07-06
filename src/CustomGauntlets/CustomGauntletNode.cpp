@@ -144,7 +144,7 @@ bool CustomGauntletNode::init(
     sprite->addChild(gradientClip);
 
     auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    gradient->setColor(data.nodeColor);
+    gradient->setColor(data.nameColor);
     gradient->setOpacity(128);
     gradient->setPositionY(-35);
     gradient->setScaleX(1.5);

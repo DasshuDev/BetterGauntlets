@@ -18,7 +18,8 @@ void RedesignedGauntletNode::generateNode() {
 
     auto progress = static_cast<CCLabelBMFont*>(this->getChildByIDRecursive("gauntlet-progress-label"));
     auto bg = static_cast<CCSprite*>(progress->getParent()->getParent()->getChildByIDRecursive("background"));
-
+    auto name = static_cast<CCLabelBMFont*>(progress->getParent()->getParent()->getChildByIDRecursive("gauntlet-label"));
+    
     auto stencil = NineSlice::create("square04_001.png");
     stencil->setContentSize({155, 333});
     stencil->setScale(0.625);
@@ -29,7 +30,7 @@ void RedesignedGauntletNode::generateNode() {
     gradientClip->setID("gradient-clip");
     bg->getParent()->addChild(gradientClip);
 
-    m_fields->m_gradient->setColor(bg->getColor());
+    m_fields->m_gradient->setColor(name->getColor());
     m_fields->m_gradient->setOpacity(128);
     m_fields->m_gradient->setPositionY(-35);
     m_fields->m_gradient->setScaleX(1.5);

@@ -426,6 +426,15 @@ void BetterGauntletSelectLayer::buildGauntletNodes(CCArray* gauntlets) {
         m_gauntletBtnContainer->addChild(btn);
     }
 
+    if (m_gauntletBtnContainer->getChildrenCount() < 5) {
+        m_gauntletBtnContainer->setAnchorPoint({0.0, 0.5});
+        m_gauntletBtnContainer->setPositionX(58.5);
+    }
+    else {
+        m_gauntletBtnContainer->setAnchorPoint({0, 0.5});
+        m_gauntletBtnContainer->setPositionX(0);
+    }
+
     m_gauntletBtnContainer->updateLayout();
 
     m_customScrollLayer->getContentLayer()->setContentWidth(m_gauntletBtnContainer->getContentWidth());
@@ -433,7 +442,6 @@ void BetterGauntletSelectLayer::buildGauntletNodes(CCArray* gauntlets) {
     styleGauntletButtons();
     loadScrollPos();
 
-    // Restore custom list state (e.g. returning from CustomGauntletLayer)
     if (s_showCustomList) {
         toggleList(nullptr);
     }
@@ -454,7 +462,6 @@ void BetterGauntletSelectLayer::setupScrollMode() {
 
     m_gauntletBtnContainer = CCMenu::create();
     m_gauntletBtnContainer->setAnchorPoint({0, 0.5});
-    m_gauntletBtnContainer->setPositionX(0);
     m_gauntletBtnContainer->setID("gauntlet-btns");
     m_gauntletBtnContainer->setLayout(
         RowLayout::create()
@@ -613,8 +620,6 @@ void BetterGauntletSelectLayer::onBack(CCObject* sender) {
 
 void BetterGauntletSelectLayer::onRefresh(CCObject* sender) {
     if (m_showingCustomList) {
-        // Tear down the persistent custom list so buildCustomList() rebuilds
-        // it from scratch instead of treating it as already-built.
         if (m_customGauntletScrollLayer) { m_customGauntletScrollLayer->removeFromParent(); m_customGauntletScrollLayer = nullptr; }
         if (m_customGauntletScrollBar) { m_customGauntletScrollBar->removeFromParent(); m_customGauntletScrollBar = nullptr; }
         if (m_customListLoadingCircle) { m_customListLoadingCircle->removeFromParent(); m_customListLoadingCircle = nullptr; }
@@ -622,7 +627,6 @@ void BetterGauntletSelectLayer::onRefresh(CCObject* sender) {
         CustomGauntletManager::get()->clearCache();
         buildCustomList();
     } else {
-        // Reload the vanilla gauntlets list
         saveScrollPos();
 
         if (m_sliderLabel) { m_sliderLabel->removeFromParent(); m_sliderLabel = nullptr; }
@@ -687,15 +691,9 @@ void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
     if (m_customScrollBar) m_customScrollBar->setVisible(!m_showingCustomList);
     if (m_vanillaTitle) m_vanillaTitle->setVisible(!m_showingCustomList);
     if (m_betterTitle) m_betterTitle->setVisible(m_showingCustomList);
-
-    // The custom gauntlet list is built once (from init(), or below as a
-    // fallback) and simply shown/hidden here - no rebuilding, no re-fetching
-    // icons.
     if (m_customGauntletScrollLayer) m_customGauntletScrollLayer->setVisible(m_showingCustomList);
     if (m_customGauntletScrollBar) m_customGauntletScrollBar->setVisible(m_showingCustomList);
     if (m_customListLoadingCircle) m_customListLoadingCircle->setVisible(m_showingCustomList);
-
-    // No-op if already built or already in flight.
     buildCustomList();
 }
 
@@ -728,10 +726,6 @@ void BetterGauntletSelectLayer::buildCustomList() {
             }
 
             if (!res.ok()) {
-                // This can happen from the eager fetch kicked off in init(),
-                // before the player has ever looked at the custom list - only
-                // surface it (and fall back to the vanilla list) if they're
-                // actually on that tab.
                 if (m_showingCustomList) {
                     Notification::create(
                         fmt::format("Failed to load custom gauntlets: HTTP {}", res.code()),

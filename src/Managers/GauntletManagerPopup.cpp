@@ -347,9 +347,11 @@ void GauntletManagerPopup::buildPanelView() {
     m_panelLayer->addChild(listClip);
 
     m_listLayer = CCLayer::create();
+    m_listLayer->setAnchorPoint({0, 0});
     m_listLayer->setPosition({20, 20});
     m_listLayer->setID("list");
     m_listLayer->setContentSize(m_listBG->getContentSize());
+    m_listLayer->ignoreAnchorPointForPosition(false);
     listClip->addChild(m_listLayer);
 
     buildTabMenu();
@@ -429,35 +431,37 @@ void GauntletManagerPopup::buildGauntletList() {
 
     m_gauntletList = CCMenu::create();
     m_gauntletList->setID("gauntlet-list");
-    m_gauntletList->setContentSize(m_listLayer->getContentSize());
-    m_gauntletList->setPosition({m_size.width / 2 - 20, m_size.height / 2 - 41});
+    m_gauntletList->setAnchorPoint({0.5, 1});
+    m_gauntletList->setContentSize({m_listLayer->getContentWidth(), 0});
     m_gauntletList->setLayout(ColumnLayout::create()
         ->setGap(0)
-        ->setAxisReverse(true)
+        ->setAutoGrowAxis(true)
         ->setAutoScale(false)
         ->setAxisAlignment(AxisAlignment::End)
     );
 
-    auto scroll = ScrollLayer::create(m_gauntletList->getContentSize(), true, true);
+    auto scroll = ScrollLayer::create(m_listLayer->getContentSize(), true, true);
     scroll->m_contentLayer->addChild(m_gauntletList);
 
     m_listLayer->addChild(scroll);
 
     if (m_activeTab == 0) {
-        // Published tab - server rows only. Rows show an update button
-        // if a staged edit is pending for that gauntlet.
         for (auto const& g : m_gauntlets) {
             buildGauntletRow(g);
         }
     } else {
-        // Staged tab - both brand-new gauntlets and pending edits to
-        // already-published ones.
         for (int i = 0; i < (int)m_staged.size(); i++) {
             buildStagedRow(m_staged[i], i);
         }
     }
 
     m_gauntletList->updateLayout();
+    
+    scroll->m_contentLayer->setContentSize({m_listLayer->getContentWidth(), m_gauntletList->getContentHeight()});
+
+    m_gauntletList->setPosition({m_listLayer->getContentWidth() / 2, scroll->m_contentLayer->getContentHeight()});
+
+    scroll->moveToTop();
 
     buildTabMenu();
 }
@@ -797,13 +801,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
     auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
     deleteSpr->setScale(0.85f);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
-        [this, index](CCMenuItemSpriteExtra*) {
-            if (index < 0 || index >= (int)m_staged.size()) return;
-            m_staged.erase(m_staged.begin() + index);
-            saveStaged();
-            buildGauntletList();
-            Notification::create("Staged gauntlet removed.", NotificationIcon::Success)->show();
-        });
+        [this, index](CCMenuItemSpriteExtra*) { onDeleteStaged(index); });
     actionMenu->addChild(deleteBtn);
 
     actionMenu->updateLayout();
@@ -920,6 +918,25 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
                     Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
                 }
             );
+        }
+    );
+}
+
+void GauntletManagerPopup::onDeleteStaged(int index) {
+    if (index < 0 || index >= (int)m_staged.size()) return;
+    auto name = m_staged[index].name;
+
+    createQuickPopup(
+        "Remove Staged Gauntlet",
+        fmt::format("Discard the staged <cy>{} Gauntlet</c>? This <cr>cannot</c> be undone.", name).c_str(),
+        "Cancel", "Discard",
+        [this, index](FLAlertLayer*, bool confirmed) {
+            if (!confirmed) return;
+            if (index < 0 || index >= (int)m_staged.size()) return;
+            m_staged.erase(m_staged.begin() + index);
+            saveStaged();
+            buildGauntletList();
+            Notification::create("Staged gauntlet removed.", NotificationIcon::Success)->show();
         }
     );
 }

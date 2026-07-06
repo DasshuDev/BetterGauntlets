@@ -45,6 +45,7 @@ protected:
     void onEditStaged(int index);
     void onPushStaged(int index);
     void onDelete(int gauntletId);
+    void onDeleteStaged(int index);
 
 public:
     static GauntletManagerPopup* create();

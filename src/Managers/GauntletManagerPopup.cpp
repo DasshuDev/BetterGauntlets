@@ -468,14 +468,26 @@ void GauntletManagerPopup::buildGauntletList() {
 
 // Already added Gauntlets
 
-void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
-    auto row = CCNode::create();
-    row->setContentSize({m_gauntletList->getContentWidth(), 60});
+struct RowChrome {
+    CCNode* row;
+    CCNode* iconNode;
+    CCMenu* actionMenu;
+};
 
-    // Background with gauntlet's bg color
+// Shared visual chrome for a gauntlet row (published or staged): background
+// layers, icon placeholder, name label + shadow, description box, and an
+// empty action menu for the caller to fill with row-specific buttons.
+static RowChrome buildRowChrome(
+    float listWidth, ccColor3B nodeColor, ccColor3B nameColor,
+    std::string const& name, std::string const& description
+) {
+    auto row = CCNode::create();
+    row->setContentSize({listWidth, 60});
+
+    // Background with gauntlet's node color
     auto accent1 = CCScale9Sprite::create("square.png");
     accent1->setContentSize(row->getContentSize());
-    accent1->setColor(g.nodeColor);
+    accent1->setColor(nodeColor);
     accent1->setAnchorPoint({0, 0});
     row->addChild(accent1);
 
@@ -483,37 +495,30 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto accent2 = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
     accent2->setScaleX(2.5);
     accent2->setScaleY(0.475);
-    accent2->setColor(g.nameColor);
+    accent2->setColor(nameColor);
     accent2->setOpacity(120);
     accent2->setAnchorPoint({1, 0});
     accent2->setPosition({row->getContentWidth(), 0});
     row->addChild(accent2);
 
-    // Icon placeholder - filled async below
+    // Icon placeholder - filled async by loadRowIcon()
     auto iconNode = CCNode::create();
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
     iconNode->setPosition({30, row->getContentHeight() / 2});
     iconNode->setAnchorPoint({0.5f, 0.5f});
-
-    // auto loadingIcon = LoadingCircle::create();
-    // loadingIcon->setID("loading-circle");
-    // loadingIcon->setPosition(iconNode->getContentSize() / 2);
-    // loadingIcon->setContentSize({50, 50});
-    // loadingIcon->setOpacity(120);
-    // loadingIcon->setAnchorPoint({0.5f, 0.5f});
-    // iconNode->addChild(loadingIcon);
     row->addChild(iconNode);
 
     // Name with gauntlet's name color
-    auto nameLabel = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
+    auto nameLabel = CCLabelBMFont::create(fmt::format("{} Gauntlet", name).c_str(), "bigFont.fnt");
     nameLabel->setScale(0.575);
-    nameLabel->setColor(g.nameColor);
+    nameLabel->setID("gauntlet-name");
+    nameLabel->setColor(nameColor);
     nameLabel->setAnchorPoint({0, 0.5f});
     nameLabel->setPosition({58, row->getContentHeight() / 2 + 17.5f});
     row->addChild(nameLabel, 1);
 
-    auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
+    auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", name).c_str(), "bigFont.fnt");
     nameShadow->setScale(0.575);
     nameShadow->setID("gauntlet-name-shadow");
     nameShadow->setColor({0, 0, 0});
@@ -530,8 +535,8 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     descBox->setOpacity(80);
     row->addChild(descBox);
 
-    auto description = TextArea::create(
-        g.description,
+    auto descriptionArea = TextArea::create(
+        description,
         "chatFont.fnt",
         0.5,
         160,
@@ -539,17 +544,66 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
         7.5,
         false
     );
-    description->setAnchorPoint({0, 0});
-    description->setContentSize({180, 20});
-    description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
-    row->addChild(description);
+    descriptionArea->setAnchorPoint({0, 0});
+    descriptionArea->setContentSize({180, 20});
+    descriptionArea->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
+    row->addChild(descriptionArea);
 
-    // Buttons - local menu, not m_actionMenu
-    int gid = g.id;
     auto actionMenu = CCMenu::create();
     actionMenu->setAnchorPoint({1, 0.5f});
     actionMenu->setPosition({row->getContentWidth() - 12, row->getContentHeight() / 2});
     actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
+    row->addChild(actionMenu);
+
+    return {row, iconNode, actionMenu};
+}
+
+void GauntletManagerPopup::loadRowIcon(CCNode* iconNode, std::string const& iconURL) {
+    if (iconURL.empty()) return;
+
+    m_rowIconHolders.emplace_back();
+    m_rowIconHolders.back().spawn(
+        web::WebRequest().get(iconURL),
+        [iconNode](web::WebResponse res) {
+            if (!res.ok()) return;
+            auto bytes = res.data();
+            queueInMainThread([iconNode, bytes]() {
+                if (!iconNode) return;
+                auto img = new CCImage();
+                if (!img->initWithImageData(
+                        const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                    delete img; return;
+                }
+                auto tex = new CCTexture2D();
+                tex->initWithImage(img);
+                delete img;
+                auto icon = CCSprite::createWithTexture(tex);
+                auto iconShadow = CCSprite::createWithTexture(tex);
+                tex->release();
+                icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
+                icon->setPosition(iconNode->getContentSize() / 2);
+                icon->setAnchorPoint({0.5f, 0.5f});
+                iconShadow->setScaleX(icon->getScaleX());
+                iconShadow->setScaleY(icon->getScaleY() * 1.2);
+                iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
+                iconShadow->setAnchorPoint({0.5f, 0.5f});
+                iconShadow->setColor({0, 0, 0});
+                iconShadow->setOpacity(50);
+                if (auto ph = iconNode->getChildByID("icon-placeholder"))
+                    ph->removeFromParent();
+                iconNode->addChild(icon, 1);
+                iconNode->addChild(iconShadow, 0);
+            });
+        }
+    );
+}
+
+void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
+    auto chrome = buildRowChrome(
+        m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
+    );
+
+    int gid = g.id;
 
     // Check if this gauntlet has a staged update pending
     int stagedIndex = -1;
@@ -562,64 +616,25 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
         updateSpr->setScale(0.85f);
         auto updateBtn = CCMenuItemExt::createSpriteExtra(updateSpr,
             [this, stagedIndex](CCMenuItemSpriteExtra*) { onPushStaged(stagedIndex); });
-        actionMenu->addChild(updateBtn);
+        chrome.actionMenu->addChild(updateBtn);
     }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
         [this, gid](CCMenuItemSpriteExtra*) { onEdit(gid); });
-    actionMenu->addChild(editBtn);
+    chrome.actionMenu->addChild(editBtn);
 
     auto delSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
     delSpr->setScale(0.85f);
     auto delBtn = CCMenuItemExt::createSpriteExtra(delSpr,
         [this, gid](CCMenuItemSpriteExtra*) { onDelete(gid); });
-    actionMenu->addChild(delBtn);
+    chrome.actionMenu->addChild(delBtn);
 
-    actionMenu->updateLayout();
-    row->addChild(actionMenu);
+    chrome.actionMenu->updateLayout();
+    m_gauntletList->addChild(chrome.row);
 
-    m_gauntletList->addChild(row);
-
-    // Async icon load
-    if (!g.iconURL.empty()) {
-        m_rowIconHolders.emplace_back();
-        m_rowIconHolders.back().spawn(
-            web::WebRequest().get(g.iconURL),
-            [iconNode](web::WebResponse res) {
-                if (!res.ok()) return;
-                auto bytes = res.data();
-                queueInMainThread([iconNode, bytes]() {
-                    if (!iconNode) return;
-                    auto img = new CCImage();
-                    if (!img->initWithImageData(
-                            const_cast<unsigned char*>(bytes.data()), bytes.size())) {
-                        delete img; return;
-                    }
-                    auto tex = new CCTexture2D();
-                    tex->initWithImage(img);
-                    delete img;
-                    auto icon = CCSprite::createWithTexture(tex);
-                    auto iconShadow = CCSprite::createWithTexture(tex);
-                    tex->release();
-                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
-                    icon->setPosition(iconNode->getContentSize() / 2);
-                    icon->setAnchorPoint({0.5f, 0.5f});
-                    iconShadow->setScaleX(icon->getScaleX());
-                    iconShadow->setScaleY(icon->getScaleY() * 1.2);
-                    iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
-                    iconShadow->setAnchorPoint({0.5f, 0.5f});
-                    iconShadow->setColor({0, 0, 0});
-                    iconShadow->setOpacity(50);
-                    if (auto ph = iconNode->getChildByID("icon-placeholder"))
-                        ph->removeFromParent();
-                    iconNode->addChild(icon, 1);
-                    iconNode->addChild(iconShadow, 0);
-                });
-            }
-        );
-    }
+    loadRowIcon(chrome.iconNode, g.iconURL);
 }
 
 void GauntletManagerPopup::onEdit(int gauntletId) {
@@ -691,162 +706,42 @@ void GauntletManagerPopup::onEditStaged(int index) {
 }
 
 void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) {
-    auto gauntletListItem = CCNode::create();
-    gauntletListItem->setContentSize({m_gauntletList->getContentWidth(), 60});
-
-    // Accent 1 background
-    auto accent1 = CCScale9Sprite::create("square.png");
-    accent1->setContentSize(gauntletListItem->getContentSize());
-    accent1->setColor(g.nodeColor);
-    // accent1->setOpacity(120);
-    accent1->setAnchorPoint({0, 0});
-    gauntletListItem->addChild(accent1);
-
-    // Accent 2 gradient overlay
-    auto accent2 = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    accent2->setScaleX(2.5);
-    accent2->setScaleY(0.475);
-    accent2->setColor(g.nameColor);
-    accent2->setOpacity(120);
-    // accent2->setOpacity(120);
-    accent2->setAnchorPoint({1, 0});
-    accent2->setPosition({gauntletListItem->getContentWidth(), 0});
-    gauntletListItem->addChild(accent2);
-
-    // Icon placeholder - filled async below
-    auto iconNode = CCNode::create();
-    iconNode->setID("icon-node");
-    iconNode->setContentSize({50, 50});
-    iconNode->setPosition({30, gauntletListItem->getContentHeight() / 2});
-    iconNode->setAnchorPoint({0.5, 0.5});
-
-    // auto loadingIcon = LoadingCircle::create();
-    // loadingIcon->setID("loading-circle");
-    // loadingIcon->setPosition(iconNode->getContentSize() / 2);
-    // loadingIcon->setContentSize({50, 50});
-    // loadingIcon->setOpacity(120);
-    // loadingIcon->setAnchorPoint({0.5, 0.5});
-    // iconNode->addChild(loadingIcon);
-    gauntletListItem->addChild(iconNode);
+    auto chrome = buildRowChrome(
+        m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
+    );
 
     // STAGED / update badge - distinguishes a brand-new gauntlet from a pending edit to a published one
     std::string badgeFrame = g.id != 0 ? "GR_addedTag_001.png"_spr : "GR_stagedTag_001.png"_spr;
     auto badge = CCSprite::createWithSpriteFrameName(badgeFrame.c_str());
     badge->setScale(0.35);
-    // badge->setColor({255, 220, 50});
     badge->setAnchorPoint({0.5, 1});
-    badge->setPosition({10, gauntletListItem->getContentHeight()});
-    gauntletListItem->addChild(badge);
-
-    // Name
-    auto nameLabel = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
-    nameLabel->setScale(0.575);
-    nameLabel->setID("gauntlet-name");
-    nameLabel->setColor(g.nameColor);
-    nameLabel->setAnchorPoint({0, 0.5});
-    nameLabel->setPosition({58, gauntletListItem->getContentHeight() / 2 + 17.5f});
-    gauntletListItem->addChild(nameLabel, 1);
-
-    auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", g.name).c_str(), "bigFont.fnt");
-    nameShadow->setScale(0.575);
-    nameShadow->setID("gauntlet-name-shadow");
-    nameShadow->setColor({0, 0, 0});
-    nameShadow->setOpacity(60);
-    nameShadow->setAnchorPoint({0, 0.5});
-    nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
-    gauntletListItem->addChild(nameShadow, 0);
-
-    auto descBox = NineSlice::create("square02b_small.png");
-    descBox->setContentSize({185, 25});
-    descBox->setAnchorPoint({0, 0});
-    descBox->setPosition(nameLabel->getPositionX(), gauntletListItem->getContentHeight() / 2 - 22.5);
-    descBox->setColor({0, 0, 0});
-    descBox->setOpacity(80);
-    gauntletListItem->addChild(descBox);
-
-    auto description = TextArea::create(
-        g.description,
-        "chatFont.fnt",
-        0.5,
-        160,
-        {0, 0.5},
-        7.5,
-        false
-    );
-    description->setAnchorPoint({0, 0});
-    description->setContentSize({180, 20});
-    description->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
-    gauntletListItem->addChild(description);
-
-    // Buttons - local menu
-    auto actionMenu = CCMenu::create();
-    actionMenu->setAnchorPoint({1, 0.5});
-    actionMenu->setPosition({gauntletListItem->getContentWidth() - 12, gauntletListItem->getContentHeight() / 2});
-    actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
+    badge->setPosition({10, chrome.row->getContentHeight()});
+    chrome.row->addChild(badge);
 
     if (isReadyToPush(g)) {
         auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
         pushSpr->setScale(0.85f);
         auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
             [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
-        actionMenu->addChild(pushBtn);
+        chrome.actionMenu->addChild(pushBtn);
     }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
         [this, index](CCMenuItemSpriteExtra*) { onEditStaged(index); });
-    actionMenu->addChild(editBtn);
+    chrome.actionMenu->addChild(editBtn);
 
     auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
     deleteSpr->setScale(0.85f);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
         [this, index](CCMenuItemSpriteExtra*) { onDeleteStaged(index); });
-    actionMenu->addChild(deleteBtn);
+    chrome.actionMenu->addChild(deleteBtn);
 
-    actionMenu->updateLayout();
-    gauntletListItem->addChild(actionMenu);
+    chrome.actionMenu->updateLayout();
+    m_gauntletList->addChild(chrome.row);
 
-    m_gauntletList->addChild(gauntletListItem);
-
-    // Async icon load
-    if (!g.iconURL.empty()) {
-        m_rowIconHolders.emplace_back();
-        m_rowIconHolders.back().spawn(
-            web::WebRequest().get(g.iconURL),
-            [iconNode](web::WebResponse res) {
-                if (!res.ok()) return;
-                auto bytes = res.data();
-                queueInMainThread([iconNode, bytes]() {
-                    if (!iconNode) return;
-                    auto img = new CCImage();
-                    if (!img->initWithImageData(
-                            const_cast<unsigned char*>(bytes.data()), bytes.size())) {
-                        delete img; return;
-                    }
-                    auto tex = new CCTexture2D();
-                    tex->initWithImage(img);
-                    delete img;
-                    auto icon = CCSprite::createWithTexture(tex);
-                    auto iconShadow = CCSprite::createWithTexture(tex);
-                    tex->release();
-                    icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
-                    icon->setPosition(iconNode->getContentSize() / 2);
-                    icon->setAnchorPoint({0.5, 0.5});
-                    iconShadow->setScaleX(icon->getScaleX());
-                    iconShadow->setScaleY(icon->getScaleY() * 1.2);
-                    iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
-                    iconShadow->setAnchorPoint({0.5, 0.5});
-                    iconShadow->setColor({0, 0, 0});
-                    iconShadow->setOpacity(50);
-                    if (auto ph = iconNode->getChildByID("icon-placeholder"))
-                        ph->removeFromParent();
-                    iconNode->addChild(icon, 1);
-                    iconNode->addChild(iconShadow, 0);
-                });
-            }
-        );
-    }
+    loadRowIcon(chrome.iconNode, g.iconURL);
 }
 
 void GauntletManagerPopup::onPushStaged(int index) {

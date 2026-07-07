@@ -1,5 +1,6 @@
 #include "CustomGauntletLayer.hpp"
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 
 using namespace geode::prelude;
 
@@ -349,20 +350,19 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
     m_levelsMenu->setPosition({0, -14});
     addChild(m_levelsMenu, 4);
 
-    auto gsm = GameStatsManager::sharedState();
-
     for (int i = 0; i < 5; i++) {
         auto& slotData = m_data.levels[i];
         auto obj = levels->objectAtIndex(i);
         auto level = typeinfo_cast<GJGameLevel*>(obj);
         // if level is null (placeholder) we still show a locked/empty slot
 
-        bool hasCompleted = level && gsm->hasCompletedLevel(level);
+        // "Completed" here means the crystal reward was claimed (i.e. beaten
+        // through the gauntlet), not just completed some other way.
+        bool hasCompleted = CustomGauntletManager::get()->isLevelRewardClaimed(slotData.id);
         bool isLocked = false;
         if (i > 0) {
-            auto prevObj = levels->objectAtIndex(i - 1);
-            auto prevLevel = typeinfo_cast<GJGameLevel*>(prevObj);
-            isLocked = !prevLevel || !gsm->hasCompletedLevel(prevLevel);
+            auto& prevSlotData = m_data.levels[i - 1];
+            isLocked = !CustomGauntletManager::get()->isLevelRewardClaimed(prevSlotData.id);
         }
 
         // Island Node
@@ -545,6 +545,10 @@ void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto btn   = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto level = static_cast<GJGameLevel*>(btn->getUserObject());
     if (!level) return;
+
+    // Arms the next PlayLayer as a gauntlet attempt, so completing it counts
+    // toward the crystal reward / gauntlet progress (see PlayLayer's hook).
+    CustomGauntletManager::get()->markPendingGauntletAttempt(level->m_levelID.value());
 
     auto lil   = LevelInfoLayer::create(level, false);
     auto scene  = CCScene::create();

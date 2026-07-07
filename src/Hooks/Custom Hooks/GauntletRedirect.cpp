@@ -1,7 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GauntletLayer.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
-#include "../GauntletLayer/GauntletLayer.hpp"
+#include "../../GauntletLayer/GauntletLayer.hpp"
 
 using namespace geode::prelude;
 

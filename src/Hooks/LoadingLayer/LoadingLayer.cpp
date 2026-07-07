@@ -1,6 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/LoadingLayer.hpp>
-#include "../Managers/GauntletManagerCache.hpp"
+#include "../../Managers/GauntletManagerCache.hpp"
 
 using namespace geode::prelude;
 

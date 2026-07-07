@@ -158,3 +158,44 @@ void CustomGauntletManager::clearCache() {
     m_cache.clear();
     m_hasCached = false;
 }
+
+// Player progress
+
+void CustomGauntletManager::markPendingGauntletAttempt(int levelID) {
+    m_pendingGauntletLevelID = levelID;
+}
+
+bool CustomGauntletManager::consumePendingGauntletAttempt(int levelID) {
+    bool matches = m_pendingGauntletLevelID != 0 && m_pendingGauntletLevelID == levelID;
+    m_pendingGauntletLevelID = 0;
+    return matches;
+}
+
+bool CustomGauntletManager::isLevelRewardClaimed(int levelID) const {
+    auto claimed = Mod::get()->getSavedValue<matjson::Value>(
+        "claimed-level-rewards", matjson::Value::array()
+    );
+    if (!claimed.isArray()) return false;
+    for (auto const& id : claimed) {
+        if (id.asInt().unwrapOr(0) == levelID) return true;
+    }
+    return false;
+}
+
+void CustomGauntletManager::markLevelRewardClaimed(int levelID) {
+    auto claimed = Mod::get()->getSavedValue<matjson::Value>(
+        "claimed-level-rewards", matjson::Value::array()
+    );
+    if (!claimed.isArray()) claimed = matjson::Value::array();
+    claimed.push(levelID);
+    Mod::get()->setSavedValue("claimed-level-rewards", claimed);
+}
+
+int CustomGauntletManager::getCrystalTotal() const {
+    return Mod::get()->getSavedValue<int>("crystal-total", 0);
+}
+
+void CustomGauntletManager::addCrystals(int amount) {
+    if (amount <= 0) return;
+    Mod::get()->setSavedValue("crystal-total", getCrystalTotal() + amount);
+}

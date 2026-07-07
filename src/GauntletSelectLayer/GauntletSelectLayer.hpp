@@ -34,6 +34,7 @@ protected:
     void buildDecorations();
     void buildMenus();
     void buildGauntletNodes(cocos2d::CCArray* gauntlets);
+    void updateCrystalLabel();
 
     // Navigation
     void setupScrollMode();
@@ -65,6 +66,7 @@ protected:
     CCSprite* m_betterTitle = nullptr;
     CCNode* m_loadingCircle = nullptr;
     CCMenuItemSpriteExtra* m_refreshButton = nullptr;
+    CCLabelBMFont* m_crystalLabel = nullptr;
 
     // The server-hosted custom gauntlet list is built once (kicked off from
     // init(), same as the vanilla list) and kept alive for the lifetime of
@@ -84,6 +86,5 @@ protected:
     bool m_exiting = false;
     cocos2d::CCArray* m_gauntletPacks = nullptr;
 
-    async::TaskHolder<Result<std::string>> m_listener;
     async::TaskHolder<web::WebResponse> m_fetchHolder;
 };

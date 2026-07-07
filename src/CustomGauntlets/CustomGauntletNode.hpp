@@ -8,9 +8,6 @@ using namespace geode::prelude;
 using GauntletTapCallback = std::function<void(CustomGauntletData const&)>;
 
 class CustomGauntletNode : public CCMenuItemSpriteExtra {
-struct Fields {
-
-};
 public:
     static CustomGauntletNode* create(
         CustomGauntletData const& data,

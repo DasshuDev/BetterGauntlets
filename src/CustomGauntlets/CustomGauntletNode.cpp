@@ -1,4 +1,5 @@
 #include "CustomGauntletNode.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 
 using namespace geode::prelude;
 
@@ -107,15 +108,12 @@ bool CustomGauntletNode::init(
     m_rewardNode->addChild(m_rewardLabel, 1);
     m_rewardNode->addChild(m_rewardLabelShadow, 0);
 
-    // Completion Badge
+    // Completion Badge - counts levels completed *through the gauntlet*
+    // (crystal reward claimed), not just completed some other way.
     int completed = 0;
-    auto glm = GameLevelManager::sharedState();
-    auto gsm = GameStatsManager::sharedState();
     for (auto const& slot : data.levels) {
         if (slot.id == 0) continue;
-        auto saved = glm->getSavedLevel(slot.id);
-        if (!saved) saved = glm->getSavedGauntletLevel(slot.id);
-        if (saved && gsm->hasCompletedLevel(saved))
+        if (CustomGauntletManager::get()->isLevelRewardClaimed(slot.id))
             completed++;
     }
 

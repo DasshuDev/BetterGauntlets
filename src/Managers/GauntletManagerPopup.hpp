@@ -36,6 +36,7 @@ protected:
     void buildGauntletList();
     void buildGauntletRow(CustomGauntletData const& g);
     void buildStagedRow(GauntletEditData const& g, int index);
+    void loadRowIcon(CCNode* iconNode, std::string const& iconURL);
     void startArgonAuth();
     void fetchGauntlets();
     void saveStaged();

@@ -246,7 +246,7 @@ void BetterGauntletSelectLayer::buildMenus() {
         backMenu->addChild(controllerBtn);
     }
 
-    // Top-right menu 
+    // Top-right menu
     auto TRMenu = CCMenu::create();
     TRMenu->setID("top-right-menu");
     TRMenu->setPosition(director->getScreenRight() - 24, 254.5);
@@ -342,6 +342,15 @@ void BetterGauntletSelectLayer::buildMenus() {
     toggleSpr->setScale(0.65);
     toggleSpr->setOpacity(80);
     topMenu->addChild(toggleSpr);
+
+    // Crystal counter
+    m_crystalLabel = CCLabelBMFont::create("0", "bigFont.fnt");
+    m_crystalLabel->setID("crystal-counter-label"_spr);
+    m_crystalLabel->setAnchorPoint({0.5, 0.5});
+    m_crystalLabel->setAlignment(kCCTextAlignmentLeft);
+    m_crystalLabel->setScale(0.6f);
+    topMenu->addChild(m_crystalLabel);
+    updateCrystalLabel();
 }
 
 // Level loading delegates 
@@ -585,6 +594,16 @@ void BetterGauntletSelectLayer::loadScrollPos() {
 void BetterGauntletSelectLayer::onEnterTransitionDidFinish() {
     CCLayer::onEnterTransitionDidFinish();
     m_exiting = false;
+
+    // This layer stays alive underneath the pushed LevelInfoLayer/PlayLayer
+    // scene stack rather than being recreated, so refresh here to pick up
+    // crystals earned while the player was away completing a level.
+    updateCrystalLabel();
+}
+
+void BetterGauntletSelectLayer::updateCrystalLabel() {
+    if (!m_crystalLabel) return;
+    m_crystalLabel->setString(fmt::format("{}", CustomGauntletManager::get()->getCrystalTotal()).c_str());
 }
 
 void BetterGauntletSelectLayer::onPlay(CCObject* sender) {

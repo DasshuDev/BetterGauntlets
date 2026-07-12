@@ -6,9 +6,6 @@ using namespace geode::prelude;
 
 namespace {
 
-// The single source of truth for how many crystals a gauntlet level is worth.
-// Looks up levelID across every cached gauntlet's level slots; returns false
-// if it isn't part of any custom gauntlet.
 bool findGauntletLevelStars(int levelID, int& outStars) {
     for (auto const& gauntlet : CustomGauntletManager::get()->getCached()) {
         for (auto const& slot : gauntlet.levels) {
@@ -36,11 +33,7 @@ bool GRPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateObject
 void GRPlayLayer::levelComplete() {
     PlayLayer::levelComplete();
 
-    // Only completions reached via the gauntlet screen count - finishing the
-    // same level some other way (search, saved levels, etc.) grants nothing.
     if (!m_fields->m_isGauntletAttempt) return;
-
-    // Practice mode never saves real progress/currency - don't grant here either.
     if (m_isPracticeMode || !m_level) return;
 
     int levelID = m_level->m_levelID.value();

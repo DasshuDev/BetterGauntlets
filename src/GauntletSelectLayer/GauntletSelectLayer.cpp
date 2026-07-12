@@ -48,8 +48,6 @@ bool BetterGauntletSelectLayer::init() {
     setKeypadEnabled(true);
     setKeyboardEnabled(true);
 
-    // Re-check manager status every time this layer is entered, so the
-    // manage button reflects newly added/removed managers without a restart.
     GauntletManagerCache::get()->refresh();
 
     auto GDUtils = Loader::get()->getLoadedMod("gdutilsdevs.gdutils");
@@ -58,14 +56,12 @@ bool BetterGauntletSelectLayer::init() {
         if (settingVal) GDUtils->setSettingValue<bool>("gauntletDesign", false);
     }
 
-    // Preload the gauntlet sprite sheet (vanilla loads this in its own init)
     CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("GauntletSheet.plist");
 
     buildBackground();
     buildDecorations();
     buildMenus();
 
-    // Loading spinner (avoid LoadingCircle::show - it corrupts the scene tree) 
     auto winSize = CCDirector::sharedDirector()->getWinSize();
     auto spinner = CCSprite::create("loadingCircle.png");
     spinner->setBlendFunc({GL_SRC_ALPHA, GL_ONE});
@@ -79,13 +75,8 @@ bool BetterGauntletSelectLayer::init() {
     GameLevelManager::get()->m_levelManagerDelegate = this;
     GameLevelManager::get()->getGauntlets();
 
-    // Kick off the custom (server-hosted) gauntlet list fetch in parallel so
-    // it's ready by the time the player toggles to it. Built once, hidden
-    // until toggled - see buildCustomList()/populateCustomList().
     buildCustomList();
 
-    // Resolved once and added immediately if the player is a manager - not
-    // tied to the custom-list toggle (see m_managerButton in the header).
     checkManagerStatus();
 
     return true;
@@ -409,12 +400,6 @@ void BetterGauntletSelectLayer::buildGauntletNodes(CCArray* gauntlets) {
         auto gauntletNode = GauntletNode::create(pack);
         if (!gauntletNode) continue;
 
-        // GauntletNode is a raw CCNode with no content size set - sprites
-        // overflow its bounds.  Give it a real size so the wrapping button
-        // has a clickable hit area, and kill any internal menus that would
-        // swallow touches before ours.
-
-        // Disable internal menus/buttons created by generateNode()
         for (auto* child : CCArrayExt<CCNode*>(gauntletNode->getChildren())) {
             if (auto menu = typeinfo_cast<CCMenu*>(child)) {
                 menu->setEnabled(false);
@@ -595,9 +580,6 @@ void BetterGauntletSelectLayer::onEnterTransitionDidFinish() {
     CCLayer::onEnterTransitionDidFinish();
     m_exiting = false;
 
-    // This layer stays alive underneath the pushed LevelInfoLayer/PlayLayer
-    // scene stack rather than being recreated, so refresh here to pick up
-    // crystals earned while the player was away completing a level.
     updateCrystalLabel();
 }
 
@@ -607,21 +589,84 @@ void BetterGauntletSelectLayer::updateCrystalLabel() {
 }
 
 void BetterGauntletSelectLayer::onPlay(CCObject* sender) {
-    if (m_exiting) return;
-    m_exiting = true;
-    saveScrollPos();
+    if (m_exiting || m_playBlocked) return;
+    GameManager* gm = GameManager::sharedState();
 
     auto btn = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto pack = static_cast<GJMapPack*>(btn->getUserObject());
-    if (!pack) { m_exiting = false; return; }
+    if (!pack) return;
 
     GauntletType type = static_cast<GauntletType>(pack->m_packID);
+
+    if (type == GauntletType::Chaos) {
+        m_locked = !gm->getUGV("19"); // Spoken to Demon Guardian
+    } else if (type == GauntletType::Demon) {
+        m_locked = !gm->getUGV("13"); // Demon Guardian freed
+    } else {
+        m_locked = false;
+    }
+
+    if (m_locked) {
+        m_playBlocked = true;
+        Notification::create("This Gauntlet is locked!", NotificationIcon::Error, 1.5)->show();
+        this->runAction(CCSequence::create(
+            CCDelayTime::create(1.5f),
+            CCCallFunc::create(this, callfunc_selector(BetterGauntletSelectLayer::unblockPlay)),
+            nullptr
+        ));
+        return;
+    }
+
+    m_exiting = true;
+    saveScrollPos();
+
+    logMembers(pack);
+
     auto scene = BetterGauntletLayer::scene(type);
     if (scene) {
         CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
     } else {
         m_exiting = false;
     }
+}
+
+void BetterGauntletSelectLayer::unblockPlay() {
+    m_playBlocked = false;
+}
+
+void BetterGauntletSelectLayer::logMembers(GJMapPack* pack) {
+    log::debug(
+        "[GauntletSelectLayer] --- opening gauntlet packID={} ---",
+        pack ? pack->m_packID : -1
+    );
+
+    log::debug("  m_customScrollLayer: {}", (void*)m_customScrollLayer);
+    log::debug("  m_customScrollBar: {}", (void*)m_customScrollBar);
+    log::debug("  m_gauntletBtnContainer: {}", (void*)m_gauntletBtnContainer);
+    log::debug("  m_sliderLabel: {}", (void*)m_sliderLabel);
+    log::debug("  m_vanillaTitle: {}", (void*)m_vanillaTitle);
+    log::debug("  m_betterTitle: {}", (void*)m_betterTitle);
+    log::debug("  m_loadingCircle: {}", (void*)m_loadingCircle);
+    log::debug("  m_refreshButton: {}", (void*)m_refreshButton);
+    log::debug("  m_crystalLabel: {}", (void*)m_crystalLabel);
+    log::debug("  m_customGauntletScrollLayer: {}", (void*)m_customGauntletScrollLayer);
+    log::debug("  m_customGauntletScrollBar: {}", (void*)m_customGauntletScrollBar);
+    log::debug("  m_customListLoadingCircle: {}", (void*)m_customListLoadingCircle);
+    log::debug("  m_managerButton: {}", (void*)m_managerButton);
+
+    log::debug("  m_showingCustomList: {}", m_showingCustomList);
+    log::debug("  m_exiting: {}", m_exiting);
+    log::debug("  m_playBlocked: {}", m_playBlocked);
+    log::debug("  m_locked: {}", m_locked);
+
+    log::debug(
+        "  m_gauntletPacks: {} (count={})",
+        (void*)m_gauntletPacks, m_gauntletPacks ? m_gauntletPacks->count() : 0
+    );
+    log::debug("  m_fetchHolder.isPending(): {}", m_fetchHolder.isPending());
+
+    log::debug("  s_scrollLocation (static): {}", s_scrollLocation);
+    log::debug("  s_showCustomList (static): {}", s_showCustomList);
 }
 
 void BetterGauntletSelectLayer::keyBackClicked() {

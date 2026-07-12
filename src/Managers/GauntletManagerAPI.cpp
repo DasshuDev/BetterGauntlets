@@ -73,10 +73,10 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     body["accent_color2_b"] = (int)data.accentColor2.b;
 
     // info card
-    body["info_date"]      = data.infoDate;
-    body["info_version"]   = data.infoVersion;
-    body["info_suggester"] = data.infoSuggester;
-    body["info_acc_id"]    = data.infoAccID;
+    body["info_date"]       = data.infoDate;
+    body["info_version"]    = data.infoVersion;
+    body["info_suggester"]  = data.infoSuggester;
+    body["info_acc_id"]     = data.infoAccID;
 
     return body;
 }
@@ -112,6 +112,13 @@ web::WebFuture GauntletManagerAPI::remove(int id) {
         .header("Authorization", "Bearer " + m_token)
         .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
         .send("DELETE", baseURL() + fmt::format("/manage?id={}", id));
+}
+
+web::WebFuture GauntletManagerAPI::setFeatured(int id) {
+    return web::WebRequest()
+        .header("Authorization", "Bearer " + m_token)
+        .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))
+        .send("PATCH", baseURL() + fmt::format("/manage?id={}", id));
 }
 
 web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path) {

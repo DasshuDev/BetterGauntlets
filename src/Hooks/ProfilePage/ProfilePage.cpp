@@ -11,9 +11,6 @@ using namespace alpha::badgify;
 class $modify(GRProfilePage, ProfilePage) {
     bool init(int accountID, bool ownProfile) {
         if (!ProfilePage::init(accountID, ownProfile)) return false;
-
-        // Re-fetch the manager list on every profile load/reload so newly
-        // added (or removed) managers show up without restarting the game.
         GauntletManagerCache::get()->refresh();
 
         return true;
@@ -21,7 +18,7 @@ class $modify(GRProfilePage, ProfilePage) {
 };
 
 $execute {
-    alpha::badgify::registerBadge(
+    registerBadge(
         "GR_badgeManager_001.png"_spr, 
         "Gauntlet Manager", 
         "This user oversees and moderates <cc>Better Gauntlets</c>' custom Gauntlets. They can <cg>add</c>, <cj>edit</c>, and <cr>delete</c> gauntlets added by the mod. This does not apply to the <cy>Lost Gauntlets</c>, which are hosted exclusively by <co>RobTop</c>.", 

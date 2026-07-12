@@ -39,6 +39,7 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
     data.infoVersion   = g["info_version"].asString().unwrapOr("");
     data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
     data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
+    data.featured      = g["featured"].asBool().unwrapOr(false);
 
     if (g.contains("levels") && g["levels"].isArray()) {
         int i = 0;
@@ -58,8 +59,6 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
 static std::vector<CustomGauntletData> parseGauntletsResponse(matjson::Value const& json) {
     std::vector<CustomGauntletData> result;
 
-    // Server returns levels as a separate top-level array keyed by gauntlet_id.
-    // Group them so parseGauntletJson can find them nested under each gauntlet.
     std::unordered_map<int, std::vector<matjson::Value const*>> levelsByGauntlet;
     if (json.contains("levels") && json["levels"].isArray()) {
         for (auto const& lvl : json["levels"]) {
@@ -474,9 +473,6 @@ struct RowChrome {
     CCMenu* actionMenu;
 };
 
-// Shared visual chrome for a gauntlet row (published or staged): background
-// layers, icon placeholder, name label + shadow, description box, and an
-// empty action menu for the caller to fill with row-specific buttons.
 static RowChrome buildRowChrome(
     float listWidth, ccColor3B nodeColor, ccColor3B nameColor,
     std::string const& name, std::string const& description
@@ -618,6 +614,18 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
             [this, stagedIndex](CCMenuItemSpriteExtra*) { onPushStaged(stagedIndex); });
         chrome.actionMenu->addChild(updateBtn);
     }
+
+    auto featureSpr = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
+    featureSpr->setScale(0.85f);
+    if (g.featured) {
+        featureSpr->setColor({255, 220, 50});
+    } else {
+        featureSpr->setColor({120, 120, 120});
+        featureSpr->setOpacity(160);
+    }
+    auto featureBtn = CCMenuItemExt::createSpriteExtra(featureSpr,
+        [this, gid](CCMenuItemSpriteExtra*) { onToggleFeatured(gid); });
+    chrome.actionMenu->addChild(featureBtn);
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
@@ -813,6 +821,33 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
                     Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
                 }
             );
+        }
+    );
+}
+
+void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
+    auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
+        [gauntletId](auto const& g) { return g.id == gauntletId; });
+    bool wasFeatured = it != m_gauntlets.end() && it->featured;
+
+    m_loadingCircle->setVisible(true);
+    m_featureHolder.spawn(
+        GauntletManagerAPI::get()->setFeatured(gauntletId),
+        [this, gauntletId, wasFeatured](web::WebResponse res) {
+            m_loadingCircle->setVisible(false);
+            if (!res.ok()) {
+                log::error("Feature failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
+                Notification::create(fmt::format("Failed to feature. Err {}", res.code()), NotificationIcon::Error)->show();
+                return;
+            }
+            // Server now toggles: clicking an already-featured gauntlet
+            // unfeatures it instead of re-featuring it.
+            for (auto& g : m_gauntlets) g.featured = !wasFeatured && (g.id == gauntletId);
+            buildGauntletList();
+            Notification::create(
+                wasFeatured ? "Gauntlet unfeatured." : "Gauntlet featured.",
+                NotificationIcon::Success
+            )->show();
         }
     );
 }

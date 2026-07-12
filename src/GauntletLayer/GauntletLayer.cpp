@@ -87,7 +87,7 @@ bool BetterGauntletLayer::init(GauntletType type) {
         this->addChild(m_backgroundSprite);
     }
 
-    // Title (shadow is drawn first, then main label on top) 
+    // Title
     std::string gauntletName = GauntletNode::nameForType(m_gauntletType);
     std::string titleStr = "The " + gauntletName + " Gauntlet";
 

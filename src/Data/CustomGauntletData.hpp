@@ -35,6 +35,8 @@ struct CustomGauntletData {
     std::string infoSuggester;
     int         infoAccID    = 0;
 
+    bool        featured     = false;
+
     // Parse from a single JSON object
     static CustomGauntletData fromJson(matjson::Value const& obj) {
         CustomGauntletData d;
@@ -64,6 +66,7 @@ struct CustomGauntletData {
         d.infoVersion   = obj["info_version"].asString().unwrapOr("");
         d.infoSuggester = obj["info_suggester"].asString().unwrapOr("");
         d.infoAccID     = obj["info_acc_id"].asInt().unwrapOr(0);
+        d.featured      = obj["featured"].asBool().unwrapOr(false);
 
         if (obj.contains("levels") && obj["levels"].isArray()) {
             int i = 0;

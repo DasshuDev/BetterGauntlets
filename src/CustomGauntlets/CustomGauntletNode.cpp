@@ -34,6 +34,29 @@ bool CustomGauntletNode::init(
     node->setAnchorPoint({0.5, 0.5});
     sprite->addChild(node);
 
+    if (data.featured) {
+        auto featuredSprShadow = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
+        featuredSprShadow->setID("featured-badge-shadow"_spr);
+        featuredSprShadow->setScale(0.5f);
+        featuredSprShadow->setColor({0, 0, 0});
+        featuredSprShadow->setOpacity(70);
+        featuredSprShadow->setPosition({
+            node->getPositionX() - node->getContentWidth() / 2 + 16,
+            node->getPositionY() + node->getContentHeight() / 2 - 18
+        });
+        sprite->addChild(featuredSprShadow, 19);
+
+        auto featuredSpr = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
+        featuredSpr->setID("featured-badge"_spr);
+        featuredSpr->setScale(0.5f);
+        featuredSpr->setColor({255, 220, 50});
+        featuredSpr->setPosition({
+            node->getPositionX() - node->getContentWidth() / 2 + 14,
+            node->getPositionY() + node->getContentHeight() / 2 - 16
+        });
+        sprite->addChild(featuredSpr, 20);
+    }
+
     auto ph = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
     ph->setID("icon-placeholder");
     ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2 + 10});

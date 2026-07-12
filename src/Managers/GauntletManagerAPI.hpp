@@ -59,6 +59,9 @@ public:
     web::WebFuture update(GauntletEditData const& data);
     web::WebFuture remove(int id);
 
+    // Mark a gauntlet as the featured one (server unfeatures any previous one)
+    web::WebFuture setFeatured(int id);
+
     // Upload icon file, returns public URL
     web::WebFuture uploadIcon(std::filesystem::path const& path);
 

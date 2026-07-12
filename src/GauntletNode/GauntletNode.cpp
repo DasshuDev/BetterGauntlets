@@ -32,7 +32,7 @@ void RedesignedGauntletNode::generateNode() {
 
     m_fields->m_gradient->setColor(name->getColor());
     m_fields->m_gradient->setOpacity(128);
-    m_fields->m_gradient->setPositionY(-35);
+    m_fields->m_gradient->setPositionY(-34.5);
     m_fields->m_gradient->setScaleX(1.5);
     m_fields->m_gradient->setScaleY(1.65);
     m_fields->m_gradient->setRotation(67);

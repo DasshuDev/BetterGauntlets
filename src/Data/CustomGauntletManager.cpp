@@ -68,7 +68,6 @@ static CustomSlotLevel parseSlotLevel(std::string const& str) {
     return lvl;
 }
 
-// Parse "1:val:2:val:..." into a field map keyed by the integer tags.
 static std::map<int, std::string> parseGDFields(std::string const& entry) {
     std::map<int, std::string> fields;
 
@@ -140,6 +139,8 @@ std::vector<CustomGauntletData> CustomGauntletManager::parse(std::string const& 
             if (info.size() >= 3) d.infoSuggester  = stripPrefix(info[2], "Suggested by: ");
             if (info.size() >= 4) d.infoAccID      = toInt(info[3]);
         }
+
+        if (f.count(17)) d.featured = toInt(f[17]) != 0;
 
         m_cache.push_back(d);
     }

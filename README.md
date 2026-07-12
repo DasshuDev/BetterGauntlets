@@ -13,7 +13,7 @@ The __ultimate__ Gauntlet rewrite; bringing the Gauntlets to life! Truly giving 
 
 ## Recommendations
 These mods are recommended you download to *further enhance* the liveliness of the Gauntlets:
-- **Gauntlets Deluxe** by __ArcticWoof__
+- **Gauntlets Deluxe** by __ArcticWoof__ and __Supernova3339__
 
 ---
 

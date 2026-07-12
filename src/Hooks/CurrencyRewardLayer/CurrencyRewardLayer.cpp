@@ -22,8 +22,6 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
 
     auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-    // Diamonds is the slot we hijack to display crystals - everything else
-    // stays at 0 so no vanilla currency icons ever appear in this popup.
     auto rewardLayer = CurrencyRewardLayer::create(
         0, 0, 0, rewardAmount,
         CurrencySpriteType::Star, 0,
@@ -35,20 +33,11 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
 
     s_activeCrystalLayer = rewardLayer;
 
-    // The layer natively animates the diamonds label ticking up by
-    // `rewardAmount` starting from whatever m_diamonds is set to. Rebase
-    // that starting point to the crystal total *before* this reward, so it
-    // ticks up to the correct post-reward total instead of a real diamond count.
     int totalAfter = CustomGauntletManager::get()->getCrystalTotal();
     rewardLayer->m_particlesAdded = false;
     rewardLayer->m_diamonds = 0;
     rewardLayer->incrementDiamondsCount(totalAfter - rewardAmount);
 
-    // Not a registered sprite frame - it's a standalone PNG, loaded the same
-    // way everywhere else in this codebase. CCSpriteFrameCache::spriteFrameByName()
-    // doesn't return nullptr for an unresolved name here (Geode hands back a
-    // fallback/placeholder frame instead), so checking it first silently
-    // masked the real texture - go straight through CCSprite::create().
     std::string frameName = "GR_crystal_001.png"_spr;
     CCTexture2D* texture = nullptr;
     CCSpriteFrame* displayFrame = nullptr;
@@ -66,8 +55,6 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
     if (rewardLayer->m_currencyBatchNode && texture)
         rewardLayer->m_currencyBatchNode->setTexture(texture);
 
-    // Reskin the flying pickup objects too, and hide the diamond-specific
-    // burst/shine effect since it doesn't suit the crystal icon.
     for (auto sprite : CCArrayExt<CurrencySprite*>(rewardLayer->m_objects)) {
         if (!sprite) continue;
         if (sprite->m_burstSprite) sprite->m_burstSprite->setVisible(false);

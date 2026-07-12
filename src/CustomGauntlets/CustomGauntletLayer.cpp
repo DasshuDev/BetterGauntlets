@@ -263,17 +263,11 @@ void CustomGauntletLayer::loadIslandIcon() {
                         if (auto island = static_cast<CCSprite*>(
                                 levelSpr->getChildByID(fmt::format("island-{}", i).c_str()))) {
                             island->setTexture(tex);
-                            // island->setTextureRect({0, 0,
-                            //    (float)tex->getPixelsWide(),
-                            //    (float)tex->getPixelsHigh()});
                         }
                         if (auto shadow = static_cast<CCSprite*>(
                                 levelSpr->getChildByID(
                                     fmt::format("island-{}-shadow", i).c_str()))) {
                             shadow->setTexture(tex);
-                            // shadow->setTextureRect({0, 0,
-                            //    (float)tex->getPixelsWide(),
-                            //    (float)tex->getPixelsHigh()});
                         }
                     }
                 }
@@ -286,7 +280,6 @@ void CustomGauntletLayer::loadIslandIcon() {
 // Level loader
 
 void CustomGauntletLayer::loadLevels() {
-    // Build comma-separated ID string for Type19 search
     std::string idList;
     for (int i = 0; i < 5; i++) {
         if (m_data.levels[i].id == 0) continue;
@@ -306,7 +299,6 @@ void CustomGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
 
     if (auto lc = getChildByIDRecursive("loading-circle")) lc->removeFromParent();
 
-    // Sort returned levels to match the original slot order
     CCArray* ordered = CCArray::createWithCapacity(5);
     for (int i = 0; i < 5; i++) {
         int wantId = m_data.levels[i].id;
@@ -316,18 +308,17 @@ void CustomGauntletLayer::loadLevelsFinished(CCArray* levels, char const*) {
             if ((int)obj->m_levelID == wantId) { found = obj; break; }
         }
         if (found) {
-            // found->m_gauntletLevel = false;
             found->m_gauntletLevel2 = true;
             ordered->addObject(found);
         }
-        else ordered->addObject(CCInteger::create(0)); // placeholder
+        else ordered->addObject(CCInteger::create(0));
     }
 
     m_loadedLevels = ordered;
     m_loadedLevels->retain();
 
     buildLevelButtons(ordered);
-    loadIslandIcon(); // now that buttons exist, load the icon
+    loadIslandIcon();
 }
 
 void CustomGauntletLayer::loadLevelsFailed(char const*, int) {
@@ -354,10 +345,6 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         auto& slotData = m_data.levels[i];
         auto obj = levels->objectAtIndex(i);
         auto level = typeinfo_cast<GJGameLevel*>(obj);
-        // if level is null (placeholder) we still show a locked/empty slot
-
-        // "Completed" here means the crystal reward was claimed (i.e. beaten
-        // through the gauntlet), not just completed some other way.
         bool hasCompleted = CustomGauntletManager::get()->isLevelRewardClaimed(slotData.id);
         bool isLocked = false;
         if (i > 0) {
@@ -466,7 +453,6 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         btn->setTag(i);
         btn->setID(fmt::format("level-{}", i + 1).c_str());
 
-        // Same zigzag positions as RedesignedGauntletLayer
         float posFarX = 185.f;
 		float posCloseX = posFarX / 2.f;
 		float posY = 50.f;
@@ -545,9 +531,6 @@ void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto btn   = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto level = static_cast<GJGameLevel*>(btn->getUserObject());
     if (!level) return;
-
-    // Arms the next PlayLayer as a gauntlet attempt, so completing it counts
-    // toward the crystal reward / gauntlet progress (see PlayLayer's hook).
     CustomGauntletManager::get()->markPendingGauntletAttempt(level->m_levelID.value());
 
     auto lil   = LevelInfoLayer::create(level, false);
@@ -580,7 +563,6 @@ void CustomGauntletLayer::onInfo(CCObject*) {
         "OK"
     );
 
-    // Metadata labels (same layout as RedesignedGauntletLayer::onInfo)
     auto makeLabel = [](std::string const& text, float x, float y, float scale, CCTextAlignment align) {
         auto lbl = CCLabelBMFont::create(text.c_str(), "chatFont.fnt");
         lbl->setPosition(x, y);
@@ -627,7 +609,6 @@ void CustomGauntletLayer::gauntletVault(CCObject*) {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
-    // Build level ID string from custom gauntlet data
     std::string idList;
     for (auto const& slot : m_data.levels) {
         if (slot.id == 0) continue;

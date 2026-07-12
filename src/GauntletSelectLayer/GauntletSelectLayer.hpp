@@ -51,6 +51,10 @@ protected:
     void onNewInfo(cocos2d::CCObject* sender);
     void onDiscord(cocos2d::CCObject* sender);
     void toggleList(cocos2d::CCObject* sender);
+    void unblockPlay();
+
+    // Debugging
+    void logMembers(GJMapPack* pack);
 
     // Custom gauntlets
     void buildCustomList();
@@ -68,22 +72,16 @@ protected:
     CCMenuItemSpriteExtra* m_refreshButton = nullptr;
     CCLabelBMFont* m_crystalLabel = nullptr;
 
-    // The server-hosted custom gauntlet list is built once (kicked off from
-    // init(), same as the vanilla list) and kept alive for the lifetime of
-    // this layer - toggling only flips visibility so icons/nodes aren't
-    // re-fetched and re-created every time the player switches tabs.
     alpha::ui::AdvancedScrollLayer* m_customGauntletScrollLayer = nullptr;
     alpha::ui::AdvancedScrollBar* m_customGauntletScrollBar = nullptr;
     CCNode* m_customListLoadingCircle = nullptr;
 
-    // Resolved once via checkManagerStatus() and added to bottom-left-menu
-    // right away (never toggled) - flipping visibility after the fact broke
-    // the menu's ColumnLayout, which only sizes/positions around whichever
-    // children were visible the last time updateLayout() ran.
     CCMenuItemSpriteExtra* m_managerButton = nullptr;
 
     bool m_showingCustomList = false;
     bool m_exiting = false;
+    bool m_playBlocked = false;
+    bool m_locked = false;
     cocos2d::CCArray* m_gauntletPacks = nullptr;
 
     async::TaskHolder<web::WebResponse> m_fetchHolder;

@@ -28,6 +28,7 @@ protected:
     async::TaskHolder<web::WebResponse> m_fetchHolder;
     async::TaskHolder<web::WebResponse> m_deleteHolder;
     async::TaskHolder<web::WebResponse> m_pushHolder;
+    async::TaskHolder<web::WebResponse> m_featureHolder;
     std::vector<async::TaskHolder<web::WebResponse>> m_rowIconHolders;
 
     void buildPanelView();
@@ -47,6 +48,7 @@ protected:
     void onPushStaged(int index);
     void onDelete(int gauntletId);
     void onDeleteStaged(int index);
+    void onToggleFeatured(int gauntletId);
 
 public:
     static GauntletManagerPopup* create();

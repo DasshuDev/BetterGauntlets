@@ -397,32 +397,32 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         if (isLocked) authorLabel->setVisible(false);
         levelSpr->addChild(authorLabel);
 
-        // Stars row
-        auto starNode = CCNode::create();
-        starNode->setID("star-node"_spr);
-        starNode->setScale(0.65f);
-        starNode->setAnchorPoint({0.5f, 0.5f});
-        starNode->setPosition({nameLabel->getPositionX(),
-                                 nameLabel->getPositionY() - 27.5f});
-        starNode->setLayout(RowLayout::create()
+        // Crystals row
+        auto crystalNode = CCNode::create();
+        crystalNode->setID("crystal-node"_spr);
+        crystalNode->setScale(0.5f);
+        crystalNode->setAnchorPoint({0.5f, 0.5f});
+        crystalNode->setPosition({nameLabel->getPositionX(),
+                                    nameLabel->getPositionY() - 27.5f});
+        crystalNode->setLayout(RowLayout::create()
             ->setGap(5)->setAutoGrowAxis(true)
             ->setAxisAlignment(AxisAlignment::Center));
 
-        auto starCount = CCLabelBMFont::create(fmt::format("{}", stars * 2).c_str(), "bigFont.fnt");
-        starCount->setID("star-count"_spr);
-        starCount->setScale(0.65f);
-        if (hasCompleted) starCount->setColor({255, 255, 50});
+        auto crystalCount = CCLabelBMFont::create(fmt::format("{}", stars * 2).c_str(), "bigFont.fnt");
+        crystalCount->setID("crystal-count"_spr);
+        crystalCount->setScale(0.65f);
+        if (hasCompleted) crystalCount->setColor({255, 255, 50});
 
-        auto starSpr = CCSprite::create("GR_crystal_001.png"_spr);
-        starSpr->setID("star-icon"_spr);
-        starSpr->setAnchorPoint({0.5f, 0.5f});
-        starSpr->setScale(0.45f);
+        auto crystalSpr = CCSprite::create("GR_crystal_001.png"_spr);
+        crystalSpr->setID("crystal-icon"_spr);
+        crystalSpr->setAnchorPoint({0.5f, 0.5f});
+        crystalSpr->setScale(0.45f);
 
-        starNode->addChild(starCount);
-        starNode->addChild(starSpr);
-        starNode->updateLayout();
-        if (isLocked) starNode->setVisible(false);
-        levelSpr->addChild(starNode);
+        crystalNode->addChild(crystalCount);
+        crystalNode->addChild(crystalSpr);
+        crystalNode->updateLayout();
+        if (isLocked) crystalNode->setVisible(false);
+        levelSpr->addChild(crystalNode);
 
         // Completion checkmark
         if (hasCompleted) {

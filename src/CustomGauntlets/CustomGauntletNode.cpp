@@ -185,11 +185,11 @@ bool CustomGauntletNode::init(
 
     if (data.featured) {
         auto shine = GameToolbox::particleFromString(
-            "1a-1a1.25a0.55a-1a0a0a75a0a0a0a0a0a0a0a0a0a25a0a0a0a0.964706a0a0.941176a0a0.329412a0a0.4a0.1a25a0a0a0a0.964706a0a0.941176a0a0.329412a0a0.3a0a0a0a0a0a0a0a0a0a0a0a0a2a1a0a0a1a32a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+            "1a-1a2a0.75a-1a0a0a50a25a0a0a0a0a0a0a0a0a100a0a0a0a0.964706a0a0.917647a0a0.329412a0a0.2a0.1a100a0a0a0a0.321569a0a0.25098a0a0a0a0.1a0a0.15a0a0.65a0a0a0a0a0a0a0a0a2a1a0a0a1a31a0a1a0a0a0a0a0a0a0a0a0a0a0a0",
             NULL,
             false
         );
-        shine->setPosition({-150, 50});
+        shine->setPosition({-300, 200});
         shine->setRotation(30);
         shine->setScaleY(150);
         shine->setScaleX(20);

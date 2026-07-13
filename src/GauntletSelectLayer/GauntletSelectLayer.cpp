@@ -853,7 +853,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
             node->addChild(glow, -1);
 
             auto stars = GameToolbox::particleFromString(
-                "15a-1a1.75a0.67a6a0a180a0a51a55a110a0a0a0a0a0a0a25a5a0a67a0.964706a0a0.945098a0a0.329412a0a1a0a20a0a0a67a0.321569a0a0.113725a0a0a0a1a0a0.65a0.15a0.65a0.15a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",
+                "8a-1a1.75a0.25a4a90a180a0a20a45a100a0a0a0a0a0a0a50a0a90a53a0.964706a0a0.847059a0a0.329412a0a0.5a0a10a0a90a53a0.321569a0a0.192157a0a0a0a0.25a0a0.35a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0.5a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
                 false
             );

@@ -26,6 +26,7 @@ bool CustomGauntletNode::init(
     auto sprite = CCNode::create();
     sprite->setContentSize({110, 234});
     sprite->setAnchorPoint({0.5, 0.5});
+    sprite->setID("gauntlet-container"_spr);
 
     auto node = NineSlice::create("GJ_squareB_01.png");
     node->setContentSize({110, 220});
@@ -138,7 +139,7 @@ bool CustomGauntletNode::init(
     gradientClip->setAlphaThreshold(0);
     gradientClip->setContentSize(stencil->getContentSize());
     gradientClip->setID("gradient-clip");
-    gradientClip->setPosition({55, 117.5});
+    gradientClip->setPosition({55, 117});
     sprite->addChild(gradientClip);
 
     auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
@@ -234,7 +235,7 @@ void CustomGauntletNode::loadIcon() {
                 tex->release();
                 if (!icon || !shadow) return;
 
-                auto container = static_cast<CCNode*>(self->getChildren()->objectAtIndex(0));
+                auto container = self->getChildByID("gauntlet-container"_spr);
                 if (!container) return;
 
                 icon->setID("gauntlet-icon");

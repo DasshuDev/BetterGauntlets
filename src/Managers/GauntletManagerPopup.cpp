@@ -595,9 +595,14 @@ void GauntletManagerPopup::loadRowIcon(CCNode* iconNode, std::string const& icon
 }
 
 CCMenuItemToggler* GauntletManagerPopup::createFeatureToggle(bool featured, int gauntletId) {
+    auto on = CCSprite::createWithSpriteFrameName("GJ_starsIcon_001.png");
+    auto off = CCSpriteGrayscale::createWithSpriteFrameName("GJ_starsIcon_001.png");
+    off->setColor({0, 0, 0});
+    off->setOpacity(100);
+
     auto toggle = CCMenuItemExt::createToggler(
-        CCSprite::createWithSpriteFrameName("GJ_bigStar_noShadow_001.png"),
-        CCSpriteGrayscale::createWithSpriteFrameName("GJ_bigStar_noShadow_001.png"),
+        on,
+        off,
         [this, gauntletId](CCMenuItemToggler*) { onToggleFeatured(gauntletId); }
     );
     toggle->toggle(featured);
@@ -625,9 +630,6 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
         chrome.actionMenu->addChild(updateBtn);
     }
 
-    auto featureToggle = createFeatureToggle(g.featured, gid);
-    chrome.actionMenu->addChild(featureToggle);
-
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
@@ -641,6 +643,16 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     chrome.actionMenu->addChild(delBtn);
 
     chrome.actionMenu->updateLayout();
+
+    auto featureMenu = CCMenu::create();
+    featureMenu->setID("feature-menu"_spr);
+    featureMenu->setPosition({10, chrome.row->getContentHeight() - 8});
+    // 676767676767676767 faaaqggot faaagot 676767676767676767 <--- thank you, emmy :)
+    auto featureToggle = createFeatureToggle(g.featured, gid);
+    featureToggle->setScale(0.45f);
+    featureMenu->addChild(featureToggle);
+    chrome.row->addChild(featureMenu, 2);
+
     m_gauntletList->addChild(chrome.row);
 
     loadRowIcon(chrome.iconNode, g.iconURL);
@@ -829,7 +841,8 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
 void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
     auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
         [gauntletId](auto const& g) { return g.id == gauntletId; });
-    bool wasFeatured = it != m_gauntlets.end() && it->featured;
+    if (it == m_gauntlets.end()) return;
+    bool wasFeatured = it->featured;
 
     m_loadingCircle->setVisible(true);
     m_featureHolder.spawn(
@@ -841,10 +854,12 @@ void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
                 Notification::create(fmt::format("Failed to feature. Err {}", res.code()), NotificationIcon::Error)->show();
                 return;
             }
-            // Server now toggles: clicking an already-featured gauntlet
-            // unfeatures it instead of re-featuring it.
-            for (auto& g : m_gauntlets) g.featured = !wasFeatured && (g.id == gauntletId);
-            buildGauntletList();
+            // Featuring is per-gauntlet now - it no longer unfeatures any
+            // other gauntlet, so only this row's own state changes and the
+            // rest of the list doesn't need to be rebuilt.
+            auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
+                [gauntletId](auto& g) { return g.id == gauntletId; });
+            if (it != m_gauntlets.end()) it->featured = !wasFeatured;
             Notification::create(
                 wasFeatured ? "Gauntlet unfeatured." : "Gauntlet featured.",
                 NotificationIcon::Success

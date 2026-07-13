@@ -59,7 +59,8 @@ public:
     web::WebFuture update(GauntletEditData const& data);
     web::WebFuture remove(int id);
 
-    // Mark a gauntlet as the featured one (server unfeatures any previous one)
+    // Toggle a gauntlet's own featured state. Independent per-gauntlet -
+    // does not affect any other gauntlet's featured state.
     web::WebFuture setFeatured(int id);
 
     // Upload icon file, returns public URL

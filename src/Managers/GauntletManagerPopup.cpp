@@ -594,6 +594,16 @@ void GauntletManagerPopup::loadRowIcon(CCNode* iconNode, std::string const& icon
     );
 }
 
+CCMenuItemToggler* GauntletManagerPopup::createFeatureToggle(bool featured, int gauntletId) {
+    auto toggle = CCMenuItemExt::createToggler(
+        CCSprite::createWithSpriteFrameName("GJ_bigStar_noShadow_001.png"),
+        CCSpriteGrayscale::createWithSpriteFrameName("GJ_bigStar_noShadow_001.png"),
+        [this, gauntletId](CCMenuItemToggler*) { onToggleFeatured(gauntletId); }
+    );
+    toggle->toggle(featured);
+    return toggle;
+}
+
 void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto chrome = buildRowChrome(
         m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
@@ -615,17 +625,8 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
         chrome.actionMenu->addChild(updateBtn);
     }
 
-    auto featureSpr = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
-    featureSpr->setScale(0.85f);
-    if (g.featured) {
-        featureSpr->setColor({255, 220, 50});
-    } else {
-        featureSpr->setColor({120, 120, 120});
-        featureSpr->setOpacity(160);
-    }
-    auto featureBtn = CCMenuItemExt::createSpriteExtra(featureSpr,
-        [this, gid](CCMenuItemSpriteExtra*) { onToggleFeatured(gid); });
-    chrome.actionMenu->addChild(featureBtn);
+    auto featureToggle = createFeatureToggle(g.featured, gid);
+    chrome.actionMenu->addChild(featureToggle);
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
     editSpr->setScale(0.85f);

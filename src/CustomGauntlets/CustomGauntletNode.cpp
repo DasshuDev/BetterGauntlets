@@ -34,29 +34,6 @@ bool CustomGauntletNode::init(
     node->setAnchorPoint({0.5, 0.5});
     sprite->addChild(node);
 
-    if (data.featured) {
-        auto featuredSprShadow = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
-        featuredSprShadow->setID("featured-badge-shadow"_spr);
-        featuredSprShadow->setScale(0.5f);
-        featuredSprShadow->setColor({0, 0, 0});
-        featuredSprShadow->setOpacity(70);
-        featuredSprShadow->setPosition({
-            node->getPositionX() - node->getContentWidth() / 2 + 16,
-            node->getPositionY() + node->getContentHeight() / 2 - 18
-        });
-        sprite->addChild(featuredSprShadow, 19);
-
-        auto featuredSpr = CCSprite::createWithSpriteFrameName("GR_gauntletStar_001.png"_spr);
-        featuredSpr->setID("featured-badge"_spr);
-        featuredSpr->setScale(0.5f);
-        featuredSpr->setColor({255, 220, 50});
-        featuredSpr->setPosition({
-            node->getPositionX() - node->getContentWidth() / 2 + 14,
-            node->getPositionY() + node->getContentHeight() / 2 - 16
-        });
-        sprite->addChild(featuredSpr, 20);
-    }
-
     auto ph = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
     ph->setID("icon-placeholder");
     ph->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2 + 10});
@@ -197,12 +174,27 @@ bool CustomGauntletNode::init(
 
         auto gradientParticles = GameToolbox::particleFromString(
             "15a-1a1.75a0a8a90a0a30a15a55a0a0a0a0a0a0a0a5a3a0a60a0.329412a0a0.968627a0a0.337255a0a1a0a2a0a0a67a0a0a0.321569a0a0.00392157a0a1a0a0a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a0a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",
-            NULL, false
+            NULL,
+            false
         );
         if (gradientParticles) {
             gradientParticles->setPosition({0, -110});
             gradientClip->addChild(gradientParticles);
         }
+    }
+
+    if (data.featured) {
+        auto shine = GameToolbox::particleFromString(
+            "1a-1a1.25a0.55a-1a0a0a75a0a0a0a0a0a0a0a0a0a25a0a0a0a0.964706a0a0.941176a0a0.329412a0a0.4a0.1a25a0a0a0a0.964706a0a0.941176a0a0.329412a0a0.3a0a0a0a0a0a0a0a0a0a0a0a0a2a1a0a0a1a32a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+            NULL,
+            false
+        );
+        shine->setPosition({-150, 50});
+        shine->setRotation(30);
+        shine->setScaleY(150);
+        shine->setScaleX(20);
+        shine->setID("shine");
+        gradientClip->addChild(shine);
     }
 
     if (!CCMenuItemSpriteExtra::init(sprite, nullptr, nullptr, nullptr))

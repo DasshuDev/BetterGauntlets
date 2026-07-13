@@ -841,7 +841,28 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
                     CCTransitionFade::create(0.5f, sc));
             }
         );
-        if (node) container->addChild(node);
+        if (!node) continue;
+
+        if (data.featured) {
+            auto glow = NineSlice::create("GR_featureGlow_001.png"_spr);
+            glow->setContentSize({85, 160});
+            glow->setScale(1.475);
+            glow->setColor({255, 255, 128});
+            glow->setPosition(node->getContentSize() / 2);
+            glow->setID("feature-glow"_spr);
+            node->addChild(glow, -1);
+
+            auto stars = GameToolbox::particleFromString(
+                "15a-1a1.75a0.67a6a0a180a0a51a55a110a0a0a0a0a0a0a25a5a0a67a0.964706a0a0.945098a0a0.329412a0a1a0a20a0a0a67a0.321569a0a0.113725a0a0a0a1a0a0.65a0.15a0.65a0.15a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0.75a0.5a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+            );
+            stars->setPosition(node->getContentSize() / 2);
+            stars->setID("stars");
+            node->addChild(stars, 1);
+        }
+
+        container->addChild(node);
     }
 
     if (container->getChildrenCount() < 5) container->setAnchorPoint({0.5, 0.5});

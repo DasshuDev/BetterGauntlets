@@ -861,8 +861,9 @@ void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
                 [gauntletId](auto& g) { return g.id == gauntletId; });
             if (it != m_gauntlets.end()) it->featured = !wasFeatured;
             Notification::create(
-                wasFeatured ? "Gauntlet unfeatured." : "Gauntlet featured.",
-                NotificationIcon::Success
+                wasFeatured ? "Unfeatured" : "Featured",
+                NotificationIcon::Success,
+                0.5f
             )->show();
         }
     );

@@ -351,6 +351,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
             auto& prevSlotData = m_data.levels[i - 1];
             isLocked = !CustomGauntletManager::get()->isLevelRewardClaimed(prevSlotData.id);
         }
+        m_lockedStates.push_back(isLocked);
 
         // Island Node
         auto levelSpr = CCNode::create();
@@ -514,6 +515,76 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 			island->runAction(levelHover);
 		}
 	}
+}
+
+// Unlock detection - re-checked whenever this layer becomes active again
+// (e.g. popped back to after finishing a level), since the level buttons
+// are only ever built once after the initial online level fetch.
+
+void CustomGauntletLayer::onEnter() {
+    CCLayer::onEnter();
+    checkForUnlocks();
+}
+
+void CustomGauntletLayer::checkForUnlocks() {
+    if (!m_levelsMenu || m_lockedStates.empty()) return;
+
+    for (int i = 0; i < 5 && i < static_cast<int>(m_lockedStates.size()); i++) {
+        if (!m_lockedStates[i]) continue;
+
+        auto& prevSlotData = m_data.levels[i - 1];
+        bool stillLocked = !CustomGauntletManager::get()->isLevelRewardClaimed(prevSlotData.id);
+        if (stillLocked) continue;
+
+        m_lockedStates[i] = false;
+        auto levelSpr = m_levelsMenu->getChildByIDRecursive(fmt::format("gauntlet-{}", i + 1));
+        if (levelSpr) playUnlockAnimation(levelSpr, i);
+    }
+}
+
+void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
+    auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
+    if (btn) btn->setTarget(this, menu_selector(CustomGauntletLayer::onLevel));
+
+    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
+    auto lockSpr = levelSpr->getChildByID("gauntlet-lock"_spr);
+    auto nameLabel = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("level-name"_spr));
+    auto authorLabel = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("creator-name"_spr));
+    auto crystalNode = levelSpr->getChildByID("crystal-node"_spr);
+
+    if (lockSpr) {
+        lockSpr->runAction(CCSequence::create(
+            CCSpawn::create(
+                CCScaleTo::create(0.3f, 0.f),
+                CCFadeOut::create(0.3f),
+                nullptr
+            ),
+            CCRemoveSelf::create(),
+            nullptr
+        ));
+    }
+
+    for (auto label : { nameLabel, authorLabel }) {
+        if (!label) continue;
+        label->setVisible(true);
+        label->setOpacity(0);
+        label->runAction(CCFadeIn::create(0.4f));
+    }
+
+    if (crystalNode) {
+        crystalNode->setVisible(true);
+        crystalNode->setScale(0.f);
+        crystalNode->runAction(CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.5f)));
+    }
+
+    if (islandSpr) {
+        islandSpr->setColor(ccc3(128, 128, 128));
+        islandSpr->runAction(CCTintTo::create(0.3f, 255, 255, 255));
+
+        auto scaleUp = CCScaleTo::create(0.15f, 1.15f);
+        auto scaleDown = CCEaseBackOut::create(CCScaleTo::create(0.25f, 1.f));
+        islandSpr->runAction(CCSequence::create(scaleUp, scaleDown, nullptr));
+    }
 }
 
 void CustomGauntletLayer::onBack(CCObject*) {

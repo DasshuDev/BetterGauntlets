@@ -22,9 +22,11 @@ public:
     CCSprite* m_lockSprite = nullptr;
     bool m_loaded = false;
     bool m_exiting = false;
+    std::vector<bool> m_lockedStates;
 
 protected:
     bool init(GauntletType type);
+    void onEnter() override;
     void keyBackClicked() override;
 
     // LevelManagerDelegate (3-param overload used by GD gauntlet fetching)
@@ -34,6 +36,8 @@ protected:
     // Setup
     void setupGauntlet(cocos2d::CCArray* levels);
     void editGauntlets();
+    void checkForUnlocks();
+    void playUnlockAnimation(cocos2d::CCNode* levelSpr, int index);
     void editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor);
     void setupInfo();
 

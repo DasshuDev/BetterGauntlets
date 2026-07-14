@@ -12,6 +12,7 @@ public:
 
 protected:
     bool init(CustomGauntletData const& data);
+    void onEnter() override;
 
     CustomGauntletData              m_data;
     CCArray*                        m_loadedLevels = nullptr;
@@ -19,6 +20,7 @@ protected:
     CCSprite*                       m_islandSpr    = nullptr;
     CCLabelBMFont*                  m_titleLabel   = nullptr;
     CCLabelBMFont*                  m_titleShadow  = nullptr;
+    std::vector<bool>               m_lockedStates;
 
     async::TaskHolder<web::WebResponse> m_iconHolder;
     async::TaskHolder<web::WebResponse> m_completionHolder;
@@ -34,6 +36,8 @@ protected:
     void buildTitle();
     void buildLevelButtons(CCArray* levels);
     void loadIslandIcon();
+    void checkForUnlocks();
+    void playUnlockAnimation(CCNode* levelSpr, int index);
 
     // Callbacks
     void onBack(CCObject* sender);

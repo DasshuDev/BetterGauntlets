@@ -378,12 +378,13 @@ void BetterGauntletLayer::editGauntlets() {
         starNode->addChild(starSpr);
         starNode->updateLayout();
 
-        // Lock check 
+        // Lock check
         bool isLocked = false;
         if (i > 0) {
             GJGameLevel* previousLevel = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 1));
             isLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
         }
+        m_lockedStates.push_back(isLocked);
 
         if (isLocked) {
             m_lockSprite = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
@@ -445,7 +446,79 @@ void BetterGauntletLayer::editGauntlets() {
     }
 }
 
-// Info 
+// Unlock detection - re-checked whenever this layer becomes active again
+// (e.g. popped back to after finishing a level), since the level buttons
+// are only ever built once (m_loaded guard).
+
+void BetterGauntletLayer::onEnter() {
+    CCLayer::onEnter();
+    checkForUnlocks();
+}
+
+void BetterGauntletLayer::checkForUnlocks() {
+    if (!m_levels || !m_levelsMenu || m_lockedStates.empty()) return;
+
+    int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
+    for (int i = 0; i < levelCount && i < static_cast<int>(m_lockedStates.size()); i++) {
+        if (!m_lockedStates[i]) continue;
+
+        GJGameLevel* previousLevel = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 1));
+        bool stillLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
+        if (stillLocked) continue;
+
+        m_lockedStates[i] = false;
+        auto levelSpr = m_levelsMenu->getChildByIDRecursive(fmt::format("gauntlet-{}", i + 1));
+        if (levelSpr) playUnlockAnimation(levelSpr, i);
+    }
+}
+
+void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
+    auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
+    if (btn) btn->setTarget(this, menu_selector(BetterGauntletLayer::onLevel));
+
+    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
+    auto lockSpr = levelSpr->getChildByID("gauntlet-lock"_spr);
+    auto levelName = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("level-name"_spr));
+    auto authorName = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("creator-name"_spr));
+    auto starNode = levelSpr->getChildByID("star-node"_spr);
+
+    if (lockSpr) {
+        lockSpr->runAction(CCSequence::create(
+            CCSpawn::create(
+                CCScaleTo::create(0.3f, 0.f),
+                CCFadeOut::create(0.3f),
+                nullptr
+            ),
+            CCRemoveSelf::create(),
+            nullptr
+        ));
+    }
+
+    for (auto label : { levelName, authorName }) {
+        if (!label) continue;
+        label->setVisible(true);
+        label->setOpacity(0);
+        label->runAction(CCFadeIn::create(0.4f));
+    }
+
+    if (starNode) {
+        starNode->setVisible(true);
+        starNode->setScale(0.f);
+        starNode->runAction(CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.65f)));
+    }
+
+    if (islandSpr) {
+        islandSpr->setColor(ccc3(128, 128, 128));
+        islandSpr->runAction(CCTintTo::create(0.3f, 255, 255, 255));
+
+        auto wait = CCDelayTime::create(0.5f);
+        auto scaleUp = CCScaleTo::create(0.15f, 1.15f);
+        auto scaleDown = CCEaseBackOut::create(CCScaleTo::create(0.25f, 1.f));
+        islandSpr->runAction(CCSequence::create(wait, scaleUp, scaleDown, nullptr));
+    }
+}
+
+// Info
 
 void BetterGauntletLayer::setupInfo() {
     CCDirector* director = CCDirector::sharedDirector();

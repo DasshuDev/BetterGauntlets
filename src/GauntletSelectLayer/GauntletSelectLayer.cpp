@@ -848,7 +848,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
             auto glow = NineSlice::create("GR_featureGlow_001.png"_spr);
             glow->setContentSize({85, 160});
             glow->setScale(1.475);
-            glow->setColor({255, 255, 128});
+            glow->setColor({255, 200, 67});
             glow->setPosition(node->getContentSize() / 2);
             glow->setID("feature-glow"_spr);
             node->addChild(glow, -1);

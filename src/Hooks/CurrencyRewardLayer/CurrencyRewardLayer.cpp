@@ -64,10 +64,13 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
         }
     }
 
+    auto tintFrom = ccColor3B({255, 255, 128});
+    auto tintTo = ccColor3B({255, 255, 255});
+
     if (rewardLayer->m_diamondsLabel) {
         rewardLayer->m_diamondsLabel->runAction(CCRepeatForever::create(CCSequence::create(
-            CCTintTo::create(0.5f, 120, 210, 255),
-            CCTintTo::create(0.5f, 255, 255, 255),
+            CCTintTo::create(0.5f, tintFrom.r, tintFrom.g, tintFrom.b),
+            CCTintTo::create(0.5f, tintTo.r, tintTo.g, tintTo.b),
             nullptr
         )));
     }

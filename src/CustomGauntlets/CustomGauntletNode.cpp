@@ -186,14 +186,14 @@ bool CustomGauntletNode::init(
 
     if (data.featured) {
         auto shine = GameToolbox::particleFromString(
-            "1a-1a2a0.75a-1a0a0a50a25a0a0a0a0a0a0a0a0a100a0a0a0a0.964706a0a0.917647a0a0.329412a0a0.2a0.1a100a0a0a0a0.321569a0a0.25098a0a0a0a0.1a0a0.15a0a0.65a0a0a0a0a0a0a0a0a2a1a0a0a1a31a0a1a0a0a0a0a0a0a0a0a0a0a0a0",
+            "1a-1a2a0.75a-1a0a0a85a25a0a0a0a0a0a0a0a0a100a0a0a0a0.964706a0a0.917647a0a0.329412a0a0.2a0.1a100a0a0a0a0.321569a0a0.25098a0a0a0a0.1a0a0a0a0.65a0a0a0a0a0a0a0a0a2a1a0a0a1a31a0a1a0a0a0a0a0a0a0a0a0a0a0a0",
             NULL,
             false
         );
-        shine->setPosition({-300, 200});
+        shine->setPosition({-450, 400});
         shine->setRotation(30);
-        shine->setScaleY(150);
-        shine->setScaleX(20);
+        shine->setScaleY(40);
+        shine->setScaleX(7);
         shine->setID("shine");
         gradientClip->addChild(shine);
     }

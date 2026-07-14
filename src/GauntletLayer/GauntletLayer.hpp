@@ -38,6 +38,8 @@ protected:
     void editGauntlets();
     void checkForUnlocks();
     void playUnlockAnimation(cocos2d::CCNode* levelSpr, int index);
+    void playUnlockSurroundParticles(cocos2d::CCNode* levelSpr, int index);
+    void onUnlockPulse();
     void editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor);
     void setupInfo();
 

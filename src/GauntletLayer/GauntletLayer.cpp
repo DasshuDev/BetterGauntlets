@@ -472,6 +472,15 @@ void BetterGauntletLayer::checkForUnlocks() {
     }
 }
 
+// Unlock animation timeline:
+//   0s              lock fades out (opacity)                    -> 1s
+//   1s              GameToolbox particles surround the level    -> 3.5s (see playUnlockSurroundParticles)
+//   3.5s            island pulses in scale; name/author/star    -> 4.5s
+//                   appear instantly and the unlock sfx fires
+constexpr float kUnlockLockFadeDuration = 1.f;
+constexpr float kUnlockSurroundDuration = 2.5f;
+constexpr float kUnlockPulseDelay = kUnlockLockFadeDuration + kUnlockSurroundDuration;
+
 void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
     if (btn) btn->setTarget(this, menu_selector(BetterGauntletLayer::onLevel));
@@ -484,38 +493,66 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
 
     if (lockSpr) {
         lockSpr->runAction(CCSequence::create(
-            CCSpawn::create(
-                CCScaleTo::create(0.3f, 0.f),
-                CCFadeOut::create(0.3f),
-                nullptr
-            ),
+            CCFadeOut::create(kUnlockLockFadeDuration),
             CCRemoveSelf::create(),
             nullptr
         ));
     }
 
+    playUnlockSurroundParticles(levelSpr, index);
+
+    // Name/author/star pop in instantly the moment the pulse starts, no fade.
     for (auto label : { levelName, authorName }) {
         if (!label) continue;
-        label->setVisible(true);
-        label->setOpacity(0);
-        label->runAction(CCFadeIn::create(0.4f));
+        label->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockPulseDelay),
+            CCShow::create(),
+            nullptr
+        ));
     }
 
     if (starNode) {
-        starNode->setVisible(true);
-        starNode->setScale(0.f);
-        starNode->runAction(CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.65f)));
+        starNode->setScale(0.65f);
+        starNode->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockPulseDelay),
+            CCShow::create(),
+            nullptr
+        ));
     }
 
     if (islandSpr) {
         islandSpr->setColor(ccc3(128, 128, 128));
-        islandSpr->runAction(CCTintTo::create(0.3f, 255, 255, 255));
-
-        auto wait = CCDelayTime::create(0.5f);
-        auto scaleUp = CCScaleTo::create(0.15f, 1.15f);
-        auto scaleDown = CCEaseBackOut::create(CCScaleTo::create(0.25f, 1.f));
-        islandSpr->runAction(CCSequence::create(wait, scaleUp, scaleDown, nullptr));
+        islandSpr->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockPulseDelay),
+            CCCallFunc::create(this, callfunc_selector(BetterGauntletLayer::onUnlockPulse)),
+            CCSpawn::create(
+                CCTintTo::create(0.5f, 255, 255, 255),
+                CCSequence::create(
+                    CCEaseInOut::create(CCScaleTo::create(0.35f, 1.15f), 2.f),
+                    CCEaseBackOut::create(CCScaleTo::create(0.65f, 1.f)),
+                    nullptr
+                ),
+                nullptr
+            ),
+            nullptr
+        ));
     }
+}
+
+void BetterGauntletLayer::playUnlockSurroundParticles(CCNode* levelSpr, int index) {
+    auto unlockParticles = GameToolbox::particleFromString(
+        "45a4a2a0a22a-180a180a0a0a100a100a0a0a-400a0a0a0a5a1a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a0a0a0",
+        NULL,
+        false
+    );
+    unlockParticles->setPosition(levelSpr->getContentSize() / 2);
+    unlockParticles->setID(fmt::format("unlock-particles-{}", index + 1));
+    unlockParticles->setAutoRemoveOnFinish(true);
+    levelSpr->addChild(unlockParticles);
+}
+
+void BetterGauntletLayer::onUnlockPulse() {
+    FMODAudioEngine::sharedEngine()->playEffect("unlockGauntlet.ogg");
 }
 
 // Info

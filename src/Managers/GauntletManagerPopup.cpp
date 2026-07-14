@@ -731,7 +731,7 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
         m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
     );
 
-    // STAGED / update badge - distinguishes a brand-new gauntlet from a pending edit to a published one
+    // Staged Gauntlet
     std::string badgeFrame = g.id != 0 ? "GR_addedTag_001.png"_spr : "GR_stagedTag_001.png"_spr;
     auto badge = CCSprite::createWithSpriteFrameName(badgeFrame.c_str());
     badge->setScale(0.35);

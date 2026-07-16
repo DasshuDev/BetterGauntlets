@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <ctime>
+#include <unordered_map>
 #include <cocos2d.h>
 #include <Geode/Geode.hpp>
 #include <Geode/ui/Layout.hpp>
@@ -7,11 +8,22 @@
 #include <Geode/ui/MDTextArea.hpp>
 #include <Geode/utils/cocos.hpp>
 #include <Geode/binding/GJGameLevel.hpp>
+#include <Geode/binding/CCSpriteWithHue.hpp>
 #include "GauntletLayer.hpp"
+#include "HueLuminanceTo.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
 
 using namespace geode::prelude;
+
+// LevelInfoLayer::onBack redirects gauntlet levels back into a brand-new
+// BetterGauntletLayer instance (see Hooks/Custom Hooks/GauntletRedirect.cpp)
+// rather than popping back to the one the player left. That means the normal
+// "was locked a second ago, now isn't" in-memory transition (m_lockedStates /
+// checkForUnlocks) never has anything to compare against on the fresh
+// instance. This session-lifetime cache is what actually detects the
+// transition across that instance boundary, keyed by gauntlet type.
+static std::unordered_map<int, std::vector<bool>> s_lastKnownLockedStates;
 
 // Helpers 
 
@@ -289,6 +301,7 @@ void BetterGauntletLayer::editGauntlets() {
     this->addChild(m_levelsMenu);
 
     int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
+    auto& lastLockedStates = s_lastKnownLockedStates[static_cast<int>(m_gauntletType)];
 
     for (int i = 0; i < levelCount; i++) {
         GJGameLevel* levelNode = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i));
@@ -309,7 +322,7 @@ void BetterGauntletLayer::editGauntlets() {
         levelSpr->setAnchorPoint({0.5, 0.5});
         levelSpr->setContentSize({70, 80});
 
-        CCSprite* islandSpr = CCSprite::createWithSpriteFrameName(
+        CCSpriteWithHue* islandSpr = CCSpriteWithHue::createWithSpriteFrameName(
             GauntletNode::frameForType(m_gauntletType).c_str()
         );
         islandSpr->setPosition(levelSpr->getContentSize() / 2);
@@ -384,9 +397,14 @@ void BetterGauntletLayer::editGauntlets() {
             GJGameLevel* previousLevel = static_cast<GJGameLevel*>(m_levels->objectAtIndex(i - 1));
             isLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
         }
+        // No prior record (first time this gauntlet type is opened this session) ->
+        // treat as "always was this way", so nothing appears freshly unlocked.
+        bool wasLocked = i < static_cast<int>(lastLockedStates.size()) ? lastLockedStates[i] : isLocked;
+        bool justUnlocked = wasLocked && !isLocked;
+
         m_lockedStates.push_back(isLocked);
 
-        if (isLocked) {
+        if (isLocked || justUnlocked) {
             m_lockSprite = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
             m_lockSprite->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15});
             m_lockSprite->setID("gauntlet-lock"_spr);
@@ -422,9 +440,13 @@ void BetterGauntletLayer::editGauntlets() {
         }
 
         m_levelsMenu->addChild(btn);
+
+        if (justUnlocked) playUnlockAnimation(levelSpr, i);
     }
 
-    // Hover animation 
+    lastLockedStates = m_lockedStates;
+
+    // Hover animation
     bool hover = Mod::get()->getSettingValue<bool>("level-hover");
     if (hover) {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -472,40 +494,40 @@ void BetterGauntletLayer::checkForUnlocks() {
     }
 }
 
-// Unlock animation timeline:
-//   0s              lock fades out (opacity)                    -> 1s
-//   1s              GameToolbox particles surround the level    -> 3.5s (see playUnlockSurroundParticles)
-//   3.5s            island pulses in scale; name/author/star    -> 4.5s
-//                   appear instantly and the unlock sfx fires
-constexpr float kUnlockLockFadeDuration = 1.f;
-constexpr float kUnlockSurroundDuration = 2.5f;
-constexpr float kUnlockPulseDelay = kUnlockLockFadeDuration + kUnlockSurroundDuration;
+// Unlock animation timeline - synced to unlockGauntlet.ogg (3s, "unlock" hit at 1.5s):
+//   0s        sfx starts, inward particles spawn, lock fades out, island starts shaking
+//   1.5s      sfx "peak" - shake stops, outward particle burst, island pulses to 1.35
+//             scale, and name/author/reward instantly appear (no fade)
+constexpr float kUnlockSfxPeakDelay = 1.5f;
 
 void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
     if (btn) btn->setTarget(this, menu_selector(BetterGauntletLayer::onLevel));
 
-    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
+    auto islandSpr = static_cast<CCSpriteWithHue*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
     auto lockSpr = levelSpr->getChildByID("gauntlet-lock"_spr);
     auto levelName = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("level-name"_spr));
     auto authorName = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("creator-name"_spr));
     auto starNode = levelSpr->getChildByID("star-node"_spr);
 
+    FMODAudioEngine::sharedEngine()->playEffect("unlockGauntlet.ogg");
+
     if (lockSpr) {
         lockSpr->runAction(CCSequence::create(
-            CCFadeOut::create(kUnlockLockFadeDuration),
+            CCFadeOut::create(kUnlockSfxPeakDelay),
             CCRemoveSelf::create(),
             nullptr
         ));
     }
 
-    playUnlockSurroundParticles(levelSpr, index);
+    playUnlockParticlesIn(levelSpr, index);
+    if (islandSpr) islandShake(islandSpr, kUnlockSfxPeakDelay);
 
-    // Name/author/star pop in instantly the moment the pulse starts, no fade.
+    // Name/author/star pop in instantly at the sfx peak, no fade.
     for (auto label : { levelName, authorName }) {
         if (!label) continue;
         label->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockPulseDelay),
+            CCDelayTime::create(kUnlockSfxPeakDelay),
             CCShow::create(),
             nullptr
         ));
@@ -514,7 +536,7 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     if (starNode) {
         starNode->setScale(0.65f);
         starNode->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockPulseDelay),
+            CCDelayTime::create(kUnlockSfxPeakDelay),
             CCShow::create(),
             nullptr
         ));
@@ -523,13 +545,14 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     if (islandSpr) {
         islandSpr->setColor(ccc3(128, 128, 128));
         islandSpr->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockPulseDelay),
-            CCCallFunc::create(this, callfunc_selector(BetterGauntletLayer::onUnlockPulse)),
+            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCCallFuncN::create(this, callfuncN_selector(BetterGauntletLayer::onUnlockPeak)),
             CCSpawn::create(
-                CCTintTo::create(0.5f, 255, 255, 255),
+                CCTintTo::create(0.3f, 255, 255, 255),
+                HueLuminanceTo::create(0.6f, 1.f, 0.f),
                 CCSequence::create(
-                    CCEaseInOut::create(CCScaleTo::create(0.35f, 1.15f), 2.f),
-                    CCEaseBackOut::create(CCScaleTo::create(0.65f, 1.f)),
+                    CCEaseInOut::create(CCScaleTo::create(0.25f, 1.35f), 2.f),
+                    CCEaseBackOut::create(CCScaleTo::create(0.35f, 1.f)),
                     nullptr
                 ),
                 nullptr
@@ -539,20 +562,58 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     }
 }
 
-void BetterGauntletLayer::playUnlockSurroundParticles(CCNode* levelSpr, int index) {
-    auto unlockParticles = GameToolbox::particleFromString(
-        "45a4a2a0a22a-180a180a0a0a100a100a0a0a-400a0a0a0a5a1a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a0a0a0",
+// Fires at the sfx's "unlock" peak (pSender is the island sprite mid-pulse).
+void BetterGauntletLayer::onUnlockPeak(CCNode* sender) {
+    auto levelSpr = sender->getParent();
+    if (!levelSpr) return;
+    auto btn = levelSpr->getParent();
+    playUnlockParticlesOut(levelSpr, btn ? btn->getTag() : 0);
+}
+
+CCFiniteTimeAction* BetterGauntletLayer::generateShakeAction(CCPoint originalPos, float xyOffset, float duration) {
+    float dx = CCRANDOM_MINUS1_1() * xyOffset;
+    float dy = CCRANDOM_MINUS1_1() * xyOffset;
+    return CCMoveTo::create(duration, {originalPos.x + dx, originalPos.y + dy});
+}
+
+void BetterGauntletLayer::islandShake(CCSprite* islandSpr, float duration) {
+    constexpr float stepDuration = 0.01f;
+    constexpr float xyOffset = 3.f;
+
+    CCPoint originalPos = islandSpr->getPosition();
+    int steps = static_cast<int>(duration / stepDuration);
+
+    auto shakeSteps = CCArray::create();
+    for (int i = 0; i < steps; i++) {
+        shakeSteps->addObject(generateShakeAction(originalPos, xyOffset, stepDuration));
+    }
+    shakeSteps->addObject(CCMoveTo::create(stepDuration, originalPos));
+
+    islandSpr->runAction(CCSequence::create(shakeSteps));
+}
+
+void BetterGauntletLayer::playUnlockParticlesIn(CCNode* levelSpr, int index) {
+    auto particlesIn = GameToolbox::particleFromString(
+        "150a1a2a0a75a-180a180a0a0a75a75a0a0a-2000a0a0a0a3a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a0a0a0",
         NULL,
         false
     );
-    unlockParticles->setPosition(levelSpr->getContentSize() / 2);
-    unlockParticles->setID(fmt::format("unlock-particles-{}", index + 1));
-    unlockParticles->setAutoRemoveOnFinish(true);
-    levelSpr->addChild(unlockParticles);
+    particlesIn->setPosition(levelSpr->getContentSize() / 2);
+    particlesIn->setID(fmt::format("unlock-particles-in-{}", index + 1));
+    particlesIn->setAutoRemoveOnFinish(true);
+    levelSpr->addChild(particlesIn, -1);
 }
 
-void BetterGauntletLayer::onUnlockPulse() {
-    FMODAudioEngine::sharedEngine()->playEffect("unlockGauntlet.ogg");
+void BetterGauntletLayer::playUnlockParticlesOut(CCNode* levelSpr, int index) {
+    auto particlesOut = GameToolbox::particleFromString(
+        "20a-1a0.75a0a-1a180a180a0a380a0a0a0a0a0a0a0a0a3a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0a0a0.5a0.35a0a0a20a15a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a3.61a0a0",
+        NULL,
+        false
+    );
+    particlesOut->setPosition(levelSpr->getContentSize() / 2);
+    particlesOut->setID(fmt::format("unlock-particles-out-{}", index + 1));
+    particlesOut->setAutoRemoveOnFinish(true);
+    levelSpr->addChild(particlesOut, -1);
 }
 
 // Info

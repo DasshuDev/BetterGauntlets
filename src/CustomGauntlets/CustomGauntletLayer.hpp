@@ -38,6 +38,11 @@ protected:
     void loadIslandIcon();
     void checkForUnlocks();
     void playUnlockAnimation(CCNode* levelSpr, int index);
+    void playUnlockParticlesIn(CCNode* levelSpr, int index);
+    void playUnlockParticlesOut(CCNode* levelSpr, int index);
+    void islandShake(CCSprite* islandSpr, float duration);
+    CCFiniteTimeAction* generateShakeAction(CCPoint originalPos, float xyOffset, float duration);
+    void onUnlockPeak(CCNode* sender);
 
     // Callbacks
     void onBack(CCObject* sender);

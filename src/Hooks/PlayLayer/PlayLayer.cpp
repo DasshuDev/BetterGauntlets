@@ -4,22 +4,6 @@
 
 using namespace geode::prelude;
 
-namespace {
-
-bool findGauntletLevelStars(int levelID, int& outStars) {
-    for (auto const& gauntlet : CustomGauntletManager::get()->getCached()) {
-        for (auto const& slot : gauntlet.levels) {
-            if (slot.id == levelID) {
-                outStars = slot.stars;
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-}
-
 bool GRPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
     if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
 
@@ -38,13 +22,11 @@ void GRPlayLayer::levelComplete() {
 
     int levelID = m_level->m_levelID.value();
 
-    int stars = 0;
-    if (!findGauntletLevelStars(levelID, stars)) return;
-
     auto* manager = CustomGauntletManager::get();
+    if (!manager->isCustomGauntletLevel(levelID)) return;
     if (manager->isLevelRewardClaimed(levelID)) return;
 
-    int reward = stars * 2;
+    int reward = CustomGauntletManager::crystalsForLevel(m_level);
     manager->markLevelRewardClaimed(levelID);
     manager->addCrystals(reward);
     GRCurrencyRewardLayer::queueCrystalReward(reward);

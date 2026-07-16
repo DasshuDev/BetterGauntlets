@@ -19,6 +19,9 @@ public:
     bool hasCached() const;
     std::vector<CustomGauntletData> const& getCached() const;
     void clearCache();
+
+    // Is this level ID one of the slots across all cached custom gauntlets?
+    bool isCustomGauntletLevel(int levelID) const;
     void markPendingGauntletAttempt(int levelID);
 
     bool consumePendingGauntletAttempt(int levelID);
@@ -30,6 +33,9 @@ public:
     // Persisted running crystal total.
     int getCrystalTotal() const;
     void addCrystals(int amount);
+
+    // Crystal reward for a level, based on its difficulty rating.
+    static int crystalsForLevel(GJGameLevel* level);
 
 private:
     CustomGauntletManager() = default;

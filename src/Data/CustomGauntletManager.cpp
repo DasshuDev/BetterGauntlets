@@ -160,6 +160,43 @@ void CustomGauntletManager::clearCache() {
     m_hasCached = false;
 }
 
+bool CustomGauntletManager::isCustomGauntletLevel(int levelID) const {
+    for (auto const& gauntlet : m_cache) {
+        for (auto const& slot : gauntlet.levels) {
+            if (slot.id == levelID) return true;
+        }
+    }
+    return false;
+}
+
+int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
+    if (!level) return 0;
+
+    // getAverageDifficulty() collapses every demon sub-rating down to a
+    // single "Insane Demon" value, so demons need their own scale read
+    // straight off the raw sub-rating field instead.
+    if (level->m_demon.value()) {
+        switch (static_cast<DemonDifficultyType>(level->m_demonDifficulty)) {
+            case DemonDifficultyType::EasyDemon:    return 10;
+            case DemonDifficultyType::MediumDemon:  return 15;
+            case DemonDifficultyType::HardDemon:    return 20;
+            case DemonDifficultyType::InsaneDemon:  return 25;
+            case DemonDifficultyType::ExtremeDemon: return 30;
+            default:                                return 20; // unrated demon defaults to hard
+        }
+    }
+
+    switch (static_cast<GJDifficulty>(level->getAverageDifficulty())) {
+        case GJDifficulty::Auto:   return 1;
+        case GJDifficulty::Easy:   return 2;
+        case GJDifficulty::Normal: return 3;
+        case GJDifficulty::Hard:   return 5;
+        case GJDifficulty::Harder: return 7;
+        case GJDifficulty::Insane: return 9;
+        default:                   return 0;  // NA / unrated
+    }
+}
+
 // Player progress
 
 void CustomGauntletManager::markPendingGauntletAttempt(int levelID) {

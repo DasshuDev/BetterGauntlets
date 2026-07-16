@@ -1,6 +1,8 @@
 #include "CustomGauntletLayer.hpp"
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
 #include "../Data/CustomGauntletManager.hpp"
+#include "../GauntletLayer/HueLuminanceTo.hpp"
+#include <Geode/binding/CCSpriteWithHue.hpp>
 
 using namespace geode::prelude;
 
@@ -360,8 +362,8 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         levelSpr->setID(fmt::format("gauntlet-{}", i + 1).c_str());
 
         // Sprite PH
-        auto islandSpr = CCSprite::create("GR_unknownGauntlet_001.png"_spr);
-        if (!islandSpr) islandSpr = CCSprite::create();
+        auto islandSpr = CCSpriteWithHue::create("GR_unknownGauntlet_001.png"_spr);
+        if (!islandSpr) continue; // bundled resource, should never actually fail to load
         islandSpr->setID(fmt::format("island-{}", i + 1).c_str());
         islandSpr->setPosition(levelSpr->getContentSize() / 2);
         if (isLocked) islandSpr->setColor({128, 128, 128});
@@ -379,13 +381,12 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         // Info stats
         std::string levelName    = level ? std::string(level->m_levelName)    : slotData.name;
         std::string creatorName  = level ? std::string(level->m_creatorName)  : slotData.creator;
-        int         stars        = slotData.stars;
+        int         crystalCount = CustomGauntletManager::crystalsForLevel(level);
 
         auto nameLabel = CCLabelBMFont::create(levelName.c_str(), "bigFont.fnt");
         nameLabel->setID("level-name"_spr);
         limitLabel(nameLabel, 120.f, 0.4f, 0.3f);
-        nameLabel->setPosition({islandSpr->getPositionX(),
-                                  islandSpr->getPositionY() - 10.f});
+        nameLabel->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10.f});
         if (isLocked) nameLabel->setVisible(false);
         levelSpr->addChild(nameLabel);
 
@@ -393,8 +394,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         authorLabel->setID("creator-name"_spr);
         limitLabel(authorLabel, 120.f, 0.4f, 0.25f);
         authorLabel->setAlignment(kCCTextAlignmentCenter);
-        authorLabel->setPosition({nameLabel->getPositionX(),
-                                    nameLabel->getPositionY() - 10.f});
+        authorLabel->setPosition({nameLabel->getPositionX(), nameLabel->getPositionY() - 10.f});
         if (isLocked) authorLabel->setVisible(false);
         levelSpr->addChild(authorLabel);
 
@@ -403,23 +403,22 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         crystalNode->setID("crystal-node"_spr);
         crystalNode->setScale(0.5f);
         crystalNode->setAnchorPoint({0.5f, 0.5f});
-        crystalNode->setPosition({nameLabel->getPositionX(),
-                                    nameLabel->getPositionY() - 27.5f});
+        crystalNode->setPosition({nameLabel->getPositionX(), nameLabel->getPositionY() - 27.5f});
         crystalNode->setLayout(RowLayout::create()
             ->setGap(5)->setAutoGrowAxis(true)
             ->setAxisAlignment(AxisAlignment::Center));
 
-        auto crystalCount = CCLabelBMFont::create(fmt::format("{}", stars * 2).c_str(), "bigFont.fnt");
-        crystalCount->setID("crystal-count"_spr);
-        crystalCount->setScale(0.65f);
-        if (hasCompleted) crystalCount->setColor({255, 255, 50});
+        auto crystalCountLabel = CCLabelBMFont::create(fmt::format("{}", crystalCount).c_str(), "bigFont.fnt");
+        crystalCountLabel->setID("crystal-count"_spr);
+        crystalCountLabel->setScale(0.65f);
+        if (hasCompleted) crystalCountLabel->setColor({255, 255, 50});
 
         auto crystalSpr = CCSprite::create("GR_crystal_001.png"_spr);
         crystalSpr->setID("crystal-icon"_spr);
         crystalSpr->setAnchorPoint({0.5f, 0.5f});
         crystalSpr->setScale(0.45f);
 
-        crystalNode->addChild(crystalCount);
+        crystalNode->addChild(crystalCountLabel);
         crystalNode->addChild(crystalSpr);
         crystalNode->updateLayout();
         if (isLocked) crystalNode->setVisible(false);
@@ -430,8 +429,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
             auto check = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
             check->setID("checkmark-icon"_spr);
             check->setAnchorPoint({0.5f, 0.5f});
-            check->setPosition({islandSpr->getPositionX() + 15.f,
-                                  islandSpr->getPositionY() + 15.f});
+            check->setPosition({islandSpr->getPositionX() + 15.f, islandSpr->getPositionY() + 15.f});
             levelSpr->addChild(check);
         }
 
@@ -439,8 +437,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         if (isLocked) {
             auto lockSpr = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
             lockSpr->setID("gauntlet-lock"_spr);
-            lockSpr->setPosition({islandSpr->getPositionX(),
-                                    islandSpr->getPositionY() - 15.f});
+            lockSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15.f});
             levelSpr->addChild(lockSpr);
         }
 
@@ -542,49 +539,126 @@ void CustomGauntletLayer::checkForUnlocks() {
     }
 }
 
+// Unlock animation timeline - synced to unlockGauntlet.ogg (3s, "unlock" hit at 1.5s):
+//   0s        sfx starts, inward particles spawn, lock fades out, island starts shaking
+//   1.5s      sfx "peak" - shake stops, outward particle burst, island pulses to 1.35
+//             scale, and name/author/reward instantly appear (no fade)
+constexpr float kUnlockSfxPeakDelay = 1.5f;
+
 void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
     if (btn) btn->setTarget(this, menu_selector(CustomGauntletLayer::onLevel));
 
-    auto islandSpr = static_cast<CCSprite*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
+    auto islandSpr = static_cast<CCSpriteWithHue*>(levelSpr->getChildByID(fmt::format("island-{}", index + 1)));
     auto lockSpr = levelSpr->getChildByID("gauntlet-lock"_spr);
     auto nameLabel = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("level-name"_spr));
     auto authorLabel = static_cast<CCLabelBMFont*>(levelSpr->getChildByID("creator-name"_spr));
     auto crystalNode = levelSpr->getChildByID("crystal-node"_spr);
 
+    FMODAudioEngine::sharedEngine()->playEffect("unlockGauntlet.ogg");
+
     if (lockSpr) {
         lockSpr->runAction(CCSequence::create(
-            CCSpawn::create(
-                CCScaleTo::create(0.3f, 0.f),
-                CCFadeOut::create(0.3f),
-                nullptr
-            ),
+            CCFadeOut::create(kUnlockSfxPeakDelay),
             CCRemoveSelf::create(),
             nullptr
         ));
     }
 
+    playUnlockParticlesIn(levelSpr, index);
+    if (islandSpr) islandShake(islandSpr, kUnlockSfxPeakDelay);
+
+    // Name/author/crystal pop in instantly at the sfx peak, no fade.
     for (auto label : { nameLabel, authorLabel }) {
         if (!label) continue;
-        label->setVisible(true);
-        label->setOpacity(0);
-        label->runAction(CCFadeIn::create(0.4f));
+        label->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCShow::create(),
+            nullptr
+        ));
     }
 
     if (crystalNode) {
-        crystalNode->setVisible(true);
-        crystalNode->setScale(0.f);
-        crystalNode->runAction(CCEaseBackOut::create(CCScaleTo::create(0.3f, 0.5f)));
+        crystalNode->setScale(0.5f);
+        crystalNode->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCShow::create(),
+            nullptr
+        ));
     }
 
     if (islandSpr) {
         islandSpr->setColor(ccc3(128, 128, 128));
-        islandSpr->runAction(CCTintTo::create(0.3f, 255, 255, 255));
-
-        auto scaleUp = CCScaleTo::create(0.15f, 1.15f);
-        auto scaleDown = CCEaseBackOut::create(CCScaleTo::create(0.25f, 1.f));
-        islandSpr->runAction(CCSequence::create(scaleUp, scaleDown, nullptr));
+        islandSpr->runAction(CCSequence::create(
+            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCCallFuncN::create(this, callfuncN_selector(CustomGauntletLayer::onUnlockPeak)),
+            CCSpawn::create(
+                CCTintTo::create(0.3f, 255, 255, 255),
+                HueLuminanceTo::create(0.6f, 1.f, 0.f),
+                CCSequence::create(
+                    CCEaseInOut::create(CCScaleTo::create(0.25f, 1.35f), 2.f),
+                    CCEaseBackOut::create(CCScaleTo::create(0.35f, 1.f)),
+                    nullptr
+                ),
+                nullptr
+            ),
+            nullptr
+        ));
     }
+}
+
+// Fires at the sfx's "unlock" peak (pSender is the island sprite mid-pulse).
+void CustomGauntletLayer::onUnlockPeak(CCNode* sender) {
+    auto levelSpr = sender->getParent();
+    if (!levelSpr) return;
+    auto btn = levelSpr->getParent();
+    playUnlockParticlesOut(levelSpr, btn ? btn->getTag() : 0);
+}
+
+CCFiniteTimeAction* CustomGauntletLayer::generateShakeAction(CCPoint originalPos, float xyOffset, float duration) {
+    float dx = CCRANDOM_MINUS1_1() * xyOffset;
+    float dy = CCRANDOM_MINUS1_1() * xyOffset;
+    return CCMoveTo::create(duration, {originalPos.x + dx, originalPos.y + dy});
+}
+
+void CustomGauntletLayer::islandShake(CCSprite* islandSpr, float duration) {
+    constexpr float stepDuration = 0.05f;
+    constexpr float xyOffset = 3.f;
+
+    CCPoint originalPos = islandSpr->getPosition();
+    int steps = static_cast<int>(duration / stepDuration);
+
+    auto shakeSteps = CCArray::create();
+    for (int i = 0; i < steps; i++) {
+        shakeSteps->addObject(generateShakeAction(originalPos, xyOffset, stepDuration));
+    }
+    shakeSteps->addObject(CCMoveTo::create(stepDuration, originalPos));
+
+    islandSpr->runAction(CCSequence::create(shakeSteps));
+}
+
+void CustomGauntletLayer::playUnlockParticlesIn(CCNode* levelSpr, int index) {
+    auto particlesIn = GameToolbox::particleFromString(
+        "150a1a2a0a75a-180a180a0a0a75a75a0a0a-2000a0a0a0a3a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a0a0a0",
+        NULL,
+        false
+    );
+    particlesIn->setPosition(levelSpr->getContentSize() / 2);
+    particlesIn->setID(fmt::format("unlock-particles-in-{}", index + 1));
+    particlesIn->setAutoRemoveOnFinish(true);
+    levelSpr->addChild(particlesIn, -1);
+}
+
+void CustomGauntletLayer::playUnlockParticlesOut(CCNode* levelSpr, int index) {
+    auto particlesOut = GameToolbox::particleFromString(
+        "20a-1a0.75a0a-1a180a180a0a380a0a0a0a0a0a0a0a0a3a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0a0a0.5a0.35a0a0a20a15a0a0a0a2a1a0a0a0a0a0a5a0a0a0a0a0a0a0a0a0a3.61a0a0",
+        NULL,
+        false
+    );
+    particlesOut->setPosition(levelSpr->getContentSize() / 2);
+    particlesOut->setID(fmt::format("unlock-particles-out-{}", index + 1));
+    particlesOut->setAutoRemoveOnFinish(true);
+    levelSpr->addChild(particlesOut, -1);
 }
 
 void CustomGauntletLayer::onBack(CCObject*) {

@@ -51,9 +51,25 @@ class $modify(GauntletLevelInfoLayer, LevelInfoLayer) {
             level->m_levelID.value()
         );
 
-        if (isCustomGauntletLevel) level->m_gauntletLevel2 = true;
+        if (isCustomGauntletLevel) {
+            level->m_gauntletLevel2 = true;
+        }
 
         if (!LevelInfoLayer::init(level, challenge)) return false;
+
+        if (isCustomGauntletLevel) {
+            auto bg = static_cast<CCSprite*>(getChildByIDRecursive("background"));
+            auto bl = static_cast<CCSprite*>(getChildByIDRecursive("bottom-left-art"));
+            auto br = static_cast<CCSprite*>(getChildByIDRecursive("bottom-right-art"));
+            if (bg && bl && br) {
+                bg->setColor({ 90, 85, 40 });
+                // bl->initWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+                // bl->setAnchorPoint({0, 0});
+                // br->initWithSpriteFrameName("GR_gauntletCorner_001.png"_spr);
+                // br->setAnchorPoint({1, 0});
+                // br->setFlipX(true);
+            }
+        }
 
         if (isCustomGauntletLevel && m_starsIcon && m_starsLabel) {
             int crystalCount = CustomGauntletManager::crystalsForLevel(level);

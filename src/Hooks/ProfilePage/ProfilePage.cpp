@@ -19,7 +19,7 @@ class $modify(GRProfilePage, ProfilePage) {
 
 $execute {
     registerBadge(
-        "GR_badgeManager_001.png"_spr, 
+        "GRManager"_spr, 
         "Gauntlet Manager", 
         "This user oversees and moderates <cc>Better Gauntlets</c>' custom Gauntlets. They can <cg>add</c>, <cj>edit</c>, and <cr>delete</c> gauntlets added by the mod. This does not apply to the <cy>Lost Gauntlets</c>, which are hosted exclusively by <co>RobTop</c>.", 
         [] (const Badge& badge) {
@@ -28,8 +28,10 @@ $execute {
             }
         }
     );
+    setCommentColor("GRManager"_spr, { 241, 125, 179 });
+    setPriority("GRManager"_spr, 999999999);
 
-    setProfileCallback("GR_badgeManager_001.png"_spr, [] (const Badge& badge) {
+    setProfileCallback("GRManager"_spr, [] (const Badge& badge) {
         GauntletManagerCache::get()->isManager(badge.user->m_accountID, [badge](bool isManager) {
             if (!isManager) return;
 

@@ -118,6 +118,7 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
     m_loadingCircle->setPosition(m_size / 2);
     m_loadingCircle->setVisible(false);
     m_loadingCircle->ignoreAnchorPointForPosition(false);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
     m_mainLayer->addChild(m_loadingCircle, 10);
 
     if (GauntletManagerAPI::get()->isLoggedIn()) {
@@ -134,6 +135,7 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
 
 void GauntletManagerPopup::startArgonAuth() {
     m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
 
     m_argonHolder.spawn(
         argon::startAuth(),
@@ -155,6 +157,7 @@ void GauntletManagerPopup::startArgonAuth() {
             auto token = std::move(result).unwrap();
             auto accountID = GJAccountManager::sharedState()->m_accountID;
             m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
 
             m_fetchHolder.spawn(
                 web::WebRequest()
@@ -394,6 +397,7 @@ void GauntletManagerPopup::onSwitchTab(int tab) {
 
 void GauntletManagerPopup::fetchGauntlets() {
     m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
 
     m_fetchHolder.spawn(
         GauntletManagerAPI::get()->fetchAll(),
@@ -776,6 +780,7 @@ void GauntletManagerPopup::onPushStaged(int index) {
         [this, data, index](FLAlertLayer*, bool confirmed) {
             if (!confirmed) return;
             m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
 
             auto future = data.id == 0
                 ? GauntletManagerAPI::get()->create(data)
@@ -808,6 +813,7 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
         [this, gauntletId](FLAlertLayer*, bool confirmed) {
             if (!confirmed) return;
             m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
             m_deleteHolder.spawn(
                 GauntletManagerAPI::get()->remove(gauntletId),
                 [this, gauntletId](web::WebResponse res) {
@@ -845,6 +851,7 @@ void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
     bool wasFeatured = it->featured;
 
     m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
     m_featureHolder.spawn(
         GauntletManagerAPI::get()->setFeatured(gauntletId),
         [this, gauntletId, wasFeatured](web::WebResponse res) {

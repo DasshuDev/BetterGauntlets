@@ -19,7 +19,7 @@
 
 ## Known Issues:
 - The new Gauntlets added by Better Gauntlets may not show up all the time, this is due to rate limiting. If you would like to support this mod and help fund the server's upkeep, please consider donating to my Kofi or Boosty!
-- GDUtils' "New Gauntlet Design" setting **does not work** with this update, and that is intentional. Measures have been taken to make sure the setting does not apply due to the modifications made to `GauntletNode`.
+- GDUtils' "New Gauntlet Design" setting **does not work** with this update, and that is intentional. Measures have been taken to make sure the setting does not apply due to the modifications made to `GauntletNode`. Does this count as an incompatability? Maybe. Do I care? No :P
 
 <c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but may soon return.*
 

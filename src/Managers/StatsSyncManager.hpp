@@ -5,22 +5,13 @@
 
 using namespace geode::prelude;
 
-// Pushes the player's crystal/coin totals to the leaderboard backend.
-// A singleton (rather than living on a transient layer like PlayLayer) so the
-// in-flight request isn't cancelled if the player leaves the scene right away.
 class StatsSyncManager {
 public:
     static StatsSyncManager* get();
 
     using SyncCallback = std::function<void(bool success, std::string const& error)>;
 
-    // Calls back with success=false (and a reason) if the player isn't signed
-    // into a GD account, auth fails, or the push request fails.
     void sync(int crystals, int coins, SyncCallback callback = nullptr);
-
-    // Forces the server-side crystal total to 0 for this account, bypassing the
-    // GREATEST ratchet that sync() is subject to. Does not touch the local save -
-    // callers should also call CustomGauntletManager::resetCrystals().
     void resetSelf(SyncCallback callback = nullptr);
 
 private:

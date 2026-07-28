@@ -22,13 +22,9 @@ void GauntletManagerCache::fetch() {
                         }
                     }
                 }
-                // Replace wholesale (not merge) so removed managers actually
-                // lose the badge on the next check instead of sticking around.
                 m_managerIDs = std::move(ids);
                 m_hasFetched = true;
             } else {
-                // Leave m_hasFetched false so the next isManager() call retries
-                // instead of permanently answering false for the whole session.
                 log::warn(
                     "[GauntletManagerCache] Failed to fetch manager list (code {}): {}",
                     res.code(), res.string().unwrapOr("<no body>")

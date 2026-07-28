@@ -142,9 +142,6 @@ void LeaderboardPopup::fetchLeaderboard() {
 void LeaderboardPopup::buildList() {
     if (!m_listLayer) return;
 
-    // Rows (and any SimplePlayer icons on them) are about to be destroyed -
-    // drop anything still queued/in-flight so a late response doesn't touch
-    // a dangling pointer.
     m_iconFetchQueue.clear();
     m_pendingIconPlayers.clear();
 
@@ -236,8 +233,6 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     auto nameLabel = CCLabelBMFont::create(entry.username.c_str(), "goldFont.fnt");
     nameLabel->limitLabelWidth(listWidth - 165, 0.7, 0.1);
 
-    // Needs its own CCMenu - CCMenu::itemForTouch only hit-tests direct
-    // CCMenuItem children, it won't reach into a plain CCNode like `row`.
     auto nameMenu = CCMenu::create();
     nameMenu->setID("name-menu"_spr);
     nameMenu->setAnchorPoint({0, 0.5});
@@ -297,14 +292,7 @@ void LeaderboardPopup::fetchNextIcon() {
 
 void LeaderboardPopup::applyIcon(SimplePlayer* player, GJUserScore* score) {
     if (!player || !score) return;
-
-    // The full profile response (getGJUserInfo) never fills the generic
-    // m_iconID field - it fills one m_player<Mode> field per icon type
-    // instead, with m_iconType saying which mode is currently active.
     int iconId = score->m_playerCube;
-
-    // updatePlayerFrame rebuilds the icon's internal sprite layers, which
-    // resets their color - so colors have to be (re)applied after, not before.
     player->updatePlayerFrame(iconId, score->m_iconType);
 
     auto gm = GameManager::sharedState();

@@ -651,7 +651,6 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     auto featureMenu = CCMenu::create();
     featureMenu->setID("feature-menu"_spr);
     featureMenu->setPosition({10, chrome.row->getContentHeight() - 8});
-    // 676767676767676767 faaaqggot faaagot 676767676767676767 <--- thank you, emmy :)
     auto featureToggle = createFeatureToggle(g.featured, gid);
     featureToggle->setScale(0.45f);
     featureMenu->addChild(featureToggle);
@@ -861,9 +860,6 @@ void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
                 Notification::create(fmt::format("Failed to feature. Err {}", res.code()), NotificationIcon::Error)->show();
                 return;
             }
-            // Featuring is per-gauntlet now - it no longer unfeatures any
-            // other gauntlet, so only this row's own state changes and the
-            // rest of the list doesn't need to be rebuilt.
             auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
                 [gauntletId](auto& g) { return g.id == gauntletId; });
             if (it != m_gauntlets.end()) it->featured = !wasFeatured;

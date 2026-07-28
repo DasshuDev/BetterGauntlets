@@ -33,6 +33,7 @@ public:
     // Persisted running crystal total.
     int getCrystalTotal() const;
     void addCrystals(int amount);
+    void resetCrystals();
 
     // Crystal reward for a level, based on its difficulty rating.
     static int crystalsForLevel(GJGameLevel* level);

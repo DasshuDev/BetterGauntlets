@@ -50,6 +50,7 @@ protected:
     void onPlay(cocos2d::CCObject* sender);
     void onNewInfo(cocos2d::CCObject* sender);
     void onDiscord(cocos2d::CCObject* sender);
+    void onLeaderboard(cocos2d::CCObject* sender);
     void toggleList(cocos2d::CCObject* sender);
     void unblockPlay();
 
@@ -70,6 +71,7 @@ protected:
     CCSprite* m_betterTitle = nullptr;
     CCNode* m_loadingCircle = nullptr;
     CCMenuItemSpriteExtra* m_refreshButton = nullptr;
+    CCMenuItemSpriteExtra* m_leaderboardButton = nullptr;
     CCLabelBMFont* m_crystalLabel = nullptr;
 
     alpha::ui::AdvancedScrollLayer* m_customGauntletScrollLayer = nullptr;

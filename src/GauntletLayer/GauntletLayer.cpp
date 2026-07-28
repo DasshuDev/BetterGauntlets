@@ -16,13 +16,6 @@
 
 using namespace geode::prelude;
 
-// LevelInfoLayer::onBack redirects gauntlet levels back into a brand-new
-// BetterGauntletLayer instance (see Hooks/Custom Hooks/GauntletRedirect.cpp)
-// rather than popping back to the one the player left. That means the normal
-// "was locked a second ago, now isn't" in-memory transition (m_lockedStates /
-// checkForUnlocks) never has anything to compare against on the fresh
-// instance. This session-lifetime cache is what actually detects the
-// transition across that instance boundary, keyed by gauntlet type.
 static std::unordered_map<int, std::vector<bool>> s_lastKnownLockedStates;
 
 // Helpers 
@@ -468,10 +461,6 @@ void BetterGauntletLayer::editGauntlets() {
     }
 }
 
-// Unlock detection - re-checked whenever this layer becomes active again
-// (e.g. popped back to after finishing a level), since the level buttons
-// are only ever built once (m_loaded guard).
-
 void BetterGauntletLayer::onEnter() {
     CCLayer::onEnter();
     checkForUnlocks();
@@ -494,10 +483,6 @@ void BetterGauntletLayer::checkForUnlocks() {
     }
 }
 
-// Unlock animation timeline - synced to unlockGauntlet.ogg (3s, "unlock" hit at 1.5s):
-//   0s        sfx starts, inward particles spawn, lock fades out, island starts shaking
-//   1.5s      sfx "peak" - shake stops, outward particle burst, island pulses to 1.35
-//             scale, and name/author/reward instantly appear (no fade)
 constexpr float kUnlockSfxPeakDelay = 1.5f;
 
 void BetterGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {

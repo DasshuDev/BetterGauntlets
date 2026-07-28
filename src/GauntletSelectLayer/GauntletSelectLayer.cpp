@@ -10,6 +10,7 @@
 #include "../Data/CustomGauntletManager.hpp"
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../CustomGauntlets/CustomGauntletLayer.hpp"
+#include "../Managers/LeaderboardPopup.hpp"
 
 using namespace geode::prelude;
 
@@ -280,7 +281,7 @@ void BetterGauntletSelectLayer::buildMenus() {
         ColumnLayout::create()
         ->setAxisReverse(false)
         ->setAxisAlignment(AxisAlignment::Start)
-        ->setGap(10.0)
+        ->setGap(5.0)
         ->setAutoGrowAxis(true)
     );
     this->addChild(BRMenu, 1);
@@ -292,6 +293,15 @@ void BetterGauntletSelectLayer::buildMenus() {
     );
     m_refreshButton->setID("refresh-button");
     BRMenu->addChild(m_refreshButton);
+
+    auto leaderboardSpr = CCSprite::createWithSpriteFrameName("GJ_levelLeaderboardBtn_001.png");
+    leaderboardSpr->setScale(0.75);
+    m_leaderboardButton = CCMenuItemSpriteExtra::create(
+        leaderboardSpr, this, menu_selector(BetterGauntletSelectLayer::onLeaderboard)
+    );
+    m_leaderboardButton->setID("leaderboard-button");
+    BRMenu->addChild(m_leaderboardButton);
+
     BRMenu->updateLayout();
 
     // Top menu (title + toggle) 
@@ -746,7 +756,11 @@ void BetterGauntletSelectLayer::onDiscord(CCObject* sender) {
     );
 }
 
-// Custom gauntlets toggle 
+void BetterGauntletSelectLayer::onLeaderboard(CCObject* sender) {
+    LeaderboardPopup::create()->show();
+}
+
+// Custom gauntlets toggle
 
 void BetterGauntletSelectLayer::toggleList(CCObject* sender) {
     m_showingCustomList = !m_showingCustomList;

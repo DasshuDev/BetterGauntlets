@@ -172,9 +172,6 @@ bool CustomGauntletManager::isCustomGauntletLevel(int levelID) const {
 int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
     if (!level) return 0;
 
-    // getAverageDifficulty() collapses every demon sub-rating down to a
-    // single "Insane Demon" value, so demons need their own scale read
-    // straight off the raw sub-rating field instead.
     if (level->m_demon.value()) {
         switch (static_cast<DemonDifficultyType>(level->m_demonDifficulty)) {
             case DemonDifficultyType::EasyDemon:    return 10;
@@ -236,4 +233,8 @@ int CustomGauntletManager::getCrystalTotal() const {
 void CustomGauntletManager::addCrystals(int amount) {
     if (amount <= 0) return;
     Mod::get()->setSavedValue("crystal-total", getCrystalTotal() + amount);
+}
+
+void CustomGauntletManager::resetCrystals() {
+    Mod::get()->setSavedValue("crystal-total", 0);
 }

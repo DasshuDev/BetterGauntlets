@@ -514,10 +514,6 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 	}
 }
 
-// Unlock detection - re-checked whenever this layer becomes active again
-// (e.g. popped back to after finishing a level), since the level buttons
-// are only ever built once after the initial online level fetch.
-
 void CustomGauntletLayer::onEnter() {
     CCLayer::onEnter();
     checkForUnlocks();
@@ -539,10 +535,6 @@ void CustomGauntletLayer::checkForUnlocks() {
     }
 }
 
-// Unlock animation timeline - synced to unlockGauntlet.ogg (3s, "unlock" hit at 1.5s):
-//   0s        sfx starts, inward particles spawn, lock fades out, island starts shaking
-//   1.5s      sfx "peak" - shake stops, outward particle burst, island pulses to 1.35
-//             scale, and name/author/reward instantly appear (no fade)
 constexpr float kUnlockSfxPeakDelay = 1.5f;
 
 void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {

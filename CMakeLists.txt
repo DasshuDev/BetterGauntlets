@@ -51,6 +51,10 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/Managers/GauntletManagerPopup.cpp
     src/Managers/GauntletManagerCache.cpp
     src/Managers/GauntletEditPopup.cpp
+    src/Managers/LeaderboardAPI.cpp
+    src/Managers/LeaderboardPopup.cpp
+    src/Managers/StatsAPI.cpp
+    src/Managers/StatsSyncManager.cpp
     src/Data/CustomGauntletManager.cpp
     src/CustomGauntlets/CustomGauntletNode.cpp
     src/CustomGauntlets/CustomGauntletLayer.cpp

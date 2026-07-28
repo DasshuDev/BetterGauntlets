@@ -5,8 +5,6 @@
 
 using namespace geode::prelude;
 
-// Animates a CCSpriteWithHue's luminance from `from` to `to` over `duration`,
-// used to flash an island sprite white then fade back to its true colors.
 class HueLuminanceTo : public CCActionInterval {
 public:
     static HueLuminanceTo* create(float duration, float from, float to) {

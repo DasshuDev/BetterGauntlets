@@ -1,6 +1,7 @@
 #include "PlayLayer.hpp"
 #include "../CurrencyRewardLayer/CurrencyRewardLayer.hpp"
 #include "../../Data/CustomGauntletManager.hpp"
+#include "../../Managers/StatsSyncManager.hpp"
 
 using namespace geode::prelude;
 
@@ -30,4 +31,6 @@ void GRPlayLayer::levelComplete() {
     manager->markLevelRewardClaimed(levelID);
     manager->addCrystals(reward);
     GRCurrencyRewardLayer::queueCrystalReward(reward);
+
+    StatsSyncManager::get()->sync(manager->getCrystalTotal(), 0);
 }

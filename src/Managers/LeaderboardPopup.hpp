@@ -21,8 +21,6 @@ protected:
 
     async::TaskHolder<web::WebResponse> m_fetchHolder;
 
-    // Player icons are fetched one at a time - GameLevelManager only has a
-    // single UserInfoDelegate slot - and queued behind whichever row asked first.
     std::vector<int> m_iconFetchQueue;
     std::unordered_map<int, SimplePlayer*> m_pendingIconPlayers;
     bool m_fetchingIcon = false;

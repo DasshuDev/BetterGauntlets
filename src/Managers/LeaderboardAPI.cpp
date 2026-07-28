@@ -14,8 +14,6 @@ web::WebFuture LeaderboardAPI::fetch(int limit) {
         .get(baseURL() + fmt::format("/leaderboard?type=crystals&limit={}", limit));
 }
 
-// Postgres BIGINT columns (account_id) get serialized as JSON strings by
-// postgres.js to avoid precision loss, not as JSON numbers - accept either.
 static int parseIntField(matjson::Value const& val) {
     if (auto asInt = val.asInt(); asInt.isOk()) return asInt.unwrap();
     return geode::utils::numFromString<int>(val.asString().unwrapOr("0")).unwrapOr(0);

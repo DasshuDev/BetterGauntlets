@@ -238,3 +238,7 @@ void CustomGauntletManager::addCrystals(int amount) {
 void CustomGauntletManager::resetCrystals() {
     Mod::get()->setSavedValue("crystal-total", 0);
 }
+
+void CustomGauntletManager::resetClaimedRewards() {
+    Mod::get()->setSavedValue("claimed-level-rewards", matjson::Value::array());
+}

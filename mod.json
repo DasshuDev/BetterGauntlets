@@ -96,6 +96,20 @@
 			"default": true
 		},
 		
+		"stats": {
+			"name": "Stats",
+			"type": "title"
+		},
+
+		"reset-crystals": {
+			"name": "Reset Crystals",
+			"description": "Resets your <cy>overall Crystal count</c> and <cc>custom Gauntlet level completions</c> back to <cr>default (0)</c>, and syncs the reset to the server immediately.",
+			"type": "button",
+			"buttons": {
+				"reset-crystals": "Reset Crystals"
+			}
+		},
+
 		"developer": {
 			"name": "Developer Settings",
 			"type": "title",

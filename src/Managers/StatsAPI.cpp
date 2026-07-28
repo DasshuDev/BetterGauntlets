@@ -25,3 +25,10 @@ web::WebFuture StatsAPI::push(
         .bodyString(body.dump())
         .post(baseURL() + "/stats");
 }
+
+web::WebFuture StatsAPI::resetSelf(int accountId, std::string const& token) {
+    return web::WebRequest()
+        .header("Authorization", "Bearer " + token)
+        .header("X-Account-Id", std::to_string(accountId))
+        .send("DELETE", baseURL() + "/stats");
+}

@@ -18,9 +18,17 @@ public:
     // into a GD account, auth fails, or the push request fails.
     void sync(int crystals, int coins, SyncCallback callback = nullptr);
 
+    // Forces the server-side crystal total to 0 for this account, bypassing the
+    // GREATEST ratchet that sync() is subject to. Does not touch the local save -
+    // callers should also call CustomGauntletManager::resetCrystals().
+    void resetSelf(SyncCallback callback = nullptr);
+
 private:
     StatsSyncManager() = default;
 
     async::TaskHolder<geode::Result<std::string>> m_argonHolder;
     async::TaskHolder<web::WebResponse> m_pushHolder;
+
+    async::TaskHolder<geode::Result<std::string>> m_resetArgonHolder;
+    async::TaskHolder<web::WebResponse> m_resetHolder;
 };

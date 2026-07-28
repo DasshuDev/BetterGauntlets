@@ -35,6 +35,10 @@ public:
     void addCrystals(int amount);
     void resetCrystals();
 
+    // Clears every claimed level reward, so previously-completed gauntlet
+    // levels can be replayed for crystals and locked slots re-lock.
+    void resetClaimedRewards();
+
     // Crystal reward for a level, based on its difficulty rating.
     static int crystalsForLevel(GJGameLevel* level);
 

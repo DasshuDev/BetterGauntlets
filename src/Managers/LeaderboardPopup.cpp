@@ -186,15 +186,15 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     auto rowBG = CCScale9Sprite::create("square.png");
     rowBG->setContentSize(row->getContentSize());
     rowBG->setColor({0, 0, 0});
-    rowBG->setOpacity(rank % 2 == 0 ? 80 : 40);
+    rowBG->setOpacity(rank % 2 == 0 ? 40 : 80);
     rowBG->setAnchorPoint({0, 0});
     row->addChild(rowBG);
 
-    ccColor3B rankColor = {255, 255, 255};
-    if (rank == 1) rankColor = {255, 215, 0};
-    else if (rank == 2) rankColor = {200, 200, 210};
-    else if (rank == 3) rankColor = {205, 127, 50};
-    else if (rank >= 4) rankColor = {0, 0, 0};
+    ccColor4B rankColor = {255, 255, 255, 255};
+    if (rank == 1) rankColor = {255, 215, 0, 80};
+    else if (rank == 2) rankColor = {200, 200, 210, 80};
+    else if (rank == 3) rankColor = {205, 127, 50, 80};
+    else if (rank >= 4) rankColor = {0, 0, 0, 80};
 
     std::string trophy = "rankIcon_all_001.png";
     if (rank == 1)       trophy = "rankIcon_1_001.png";
@@ -209,8 +209,8 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     gradient->setInsetRight(inset);
     gradient->setInsetBottom(inset);
     gradient->setPositionX(-75);
-    gradient->setColor(rankColor);
-    gradient->setOpacity(128);
+    gradient->setColor({rankColor.r, rankColor.g, rankColor.b});
+    gradient->setOpacity(rankColor.a);
     gradient->setContentSize(row->getContentSize());
     gradient->setAnchorPoint({1, 1});
     gradient->setRotation(180);

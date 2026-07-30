@@ -49,6 +49,8 @@ $on_mod(Loaded) {
 }
 
 $execute {
+
+    // Managers
     registerBadge(
         "manager"_spr, 
         "Gauntlet Manager", 
@@ -77,6 +79,37 @@ $execute {
 
     setCommentColor(
         "manager"_spr,
-        { 255, 185, 225 }
+        ccc3(255, 185, 225)
+    );
+
+    // Helpers
+    registerBadge(
+        "helper"_spr,
+        "Gauntlet Helper",
+        "This user helps out with <cc>Better Gauntlets</c>' custom Gauntlets. "
+        "They assist the <cj>Gauntlet Managers</c> but do not have full edit access themselves.",
+        [] (const Badge& badge) {
+            if (badge.modStatus == ModStatus::Regular) {
+                showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
+            }
+        }
+    );
+
+    setProfileCallback(
+        "helper"_spr,
+        [] (const Badge& badge) {
+        GauntletManagerCache::get()->isHelper(badge.user->m_accountID, [badge](bool isHelper) {
+            if (!isHelper)
+                return;
+            if (badge.location == Location::Profile || badge.location == Location::Comment)
+                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_001.png"_spr));
+            if (badge.location == Location::InfoPopup)
+                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_xlarge_001.png"_spr));
+        });
+    });
+
+    setCommentColor(
+        "helper"_spr,
+        ccc3(150, 210, 225)
     );
 }

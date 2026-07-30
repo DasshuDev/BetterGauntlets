@@ -25,7 +25,7 @@ bool MyCreatorLayer::init() {
 void MyCreatorLayer::onGauntlets(CCObject* sender) {
     auto scene = BetterGauntletSelectLayer::scene();
     if (scene) {
-        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
+        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
     } else {
         CreatorLayer::onGauntlets(sender);
     }

@@ -11,6 +11,7 @@
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../CustomGauntlets/CustomGauntletLayer.hpp"
 #include "../Managers/LeaderboardPopup.hpp"
+#include "GauntletInfoPopup.hpp"
 
 using namespace geode::prelude;
 
@@ -724,24 +725,30 @@ void BetterGauntletSelectLayer::onRefresh(CCObject* sender) {
 }
 
 void BetterGauntletSelectLayer::onNewInfo(CCObject* sender) {
-    MDPopup* popup = MDPopup::create(
-        "The Gauntlets",
+    std::vector<GauntletInfoPopup::InfoPage> pages = {
+        {
+            "The Lost Gauntlets",
+            "<cy>The Lost Gauntlets</c> are a series of themed collections "
+            "of five (5) rated levels that grant a <cg>special reward</c> upon completion. "
+            "They are made by <co>RobTop</c> based on which levels fit the theme, or are placed "
+            "in by official <cj>Creator Contests</c>. Make sure to check in regularly for new "
+            "Gauntlet Creator Contests on <co>RobTop's</c> <cr>social medias</c>!"
+        },
+        {
+            "The Better Gauntlets",
+            "<cc>The Better Gauntlets</c> list is a collection made up of <cl>custom Gauntlets</c>. "
+            "These Gauntlets are collections of five (5) rated levels which grant a <cg>custom reward</c> once "
+            "completed. These Gauntlets are made by <co>Gauntlet Managers</c>. The themes of the "
+            "levels should fit the theme of the Gauntlet itself, or may be placed in via "
+            "<cj>Creator Contests</c>."
+        },
+        {
+            "Credits",
+            "hi chat"
+        }
+    };
 
-        "<cy>The Lost Gauntlets</c> are a series of themed collections "
-        "of five (5) rated levels that grant a <cg>special reward</c> upon completion. "
-        "They are made by <co>RobTop</c> based on which levels fit the theme, or are placed "
-        "in by official <cj>Creator Contests</c>. Make sure to check in regularly for new "
-        "Gauntlet Creator Contests on <co>RobTop's</c> <cr>social medias</c>!"
-        
-        "\n\n<cc>The Better Gauntlets</c> list is a collection made up of <cl>custom Gauntlets</c>. "
-        "These Gauntlets are collections of five (5) rated levels which grant a <cg>custom reward</c> once "
-        "completed. These Gauntlets are made by <co>Gauntlet Managers</c>. The themes of the "
-        "levels should fit the theme of the Gauntlet itself, or may be placed in via "
-        "<cj>Creator Contests</c>.",
-
-        "OK"
-    );
-    popup->show();
+    GauntletInfoPopup::create(pages)->show();
 }
 
 void BetterGauntletSelectLayer::onDiscord(CCObject* sender) {

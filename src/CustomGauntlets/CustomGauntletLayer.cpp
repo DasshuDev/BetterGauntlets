@@ -114,9 +114,9 @@ void CustomGauntletLayer::buildBackground() {
     auto floorLine = CCSprite::createWithSpriteFrameName("floorLine_001.png");
     if (floorLine) {
         floorLine->setID("floor-line");
-        floorLine->setScaleX(0.85f);
+        floorLine->setScaleX(0.85);
         floorLine->setOpacity(100);
-        floorLine->setPosition({winSize.width / 2, winSize.height - 55.f});
+        floorLine->setPosition({winSize.width / 2, winSize.height - 55});
         this->addChild(floorLine);
     }
 }
@@ -197,25 +197,25 @@ void CustomGauntletLayer::buildTitle() {
     // Main title
     m_titleLabel = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFont.fnt"_spr);
     m_titleLabel->setID("title");
-    m_titleLabel->setScale(0.75f);
+    m_titleLabel->setScale(0.75);
     m_titleLabel->setColor(m_data.nameColor);
-    m_titleLabel->setPosition({winSize.width / 2, winSize.height - 30.f});
+    m_titleLabel->setPosition({winSize.width / 2, winSize.height - 30});
     m_titleLabel->setZOrder(37);
     this->addChild(m_titleLabel);
 
     // Highlight
     auto highlight = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
     highlight->setID("title-highlight");
-    highlight->setScale(0.75f);
+    highlight->setScale(0.75);
     highlight->setColor(m_data.accentColor2);
-    highlight->setPosition({m_titleLabel->getPositionX() + 2, winSize.height - 30.f});
+    highlight->setPosition({m_titleLabel->getPositionX() + 2, winSize.height - 30});
     highlight->setZOrder(38);
     this->addChild(highlight);
 
     // Outline
     auto outline = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontOutline.fnt"_spr);
     outline->setID("title-outline");
-    outline->setScale(0.75f);
+    outline->setScale(0.75);
     outline->setColor({ 255, 255, 255 });
     outline->setPosition(m_titleLabel->getPositionX() - 1.5, m_titleLabel->getPositionY());
     outline->setZOrder(36);
@@ -224,7 +224,7 @@ void CustomGauntletLayer::buildTitle() {
     // Shadow
     auto shadow = CCLabelBMFont::create(title.c_str(), "GR_OxygeneFontOutline.fnt"_spr);
     shadow->setID("title-shadow");
-    shadow->setScale(0.75f);
+    shadow->setScale(0.75);
     shadow->setColor({0, 0, 0});
     shadow->setOpacity(100);
     shadow->setPosition({outline->getPositionX() + 3.5f, outline->getPositionY() - 3.5f});
@@ -358,7 +358,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         // Island Node
         auto levelSpr = CCNode::create();
         levelSpr->setContentSize({70, 80});
-        levelSpr->setAnchorPoint({0.5f, 0.5f});
+        levelSpr->setAnchorPoint({0.5, 0.5});
         levelSpr->setID(fmt::format("gauntlet-{}", i + 1).c_str());
 
         // Sprite PH
@@ -374,8 +374,8 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         shadowSpr->setID(fmt::format("island-{}-shadow", i + 1).c_str());
         shadowSpr->setColor({0, 0, 0});
         shadowSpr->setOpacity(75);
-        shadowSpr->setScaleY(1.2f);
-        shadowSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10.f});
+        shadowSpr->setScaleY(1.2);
+        shadowSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
         levelSpr->addChild(shadowSpr, -1);
 
         // Info stats
@@ -385,24 +385,24 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 
         auto nameLabel = CCLabelBMFont::create(levelName.c_str(), "bigFont.fnt");
         nameLabel->setID("level-name"_spr);
-        limitLabel(nameLabel, 120.f, 0.4f, 0.3f);
-        nameLabel->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10.f});
+        limitLabel(nameLabel, 120, 0.4, 0.3);
+        nameLabel->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
         if (isLocked) nameLabel->setVisible(false);
         levelSpr->addChild(nameLabel);
 
         auto authorLabel = CCLabelBMFont::create(creatorName.c_str(), "goldFont.fnt");
         authorLabel->setID("creator-name"_spr);
-        limitLabel(authorLabel, 120.f, 0.4f, 0.25f);
+        limitLabel(authorLabel, 120, 0.4, 0.25);
         authorLabel->setAlignment(kCCTextAlignmentCenter);
-        authorLabel->setPosition({nameLabel->getPositionX(), nameLabel->getPositionY() - 10.f});
+        authorLabel->setPosition({nameLabel->getPositionX(), nameLabel->getPositionY() - 10});
         if (isLocked) authorLabel->setVisible(false);
         levelSpr->addChild(authorLabel);
 
         // Crystals row
         auto crystalNode = CCNode::create();
         crystalNode->setID("crystal-node"_spr);
-        crystalNode->setScale(0.5f);
-        crystalNode->setAnchorPoint({0.5f, 0.5f});
+        crystalNode->setScale(0.5);
+        crystalNode->setAnchorPoint({0.5, 0.5});
         crystalNode->setPosition({nameLabel->getPositionX(), nameLabel->getPositionY() - 27.5f});
         crystalNode->setLayout(RowLayout::create()
             ->setGap(5)->setAutoGrowAxis(true)
@@ -410,13 +410,13 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 
         auto crystalCountLabel = CCLabelBMFont::create(fmt::format("{}", crystalCount).c_str(), "bigFont.fnt");
         crystalCountLabel->setID("crystal-count"_spr);
-        crystalCountLabel->setScale(0.65f);
+        crystalCountLabel->setScale(0.65);
         if (hasCompleted) crystalCountLabel->setColor({255, 255, 50});
 
         auto crystalSpr = CCSprite::create("GR_crystal_001.png"_spr);
         crystalSpr->setID("crystal-icon"_spr);
-        crystalSpr->setAnchorPoint({0.5f, 0.5f});
-        crystalSpr->setScale(0.45f);
+        crystalSpr->setAnchorPoint({0.5, 0.5});
+        crystalSpr->setScale(0.45);
 
         crystalNode->addChild(crystalCountLabel);
         crystalNode->addChild(crystalSpr);
@@ -428,8 +428,8 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         if (hasCompleted) {
             auto check = CCSprite::createWithSpriteFrameName("GJ_completesIcon_001.png");
             check->setID("checkmark-icon"_spr);
-            check->setAnchorPoint({0.5f, 0.5f});
-            check->setPosition({islandSpr->getPositionX() + 15.f, islandSpr->getPositionY() + 15.f});
+            check->setAnchorPoint({0.5, 0.5});
+            check->setPosition({islandSpr->getPositionX() + 15, islandSpr->getPositionY() + 15});
             levelSpr->addChild(check);
         }
 
@@ -437,7 +437,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         if (isLocked) {
             auto lockSpr = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
             lockSpr->setID("gauntlet-lock"_spr);
-            lockSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15.f});
+            lockSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15});
             levelSpr->addChild(lockSpr);
         }
 
@@ -451,9 +451,9 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         btn->setTag(i);
         btn->setID(fmt::format("level-{}", i + 1).c_str());
 
-        float posFarX = 185.f;
-		float posCloseX = posFarX / 2.f;
-		float posY = 50.f;
+        float posFarX = 185;
+		float posCloseX = posFarX / 2;
+		float posY = 50;
 
 		switch (i + 1) {
 			case 1: btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY); break;
@@ -571,7 +571,7 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     }
 
     if (crystalNode) {
-        crystalNode->setScale(0.5f);
+        crystalNode->setScale(0.5);
         crystalNode->runAction(CCSequence::create(
             CCDelayTime::create(kUnlockSfxPeakDelay),
             CCShow::create(),
@@ -585,11 +585,11 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
             CCDelayTime::create(kUnlockSfxPeakDelay),
             CCCallFuncN::create(this, callfuncN_selector(CustomGauntletLayer::onUnlockPeak)),
             CCSpawn::create(
-                CCTintTo::create(0.3f, 255, 255, 255),
-                HueLuminanceTo::create(0.6f, 1.f, 0.f),
+                CCTintTo::create(0.3, 255, 255, 255),
+                HueLuminanceTo::create(0.6, 1, 0.),
                 CCSequence::create(
-                    CCEaseInOut::create(CCScaleTo::create(0.25f, 1.35f), 2.f),
-                    CCEaseBackOut::create(CCScaleTo::create(0.35f, 1.f)),
+                    CCEaseInOut::create(CCScaleTo::create(0.25, 1.35), 2.),
+                    CCEaseBackOut::create(CCScaleTo::create(0.35, 1.)),
                     nullptr
                 ),
                 nullptr
@@ -615,7 +615,7 @@ CCFiniteTimeAction* CustomGauntletLayer::generateShakeAction(CCPoint originalPos
 
 void CustomGauntletLayer::islandShake(CCSprite* islandSpr, float duration) {
     constexpr float stepDuration = 0.05f;
-    constexpr float xyOffset = 3.f;
+    constexpr float xyOffset = 3;
 
     CCPoint originalPos = islandSpr->getPosition();
     int steps = static_cast<int>(duration / stepDuration);
@@ -660,7 +660,7 @@ void CustomGauntletLayer::onBack(CCObject*) {
     if (m_loadedLevels) { m_loadedLevels->release(); m_loadedLevels = nullptr; }
     auto scene = BetterGauntletSelectLayer::scene();
     if (scene) {
-        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
+        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
     }
 }
 
@@ -673,7 +673,7 @@ void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto lil   = LevelInfoLayer::create(level, false);
     auto scene  = CCScene::create();
     scene->addChild(lil);
-    CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
+    CCDirector::get()->pushScene(CCTransitionFade::create(0.5, scene));
 }
 
 void CustomGauntletLayer::onLocked(CCObject* sender) {
@@ -716,25 +716,25 @@ void CustomGauntletLayer::onInfo(CCObject*) {
         if (!m_data.infoDate.empty())
             child->addChild(makeLabel(
             "Released on: " + m_data.infoDate, 
-            383.5f, 
-            25.f, 
-            0.5f, 
+            383.5, 
+            25, 
+            0.5, 
             kCCTextAlignmentRight
         ));
         if (!m_data.infoVersion.empty())
             child->addChild(makeLabel(
             "Version: " + m_data.infoVersion, 
-            383.5f, 
-            15.f, 
-            0.5f, 
+            383.5, 
+            15, 
+            0.5, 
             kCCTextAlignmentRight
         ));
         if (!m_data.infoSuggester.empty())
             child->addChild(makeLabel(
             "Suggested by: " + m_data.infoSuggester, 
-            15.5f, 
-            15.f, 
-            0.5f, 
+            15.5, 
+            15, 
+            0.5, 
             kCCTextAlignmentLeft
         ));
     }
@@ -796,7 +796,7 @@ void CustomGauntletLayer::gauntletVault(CCObject*) {
 
     auto scene = CCScene::create();
     scene->addChild(browserLayer);
-    director->pushScene(CCTransitionFade::create(0.5f, scene));
+    director->pushScene(CCTransitionFade::create(0.5, scene));
 }
 
 void CustomGauntletLayer::reportCompletion(int levelID, int stars) {

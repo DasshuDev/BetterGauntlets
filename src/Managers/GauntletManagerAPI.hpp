@@ -59,6 +59,7 @@ public:
     web::WebFuture setFeatured(int id);
     web::WebFuture uploadIcon(std::filesystem::path const& path);
     web::WebFuture fetchManagers();
+    web::WebFuture fetchHelpers();
 
     bool isLoggedIn() const;
     void setToken(std::string const& token);

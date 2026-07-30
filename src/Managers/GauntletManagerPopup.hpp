@@ -22,7 +22,7 @@ protected:
     LoadingCircle* m_loadingCircle = nullptr;
 
     int   m_activeTab = 0; // 0 = Published, 1 = Staged
-    float m_tabBarY   = 0.f;
+    float m_tabBarY   = 0;
 
     async::TaskHolder<geode::Result<std::string>> m_argonHolder;
     async::TaskHolder<web::WebResponse> m_fetchHolder;

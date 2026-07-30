@@ -40,13 +40,48 @@ void GauntletManagerCache::fetch() {
     );
 }
 
+void GauntletManagerCache::fetchHelpers() {
+    if (m_helperRequest.isPending()) return;
+
+    m_helperRequest.spawn(
+        GauntletManagerAPI::get()->fetchHelpers(),
+        [this](web::WebResponse res) {
+            if (res.ok()) {
+                std::unordered_set<int> ids;
+                auto json = res.json().unwrapOr(matjson::Value::object());
+                if (json.contains("helpers") && json["helpers"].isArray()) {
+                    for (auto const& row : json["helpers"]) {
+                        if (auto id = row["account_id"].asInt(); id.isOk()) {
+                            ids.insert(id.unwrap());
+                        }
+                    }
+                }
+                m_helperIDs = std::move(ids);
+                m_hasFetchedHelpers = true;
+            } else {
+                log::warn(
+                    "[GauntletManagerCache] Failed to fetch helper list (code {}): {}",
+                    res.code(), res.string().unwrapOr("<no body>")
+                );
+            }
+
+            auto waiting = std::move(m_waitingHelpers);
+            m_waitingHelpers.clear();
+            for (auto& [accountID, cb] : waiting) {
+                cb(m_helperIDs.contains(accountID));
+            }
+        }
+    );
+}
+
 void GauntletManagerCache::warm() {
-    if (m_hasFetched) return;
-    fetch();
+    if (!m_hasFetched) fetch();
+    if (!m_hasFetchedHelpers) fetchHelpers();
 }
 
 void GauntletManagerCache::refresh() {
     fetch();
+    fetchHelpers();
 }
 
 void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> callback) {
@@ -57,4 +92,14 @@ void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> ca
 
     m_waiting.push_back({accountID, std::move(callback)});
     fetch();
+}
+
+void GauntletManagerCache::isHelper(int accountID, std::function<void(bool)> callback) {
+    if (m_hasFetchedHelpers) {
+        callback(m_helperIDs.contains(accountID));
+        return;
+    }
+
+    m_waitingHelpers.push_back({accountID, std::move(callback)});
+    fetchHelpers();
 }

@@ -75,8 +75,8 @@ void BetterGauntletLayer::editCosmosGauntlet() {
             bgParticles->setPosition(ccp(winSize.width / 2, winSize.height / 2));
             bgParticles->setZOrder(-98);
             bgParticles->setRotation(-30);
-            bgParticles->setScaleX(0.2f);
-            bgParticles->setScaleY(5.0f);
+            bgParticles->setScaleX(0.2);
+            bgParticles->setScaleY(5.0);
             this->addChild(bgParticles);
         }
     }

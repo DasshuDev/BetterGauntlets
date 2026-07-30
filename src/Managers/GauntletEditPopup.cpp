@@ -72,7 +72,7 @@ bool GauntletEditPopup::init(
     auto titleStr = existing.id == 0 ? "Create Gauntlet" : "Edit Gauntlet";
     auto titleLabel = CCLabelBMFont::create(titleStr, "goldFont.fnt");
     titleLabel->setPosition(m_size.width / 2, m_size.height - 20);
-    titleLabel->setScale(0.7f);
+    titleLabel->setScale(0.7);
     titleLabel->setID("title-label");
     m_mainLayer->addChild(titleLabel);
 
@@ -162,7 +162,7 @@ bool GauntletEditPopup::init(
 
     auto spriteLabel = CCLabelBMFont::create("Sprite", "goldFont.fnt");
     spriteLabel->setPosition(spriteContainer->getPositionX(), spriteContainer->getPositionY() + 20);
-    spriteLabel->setScale(0.52f);
+    spriteLabel->setScale(0.52);
 
     auto addSpriteBtn = CCMenuItemSpriteExtra::create(
         ButtonSprite::create("Upload Sprite",
@@ -401,11 +401,11 @@ bool GauntletEditPopup::init(
     m_previewBG->setID("preview-background");
     m_previewBG->setContentSize({110, 220});
     m_previewBG->setColor(m_selectedNodeColor);
-    m_previewBG->setScale(0.85f);
+    m_previewBG->setScale(0.85);
 
     auto previewLabel = CCLabelBMFont::create("Preview", "goldFont.fnt");
     previewLabel->setPosition(m_previewBG->getPositionX(), m_previewBG->getContentHeight() / 2 - 7);
-    previewLabel->setScale(0.52f);
+    previewLabel->setScale(0.52);
 
     m_previewTitle = CCLabelBMFont::create("", "bigFont.fnt");
     m_previewTitle->setPosition({m_previewBG->getContentWidth() / 2, m_previewBG->getContentHeight() / 2 + 84});
@@ -851,7 +851,7 @@ bool GauntletEditPopup::init(
                         icon->getPositionY() - 10
                     });
                     shadow->setScaleX(icon->getScaleX());
-                    shadow->setScaleY(icon->getScaleY() * 1.2f);
+                    shadow->setScaleY(icon->getScaleY() * 1.2);
                     container->addChild(shadow);
                     container->addChild(icon);
                     tex->release();
@@ -931,20 +931,20 @@ void GauntletEditPopup::onPreviewInfo(CCObject* sender) {
 
     // append metadata labels to the first child of the alert
     auto releaseDate = CCLabelBMFont::create(m_infoDate.c_str(), "chatFont.fnt");
-    releaseDate->setPosition({383.5f, 25});
-    releaseDate->setScale(0.5f);
+    releaseDate->setPosition({383.5, 25});
+    releaseDate->setScale(0.5);
     releaseDate->setAnchorPoint({1, 0});
     releaseDate->setOpacity(51);
 
     auto releaseVer = CCLabelBMFont::create(m_infoVersion.c_str(), "chatFont.fnt");
-    releaseVer->setPosition({383.5f, 15});
-    releaseVer->setScale(0.5f);
+    releaseVer->setPosition({383.5, 15});
+    releaseVer->setScale(0.5);
     releaseVer->setAnchorPoint({1, 0});
     releaseVer->setOpacity(51);
 
     auto credit = CCLabelBMFont::create(m_infoSuggester.c_str(), "chatFont.fnt");
-    credit->setPosition({15.5f, 15});
-    credit->setScale(0.5f);
+    credit->setPosition({15.5, 15});
+    credit->setScale(0.5);
     credit->setAnchorPoint({0, 0});
     credit->setOpacity(51);
 
@@ -971,9 +971,9 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
         #else
         localtime_r(&t, &tm);
         #endif
-        char buf[32];
-        std::strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
-        input = buf;
+        char buff[32];
+        std::strftime(buff, sizeof(buff), "%Y-%m-%d", &tm);
+        input = buff;
         m_infoDateInput->setString(input);
     }
     m_infoDate = fmt::format("Released on: {}", input);
@@ -1086,7 +1086,7 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                 previewIconShadow->setPosition({previewIcon->getPositionX(), previewIcon->getPositionY() - 10});
                 previewIconShadow->setColor({0, 0, 0});
                 previewIconShadow->setScaleX(previewIcon->getScaleX());
-                previewIconShadow->setScaleY(previewIcon->getScaleY() * 1.2f);
+                previewIconShadow->setScaleY(previewIcon->getScaleY() * 1.2);
                 previewIconShadow->setOpacity(50);
 
                 container->addChild(previewIconShadow);
@@ -1107,7 +1107,7 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                             auto slotIcon = CCSprite::create(path.string().c_str());
                             if (!slotIcon) continue;
                             slotIcon->setID("gauntlet-icon-bg");
-                            slotIcon->setScale(0.75f);
+                            slotIcon->setScale(0.75);
                             slotIcon->setPosition({rowNode->getContentWidth() / 2,
                                                    rowNode->getContentHeight() / 2});
                             rowNode->addChild(slotIcon, 1);

@@ -14,13 +14,20 @@ public:
     void refresh();
 
     void isManager(int accountID, std::function<void(bool)> callback);
+    void isHelper(int accountID, std::function<void(bool)> callback);
 
 private:
     GauntletManagerCache() = default;
     void fetch();
+    void fetchHelpers();
 
     std::unordered_set<int> m_managerIDs;
     bool m_hasFetched = false;
     std::vector<std::pair<int, std::function<void(bool)>>> m_waiting;
     async::TaskHolder<web::WebResponse> m_request;
+
+    std::unordered_set<int> m_helperIDs;
+    bool m_hasFetchedHelpers = false;
+    std::vector<std::pair<int, std::function<void(bool)>>> m_waitingHelpers;
+    async::TaskHolder<web::WebResponse> m_helperRequest;
 };

@@ -39,7 +39,7 @@ class $modify(GauntletLayerRedirect, GauntletLayer) {
         auto t = type;
         Loader::get()->queueInMainThread([t]() {
             auto s = BetterGauntletLayer::scene(t);
-            if (s) CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, s));
+            if (s) CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, s));
         });
         return true;
     }
@@ -74,7 +74,7 @@ class $modify(GauntletLevelInfoLayer, LevelInfoLayer) {
         if (isCustomGauntletLevel && m_starsIcon && m_starsLabel) {
             int crystalCount = CustomGauntletManager::crystalsForLevel(level);
             bool rated = level->m_stars.value() > 0;
-            float yOffset = rated ? -15.f : 0.f;
+            float yOffset = rated ? -15.f : 0;
 
             auto parent = m_starsIcon->getParent();
             if (parent) {
@@ -115,7 +115,7 @@ class $modify(GauntletLevelInfoLayer, LevelInfoLayer) {
         if (!m_coins) return;
         for (auto* coin : CCArrayExt<CCNode*>(m_coins)) {
             if (!coin) continue;
-            coin->setPositionY(coin->getPositionY() - 15.f);
+            coin->setPositionY(coin->getPositionY() - 15.);
         }
     }
 
@@ -128,7 +128,7 @@ class $modify(GauntletLevelInfoLayer, LevelInfoLayer) {
             log::info("[GauntletRedirect] Redirecting to type {}", (int)type);
             auto scene = BetterGauntletLayer::scene(type);
             if (scene) {
-                CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
+                CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
                 return;
             }
         }

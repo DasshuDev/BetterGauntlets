@@ -44,8 +44,8 @@ bool CustomGauntletNode::init(
     phs->setID("icon-placeholder-shadow");
     phs->setColor({0, 0, 0});
     phs->setOpacity(50);
-    phs->setScaleY(1.2f);
-    phs->setPosition({ph->getPositionX(), ph->getPositionY() - 10.f});
+    phs->setScaleY(1.2);
+    phs->setPosition({ph->getPositionX(), ph->getPositionY() - 10});
     sprite->addChild(phs);
 
     // Name

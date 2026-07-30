@@ -17,7 +17,7 @@ public:
     static CCScene* scene();
     ~BetterGauntletSelectLayer() override;
 
-    inline static float s_scrollLocation = 0.f;
+    inline static float s_scrollLocation = 0;
     inline static bool s_showCustomList = false;
 
 protected:

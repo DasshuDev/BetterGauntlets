@@ -23,7 +23,7 @@ void BetterGauntletLayer::editTreasureGauntlet() {
                 false
             );
             bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenBottom() - 20));
-            bgParticles->setScaleX(2.0f);
+            bgParticles->setScaleX(2.0);
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }

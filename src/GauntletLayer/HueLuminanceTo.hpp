@@ -24,6 +24,6 @@ public:
     }
 
 private:
-    float m_from = 0.f;
-    float m_to = 0.f;
+    float m_from = 0;
+    float m_to = 0;
 };

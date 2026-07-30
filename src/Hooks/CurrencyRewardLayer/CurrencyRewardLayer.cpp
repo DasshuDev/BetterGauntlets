@@ -27,7 +27,7 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
         CurrencySpriteType::Star, 0,
         CurrencySpriteType::Star, 0,
         winSize / 2, CurrencyRewardType::Default,
-        0.f, 1.f
+        0, 1.f
     );
     if (!rewardLayer) return;
 
@@ -69,8 +69,8 @@ void GRCurrencyRewardLayer::showCrystalReward(CCNode* parent, int rewardAmount) 
 
     if (rewardLayer->m_diamondsLabel) {
         rewardLayer->m_diamondsLabel->runAction(CCRepeatForever::create(CCSequence::create(
-            CCTintTo::create(0.5f, tintFrom.r, tintFrom.g, tintFrom.b),
-            CCTintTo::create(0.5f, tintTo.r, tintTo.g, tintTo.b),
+            CCTintTo::create(0.5, tintFrom.r, tintFrom.g, tintFrom.b),
+            CCTintTo::create(0.5, tintTo.r, tintTo.g, tintTo.b),
             nullptr
         )));
     }

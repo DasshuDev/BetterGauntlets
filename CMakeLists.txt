@@ -58,6 +58,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     src/Data/CustomGauntletManager.cpp
     src/CustomGauntlets/CustomGauntletNode.cpp
     src/CustomGauntlets/CustomGauntletLayer.cpp
+    src/GauntletSelectLayer/GauntletInfoPopup.cpp
 )
 
 setup_geode_mod(${PROJECT_NAME})

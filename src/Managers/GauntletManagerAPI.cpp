@@ -142,3 +142,7 @@ web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path)
 web::WebFuture GauntletManagerAPI::fetchManagers() {
     return web::WebRequest().get(baseURL() + "/managers");
 }
+
+web::WebFuture GauntletManagerAPI::fetchHelpers() {
+    return web::WebRequest().get(baseURL() + "/helpers");
+}

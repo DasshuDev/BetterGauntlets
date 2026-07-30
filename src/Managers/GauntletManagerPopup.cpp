@@ -118,7 +118,7 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
     m_loadingCircle->setPosition(m_size / 2);
     m_loadingCircle->setVisible(false);
     m_loadingCircle->ignoreAnchorPointForPosition(false);
-    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
     m_mainLayer->addChild(m_loadingCircle, 10);
 
     if (GauntletManagerAPI::get()->isLoggedIn()) {
@@ -135,7 +135,7 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
 
 void GauntletManagerPopup::startArgonAuth() {
     m_loadingCircle->setVisible(true);
-    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
     m_argonHolder.spawn(
         argon::startAuth(),
@@ -157,7 +157,7 @@ void GauntletManagerPopup::startArgonAuth() {
             auto token = std::move(result).unwrap();
             auto accountID = GJAccountManager::sharedState()->m_accountID;
             m_loadingCircle->setVisible(true);
-            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
             m_fetchHolder.spawn(
                 web::WebRequest()
@@ -318,7 +318,7 @@ void GauntletManagerPopup::buildPanelView() {
     m_panelLayer->addChild(createMenu);
 
     auto createSpr = ButtonSprite::create("Create", "bigFont.fnt", "GJ_button_01.png");
-    createSpr->setScale(0.55f);
+    createSpr->setScale(0.55);
     auto createBtn = CCMenuItemExt::createSpriteExtra(
         createSpr,
         [this](CCMenuItemSpriteExtra*) { onCreateNew(nullptr); }
@@ -377,7 +377,7 @@ void GauntletManagerPopup::buildTabMenu() {
             text.c_str(), "bigFont.fnt",
             active ? "GJ_button_02.png" : "GJ_button_05.png"
         );
-        spr->setScale(0.5f);
+        spr->setScale(0.5);
         if (!active) spr->setOpacity(180);
         return CCMenuItemExt::createSpriteExtra(spr, [this, tab](CCMenuItemSpriteExtra*) {
             onSwitchTab(tab);
@@ -397,7 +397,7 @@ void GauntletManagerPopup::onSwitchTab(int tab) {
 
 void GauntletManagerPopup::fetchGauntlets() {
     m_loadingCircle->setVisible(true);
-    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
     m_fetchHolder.spawn(
         GauntletManagerAPI::get()->fetchAll(),
@@ -506,7 +506,7 @@ static RowChrome buildRowChrome(
     iconNode->setID("icon-node");
     iconNode->setContentSize({50, 50});
     iconNode->setPosition({30, row->getContentHeight() / 2});
-    iconNode->setAnchorPoint({0.5f, 0.5f});
+    iconNode->setAnchorPoint({0.5, 0.5});
     row->addChild(iconNode);
 
     // Name with gauntlet's name color
@@ -514,7 +514,7 @@ static RowChrome buildRowChrome(
     nameLabel->setScale(0.575);
     nameLabel->setID("gauntlet-name");
     nameLabel->setColor(nameColor);
-    nameLabel->setAnchorPoint({0, 0.5f});
+    nameLabel->setAnchorPoint({0, 0.5});
     nameLabel->setPosition({58, row->getContentHeight() / 2 + 17.5f});
     row->addChild(nameLabel, 1);
 
@@ -550,7 +550,7 @@ static RowChrome buildRowChrome(
     row->addChild(descriptionArea);
 
     auto actionMenu = CCMenu::create();
-    actionMenu->setAnchorPoint({1, 0.5f});
+    actionMenu->setAnchorPoint({1, 0.5});
     actionMenu->setPosition({row->getContentWidth() - 12, row->getContentHeight() / 2});
     actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
     row->addChild(actionMenu);
@@ -582,11 +582,11 @@ void GauntletManagerPopup::loadRowIcon(CCNode* iconNode, std::string const& icon
                 tex->release();
                 icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
                 icon->setPosition(iconNode->getContentSize() / 2);
-                icon->setAnchorPoint({0.5f, 0.5f});
+                icon->setAnchorPoint({0.5, 0.5});
                 iconShadow->setScaleX(icon->getScaleX());
                 iconShadow->setScaleY(icon->getScaleY() * 1.2);
                 iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
-                iconShadow->setAnchorPoint({0.5f, 0.5f});
+                iconShadow->setAnchorPoint({0.5, 0.5});
                 iconShadow->setColor({0, 0, 0});
                 iconShadow->setOpacity(50);
                 if (auto ph = iconNode->getChildByID("icon-placeholder"))
@@ -628,20 +628,20 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
 
     if (stagedIndex >= 0 && isReadyToPush(m_staged[stagedIndex])) {
         auto updateSpr = CCSprite::createWithSpriteFrameName("GR_updateBtn_001.png"_spr);
-        updateSpr->setScale(0.85f);
+        updateSpr->setScale(0.85);
         auto updateBtn = CCMenuItemExt::createSpriteExtra(updateSpr,
             [this, stagedIndex](CCMenuItemSpriteExtra*) { onPushStaged(stagedIndex); });
         chrome.actionMenu->addChild(updateBtn);
     }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
-    editSpr->setScale(0.85f);
+    editSpr->setScale(0.85);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
         [this, gid](CCMenuItemSpriteExtra*) { onEdit(gid); });
     chrome.actionMenu->addChild(editBtn);
 
     auto delSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
-    delSpr->setScale(0.85f);
+    delSpr->setScale(0.85);
     auto delBtn = CCMenuItemExt::createSpriteExtra(delSpr,
         [this, gid](CCMenuItemSpriteExtra*) { onDelete(gid); });
     chrome.actionMenu->addChild(delBtn);
@@ -652,7 +652,7 @@ void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
     featureMenu->setID("feature-menu"_spr);
     featureMenu->setPosition({10, chrome.row->getContentHeight() - 8});
     auto featureToggle = createFeatureToggle(g.featured, gid);
-    featureToggle->setScale(0.45f);
+    featureToggle->setScale(0.45);
     featureMenu->addChild(featureToggle);
     chrome.row->addChild(featureMenu, 2);
 
@@ -744,20 +744,20 @@ void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) 
 
     if (isReadyToPush(g)) {
         auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
-        pushSpr->setScale(0.85f);
+        pushSpr->setScale(0.85);
         auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
             [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
         chrome.actionMenu->addChild(pushBtn);
     }
 
     auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
-    editSpr->setScale(0.85f);
+    editSpr->setScale(0.85);
     auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
         [this, index](CCMenuItemSpriteExtra*) { onEditStaged(index); });
     chrome.actionMenu->addChild(editBtn);
 
     auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
-    deleteSpr->setScale(0.85f);
+    deleteSpr->setScale(0.85);
     auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
         [this, index](CCMenuItemSpriteExtra*) { onDeleteStaged(index); });
     chrome.actionMenu->addChild(deleteBtn);
@@ -779,7 +779,7 @@ void GauntletManagerPopup::onPushStaged(int index) {
         [this, data, index](FLAlertLayer*, bool confirmed) {
             if (!confirmed) return;
             m_loadingCircle->setVisible(true);
-            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
             auto future = data.id == 0
                 ? GauntletManagerAPI::get()->create(data)
@@ -812,7 +812,7 @@ void GauntletManagerPopup::onDelete(int gauntletId) {
         [this, gauntletId](FLAlertLayer*, bool confirmed) {
             if (!confirmed) return;
             m_loadingCircle->setVisible(true);
-            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
             m_deleteHolder.spawn(
                 GauntletManagerAPI::get()->remove(gauntletId),
                 [this, gauntletId](web::WebResponse res) {
@@ -850,7 +850,7 @@ void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
     bool wasFeatured = it->featured;
 
     m_loadingCircle->setVisible(true);
-    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0f, 360.0f)));
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
     m_featureHolder.spawn(
         GauntletManagerAPI::get()->setFeatured(gauntletId),
         [this, gauntletId, wasFeatured](web::WebResponse res) {

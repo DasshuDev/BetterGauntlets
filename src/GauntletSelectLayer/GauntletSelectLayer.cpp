@@ -631,7 +631,7 @@ void BetterGauntletSelectLayer::onPlay(CCObject* sender) {
     m_exiting = true;
     saveScrollPos();
 
-    logMembers(pack);
+    // logMembers(pack);
 
     auto scene = BetterGauntletLayer::scene(type);
     if (scene) {
@@ -741,10 +741,6 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject* sender) {
             "completed. These Gauntlets are made by <co>Gauntlet Managers</c>. The themes of the "
             "levels should fit the theme of the Gauntlet itself, or may be placed in via "
             "<cj>Creator Contests</c>."
-        },
-        {
-            "Credits",
-            "hi chat"
         }
     };
 

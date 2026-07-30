@@ -562,7 +562,7 @@ CCFiniteTimeAction* BetterGauntletLayer::generateShakeAction(CCPoint originalPos
 }
 
 void BetterGauntletLayer::islandShake(CCSprite* islandSpr, float duration) {
-    constexpr float stepDuration = 0.01f;
+    constexpr float stepDuration = 0.001f;
     constexpr float xyOffset = 3.f;
 
     CCPoint originalPos = islandSpr->getPosition();

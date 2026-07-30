@@ -3,7 +3,7 @@
 
 GauntletInfoPopup* GauntletInfoPopup::create(std::vector<InfoPage> pages) {
     auto ret = new GauntletInfoPopup();
-    if (ret && ret->init(380, 200, "GJ_square05.png", pages)) {
+    if (ret && ret->init(380, 200, "square01_001.png", pages)) {
         ret->autorelease();
         return ret;
     }
@@ -32,7 +32,7 @@ bool GauntletInfoPopup::init(
         arrowLeft,
         [this](CCMenuItemSpriteExtra*) { turnPage(-1); }
     );
-    m_pageArrowLeft->setPosition({-5, m_size.height / 2.f});
+    m_pageArrowLeft->setPosition({-15, m_size.height / 2.f});
     m_pageArrowLeft->setID("page-arrow-left");
     arrowMenu->addChild(m_pageArrowLeft);
 
@@ -40,7 +40,7 @@ bool GauntletInfoPopup::init(
         arrowRight,
         [this](CCMenuItemSpriteExtra*) { turnPage(1); }
     );
-    m_pageArrowRight->setPosition({m_size.width + 5, m_size.height / 2.f});
+    m_pageArrowRight->setPosition({m_size.width + 15, m_size.height / 2.f});
     m_pageArrowRight->setID("page-arrow-right");
     arrowMenu->addChild(m_pageArrowRight);
 
@@ -63,12 +63,12 @@ void GauntletInfoPopup::updatePage() {
     auto const& page = m_pages.at(m_currentPage);
 
     float titleY = m_size.height - 20.f;
-    float contentWidth = m_size.width - 40.f;
+    float contentWidth = m_size.width - 30.f;
     float contentHeight = titleY - 35.f;
 
     m_pageTitleLabel = CCLabelBMFont::create(page.title.c_str(), "goldFont.fnt");
     m_pageTitleLabel->setScale(0.7f);
-    m_pageTitleLabel->setPosition({m_size.width / 2.f, titleY});
+    m_pageTitleLabel->setPosition({m_size.width / 2.f, titleY - 2.5f});
     m_pageTitleLabel->setID("page-title-label");
     m_mainLayer->addChild(m_pageTitleLabel);
 

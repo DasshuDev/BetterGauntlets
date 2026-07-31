@@ -236,7 +236,7 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     auto nameMenu = CCMenu::create();
     nameMenu->setID("name-menu"_spr);
     nameMenu->setAnchorPoint({0, 0.5});
-    nameMenu->setPosition({80, (row->getContentHeight() / 2) + 1});
+    nameMenu->setPosition({80, (row->getContentHeight() / 2 - 0.5f)});
     row->addChild(nameMenu); 
 
     int accountId = entry.accountId;
@@ -246,7 +246,7 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
         ProfilePage::create(accountId, false)->show();
     });
     // nameBtn->setScale(0.7);
-    nameBtn->setAnchorPoint({0, 0.5});
+    nameBtn->setAnchorPoint({0, 0.4});
     nameMenu->addChild(nameBtn);
 
     auto valueLabel = CCLabelBMFont::create(std::to_string(entry.crystals).c_str(), "bigFont.fnt");

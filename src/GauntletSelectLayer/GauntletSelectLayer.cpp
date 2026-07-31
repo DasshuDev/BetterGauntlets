@@ -631,8 +631,6 @@ void BetterGauntletSelectLayer::onPlay(CCObject* sender) {
     m_exiting = true;
     saveScrollPos();
 
-    // logMembers(pack);
-
     auto scene = BetterGauntletLayer::scene(type);
     if (scene) {
         CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
@@ -643,41 +641,6 @@ void BetterGauntletSelectLayer::onPlay(CCObject* sender) {
 
 void BetterGauntletSelectLayer::unblockPlay() {
     m_playBlocked = false;
-}
-
-void BetterGauntletSelectLayer::logMembers(GJMapPack* pack) {
-    log::debug(
-        "[GauntletSelectLayer] --- opening gauntlet packID={} ---",
-        pack ? pack->m_packID : -1
-    );
-
-    log::debug("  m_customScrollLayer: {}", (void*)m_customScrollLayer);
-    log::debug("  m_customScrollBar: {}", (void*)m_customScrollBar);
-    log::debug("  m_gauntletBtnContainer: {}", (void*)m_gauntletBtnContainer);
-    log::debug("  m_sliderLabel: {}", (void*)m_sliderLabel);
-    log::debug("  m_vanillaTitle: {}", (void*)m_vanillaTitle);
-    log::debug("  m_betterTitle: {}", (void*)m_betterTitle);
-    log::debug("  m_loadingCircle: {}", (void*)m_loadingCircle);
-    log::debug("  m_refreshButton: {}", (void*)m_refreshButton);
-    log::debug("  m_crystalLabel: {}", (void*)m_crystalLabel);
-    log::debug("  m_customGauntletScrollLayer: {}", (void*)m_customGauntletScrollLayer);
-    log::debug("  m_customGauntletScrollBar: {}", (void*)m_customGauntletScrollBar);
-    log::debug("  m_customListLoadingCircle: {}", (void*)m_customListLoadingCircle);
-    log::debug("  m_managerButton: {}", (void*)m_managerButton);
-
-    log::debug("  m_showingCustomList: {}", m_showingCustomList);
-    log::debug("  m_exiting: {}", m_exiting);
-    log::debug("  m_playBlocked: {}", m_playBlocked);
-    log::debug("  m_locked: {}", m_locked);
-
-    log::debug(
-        "  m_gauntletPacks: {} (count={})",
-        (void*)m_gauntletPacks, m_gauntletPacks ? m_gauntletPacks->count() : 0
-    );
-    log::debug("  m_fetchHolder.isPending(): {}", m_fetchHolder.isPending());
-
-    log::debug("  s_scrollLocation (static): {}", s_scrollLocation);
-    log::debug("  s_showCustomList (static): {}", s_showCustomList);
 }
 
 void BetterGauntletSelectLayer::keyBackClicked() {

@@ -54,9 +54,6 @@ protected:
     void toggleList(cocos2d::CCObject* sender);
     void unblockPlay();
 
-    // Debugging
-    void logMembers(GJMapPack* pack);
-
     // Custom gauntlets
     void buildCustomList();
     void populateCustomList(std::vector<CustomGauntletData> const& gauntlets);

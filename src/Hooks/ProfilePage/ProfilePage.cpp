@@ -77,11 +77,6 @@ $execute {
         });
     });
 
-    setCommentColor(
-        "manager"_spr,
-        ccc3(255, 185, 225)
-    );
-
     // Helpers
     registerBadge(
         "helper"_spr,
@@ -108,8 +103,16 @@ $execute {
         });
     });
 
+    /*
+    // Comment colors
+    setCommentColor(
+        "manager"_spr,
+        ccc3(255, 185, 225)
+    );
+
     setCommentColor(
         "helper"_spr,
         ccc3(150, 210, 225)
     );
+    */
 }

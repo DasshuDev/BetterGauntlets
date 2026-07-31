@@ -237,7 +237,7 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     nameMenu->setID("name-menu"_spr);
     nameMenu->setAnchorPoint({0, 0.5});
     nameMenu->setPosition({80, (row->getContentHeight() / 2 - 0.5f)});
-    row->addChild(nameMenu); 
+    row->addChild(nameMenu);
 
     int accountId = entry.accountId;
     auto nameBtn = CCMenuItemExt::createSpriteExtra(

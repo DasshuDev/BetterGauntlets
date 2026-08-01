@@ -1,8 +1,6 @@
 TODO:
 
 - create completion animation for gauntlets, reward player *within* gauntletlayer
-- create animation for level unlocks
-- custom rewards on PlayLayer
 - gauntlet completion sync (?)
 
 lock in, jay

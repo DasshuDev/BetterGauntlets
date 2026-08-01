@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include <Geode/ui/Popup.hpp>
 #include <Geode/ui/MDTextArea.hpp>
+#include "../Managers/PagedPopup.hpp"
 
 using namespace geode::prelude;
 
-class GauntletInfoPopup : public Popup {
+class GauntletInfoPopup : public PagedPopup {
 public:
     struct InfoPage {
         std::string title;
@@ -19,14 +19,10 @@ protected:
     bool init(float width, float height, char const* bg, std::vector<InfoPage> pages);
 
     std::vector<InfoPage> m_pages;
-    int m_currentPage = 0;
 
-    CCMenuItemSpriteExtra* m_pageArrowLeft = nullptr;
-    CCMenuItemSpriteExtra* m_pageArrowRight = nullptr;
     CCLabelBMFont* m_pageTitleLabel = nullptr;
     MDTextArea* m_pageDescArea = nullptr;
 
-    void turnPage(int dir);
-    void updatePage();
-    void cleanUpPage();
+    int  getPageCount() const override;
+    void onPageChanged(int page) override;
 };

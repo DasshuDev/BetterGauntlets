@@ -1,19 +1,21 @@
 # <cc>v2.0.0</c>
 - <c-c4ffc4><cg>**Added**</c> New Gauntlets!</c>
-    - Finally we no longer have to rely on RobTop to add new Gauntlets, as Gauntlet Managers can now create official-quality Gauntlets! These Gauntlets can be mixed in rating and gameplay type to create a unique Gauntlet experience!
+    - Finally us players no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets*! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
     - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Star** and **Moon** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
 - <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!</c>
-    - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets!
-- <c-c4ffc4><cg>**Added**</c> Crystals!</c>
-    - A new form of collectable granted by completing custom Gauntlet levels!
+    - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
+- <c-c4ffc4><cg>**Added**</c> a new collectable, "Crystals"!</c>
+    - A new form of collectable granted by completing custom Gauntlet levels.
 - <c-c4ffc4><cg>**Added**</c>a Leaderboard!</c>
-    - Check your Crystal count and compare it to other Better Gauntlets players!
+    - Check your Crystal count and compare it to other Better Gauntlets players.
 - <c-c4ffc4><cg>**Added**</c> Badges!</c>
-    - Using the Badgify API, badges can now be set on managers' profiles to indicate manager status!
+    - Using the Badgify API, badges can now be set on managers' profiles to indicate manager status.
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!</c>
 - <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!</c>
     - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!
 - <c-ffffc4><cy>**Updated**</c> `CreatorLayer` to show a new Gauntlet button texture!</c>
+- <c-ffffc4><cy>**Updated**</c> Gauntlet Levels to show a new custom animation!</c>
+- <c-c4ebff><cl>**Fixed**</c> Gauntlet Level fields not appearing on unlock.</c>
 - <c-c4ebff><cl>**Fixed**</c> GDPS previews being locked, and/or crashing on Gauntlet preview.</c>
 - <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.</c>
 

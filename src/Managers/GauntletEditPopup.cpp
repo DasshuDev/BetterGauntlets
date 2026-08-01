@@ -34,7 +34,7 @@ bool GauntletEditPopup::init(
     m_data = existing;
     m_onSaved = onSaved;
 
-    // Layer swap menus
+    // Page containers: page 0 (GSL preview) and page 1 (GL preview / levels)
 
     m_GSLPreview = CCMenu::create();
     m_GSLPreview->setContentSize(m_mainLayer->getContentSize());
@@ -48,24 +48,6 @@ bool GauntletEditPopup::init(
     m_GLPreview->setID("preview-gl");
     m_GLPreview->setVisible(false);
     m_mainLayer->addChild(m_GLPreview, 5);
-
-    // Toggle button
-
-    auto toggleMenu = CCMenu::create();
-    toggleMenu->setPosition({m_mainLayer->getContentSize() - 3});
-    m_mainLayer->addChild(toggleMenu);
-
-    auto icon = CCSprite::createWithSpriteFrameName("GJ_sortIcon_001.png");
-    icon->setRotation(90);
-    icon->setFlipY(true);
-
-    auto toggleLayer = CCMenuItemToggler::create(
-        IconButtonSprite::create("GJ_button_01.png", icon, nullptr, nullptr),
-        IconButtonSprite::create("GJ_button_02.png", icon, nullptr, nullptr),
-        this,
-        menu_selector(GauntletEditPopup::onSwapLayer)
-    );
-    toggleMenu->addChild(toggleLayer);
 
     // Title label
 
@@ -860,6 +842,8 @@ bool GauntletEditPopup::init(
         );
     }
 
+    setupPageArrows();
+
     return true;
 }
 
@@ -893,12 +877,12 @@ void GauntletEditPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
     Popup::onClose(nullptr);
 }
 
-// Layer swap
+// Pages
 
-void GauntletEditPopup::onSwapLayer(CCObject* sender) {
+void GauntletEditPopup::onPageChanged(int page) {
     if (!m_GSLPreview || !m_GLPreview) return;
-    m_GSLPreview->setVisible(!m_GSLPreview->isVisible());
-    m_GLPreview->setVisible(!m_GLPreview->isVisible());
+    m_GSLPreview->setVisible(page == 0);
+    m_GLPreview->setVisible(page == 1);
 }
 
 // Preview name

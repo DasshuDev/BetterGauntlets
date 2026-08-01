@@ -6,7 +6,7 @@
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include "GauntletSelectLayer.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
-#include "../Managers/GauntletManagerCache.hpp"
+#include "../APIs/GauntletManagerCache.hpp"
 #include "../Data/CustomGauntletManager.hpp"
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../CustomGauntlets/CustomGauntletLayer.hpp"

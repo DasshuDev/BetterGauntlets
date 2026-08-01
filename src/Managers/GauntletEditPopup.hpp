@@ -4,7 +4,8 @@
 #include <Geode/Geode.hpp>
 #include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
-#include "GauntletManagerAPI.hpp"
+#include "../APIs/GauntletManagerAPI.hpp"
+#include "PagedPopup.hpp"
 
 using namespace geode::prelude;
 
@@ -18,7 +19,7 @@ struct LevelRewardEntry {
 };
 
 class GauntletEditPopup :
-    public Popup,
+    public PagedPopup,
     public TextInputDelegate,
     public SelectArtDelegate,
     public LevelManagerDelegate,
@@ -142,8 +143,9 @@ protected:
     void loadLevelsFinished(CCArray* levels, char const* key) override;
     void loadLevelsFailed(char const* key, int p1) override;
 
-    // Layer swap
-    void onSwapLayer(CCObject* sender);
+    // Pages: 0 = basic info/colors (GSL preview), 1 = levels (GL preview)
+    int  getPageCount() const override { return 2; }
+    void onPageChanged(int page) override;
 
     // Save
     void onSave(CCObject* sender);

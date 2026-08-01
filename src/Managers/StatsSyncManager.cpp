@@ -1,5 +1,5 @@
 #include "StatsSyncManager.hpp"
-#include "StatsAPI.hpp"
+#include "../APIs/StatsAPI.hpp"
 #include <argon/argon.hpp>
 
 StatsSyncManager* StatsSyncManager::get() {

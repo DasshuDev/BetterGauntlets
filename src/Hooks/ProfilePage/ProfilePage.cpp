@@ -4,7 +4,7 @@
 #include <Geode/utils/web.hpp>
 #include <Geode/loader/SettingV3.hpp>
 #include <alphalaneous.badgify/include/Badgify.hpp>
-#include "../../Managers/GauntletManagerCache.hpp"
+#include "../../APIs/GauntletManagerCache.hpp"
 #include "../../Managers/StatsSyncManager.hpp"
 #include "../../Data/CustomGauntletManager.hpp"
 

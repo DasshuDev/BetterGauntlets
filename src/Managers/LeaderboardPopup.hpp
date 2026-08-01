@@ -3,7 +3,7 @@
 #include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
 #include <unordered_map>
-#include "LeaderboardAPI.hpp"
+#include "../APIs/LeaderboardAPI.hpp"
 
 using namespace geode::prelude;
 

@@ -3,7 +3,7 @@
 #include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
 #include "../Data/CustomGauntletData.hpp"
-#include "GauntletManagerAPI.hpp"
+#include "../APIs/GauntletManagerAPI.hpp"
 
 using namespace geode::prelude;
 

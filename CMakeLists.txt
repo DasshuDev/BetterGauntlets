@@ -46,19 +46,4 @@ target_link_libraries(${PROJECT_NAME} argon)
 CPMAddPackage("gh:dankmeme01/cue#ba0c024")
 target_link_libraries(${PROJECT_NAME} cue)
 
-target_sources(${PROJECT_NAME} PRIVATE
-    src/Managers/GauntletManagerAPI.cpp
-    src/Managers/GauntletManagerPopup.cpp
-    src/Managers/GauntletManagerCache.cpp
-    src/Managers/GauntletEditPopup.cpp
-    src/Managers/LeaderboardAPI.cpp
-    src/Managers/LeaderboardPopup.cpp
-    src/Managers/StatsAPI.cpp
-    src/Managers/StatsSyncManager.cpp
-    src/Data/CustomGauntletManager.cpp
-    src/CustomGauntlets/CustomGauntletNode.cpp
-    src/CustomGauntlets/CustomGauntletLayer.cpp
-    src/GauntletSelectLayer/GauntletInfoPopup.cpp
-)
-
 setup_geode_mod(${PROJECT_NAME})

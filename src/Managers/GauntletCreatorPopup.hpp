@@ -18,7 +18,7 @@ struct LevelRewardEntry {
     int reward = 0;
 };
 
-class GauntletEditPopup :
+class GauntletCreatorPopup :
     public PagedPopup,
     public TextInputDelegate,
     public SelectArtDelegate,
@@ -152,7 +152,7 @@ protected:
     void doSave();
 
 public:
-    static GauntletEditPopup* create(
+    static GauntletCreatorPopup* create(
         GauntletEditData const& existing,
         EditSavedCallback onSaved
     );

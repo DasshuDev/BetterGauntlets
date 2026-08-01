@@ -16,7 +16,7 @@ void PagedPopup::setupPageArrows(float arrowY) {
         arrowLeft,
         [this](CCMenuItemSpriteExtra*) { turnPage(-1); }
     );
-    m_pageArrowLeft->setPosition({-15, arrowY});
+    m_pageArrowLeft->setPosition({-20, arrowY});
     m_pageArrowLeft->setID("page-arrow-left");
     arrowMenu->addChild(m_pageArrowLeft);
 
@@ -24,7 +24,7 @@ void PagedPopup::setupPageArrows(float arrowY) {
         arrowRight,
         [this](CCMenuItemSpriteExtra*) { turnPage(1); }
     );
-    m_pageArrowRight->setPosition({m_size.width + 15, arrowY});
+    m_pageArrowRight->setPosition({m_size.width + 20, arrowY});
     m_pageArrowRight->setID("page-arrow-right");
     arrowMenu->addChild(m_pageArrowRight);
 

@@ -1,6 +1,6 @@
 #include <ctime>
 #include <cue/ListNode.hpp>
-#include "GauntletEditPopup.hpp"
+#include "GauntletCreatorPopup.hpp"
 
 using namespace geode::prelude;
 
@@ -12,11 +12,11 @@ static std::string getBgIconSpriteName(int index) {
 
 // create / init
 
-GauntletEditPopup* GauntletEditPopup::create(
+GauntletCreatorPopup* GauntletCreatorPopup::create(
     GauntletEditData const& existing,
     EditSavedCallback onSaved
 ) {
-    auto ret = new GauntletEditPopup();
+    auto ret = new GauntletCreatorPopup();
     if (ret && ret->init(440, 270, "GJ_square05.png", existing, onSaved)) {
         ret->autorelease();
         return ret;
@@ -25,7 +25,7 @@ GauntletEditPopup* GauntletEditPopup::create(
     return nullptr;
 }
 
-bool GauntletEditPopup::init(
+bool GauntletCreatorPopup::init(
     float width, float height, char const* bg,
     GauntletEditData const& existing, EditSavedCallback onSaved
 ) {
@@ -87,7 +87,7 @@ bool GauntletEditPopup::init(
     auto applyNameBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GR_pushBtn_001.png"_spr),
         this,
-        menu_selector(GauntletEditPopup::updatePreviewName)
+        menu_selector(GauntletCreatorPopup::updatePreviewName)
     );
     applyNameBtn->setScale(0.6);
     applyNameBtn->m_baseScale = 0.6;
@@ -122,7 +122,7 @@ bool GauntletEditPopup::init(
     auto applyDescBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GR_pushBtn_001.png"_spr),
         this,
-        menu_selector(GauntletEditPopup::updateDescription)
+        menu_selector(GauntletCreatorPopup::updateDescription)
     );
     applyDescBtn->setScale(0.6);
     applyDescBtn->m_baseScale = 0.6;
@@ -156,7 +156,7 @@ bool GauntletEditPopup::init(
             "GJ_button_05.png"
         ),
         this,
-        menu_selector(GauntletEditPopup::onPickIcon)
+        menu_selector(GauntletCreatorPopup::onPickIcon)
     );
     addSpriteBtn->setScale(0.75);
     addSpriteBtn->m_baseScale = 0.75;
@@ -189,7 +189,7 @@ bool GauntletEditPopup::init(
     m_colorSprName = CCSprite::createWithSpriteFrameName("GJ_colorBtn_001.png");
     auto colorNameBtn = CCMenuItemSpriteExtra::create(
         m_colorSprName, this,
-        menu_selector(GauntletEditPopup::onPickNameColor)
+        menu_selector(GauntletCreatorPopup::onPickNameColor)
     );
     colorNameBtn->setScale(0.75);
     colorNameBtn->m_baseScale = 0.75;
@@ -213,7 +213,7 @@ bool GauntletEditPopup::init(
     auto colorNodeBtn = CCMenuItemSpriteExtra::create(
         m_colorSprNode,
         this,
-        menu_selector(GauntletEditPopup::onPickNodeColor)
+        menu_selector(GauntletCreatorPopup::onPickNodeColor)
     );
     colorNodeBtn->setScale(0.75);
     colorNodeBtn->m_baseScale = 0.75;
@@ -254,7 +254,7 @@ bool GauntletEditPopup::init(
     auto bgBtn = CCMenuItemSpriteExtra::create(
         bgIcon,
         this,
-        menu_selector(GauntletEditPopup::onPickBackground)
+        menu_selector(GauntletCreatorPopup::onPickBackground)
     );
     bgBtn->m_scaleMultiplier = 1.15;
 
@@ -290,7 +290,7 @@ bool GauntletEditPopup::init(
     auto bgColorBtn = CCMenuItemSpriteExtra::create(
         m_colorSprBG,
         this,
-        menu_selector(GauntletEditPopup::onPickBGColor)
+        menu_selector(GauntletCreatorPopup::onPickBGColor)
     );
     bgColorBtn->setScale(0.75);
     bgColorBtn->m_baseScale = 0.75;
@@ -330,7 +330,7 @@ bool GauntletEditPopup::init(
     auto colorAccentBtn1 = CCMenuItemSpriteExtra::create(
         m_colorAccent1,
         this,
-        menu_selector(GauntletEditPopup::onPickAcc1Color)
+        menu_selector(GauntletCreatorPopup::onPickAcc1Color)
     );
     colorAccentBtn1->setScale(0.75);
     colorAccentBtn1->m_baseScale = 0.75;
@@ -354,7 +354,7 @@ bool GauntletEditPopup::init(
     auto colorAccentBtn2 = CCMenuItemSpriteExtra::create(
         m_colorAccent2,
         this,
-        menu_selector(GauntletEditPopup::onPickAcc2Color)
+        menu_selector(GauntletCreatorPopup::onPickAcc2Color)
     );
     colorAccentBtn2->setScale(0.75);
     colorAccentBtn2->m_baseScale = 0.75;
@@ -436,7 +436,7 @@ bool GauntletEditPopup::init(
     auto previewDescBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png"),
         this,
-        menu_selector(GauntletEditPopup::onPreviewInfo)
+        menu_selector(GauntletCreatorPopup::onPreviewInfo)
     );
     previewDescBtn->setScale(0.75);
     previewDescBtn->m_baseScale = 0.75;
@@ -504,9 +504,9 @@ bool GauntletEditPopup::init(
         ->setAxisAlignment(AxisAlignment::Start)
         ->setAxisReverse(true)
     );
-    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletEditPopup::updateInfoAccID)));
-    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletEditPopup::updateInfoVersion)));
-    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletEditPopup::updateInfoDate)));
+    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletCreatorPopup::updateInfoAccID)));
+    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletCreatorPopup::updateInfoVersion)));
+    pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletCreatorPopup::updateInfoDate)));
     pushInfoMenu->updateLayout();
 
     m_GSLPreview->addChild(infoLabel);
@@ -605,7 +605,7 @@ bool GauntletEditPopup::init(
     auto searchBtn = CCMenuItemSpriteExtra::create(
         CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr),
         this,
-        menu_selector(GauntletEditPopup::onAddLevel)
+        menu_selector(GauntletCreatorPopup::onAddLevel)
     );
     
     levelSearchNode->addChild(m_levelSearchInput);
@@ -720,7 +720,7 @@ bool GauntletEditPopup::init(
     auto saveBtn = CCMenuItemSpriteExtra::create(
         ButtonSprite::create("Save"),
         this,
-        menu_selector(GauntletEditPopup::onSave)
+        menu_selector(GauntletCreatorPopup::onSave)
     );
     saveBtn->setScale(0.75);
     saveBtn->m_baseScale = 0.75;
@@ -849,7 +849,7 @@ bool GauntletEditPopup::init(
 
 // onClose 
 
-void GauntletEditPopup::onClose(CCObject* sender) {
+void GauntletCreatorPopup::onClose(CCObject* sender) {
     auto alert = FLAlertLayer::create(
         this,
         "Hold on!",
@@ -865,7 +865,7 @@ void GauntletEditPopup::onClose(CCObject* sender) {
     if (glm->m_levelManagerDelegate == this) glm->m_levelManagerDelegate = nullptr;
 }
 
-void GauntletEditPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
+void GauntletCreatorPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
     if (!btn2) return;
 
     auto glm = GameLevelManager::get();
@@ -879,7 +879,7 @@ void GauntletEditPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
 
 // Pages
 
-void GauntletEditPopup::onPageChanged(int page) {
+void GauntletCreatorPopup::onPageChanged(int page) {
     if (!m_GSLPreview || !m_GLPreview) return;
     m_GSLPreview->setVisible(page == 0);
     m_GLPreview->setVisible(page == 1);
@@ -887,7 +887,7 @@ void GauntletEditPopup::onPageChanged(int page) {
 
 // Preview name
 
-void GauntletEditPopup::updatePreviewName(CCObject* sender) {
+void GauntletCreatorPopup::updatePreviewName(CCObject* sender) {
     if (!m_previewTitle || !m_previewTitleShadow) return;
     auto str = std::string(m_nameInput->getString());
     m_previewTitle->setString(str.c_str());
@@ -900,11 +900,11 @@ void GauntletEditPopup::updatePreviewName(CCObject* sender) {
 
 // Description
 
-void GauntletEditPopup::updateDescription(CCObject* sender) {
+void GauntletCreatorPopup::updateDescription(CCObject* sender) {
     if (!m_descInput || !m_previewBG) return;
 }
 
-void GauntletEditPopup::onPreviewInfo(CCObject* sender) {
+void GauntletCreatorPopup::onPreviewInfo(CCObject* sender) {
     auto text = m_descInput ? std::string(m_descInput->getString()) : "";
 
     auto alert = MDPopup::create(
@@ -945,7 +945,7 @@ void GauntletEditPopup::onPreviewInfo(CCObject* sender) {
 
 // Info push buttons
 
-void GauntletEditPopup::updateInfoDate(CCObject* sender) {
+void GauntletCreatorPopup::updateInfoDate(CCObject* sender) {
     auto input = std::string(m_infoDateInput->getString());
     if (input.empty()) {
         auto t = std::time(nullptr);
@@ -964,7 +964,7 @@ void GauntletEditPopup::updateInfoDate(CCObject* sender) {
     Notification::create("Release date set", NotificationIcon::Success)->show();
 }
 
-void GauntletEditPopup::updateInfoVersion(CCObject* sender) {
+void GauntletCreatorPopup::updateInfoVersion(CCObject* sender) {
     auto input = std::string(m_infoVersionInput->getString());
     if (input.empty()) {
         input = Mod::get()->getVersion().toVString();
@@ -974,7 +974,7 @@ void GauntletEditPopup::updateInfoVersion(CCObject* sender) {
     Notification::create("Version set", NotificationIcon::Success)->show();
 }
 
-void GauntletEditPopup::updateInfoAccID(CCObject* sender) {
+void GauntletCreatorPopup::updateInfoAccID(CCObject* sender) {
     auto idStr = std::string(m_infoAccIDInput->getString());
 
     int accID = idStr.empty()
@@ -1004,7 +1004,7 @@ void GauntletEditPopup::updateInfoAccID(CCObject* sender) {
     glm->getGJUserInfo(accID);
 }
 
-void GauntletEditPopup::getUserInfoFinished(GJUserScore* score) {
+void GauntletCreatorPopup::getUserInfoFinished(GJUserScore* score) {
     m_searchingUser = false;
     auto glm = GameLevelManager::get();
     if (glm->m_userInfoDelegate == this)
@@ -1020,7 +1020,7 @@ void GauntletEditPopup::getUserInfoFinished(GJUserScore* score) {
     Notification::create(m_infoSuggester, NotificationIcon::Success)->show();
 }
 
-void GauntletEditPopup::getUserInfoFailed(int) {
+void GauntletCreatorPopup::getUserInfoFailed(int) {
     m_searchingUser = false;
     auto glm = GameLevelManager::get();
     if (glm->m_userInfoDelegate == this)
@@ -1031,7 +1031,7 @@ void GauntletEditPopup::getUserInfoFailed(int) {
 
 // Icon picker
 
-void GauntletEditPopup::onPickIcon(CCObject*) {
+void GauntletCreatorPopup::onPickIcon(CCObject*) {
     m_pickHolder.spawn(
         file::pick(file::PickMode::OpenFile, file::FilePickOptions{
             dirs::getGameDir(),
@@ -1086,14 +1086,12 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
                         for (unsigned int j = 0; j < rows->count(); j++) {
                             auto rowNode = static_cast<CCNode*>(rows->objectAtIndex(j));
                             if (!rowNode) continue;
-                            if (auto old = rowNode->getChildByID("gauntlet-icon-bg"))
-                                old->removeFromParent();
+                            if (auto old = rowNode->getChildByID("gauntlet-icon-bg")) old->removeFromParent();
                             auto slotIcon = CCSprite::create(path.string().c_str());
                             if (!slotIcon) continue;
                             slotIcon->setID("gauntlet-icon-bg");
                             slotIcon->setScale(0.75);
-                            slotIcon->setPosition({rowNode->getContentWidth() / 2,
-                                                   rowNode->getContentHeight() / 2});
+                            slotIcon->setPosition({rowNode->getContentWidth() / 2, rowNode->getContentHeight() / 2});
                             rowNode->addChild(slotIcon, 1);
                         }
                     }
@@ -1106,20 +1104,20 @@ void GauntletEditPopup::onPickIcon(CCObject*) {
 
 // Background picker
 
-void GauntletEditPopup::onPickBackground(CCObject* sender) {
+void GauntletCreatorPopup::onPickBackground(CCObject* sender) {
     auto layer = SelectArtLayer::create(SelectArtType::Background, m_bgIndex);
     if (!layer) return;
     layer->m_delegate = this;
     layer->show();
 }
 
-void GauntletEditPopup::selectArtClosed(SelectArtLayer* layer) {
+void GauntletCreatorPopup::selectArtClosed(SelectArtLayer* layer) {
     if (!layer) return;
     m_bgIndex = layer->m_art;
     updateBgIcon();
 }
 
-void GauntletEditPopup::updateBgIcon() {
+void GauntletCreatorPopup::updateBgIcon() {
     // Update the small icon button in the fields layer
     if (m_bgIconSpr) {
         auto frame = CCSpriteFrameCache::sharedSpriteFrameCache()
@@ -1147,7 +1145,7 @@ void GauntletEditPopup::updateBgIcon() {
 
 // Color pickers
 
-void GauntletEditPopup::onPickNameColor(CCObject* sender) {
+void GauntletCreatorPopup::onPickNameColor(CCObject* sender) {
     m_colorPopup = ColorPickPopup::create(m_selectedColor);
     if (!m_colorPopup) return;
     m_colorPopup->setCallback([this](ccColor4B const& color) {
@@ -1159,7 +1157,7 @@ void GauntletEditPopup::onPickNameColor(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onPickNodeColor(CCObject* sender) {
+void GauntletCreatorPopup::onPickNodeColor(CCObject* sender) {
     m_colorPopup = ColorPickPopup::create(m_selectedNodeColor);
     if (!m_colorPopup) return;
     m_colorPopup->setCallback([this](ccColor4B const& color) {
@@ -1170,7 +1168,7 @@ void GauntletEditPopup::onPickNodeColor(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onPickBGColor(CCObject* sender) {
+void GauntletCreatorPopup::onPickBGColor(CCObject* sender) {
     m_colorPopup = ColorPickPopup::create(m_selectedBGColor);
     if (!m_colorPopup) return;
     m_colorPopup->setCallback([this](ccColor4B const& color) {
@@ -1182,7 +1180,7 @@ void GauntletEditPopup::onPickBGColor(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onPickAcc1Color(CCObject* sender) {
+void GauntletCreatorPopup::onPickAcc1Color(CCObject* sender) {
     m_colorPopup = ColorPickPopup::create(m_selectedAccentColor1);
     if (!m_colorPopup) return;
     m_colorPopup->setCallback([this](ccColor4B const& color) {
@@ -1194,7 +1192,7 @@ void GauntletEditPopup::onPickAcc1Color(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onPickAcc2Color(CCObject* sender) {
+void GauntletCreatorPopup::onPickAcc2Color(CCObject* sender) {
     m_colorPopup = ColorPickPopup::create(m_selectedAccentColor2);
     if (!m_colorPopup) return;
     m_colorPopup->setCallback([this](ccColor4B const& color) {
@@ -1206,7 +1204,7 @@ void GauntletEditPopup::onPickAcc2Color(CCObject* sender) {
     m_colorPopup->show();
 }
 
-void GauntletEditPopup::onAddLevel(CCObject*) {
+void GauntletCreatorPopup::onAddLevel(CCObject*) {
     auto idStr = std::string(m_levelSearchInput->getString());
     if (idStr.empty()) {
         Notification::create("Enter a level ID", NotificationIcon::Error)->show();
@@ -1230,7 +1228,7 @@ void GauntletEditPopup::onAddLevel(CCObject*) {
     glm->getOnlineLevels(searchObj);
 }
 
-void GauntletEditPopup::loadLevelsFinished(CCArray* levels, char const* key) {
+void GauntletCreatorPopup::loadLevelsFinished(CCArray* levels, char const* key) {
     if (!m_searchingLevel || m_pendingSearchKey != key) return;
 
     m_searchingLevel = false;
@@ -1270,7 +1268,7 @@ void GauntletEditPopup::loadLevelsFinished(CCArray* levels, char const* key) {
     )->show();
 }
 
-void GauntletEditPopup::loadLevelsFailed(char const* key, int) {
+void GauntletCreatorPopup::loadLevelsFailed(char const* key, int) {
     if (!m_searchingLevel || m_pendingSearchKey != key) return;
 
     m_searchingLevel = false;
@@ -1281,11 +1279,11 @@ void GauntletEditPopup::loadLevelsFailed(char const* key, int) {
     Notification::create("Failed to fetch level.", NotificationIcon::Error)->show();
 }
 
-void GauntletEditPopup::onRemoveLevel(CCObject* sender) {
+void GauntletCreatorPopup::onRemoveLevel(CCObject* sender) {
     log::debug("delete");
 }
 
-void GauntletEditPopup::refreshLevels() {
+void GauntletCreatorPopup::refreshLevels() {
     auto listMenu = m_GLPreview
         ? m_GLPreview->getChildByID("level-list-menu")
         : nullptr;
@@ -1325,7 +1323,7 @@ void GauntletEditPopup::refreshLevels() {
 
 // Save
 
-void GauntletEditPopup::onSave(CCObject* sender) {
+void GauntletCreatorPopup::onSave(CCObject* sender) {
     if (m_nameInput->getString().empty()) {
         Notification::create("A gauntlet name is required.", NotificationIcon::Warning)->show();
         return;
@@ -1362,7 +1360,7 @@ void GauntletEditPopup::onSave(CCObject* sender) {
             GauntletManagerAPI::get()->uploadIcon(m_pendingIconPath.value()),
             [this](web::WebResponse res) {
                 if (!res.ok()) {
-                    Notification::create("Icon upload failed.", NotificationIcon::Error)->show();
+                    Notification::create("Icon upload failed. Try again soon!", NotificationIcon::Error)->show();
                     return;
                 }
                 m_data.iconURL = res.json().unwrapOr(matjson::Value())["url"].asString().unwrapOr("");
@@ -1370,13 +1368,10 @@ void GauntletEditPopup::onSave(CCObject* sender) {
                 doSave();
             }
         );
-    } else {
-        // iconURL already set from existing data - skip upload
-        doSave();
-    }
+    } else doSave();
 }
 
-void GauntletEditPopup::doSave() {
+void GauntletCreatorPopup::doSave() {
     if (m_onSaved) m_onSaved(m_data);
     Popup::onClose(nullptr);
 }

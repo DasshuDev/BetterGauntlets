@@ -1,5 +1,5 @@
 #include "GauntletManagerPopup.hpp"
-#include "GauntletEditPopup.hpp"
+#include "GauntletCreatorPopup.hpp"
 #include "../Data/CustomGauntletData.hpp"
 #include <argon/argon.hpp>
 
@@ -688,7 +688,7 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
         data.levels[i].stars   = it->levels[i].stars;
     }
 
-    GauntletEditPopup::create(data, [this, gauntletId](GauntletEditData const& updated) {
+    GauntletCreatorPopup::create(data, [this, gauntletId](GauntletEditData const& updated) {
         // Remove any previous staged update for this gauntlet
         m_staged.erase(
             std::remove_if(m_staged.begin(), m_staged.end(),
@@ -708,7 +708,7 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
 
 void GauntletManagerPopup::onCreateNew(CCObject*) {
     GauntletEditData empty;
-    GauntletEditPopup::create(empty, [this](GauntletEditData const& data) {
+    GauntletCreatorPopup::create(empty, [this](GauntletEditData const& data) {
         m_staged.push_back(data);
         saveStaged();
         buildGauntletList();
@@ -722,7 +722,7 @@ void GauntletManagerPopup::onCreateNew(CCObject*) {
 void GauntletManagerPopup::onEditStaged(int index) {
     if (index < 0 || index >= (int)m_staged.size()) return;
     auto existing = m_staged[index];
-    GauntletEditPopup::create(existing, [this, index](GauntletEditData const& data) {
+    GauntletCreatorPopup::create(existing, [this, index](GauntletEditData const& data) {
         m_staged[index] = data;
         saveStaged();
         buildGauntletList();

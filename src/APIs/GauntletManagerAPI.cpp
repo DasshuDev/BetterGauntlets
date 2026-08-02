@@ -13,19 +13,20 @@ bool GauntletManagerAPI::isLoggedIn() const { return !m_token.empty(); }
 void GauntletManagerAPI::setToken(std::string const& token) { m_token = token; }
 std::string const& GauntletManagerAPI::getToken() const { return m_token; }
 
-web::WebFuture GauntletManagerAPI::login(
-    std::string const& username,
-    std::string const& password
-) {
-    auto body = matjson::Value();
-    body["username"] = username;
-    body["password"] = password;
-
-    return web::WebRequest()
-        .header("Content-Type", "application/json")
-        .bodyString(body.dump())
-        .post(baseURL() + "/login");
-}
+// Unused - manager auth uses argon::startAuth() instead (see GauntletManagerPopup::startArgonAuth)
+// web::WebFuture GauntletManagerAPI::login(
+//     std::string const& username,
+//     std::string const& password
+// ) {
+//     auto body = matjson::Value();
+//     body["username"] = username;
+//     body["password"] = password;
+//
+//     return web::WebRequest()
+//         .header("Content-Type", "application/json")
+//         .bodyString(body.dump())
+//         .post(baseURL() + "/login");
+// }
 
 web::WebFuture GauntletManagerAPI::fetchAll() {
     return web::WebRequest()

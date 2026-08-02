@@ -16,8 +16,7 @@ void BetterGauntletLayer::editChanceGauntlet() {
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {
 		// left
-		auto bgParticleNode1 = CCParticleSystemQuad::create();
-        if (bgParticleNode1) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "25a-1a5a0a5a90a90a0a15a0a300a0a0a0a0a0a0a500a10a0a0a0a0a0.576471a0a1a0a0.5a0.15a500a0a0a0a0.0666667a0a0a0a1a0a0.2a0.15a0.45a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a32a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -28,8 +27,7 @@ void BetterGauntletLayer::editChanceGauntlet() {
             this->addChild(bgParticles);
         }
         // right
-		auto bgParticleNode2 = CCParticleSystemQuad::create();
-        if (bgParticleNode2) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "25a-1a5a0a5a90a90a0a15a0a300a0a0a0a0a0a0a500a10a0a0a0a0a0.576471a0a1a0a0.5a0.15a500a0a0a0a0.0666667a0a0a0a1a0a0.2a0.15a0.45a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a32a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -40,8 +38,7 @@ void BetterGauntletLayer::editChanceGauntlet() {
             this->addChild(bgParticles);
         }
         // up
-		auto bgParticleNode3 = CCParticleSystemQuad::create();
-        if (bgParticleNode3) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "25a-1a5a0a5a90a90a0a15a300a0a0a0a0a0a0a0a500a10a90a0a0a0a0.576471a0a1a0a0.5a0.15a500a0a90a0a0.0666667a0a0a0a1a0a0.2a0.15a0.45a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a32a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -52,8 +49,7 @@ void BetterGauntletLayer::editChanceGauntlet() {
             this->addChild(bgParticles);
         }
         // down
-		auto bgParticleNode4 = CCParticleSystemQuad::create();
-        if (bgParticleNode4) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "25a-1a5a0a5a90a90a0a15a300a0a0a0a0a0a0a0a500a10a90a0a0a0a0.576471a0a1a0a0.5a0.15a500a0a90a0a0.0666667a0a0a0a1a0a0.2a0.15a0.45a0a0.25a0a0a0a0a0a0a0a0a2a1a0a0a0a32a0a0.6a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,

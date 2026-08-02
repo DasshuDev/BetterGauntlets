@@ -1,15 +1,14 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/ProfilePage.hpp>
-#include <Geode/modify/CommentCell.hpp>
 #include <Geode/utils/web.hpp>
 #include <Geode/loader/SettingV3.hpp>
-#include <alphalaneous.badgify/include/Badgify.hpp>
+#include <dasshu.badgified/include/Badgified.hpp>
 #include "../../APIs/GauntletManagerCache.hpp"
 #include "../../Managers/StatsSyncManager.hpp"
 #include "../../Data/CustomGauntletManager.hpp"
 
 using namespace geode::prelude;
-using namespace alpha::badgify;
+using namespace dasshu::badgified;
 
 class $modify(GRProfilePage, ProfilePage) {
     bool init(int accountID, bool ownProfile) {

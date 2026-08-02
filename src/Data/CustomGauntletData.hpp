@@ -37,7 +37,9 @@ struct CustomGauntletData {
 
     bool        featured     = false;
 
-    // Parse from a single JSON object
+    // Unused - no call sites. CustomGauntletManager::parse() (colon-delimited format) and
+    // GauntletManagerPopup's local parseGauntletJson() are the parsers actually in use.
+    /*
     static CustomGauntletData fromJson(matjson::Value const& obj) {
         CustomGauntletData d;
         d.id          = obj["id"].asInt().unwrapOr(0);
@@ -81,4 +83,5 @@ struct CustomGauntletData {
         }
         return d;
     }
+    */
 };

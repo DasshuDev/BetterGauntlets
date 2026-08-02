@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v2.0.0-alpha.71",
+	"version": "v2.0.0-alpha.72",
 	"developer": "DasshuDev",
 	"description": "Give life to the Lost Gauntlets!",
 	"links": {
@@ -56,7 +56,7 @@
 	"dependencies": {
 		"geode.node-ids": {"version": ">=1.23.3", "required": true},
 		"alphalaneous.alphas-ui-pack": {"version": ">=1.0.0", "required": true},
-		"alphalaneous.badgify": {"version": ">=1.0.0", "required": true}
+		"dasshu.badgified": {"version": ">=1.0.0", "required": true}
 	},
 	"settings": {
 

@@ -13,6 +13,8 @@ struct SlotLevel {
     int stars = 0;
 };
 
+// Unused - GauntletUserInfo is never referenced anywhere
+/*
 struct GauntletUserInfo {
     int accountId = 0;
     std::string username;
@@ -24,6 +26,7 @@ struct GauntletUserInfo {
         return info;
     }
 };
+*/
 
 // Full data for creating/editing a gauntlet from the in-game panel
 struct GauntletEditData {
@@ -51,7 +54,7 @@ public:
     static GauntletManagerAPI* get();
 
     // Auth
-    web::WebFuture login(std::string const& username, std::string const& password);
+    // web::WebFuture login(std::string const& username, std::string const& password); // unused - manager auth uses argon::startAuth() instead
     web::WebFuture fetchAll();
     web::WebFuture create(GauntletEditData const& data);
     web::WebFuture update(GauntletEditData const& data);

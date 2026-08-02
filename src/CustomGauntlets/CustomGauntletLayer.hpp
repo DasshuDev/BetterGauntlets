@@ -17,13 +17,13 @@ protected:
     CustomGauntletData              m_data;
     CCArray*                        m_loadedLevels = nullptr;
     CCMenu*                         m_levelsMenu   = nullptr;
-    CCSprite*                       m_islandSpr    = nullptr;
+    // CCSprite*                       m_islandSpr    = nullptr; // unused - never assigned or read
     CCLabelBMFont*                  m_titleLabel   = nullptr;
-    CCLabelBMFont*                  m_titleShadow  = nullptr;
+    // CCLabelBMFont*                  m_titleShadow  = nullptr; // unused - never assigned or read
     std::vector<bool>               m_lockedStates;
 
     async::TaskHolder<web::WebResponse> m_iconHolder;
-    async::TaskHolder<web::WebResponse> m_completionHolder;
+    // async::TaskHolder<web::WebResponse> m_completionHolder; // unused - only used by dead reportCompletion()
 
     // Level loading
     void loadLevels();
@@ -50,5 +50,5 @@ protected:
     void onLocked(CCObject* sender);
     void onInfo(CCObject* sender);
     void gauntletVault(CCObject* obj);
-    void reportCompletion(int levelID, int stars);
+    // void reportCompletion(int levelID, int stars); // unused - no call sites anywhere; superseded by CustomGauntletManager reward tracking
 };

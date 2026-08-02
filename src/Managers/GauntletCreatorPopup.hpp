@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cue/ListNode.hpp>
+// #include <cue/ListNode.hpp> // unused - cue::ListNode is never instantiated, level list is built manually with a CCMenu
 #include <Geode/Geode.hpp>
 #include <Geode/ui/Popup.hpp>
 #include <Geode/utils/web.hpp>
@@ -39,7 +39,7 @@ protected:
     // Text inputs
     TextInput* m_nameInput = nullptr;
     TextInput* m_descInput = nullptr;
-    TextInput* m_levelInput = nullptr;
+    // TextInput* m_levelInput = nullptr; // unused - superseded by m_levelSearchInput
     TextInput* m_infoDateInput = nullptr;
     TextInput* m_infoVersionInput = nullptr;
     TextInput* m_infoAccIDInput = nullptr;
@@ -57,16 +57,16 @@ protected:
     CCSprite* m_rightCornerAccent1 = nullptr;
     CCSprite* m_rightCornerAccent2 = nullptr;
     TextInput* m_levelSearchInput = nullptr;
-    CCSprite* m_islandSpr = nullptr;
+    // CCSprite* m_islandSpr = nullptr; // unused - never assigned or read
 
     // Preview labels
     CCLabelBMFont* m_previewTitle = nullptr;
     CCLabelBMFont* m_previewTitleShadow = nullptr;
     CCLabelBMFont* m_gauntletText = nullptr;
     CCLabelBMFont* m_gauntletTextShadow = nullptr;
-    TextArea* m_description = nullptr;
+    // TextArea* m_description = nullptr; // unused - distinct from m_descInput, which is what's actually used
     NineSlice* m_previewBG = nullptr;
-    CCLabelBMFont* m_previewLevelCount = nullptr;
+    // CCLabelBMFont* m_previewLevelCount = nullptr; // unused - never assigned, guarded branch in refreshLevels() never runs
 
     // Info strings (set by push buttons)
     std::string m_infoDate;
@@ -75,7 +75,7 @@ protected:
     int m_infoAccID = 0;
 
     // Level slots
-    cue::ListNode* m_levelList = nullptr;
+    // cue::ListNode* m_levelList = nullptr; // unused - level list is built manually with a CCMenu
     std::vector<LevelRewardEntry> m_levels;
 
     // Background picker
@@ -99,13 +99,13 @@ protected:
     // Async holders
     async::TaskHolder<geode::Result<std::optional<std::filesystem::path>>> m_pickHolder;
     std::optional<std::filesystem::path> m_pendingIconPath;
-    async::TaskHolder<web::WebResponse> m_saveHolder;
+    // async::TaskHolder<web::WebResponse> m_saveHolder; // unused - never spawned
     async::TaskHolder<web::WebResponse> m_uploadHolder;
     async::TaskHolder<web::WebResponse> m_webIconHolder;
     std::array<async::TaskHolder<web::WebResponse>, 5> m_slotBgHolders;
 
-    std::string m_spritePath;
-    LoadingCircle* m_loadingCircle = nullptr;
+    // std::string m_spritePath; // unused - never assigned or read
+    // LoadingCircle* m_loadingCircle = nullptr; // unused - never shown, unlike GauntletManagerPopup/LeaderboardPopup
 
     // Methods
     void onClose(CCObject* sender) override;
@@ -138,7 +138,7 @@ protected:
     void getUserInfoFinished(GJUserScore* score) override;
     void getUserInfoFailed(int p1) override;
     void onAddLevel(CCObject* sender);
-    void onRemoveLevel(CCObject* sender);
+    // void onRemoveLevel(CCObject* sender); // unused - the actual remove button uses an inline lambda in the level-row builder
     void refreshLevels();
     void loadLevelsFinished(CCArray* levels, char const* key) override;
     void loadLevelsFailed(char const* key, int p1) override;

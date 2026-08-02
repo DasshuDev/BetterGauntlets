@@ -14,7 +14,7 @@ void RedesignedGauntletNode::generateNode() {
     GauntletNode::generateNode();
 
     m_fields->m_gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    m_fields->m_claimSpr = CCSprite::createWithSpriteFrameName("GJ_rewardBtn_001.png");
+    // m_fields->m_claimSpr = CCSprite::createWithSpriteFrameName("GJ_rewardBtn_001.png"); // unused - never attached to the scene
 
     auto progress = static_cast<CCLabelBMFont*>(this->getChildByIDRecursive("gauntlet-progress-label"));
     auto bg = static_cast<CCSprite*>(progress->getParent()->getParent()->getChildByIDRecursive("background"));
@@ -62,7 +62,8 @@ void RedesignedGauntletNode::generateNode() {
 void RedesignedGauntletNode::onClaimReward() {
     GauntletNode::onClaimReward();
 
-    if (!m_fields->m_claimSpr) return;
-    m_fields->m_claimSpr->removeFromParent();
-    m_fields->m_claimSpr = nullptr;
+    // m_fields->m_claimSpr is never attached to the scene, so this was always a no-op
+    // if (!m_fields->m_claimSpr) return;
+    // m_fields->m_claimSpr->removeFromParent();
+    // m_fields->m_claimSpr = nullptr;
 }

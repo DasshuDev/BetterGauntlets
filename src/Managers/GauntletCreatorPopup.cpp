@@ -1,5 +1,4 @@
 #include <ctime>
-// #include <cue/ListNode.hpp> // unused - cue::ListNode is never instantiated, level list is built manually with a CCMenu
 #include "GauntletCreatorPopup.hpp"
 
 using namespace geode::prelude;
@@ -1292,11 +1291,6 @@ void GauntletCreatorPopup::loadLevelsFailed(char const* key, int) {
 
     Notification::create("Failed to fetch level.", NotificationIcon::Error)->show();
 }
-
-// Unused - the actual remove button uses an inline lambda in the level-row builder (see levelListMenu setup above)
-// void GauntletCreatorPopup::onRemoveLevel(CCObject* sender) {
-//     log::debug("delete");
-// }
 
 void GauntletCreatorPopup::refreshLevels() {
     auto listMenu = m_GLPreview

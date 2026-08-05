@@ -798,24 +798,3 @@ void CustomGauntletLayer::gauntletVault(CCObject*) {
     scene->addChild(browserLayer);
     director->pushScene(CCTransitionFade::create(0.5, scene));
 }
-
-// Unused - no call sites anywhere; superseded by CustomGauntletManager's local reward/attempt tracking
-// void CustomGauntletLayer::reportCompletion(int levelID, int stars) {
-//     auto accountID = GJAccountManager::get()->m_accountID;
-//
-//     m_completionHolder.spawn(
-//         web::WebRequest()
-//             .bodyJSON(matjson::makeObject({
-//                 {"accountId", accountID},
-//                 {"gauntletId", m_data.id},
-//                 {"levelId", levelID},
-//                 {"stars", stars}
-//             }))
-//             .post("https://bettergauntlets.dev/complete"),
-//         [](web::WebResponse res) {
-//             if (!res.ok()) {
-//                 log::error("Failed to report completion: HTTP {}", res.code());
-//             }
-//         }
-//     );
-// }

@@ -14,7 +14,6 @@ void RedesignedGauntletNode::generateNode() {
     GauntletNode::generateNode();
 
     m_fields->m_gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    // m_fields->m_claimSpr = CCSprite::createWithSpriteFrameName("GJ_rewardBtn_001.png"); // unused - never attached to the scene
 
     auto progress = static_cast<CCLabelBMFont*>(this->getChildByIDRecursive("gauntlet-progress-label"));
     auto bg = static_cast<CCSprite*>(progress->getParent()->getParent()->getChildByIDRecursive("background"));

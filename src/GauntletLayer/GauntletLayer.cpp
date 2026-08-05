@@ -542,24 +542,19 @@ void BetterGauntletLayer::editGauntlets() {
     // Lock check
     bool isLocked = false;
     if (i > 0) {
-      GJGameLevel *previousLevel =
-          static_cast<GJGameLevel *>(m_levels->objectAtIndex(i - 1));
-      isLocked =
-          !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
+      GJGameLevel *previousLevel = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i - 1));
+      isLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
     }
     // No prior record (first time this gauntlet type is opened this session) ->
     // treat as "always was this way", so nothing appears freshly unlocked.
-    bool wasLocked = i < static_cast<int>(lastLockedStates.size())
-                         ? lastLockedStates[i]
-                         : isLocked;
+    bool wasLocked = i < static_cast<int>(lastLockedStates.size()) ? lastLockedStates[i] : isLocked;
     bool justUnlocked = wasLocked && !isLocked;
 
     m_lockedStates.push_back(isLocked);
 
     if (isLocked || justUnlocked) {
       m_lockSprite = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
-      m_lockSprite->setPosition(
-          {islandSpr->getPositionX(), islandSpr->getPositionY() - 15});
+      m_lockSprite->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 15});
       m_lockSprite->setID("gauntlet-lock"_spr);
       levelSpr->addChild(m_lockSprite);
       islandSpr->setColor(ccc3(128, 128, 128));
@@ -572,8 +567,7 @@ void BetterGauntletLayer::editGauntlets() {
     // Button
     CCMenuItemSpriteExtra *btn = CCMenuItemSpriteExtra::create(
         levelSpr, this,
-        isLocked ? menu_selector(BetterGauntletLayer::onLocked)
-                 : menu_selector(BetterGauntletLayer::onLevel));
+        isLocked ? menu_selector(BetterGauntletLayer::onLocked) : menu_selector(BetterGauntletLayer::onLevel));
     btn->setUserObject(levelNode);
     btn->setTag(i);
     btn->setID(fmt::format("level-{}", i + 1));
@@ -587,15 +581,13 @@ void BetterGauntletLayer::editGauntlets() {
       btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY);
       break;
     case 2:
-      btn->setPosition(winSize.width / 2 - posCloseX,
-                       winSize.height / 2 + posY);
+      btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY);
       break;
     case 3:
       btn->setPosition(winSize.width / 2, winSize.height / 2 - posY);
       break;
     case 4:
-      btn->setPosition(winSize.width / 2 + posCloseX,
-                       winSize.height / 2 + posY);
+      btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY);
       break;
     case 5:
       btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY);
@@ -627,8 +619,7 @@ void BetterGauntletLayer::editGauntlets() {
       CCMoveBy *moveDown = CCMoveBy::create(randomMoveDown, ccp(0, -5));
       CCEaseInOut *easeMoveUp = CCEaseInOut::create(moveUp, 2.0);
       CCEaseInOut *easeMoveDown = CCEaseInOut::create(moveDown, 2.0);
-      CCSequence *hoverSequence =
-          CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
+      CCSequence *hoverSequence = CCSequence::create(easeMoveUp, easeMoveDown, nullptr);
       CCRepeatForever *levelHover = CCRepeatForever::create(hoverSequence);
       lvl->runAction(levelHover);
     }
@@ -685,8 +676,7 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode *levelSpr, int index) {
 
   if (lockSpr) {
     lockSpr->runAction(
-        CCSequence::create(CCFadeOut::create(kUnlockSfxPeakDelay),
-                           CCRemoveSelf::create(), nullptr));
+        CCSequence::create(CCFadeOut::create(kUnlockSfxPeakDelay), CCRemoveSelf::create(), nullptr));
   }
 
   playUnlockParticlesIn(levelSpr, index);
@@ -734,8 +724,7 @@ void BetterGauntletLayer::onUnlockPeak(CCNode *sender) {
 }
 
 CCFiniteTimeAction *
-BetterGauntletLayer::generateShakeAction(CCPoint originalPos, float xyOffset,
-                                         float duration) {
+BetterGauntletLayer::generateShakeAction(CCPoint originalPos, float xyOffset, float duration) {
   float dx = CCRANDOM_MINUS1_1() * xyOffset;
   float dy = CCRANDOM_MINUS1_1() * xyOffset;
   return CCMoveTo::create(duration, {originalPos.x + dx, originalPos.y + dy});
@@ -805,8 +794,7 @@ void BetterGauntletLayer::onInfo(CCObject *sender) {
   std::string gauntletDesc = getGauntletInfo(m_gauntletType);
 
   MDPopup *popup =
-      MDPopup::create(("The " + gauntletName + " Gauntlet").c_str(),
-                      gauntletDesc.c_str(), "OK");
+      MDPopup::create(("The " + gauntletName + " Gauntlet").c_str(), gauntletDesc.c_str(), "OK");
 
   std::string date =
       fmt::format("Released on: {}", getGauntletDate(m_gauntletType));

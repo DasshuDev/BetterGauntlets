@@ -35,6 +35,7 @@ protected:
     // Layer swap
     CCMenu* m_GSLPreview = nullptr;
     CCMenu* m_GLPreview = nullptr;
+    CCMenu* m_infoPreview = nullptr;
 
     // Text inputs
     TextInput* m_nameInput = nullptr;
@@ -43,6 +44,7 @@ protected:
     TextInput* m_infoDateInput = nullptr;
     TextInput* m_infoVersionInput = nullptr;
     TextInput* m_infoAccIDInput = nullptr;
+    TextInput* m_rewardCoinsInput = nullptr;
 
     // Fetch state
     bool m_searchingUser = false;
@@ -143,8 +145,8 @@ protected:
     void loadLevelsFinished(CCArray* levels, char const* key) override;
     void loadLevelsFailed(char const* key, int p1) override;
 
-    // Pages: 0 = basic info/colors (GSL preview), 1 = levels (GL preview)
-    int  getPageCount() const override { return 2; }
+    // Pages: 0 = basic info/colors (GSL preview), 1 = levels (GL preview), 2 = info fields
+    int  getPageCount() const override { return 3; }
     void onPageChanged(int page) override;
 
     // Save

@@ -24,6 +24,12 @@ public:
     bool isCustomGauntletLevel(int levelID) const;
     void markPendingGauntletAttempt(int levelID);
 
+    // Looks up the cached gauntlet that has this level ID in one of its slots.
+    CustomGauntletData const* findGauntletForLevel(int levelID) const;
+
+    // True once every one of the gauntlet's 5 slots has a claimed reward.
+    bool isGauntletFullyCompleted(CustomGauntletData const& gauntlet) const;
+
     bool consumePendingGauntletAttempt(int levelID);
 
     // Has the reward been granted?

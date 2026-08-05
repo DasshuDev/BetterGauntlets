@@ -32,3 +32,15 @@ web::WebFuture StatsAPI::resetSelf(int accountId, std::string const& token) {
         .header("X-Account-Id", std::to_string(accountId))
         .send("DELETE", baseURL() + "/stats");
 }
+
+web::WebFuture StatsAPI::completeGauntlet(int accountId, std::string const& token, int gauntletId) {
+    auto body = matjson::Value();
+    body["gauntlet_id"] = gauntletId;
+
+    return web::WebRequest()
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .header("X-Account-Id", std::to_string(accountId))
+        .bodyString(body.dump())
+        .post(baseURL() + "/gauntlet-complete");
+}

@@ -39,8 +39,10 @@ bool LeaderboardPopup::init(float width, float height, char const* bg) {
     syncBtn->setID("sync-button");
     syncMenu->addChild(syncBtn);
 
-    float listHeight = m_size.height - 60;
+    float tabAreaHeight = 22;
+    float listHeight = m_size.height - 60 - tabAreaHeight;
     float listCenterY = 20 + listHeight / 2;
+    m_tabBarY = 26 + listHeight + tabAreaHeight / 2;
 
     auto listBG = NineSlice::create("square02b_001.png");
     listBG->setContentSize({m_size.width - 40, listHeight});
@@ -67,9 +69,47 @@ bool LeaderboardPopup::init(float width, float height, char const* bg) {
     m_listLayer->ignoreAnchorPointForPosition(false);
     listClip->addChild(m_listLayer);
 
+    buildTabMenu();
     fetchLeaderboard();
 
     return true;
+}
+
+void LeaderboardPopup::buildTabMenu() {
+    if (m_tabMenu) {
+        m_tabMenu->removeFromParent();
+        m_tabMenu = nullptr;
+    }
+
+    m_tabMenu = CCMenu::create();
+    m_tabMenu->setID("tab-menu");
+    m_tabMenu->setPosition({m_size.width / 2, m_tabBarY});
+    m_tabMenu->setLayout(RowLayout::create()->setGap(6));
+    m_mainLayer->addChild(m_tabMenu);
+
+    auto makeTabBtn = [this](std::string const& text, std::string const& sortBy) {
+        bool active = (m_sortBy == sortBy);
+        auto spr = ButtonSprite::create(
+            text.c_str(), "bigFont.fnt",
+            active ? "GJ_button_02.png" : "GJ_button_05.png"
+        );
+        spr->setScale(0.5);
+        if (!active) spr->setOpacity(180);
+        return CCMenuItemExt::createSpriteExtra(spr, [this, sortBy](CCMenuItemSpriteExtra*) {
+            onSwitchSort(sortBy);
+        });
+    };
+
+    m_tabMenu->addChild(makeTabBtn("Crystals", "crystals"));
+    m_tabMenu->addChild(makeTabBtn("Coins", "coins"));
+    m_tabMenu->updateLayout();
+}
+
+void LeaderboardPopup::onSwitchSort(std::string const& sortBy) {
+    if (m_sortBy == sortBy) return;
+    m_sortBy = sortBy;
+    buildTabMenu();
+    fetchLeaderboard();
 }
 
 void LeaderboardPopup::onClose(CCObject* sender) {
@@ -109,7 +149,7 @@ void LeaderboardPopup::fetchLeaderboard() {
     m_loadingCircle->setVisible(true);
 
     m_fetchHolder.spawn(
-        LeaderboardAPI::get()->fetch(100),
+        LeaderboardAPI::get()->fetch(100, m_sortBy),
         [this](web::WebResponse res) {
             m_loadingCircle->setVisible(false);
 
@@ -178,7 +218,7 @@ void LeaderboardPopup::buildList() {
 void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float listWidth) {
     auto row = CCNode::create();
     auto inset = 0;
-    row->setContentSize({listWidth, 45});
+    row->setContentSize({listWidth, 55});
 
     auto rowBG = CCScale9Sprite::create("square.png");
     rowBG->setContentSize(row->getContentSize());
@@ -231,7 +271,7 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     }
 
     auto nameLabel = CCLabelBMFont::create(entry.username.c_str(), "goldFont.fnt");
-    nameLabel->limitLabelWidth(listWidth - 165, 0.7, 0.1);
+    nameLabel->limitLabelWidth(listWidth - 210, 0.7, 0.1);
 
     auto nameMenu = CCMenu::create();
     nameMenu->setID("name-menu"_spr);
@@ -249,21 +289,45 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     nameBtn->setAnchorPoint({0, 0.4});
     nameMenu->addChild(nameBtn);
 
-    auto valueLabel = CCLabelBMFont::create(std::to_string(entry.crystals).c_str(), "bigFont.fnt");
+    bool showCoins = (m_sortBy == "coins");
+    int primaryValue   = showCoins ? entry.coins : entry.crystals;
+    int secondaryValue = showCoins ? entry.crystals : entry.coins;
+
+    auto valueLabel = CCLabelBMFont::create(std::to_string(primaryValue).c_str(), "bigFont.fnt");
     valueLabel->setScale(0.45);
     valueLabel->setAnchorPoint({1, 0.5});
-    valueLabel->setPosition({listWidth - 12, row->getContentHeight() / 2});
+    valueLabel->setPosition({listWidth - 12, row->getContentHeight() / 2 + 10});
     row->addChild(valueLabel);
 
-    auto icon = CCSprite::create("GR_crystal_001.png"_spr);
+    float secondaryRightX = valueLabel->getPositionX() - valueLabel->getScaledContentWidth() - 4;
+
+    auto icon = CCSprite::create(showCoins ? "GR_gauntletCoin_001.png"_spr : "GR_crystal_001.png"_spr);
     if (icon) {
         icon->setScale(0.35);
         icon->setAnchorPoint({1, 0.5});
-        icon->setPosition({
-            valueLabel->getPositionX() - valueLabel->getScaledContentWidth() - 4,
-            row->getContentHeight() / 2
-        });
+        icon->setPosition({secondaryRightX, row->getContentHeight() / 2 + 10});
         row->addChild(icon);
+        secondaryRightX = icon->getPositionX() - icon->getScaledContentWidth();
+    }
+
+    // The other stat, shown smaller and dimmer - vanity only, doesn't affect rank
+    auto secondaryLabel = CCLabelBMFont::create(std::to_string(secondaryValue).c_str(), "bigFont.fnt");
+    secondaryLabel->setScale(0.3);
+    secondaryLabel->setOpacity(130);
+    secondaryLabel->setAnchorPoint({1, 0.5});
+    secondaryLabel->setPosition({listWidth - 12, row->getContentHeight() / 2 - 10});
+    row->addChild(secondaryLabel);
+
+    auto secondaryIcon = CCSprite::create(showCoins ? "GR_crystal_001.png"_spr : "GR_gauntletCoin_001.png"_spr);
+    if (secondaryIcon) {
+        secondaryIcon->setScale(0.27);
+        secondaryIcon->setOpacity(130);
+        secondaryIcon->setAnchorPoint({1, 0.5});
+        secondaryIcon->setPosition({
+            secondaryLabel->getPositionX() - secondaryLabel->getScaledContentWidth() - 3,
+            row->getContentHeight() / 2 - 10
+        });
+        row->addChild(secondaryIcon);
     }
 
     m_entryList->addChild(row);

@@ -9,9 +9,9 @@ std::string LeaderboardAPI::baseURL() {
     return std::string("https://bettergauntlets.dev");
 }
 
-web::WebFuture LeaderboardAPI::fetch(int limit) {
+web::WebFuture LeaderboardAPI::fetch(int limit, std::string const& sortBy) {
     return web::WebRequest()
-        .get(baseURL() + fmt::format("/leaderboard?type=crystals&limit={}", limit));
+        .get(baseURL() + fmt::format("/leaderboard?sort={}&limit={}", sortBy, limit));
 }
 
 static int parseIntField(matjson::Value const& val) {
@@ -28,6 +28,7 @@ std::vector<LeaderboardEntry> LeaderboardAPI::parse(matjson::Value const& json) 
         entry.accountId = parseIntField(row["account_id"]);
         entry.username  = row["username"].asString().unwrapOr("Unknown");
         entry.crystals  = parseIntField(row["crystals"]);
+        entry.coins     = parseIntField(row["coins"]);
         result.push_back(entry);
     }
     return result;

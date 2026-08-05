@@ -8,13 +8,14 @@ struct LeaderboardEntry {
     int accountId = 0;
     std::string username;
     int crystals = 0;
+    int coins = 0;
 };
 
 class LeaderboardAPI {
 public:
     static LeaderboardAPI* get();
 
-    web::WebFuture fetch(int limit = 100);
+    web::WebFuture fetch(int limit = 100, std::string const& sortBy = "crystals");
 
     static std::vector<LeaderboardEntry> parse(matjson::Value const& json);
 

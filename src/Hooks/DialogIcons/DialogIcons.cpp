@@ -1,6 +1,12 @@
 // all of this was stolen from Rated Layouts by ArcticWoof ( hope you dont mind :3 )
 
 #include "DialogIcons.hpp"
+#include <Geode/modify/DialogLayer.hpp>
+#include <unordered_map>
+
+namespace {
+    std::unordered_map<DialogObject*, std::string> g_customIconFrames;
+}
 
 namespace DialogIcon {
 
@@ -75,7 +81,7 @@ namespace DialogIcon {
         
         auto iconBG = typeinfo_cast<CCSprite*>(dialog->m_mainLayer->getChildByTag(CustomDialogIconBGTag));
         if (!iconBG) {
-            iconBG = CCSprite::create("dialogIcon_blank.png"_spr);
+            iconBG = CCSprite::createWithSpriteFrameName("dialogIcon_blank.png"_spr);
             iconBG->setTag(CustomDialogIconBGTag);
             dialog->m_mainLayer->addChild(iconBG, 2);
         }
@@ -88,12 +94,46 @@ namespace DialogIcon {
             }
             icon->setTag(CustomDialogIconTag);
             dialog->m_mainLayer->addChild(icon, 3);
+        } else if (auto newFrame = CCSpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(frameName.c_str())) {
+            icon->setDisplayFrame(newFrame);
         }
 
         iconBG->setPosition(dialog->m_characterSprite->getPosition());
         iconBG->setVisible(true);
-        
+
         icon->setPosition(dialog->m_characterSprite->getPosition());
         icon->setVisible(true);
     }
+
+    void setDialogSequenceCustomIcons(const std::vector<DialogObject*>& objects, const std::vector<std::string>& frameNames) {
+        for (size_t i = 0; i < objects.size() && i < frameNames.size(); i++) {
+            if (objects[i]) {
+                g_customIconFrames[objects[i]] = frameNames[i];
+            }
+        }
+    }
 }
+
+class $modify(DialogIconDisplayHook, DialogLayer) {
+    void displayDialogObject(DialogObject* object) {
+        DialogLayer::displayDialogObject(object);
+
+        if (!object) {
+            return;
+        }
+
+        auto it = g_customIconFrames.find(object);
+        if (it != g_customIconFrames.end()) {
+            DialogIcon::setDialogObjectCustomIcon(this, it->second);
+        }
+    }
+
+    void onClose() {
+        if (m_dialogObjects) {
+            for (auto* obj : CCArrayExt<DialogObject*>(m_dialogObjects)) {
+                g_customIconFrames.erase(obj);
+            }
+        }
+        DialogLayer::onClose();
+    }
+};

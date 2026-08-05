@@ -40,6 +40,7 @@ static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
     data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
     data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
     data.featured      = g["featured"].asBool().unwrapOr(false);
+    data.rewardCoins   = g["reward_coins"].asInt().unwrapOr(0);
 
     if (g.contains("levels") && g["levels"].isArray()) {
         int i = 0;
@@ -231,6 +232,7 @@ void GauntletManagerPopup::saveStaged() {
         obj["infoVersion"]     = g.infoVersion;
         obj["infoSuggester"]   = g.infoSuggester;
         obj["infoAccID"]       = g.infoAccID;
+        obj["rewardCoins"]     = g.rewardCoins;
         obj["levels"]          = levels;
         arr.push(obj);
     }
@@ -280,6 +282,7 @@ void GauntletManagerPopup::loadStaged() {
         g.infoVersion   = obj["infoVersion"].asString().unwrapOr("");
         g.infoSuggester = obj["infoSuggester"].asString().unwrapOr("");
         g.infoAccID     = obj["infoAccID"].asInt().unwrapOr(0);
+        g.rewardCoins   = obj["rewardCoins"].asInt().unwrapOr(0);
 
         if (obj.contains("levels") && obj["levels"].isArray()) {
             int i = 0;
@@ -681,6 +684,7 @@ void GauntletManagerPopup::onEdit(int gauntletId) {
     data.infoVersion   = it->infoVersion;
     data.infoSuggester = it->infoSuggester;
     data.infoAccID     = it->infoAccID;
+    data.rewardCoins   = it->rewardCoins;
     for (int i = 0; i < 5; i++) {
         data.levels[i].id      = it->levels[i].id;
         data.levels[i].name    = it->levels[i].name;

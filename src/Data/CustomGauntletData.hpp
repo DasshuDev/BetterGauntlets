@@ -36,6 +36,7 @@ struct CustomGauntletData {
     int         infoAccID    = 0;
 
     bool        featured     = false;
+    int         rewardCoins  = 0;
 
     // Unused - no call sites. CustomGauntletManager::parse() (colon-delimited format) and
     // GauntletManagerPopup's local parseGauntletJson() are the parsers actually in use.

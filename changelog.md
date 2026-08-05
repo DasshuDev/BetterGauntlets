@@ -1,29 +1,39 @@
 # <cc>v2.0.0</c>
-- <c-c4ffc4><cg>**Added**</c> New Gauntlets!</c>
-    - Finally us players no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets*! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
+- <c-c4ffc4><cg>**Added**</c> The Forgotten Gauntlets!</c>
+    - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
     - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Star** and **Moon** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
 - <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!</c>
     - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> a new collectable, "Crystals"!</c>
     - A new form of collectable granted by completing custom Gauntlet levels.
+- <c-c4ffc4><cg>**Added**</c> a new collectable, "Gauntlet Coins"!</c>
+    - A new form of collectable granted by completing custom Gauntlets.
 - <c-c4ffc4><cg>**Added**</c>a Leaderboard!</c>
-    - Check your Crystal count and compare it to other Better Gauntlets players.
-- <c-c4ffc4><cg>**Added**</c> Badges!</c>
-    - Using the Badgify API, badges can now be set on managers' profiles to indicate manager status.
+    - Check your Crystal and Gauntlet Coin count and compare them to other Better Gauntlets players around the world!
+- <c-c4ffc4><cg>**Added**</c> Profile Badges!</c>
+    - Using the Badgified API, badges can now be set on managers' profiles to indicate manager status.
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!</c>
 - <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!</c>
     - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!
+- <c-ffffc4><cy>**Updated**</c> Gauntlet Info to be paged.</c>
+    - Difference between "The Lost Gauntlets" and "The Forgotten Gauntlets" info will be separated by pages.
+- <c-ffffc4><cy>**Updated**</c> Reload button.</c>
+    - The reload button now affects the visible Gauntlet list as to not cause rate limiting on RobTop's servers.
+- <c-ffffc4><cy>**Updated**</c> "The Lost Gauntlets" title sprite.</c>
+- <c-ffffc4><cy>**Updated**</c> GauntletNode completion visuals.</c>
+- <c-ffffc4><cy>**Updated**</c> GauntletNode BG colors.</c>
 - <c-ffffc4><cy>**Updated**</c> `CreatorLayer` to show a new Gauntlet button texture!</c>
 - <c-ffffc4><cy>**Updated**</c> Gauntlet Levels to show a new custom animation!</c>
-- <c-c4ebff><cl>**Fixed**</c> Gauntlet Level fields not appearing on unlock.</c>
+- <c-ffffc4><cy>**Updated**</c> Gauntlet rewards to be claimed automatically upon completion!</c>
+- <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:</c>
+  - `Water, Monster, Discord`
+- <c-c4ebff><cl>**Fixed**</c> Gauntlet Level fields (name, author, stars) not appearing on unlock.</c>
 - <c-c4ebff><cl>**Fixed**</c> GDPS previews being locked, and/or crashing on Gauntlet preview.</c>
 - <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.</c>
 
 ## Known Issues:
 - The new Gauntlets added by Better Gauntlets may not show up all the time, this is due to rate limiting. If you would like to support this mod and help fund the server's upkeep, please consider donating to my Kofi or Boosty!
 - GDUtils' "New Gauntlet Design" setting **does not work** with this update, and that is intentional. Measures have been taken to make sure the setting does not apply due to the modifications made to `GauntletNode`. Does this count as an incompatability? Maybe. Do I care? No :P
-
-<c-33333b>*The Gauntlet Keeper grows bored of you. He departs now, but may soon return.*
 
 ---
 

@@ -42,6 +42,9 @@ struct GauntletEditData {
     ccColor3B accentColor2 = {255, 255, 255};
     std::array<SlotLevel, 5> levels;
 
+    // Coins credited to the completing player when all 5 levels are claimed
+    int rewardCoins = 0;
+
     // Info metadata
     std::string infoDate;
     std::string infoVersion;

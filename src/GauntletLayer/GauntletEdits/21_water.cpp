@@ -36,5 +36,16 @@ void BetterGauntletLayer::editWaterGauntlet() {
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
+        // sparkles
+        {
+            CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
+                "83a-1a2a0.75a30a-130a0a20a0a350a300a0a0a0a0a0a0a10a0a45a0a0.756863a0a0.8a0a1a0.4a0.5a0.05a10a0a45a0a0.517647a0a0.517647a0a1a0a0.3a0.15a1a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a28a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
+                NULL,
+                false
+            );
+            bgParticles->setPosition(ccp(winSize.width / 2, director->getScreenTop() - 15));
+            bgParticles->setZOrder(-98);
+            this->addChild(bgParticles);
+        }
     }
 }

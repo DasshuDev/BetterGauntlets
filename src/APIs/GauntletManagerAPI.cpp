@@ -72,6 +72,7 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
     body["accent_color2_r"] = (int)data.accentColor2.r;
     body["accent_color2_g"] = (int)data.accentColor2.g;
     body["accent_color2_b"] = (int)data.accentColor2.b;
+    body["reward_coins"]    = data.rewardCoins;
 
     // info card
     body["info_date"]       = data.infoDate;

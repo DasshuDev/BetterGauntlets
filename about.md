@@ -30,7 +30,6 @@ These mods are recommended you download to <cp>further enhance</c> the livelines
 - **[LimeGradient](user:7214334)**: Initial setup and early help
 - **[Capeling](user:18226543)**: Early filespace development, bugfixes, pointing out that i'm dumb
 - **[Erymanthus](user:1941705)**: Bugfixes
-- **[Alphalaneous](user:1139015)**: Bugfixes and dependency advice
 
 ---
 

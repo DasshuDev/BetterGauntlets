@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v2.0.0-alpha.72",
+	"version": "v2.0.0-alpha.78",
 	"developer": "DasshuDev",
 	"description": "Give life to the Lost Gauntlets!",
 	"links": {
@@ -25,7 +25,8 @@
 	"resources": {
 		"files": [
 			"resources/fonts/*.fnt",
-			"resources/fonts/*.png"
+			"resources/fonts/*.png",
+			"resources/SFX/*.mp3"
 		],
 		"sprites": [
 			"resources/*.png",

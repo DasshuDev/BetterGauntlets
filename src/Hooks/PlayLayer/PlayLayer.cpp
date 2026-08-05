@@ -33,4 +33,27 @@ void GRPlayLayer::levelComplete() {
     GRCurrencyRewardLayer::queueCrystalReward(reward);
 
     StatsSyncManager::get()->sync(manager->getCrystalTotal(), 0);
+
+    // If this was the gauntlet's last unclaimed slot, credit its coin reward.
+    if (auto* gauntlet = manager->findGauntletForLevel(levelID)) {
+        if (manager->isGauntletFullyCompleted(*gauntlet)) {
+            int gauntletId = gauntlet->id;
+            std::string gauntletName = gauntlet->name;
+            StatsSyncManager::get()->completeGauntlet(
+                gauntletId,
+                [gauntletName](bool success, int rewardCoins, std::string const& error) {
+                    if (!success) {
+                        log::warn("Gauntlet completion sync failed: {}", error);
+                        return;
+                    }
+                    if (rewardCoins > 0) {
+                        Notification::create(
+                            fmt::format("{} Gauntlet complete! +{} coins", gauntletName, rewardCoins),
+                            NotificationIcon::Success
+                        )->show();
+                    }
+                }
+            );
+        }
+    }
 }

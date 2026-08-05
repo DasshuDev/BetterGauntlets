@@ -169,6 +169,23 @@ bool CustomGauntletManager::isCustomGauntletLevel(int levelID) const {
     return false;
 }
 
+CustomGauntletData const* CustomGauntletManager::findGauntletForLevel(int levelID) const {
+    for (auto const& gauntlet : m_cache) {
+        for (auto const& slot : gauntlet.levels) {
+            if (slot.id == levelID) return &gauntlet;
+        }
+    }
+    return nullptr;
+}
+
+bool CustomGauntletManager::isGauntletFullyCompleted(CustomGauntletData const& gauntlet) const {
+    for (auto const& slot : gauntlet.levels) {
+        if (slot.id == 0) return false;
+        if (!isLevelRewardClaimed(slot.id)) return false;
+    }
+    return true;
+}
+
 int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
     if (!level) return 0;
 

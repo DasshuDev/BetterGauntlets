@@ -13,11 +13,14 @@ protected:
     void onClose(CCObject* sender) override;
 
     std::vector<LeaderboardEntry> m_entries;
+    std::string m_sortBy = "crystals";
 
     CCLayer*       m_listLayer     = nullptr;
     CCMenu*        m_entryList     = nullptr;
+    CCMenu*        m_tabMenu       = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
     CCLabelBMFont* m_errorLabel    = nullptr;
+    float m_tabBarY = 0;
 
     async::TaskHolder<web::WebResponse> m_fetchHolder;
 
@@ -27,6 +30,8 @@ protected:
 
     void onSync(cocos2d::CCObject* sender);
     void fetchLeaderboard();
+    void buildTabMenu();
+    void onSwitchSort(std::string const& sortBy);
     void buildList();
     void buildRow(int rank, LeaderboardEntry const& entry, float listWidth);
 

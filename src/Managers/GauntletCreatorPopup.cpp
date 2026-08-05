@@ -34,7 +34,7 @@ bool GauntletCreatorPopup::init(
     m_data = existing;
     m_onSaved = onSaved;
 
-    // Page containers: page 0 (GSL preview) and page 1 (GL preview / levels)
+    // Page containers: page 0 (GSL preview), page 1 (GL preview / levels), page 2 (info fields)
 
     m_GSLPreview = CCMenu::create();
     m_GSLPreview->setContentSize(m_mainLayer->getContentSize());
@@ -49,11 +49,18 @@ bool GauntletCreatorPopup::init(
     m_GLPreview->setVisible(false);
     m_mainLayer->addChild(m_GLPreview, 5);
 
+    m_infoPreview = CCMenu::create();
+    m_infoPreview->setContentSize(m_mainLayer->getContentSize());
+    m_infoPreview->setPosition({0, 0});
+    m_infoPreview->setID("preview-info");
+    m_infoPreview->setVisible(false);
+    m_mainLayer->addChild(m_infoPreview, 5);
+
     // Title label
 
     auto titleStr = existing.id == 0 ? "Create Gauntlet" : "Edit Gauntlet";
     auto titleLabel = CCLabelBMFont::create(titleStr, "goldFont.fnt");
-    titleLabel->setPosition(m_size.width / 2, m_size.height - 20);
+    titleLabel->setPosition(m_size.width / 2, m_size.height - 15);
     titleLabel->setScale(0.7);
     titleLabel->setID("title-label");
     m_mainLayer->addChild(titleLabel);
@@ -469,10 +476,13 @@ bool GauntletCreatorPopup::init(
     m_infoAccIDInput = TextInput::create(100, "Suggester accID", "chatFont.fnt");
     m_infoAccIDInput->setCommonFilter(CommonFilter::Int);
 
+    m_rewardCoinsInput = TextInput::create(100, "Reward Coins", "chatFont.fnt");
+    m_rewardCoinsInput->setCommonFilter(CommonFilter::Int);
+
     // inputs column
     auto infoMenu = CCMenu::create();
-    infoMenu->setContentHeight(70);
-    infoMenu->setPosition({59.75, 80});
+    infoMenu->setContentHeight(95);
+    infoMenu->setPosition({190, 110});
     infoMenu->setLayout(ColumnLayout::create()
         ->setGap(5)
         ->setAxisAlignment(AxisAlignment::Start)
@@ -480,10 +490,11 @@ bool GauntletCreatorPopup::init(
     infoMenu->addChild(m_infoDateInput);
     infoMenu->addChild(m_infoVersionInput);
     infoMenu->addChild(m_infoAccIDInput);
+    infoMenu->addChild(m_rewardCoinsInput);
     infoMenu->updateLayout();
 
     auto infoLabel = CCLabelBMFont::create("Info", "goldFont.fnt");
-    infoLabel->setPosition({59.75, infoMenu->getPositionY() + 45});
+    infoLabel->setPosition({190, infoMenu->getPositionY() + 45});
     infoLabel->setScale(0.52);
 
     // push buttons column
@@ -498,7 +509,7 @@ bool GauntletCreatorPopup::init(
 
     auto pushInfoMenu = CCMenu::create();
     pushInfoMenu->setContentHeight(70);
-    pushInfoMenu->setPosition({113.75, infoMenu->getPositionY()});
+    pushInfoMenu->setPosition({244, infoMenu->getPositionY()});
     pushInfoMenu->setLayout(ColumnLayout::create()
         ->setGap(5)
         ->setAxisAlignment(AxisAlignment::Start)
@@ -509,9 +520,9 @@ bool GauntletCreatorPopup::init(
     pushInfoMenu->addChild(makePushBtn(menu_selector(GauntletCreatorPopup::updateInfoDate)));
     pushInfoMenu->updateLayout();
 
-    m_GSLPreview->addChild(infoLabel);
-    m_GSLPreview->addChild(infoMenu);
-    m_GSLPreview->addChild(pushInfoMenu);
+    m_infoPreview->addChild(infoLabel);
+    m_infoPreview->addChild(infoMenu);
+    m_infoPreview->addChild(pushInfoMenu);
 
     // GL Preview - Level Search
 
@@ -749,6 +760,8 @@ bool GauntletCreatorPopup::init(
     if (!existing.infoVersion.empty())   m_infoVersionInput->setString(existing.infoVersion);
     if (existing.infoAccID != 0)
         m_infoAccIDInput->setString(std::to_string(existing.infoAccID));
+    if (existing.rewardCoins != 0)
+        m_rewardCoinsInput->setString(std::to_string(existing.rewardCoins));
 
     // Restore colors
     m_selectedColor = existing.nameColor;
@@ -880,9 +893,10 @@ void GauntletCreatorPopup::FLAlert_Clicked(FLAlertLayer* alert, bool btn2) {
 // Pages
 
 void GauntletCreatorPopup::onPageChanged(int page) {
-    if (!m_GSLPreview || !m_GLPreview) return;
+    if (!m_GSLPreview || !m_GLPreview || !m_infoPreview) return;
     m_GSLPreview->setVisible(page == 0);
     m_GLPreview->setVisible(page == 1);
+    m_infoPreview->setVisible(page == 2);
 }
 
 // Preview name
@@ -1344,6 +1358,9 @@ void GauntletCreatorPopup::onSave(CCObject* sender) {
     m_data.infoVersion   = m_infoVersion;
     m_data.infoSuggester = m_infoSuggester;
     m_data.infoAccID     = m_infoAccID;
+    m_data.rewardCoins   = geode::utils::numFromString<int>(
+        std::string(m_rewardCoinsInput->getString())
+    ).unwrapOr(0);
 
     // Pack level slots
     for (int i = 0; i < 5; i++) {

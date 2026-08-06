@@ -57,9 +57,7 @@ $execute {
         "They can <cg>add</c>, <cj>edit</c>, and <cr>delete</c> gauntlets added by the mod. "
         "This does not apply to the <cy>Lost Gauntlets</c>, which are hosted exclusively by <co>RobTop</c>.", 
         [] (const Badge& badge) {
-            if (badge.modStatus == ModStatus::Regular) {
-                showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
-            }
+            if (badge.modStatus == ModStatus::Regular) showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
         }
     );
 
@@ -67,12 +65,9 @@ $execute {
         "manager"_spr,
         [] (const Badge& badge) {
         GauntletManagerCache::get()->isManager(badge.user->m_accountID, [badge](bool isManager) {
-            if (!isManager)
-                return;
-            if (badge.location == Location::Profile || badge.location == Location::Comment)
-                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_001.png"_spr));
-            if (badge.location == Location::InfoPopup)
-                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_xlarge_001.png"_spr));
+            if (!isManager) return;
+            if (badge.location == Location::Profile || badge.location == Location::Comment) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_001.png"_spr));
+            if (badge.location == Location::InfoPopup) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeManager_xlarge_001.png"_spr));
         });
     });
 
@@ -83,9 +78,7 @@ $execute {
         "This user helps out with <cc>Better Gauntlets</c>' custom Gauntlets. "
         "They assist the <cj>Gauntlet Managers</c> but do not have full edit access themselves.",
         [] (const Badge& badge) {
-            if (badge.modStatus == ModStatus::Regular) {
-                showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
-            }
+            if (badge.modStatus == ModStatus::Regular) showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
         }
     );
 
@@ -93,16 +86,12 @@ $execute {
         "helper"_spr,
         [] (const Badge& badge) {
         GauntletManagerCache::get()->isHelper(badge.user->m_accountID, [badge](bool isHelper) {
-            if (!isHelper)
-                return;
-            if (badge.location == Location::Profile || badge.location == Location::Comment)
-                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_001.png"_spr));
-            if (badge.location == Location::InfoPopup)
-                showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_xlarge_001.png"_spr));
+            if (!isHelper) return;
+            if (badge.location == Location::Profile || badge.location == Location::Comment) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_001.png"_spr));
+            if (badge.location == Location::InfoPopup) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeHelper_xlarge_001.png"_spr));
         });
     });
 
-    /*
     // Comment colors
     setCommentColor(
         "manager"_spr,
@@ -113,5 +102,4 @@ $execute {
         "helper"_spr,
         ccc3(150, 210, 225)
     );
-    */
 }

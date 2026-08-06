@@ -1002,7 +1002,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Demon)
+            static_cast<int>(GauntletType::Doom)
         );
     }
 
@@ -1014,7 +1014,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         toggleOff->setOpacity(80);
         toggleOff->setColor(ccc3(128, 128, 128));
 
-        // Check to see if the Demon Gauntlet is completed.
+        // Check to see if the Doom Gauntlet is completed.
         if (!isCustomListUnlocked()) {
             auto lockedBtn = CCMenuItemSpriteExtra::create(
                 toggleOff,
@@ -1238,7 +1238,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "Beat the <cr>Demon Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+                "Beat the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
                 1,
                 0.85,
                 false,

@@ -1,11 +1,9 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/ProfilePage.hpp>
 #include <Geode/utils/web.hpp>
-#include <Geode/loader/SettingV3.hpp>
 #include <dasshu.badgified/include/Badgified.hpp>
 #include "../../APIs/GauntletManagerCache.hpp"
-#include "../../Managers/StatsSyncManager.hpp"
-#include "../../Data/CustomGauntletManager.hpp"
+
 
 using namespace geode::prelude;
 using namespace dasshu::badgified;
@@ -18,34 +16,6 @@ class $modify(GRProfilePage, ProfilePage) {
         return true;
     }
 };
-
-$on_mod(Loaded) {
-    ButtonSettingPressedEventV3(Mod::get(), "reset-crystals").listen([](std::string_view buttonKey) {
-        if (buttonKey != "reset-crystals") return;
-
-        createQuickPopup(
-            "Hold up!",
-            "Resetting your <cy>crystal total</c> and <cc>custom Gauntlet level completion</c> to <cy> default (0)</c> is <cr>IRREVERSABLE</c>! "
-            "Are you sure you want to continue?",
-            "Cancel", "Reset",
-            [](FLAlertLayer*, bool confirmed) {
-                if (!confirmed) return;
-                CustomGauntletManager::get()->resetCrystals();
-                CustomGauntletManager::get()->resetClaimedRewards();
-                StatsSyncManager::get()->resetSelf([](bool success, std::string const& error) {
-                    if (!success) {
-                        Notification::create(
-                            fmt::format("Reset locally, but sync failed: {}", error),
-                            NotificationIcon::Error
-                        )->show();
-                        return;
-                    }
-                    Notification::create("Crystal count reset to 0.", NotificationIcon::Success)->show();
-                });
-            }
-        );
-    }).leak();
-}
 
 $execute {
 
@@ -93,13 +63,6 @@ $execute {
     });
 
     // Comment colors
-    setCommentColor(
-        "manager"_spr,
-        ccc3(255, 185, 225)
-    );
-
-    setCommentColor(
-        "helper"_spr,
-        ccc3(150, 210, 225)
-    );
+    setCommentColor("manager"_spr, ccc3(255, 185, 225));
+    setCommentColor("helper"_spr, ccc3(150, 210, 225));
 }

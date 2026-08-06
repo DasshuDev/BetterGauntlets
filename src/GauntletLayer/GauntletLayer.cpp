@@ -158,189 +158,67 @@ bool BetterGauntletLayer::init(GauntletType type) {
 
   // Apply per-gauntlet theme (background, corners, particles)
   switch (m_gauntletType) {
-  default:
-    editGauntletFallback();
-    break;
-  case GauntletType::Fire:
-    editFireGauntlet();
-    break;
-  case GauntletType::Ice:
-    editIceGauntlet();
-    break;
-  case GauntletType::Poison:
-    editPoisonGauntlet();
-    break;
-  case GauntletType::Shadow:
-    editShadowGauntlet();
-    break;
-  case GauntletType::Lava:
-    editLavaGauntlet();
-    break;
-  case GauntletType::Bonus:
-    editBonusGauntlet();
-    break;
-  case GauntletType::Chaos:
-    editChaosGauntlet();
-    break;
-  case GauntletType::Demon:
-    editDemonGauntlet();
-    break;
-  case GauntletType::Time:
-    editTimeGauntlet();
-    break;
-  case GauntletType::Crystal:
-    editCrystalGauntlet();
-    break;
-  case GauntletType::Magic:
-    editMagicGauntlet();
-    break;
-  case GauntletType::Spike:
-    editSpikeGauntlet();
-    break;
-  case GauntletType::Monster:
-    editMonsterGauntlet();
-    break;
-  case GauntletType::Doom:
-    editDoomGauntlet();
-    break;
-  case GauntletType::Death:
-    editDeathGauntlet();
-    break;
-  case GauntletType::Forest:
-    editForestGauntlet();
-    break;
-  case GauntletType::Rune:
-    editRuneGauntlet();
-    break;
-  case GauntletType::Force:
-    editForceGauntlet();
-    break;
-  case GauntletType::Spooky:
-    editSpookyGauntlet();
-    break;
-  case GauntletType::Dragon:
-    editDragonGauntlet();
-    break;
-  case GauntletType::Water:
-    editWaterGauntlet();
-    break;
-  case GauntletType::Haunted:
-    editHauntedGauntlet();
-    break;
-  case GauntletType::Acid:
-    editAcidGauntlet();
-    break;
-  case GauntletType::Witch:
-    editWitchGauntlet();
-    break;
-  case GauntletType::Power:
-    editPowerGauntlet();
-    break;
-  case GauntletType::Potion:
-    editPotionGauntlet();
-    break;
-  case GauntletType::Snake:
-    editSnakeGauntlet();
-    break;
-  case GauntletType::Toxic:
-    editToxicGauntlet();
-    break;
-  case GauntletType::Halloween:
-    editHalloweenGauntlet();
-    break;
-  case GauntletType::Treasure:
-    editTreasureGauntlet();
-    break;
-  case GauntletType::Ghost:
-    editGhostGauntlet();
-    break;
-  case GauntletType::Spider:
-    editSpiderGauntlet();
-    break;
-  case GauntletType::Gem:
-    editGemGauntlet();
-    break;
-  case GauntletType::Inferno:
-    editInfernoGauntlet();
-    break;
-  case GauntletType::Portal:
-    editPortalGauntlet();
-    break;
-  case GauntletType::Strange:
-    editStrangeGauntlet();
-    break;
-  case GauntletType::Fantasy:
-    editFantasyGauntlet();
-    break;
-  case GauntletType::Christmas:
-    editChristmasGauntlet();
-    break;
-  case GauntletType::Surprise:
-    editSurpriseGauntlet();
-    break;
-  case GauntletType::Mystery:
-    editMysteryGauntlet();
-    break;
-  case GauntletType::Cursed:
-    editCursedGauntlet();
-    break;
-  case GauntletType::Cyborg:
-    editCyborgGauntlet();
-    break;
-  case GauntletType::Castle:
-    editCastleGauntlet();
-    break;
-  case GauntletType::Grave:
-    editGraveGauntlet();
-    break;
-  case GauntletType::Temple:
-    editTempleGauntlet();
-    break;
-  case GauntletType::World:
-    editWorldGauntlet();
-    break;
-  case GauntletType::Galaxy:
-    editGalaxyGauntlet();
-    break;
-  case GauntletType::Universe:
-    editUniverseGauntlet();
-    break;
-  case GauntletType::Discord:
-    editDiscordGauntlet();
-    break;
-  case GauntletType::Split:
-    editSplitGauntlet();
-    break;
-  case GauntletType::NCS:
-    editNCSGauntlet1();
-    break;
-  case GauntletType::NCS2:
-    editNCSGauntlet2();
-    break;
-  case GauntletType::Space:
-    editSpaceGauntlet();
-    break;
-  case GauntletType::Cosmos:
-    editCosmosGauntlet();
-    break;
-  case GauntletType::Random:
-    editRandomGauntlet();
-    break;
-  case GauntletType::Chance:
-    editChanceGauntlet();
-    break;
-  case GauntletType::Love:
-    editLoveGauntlet();
-    break;
-  case GauntletType::Cinema:
-    editCinemaGauntlet();
-    break;
-  case GauntletType::Future:
-    editFutureGauntlet();
-    break;
-  case GauntletType::Utopia:
-    editUtopiaGauntlet();
-    break;
+  default:                          editGauntletFallback();     break;
+  case GauntletType::Fire:          editFireGauntlet();         break;
+  case GauntletType::Ice:           editIceGauntlet();          break;
+  case GauntletType::Poison:        editPoisonGauntlet();       break;
+  case GauntletType::Shadow:        editShadowGauntlet();       break;
+  case GauntletType::Lava:          editLavaGauntlet();         break;
+  case GauntletType::Bonus:         editBonusGauntlet();        break;
+  case GauntletType::Chaos:         editChaosGauntlet();        break;
+  case GauntletType::Demon:         editDemonGauntlet();        break;
+  case GauntletType::Time:          editTimeGauntlet();         break;
+  case GauntletType::Crystal:       editCrystalGauntlet();      break;
+  case GauntletType::Magic:         editMagicGauntlet();        break;
+  case GauntletType::Spike:         editSpikeGauntlet();        break;
+  case GauntletType::Monster:       editMonsterGauntlet();      break;
+  case GauntletType::Doom:          editDoomGauntlet();         break;
+  case GauntletType::Death:         editDeathGauntlet();        break;
+  case GauntletType::Forest:        editForestGauntlet();       break;
+  case GauntletType::Rune:          editRuneGauntlet();         break;
+  case GauntletType::Force:         editForceGauntlet();        break;
+  case GauntletType::Spooky:        editSpookyGauntlet();       break;
+  case GauntletType::Dragon:        editDragonGauntlet();       break;
+  case GauntletType::Water:         editWaterGauntlet();        break;
+  case GauntletType::Haunted:       editHauntedGauntlet();      break;
+  case GauntletType::Acid:          editAcidGauntlet();         break;
+  case GauntletType::Witch:         editWitchGauntlet();        break;
+  case GauntletType::Power:         editPowerGauntlet();        break;
+  case GauntletType::Potion:        editPotionGauntlet();       break;
+  case GauntletType::Snake:         editSnakeGauntlet();        break;
+  case GauntletType::Toxic:         editToxicGauntlet();        break;
+  case GauntletType::Halloween:     editHalloweenGauntlet();    break;
+  case GauntletType::Treasure:      editTreasureGauntlet();     break;
+  case GauntletType::Ghost:         editGhostGauntlet();        break;
+  case GauntletType::Spider:        editSpiderGauntlet();       break;
+  case GauntletType::Gem:           editGemGauntlet();          break;
+  case GauntletType::Inferno:       editInfernoGauntlet();      break;
+  case GauntletType::Portal:        editPortalGauntlet();       break;
+  case GauntletType::Strange:       editStrangeGauntlet();      break;
+  case GauntletType::Fantasy:       editFantasyGauntlet();      break;
+  case GauntletType::Christmas:     editChristmasGauntlet();    break;
+  case GauntletType::Surprise:      editSurpriseGauntlet();     break;
+  case GauntletType::Mystery:       editMysteryGauntlet();      break;
+  case GauntletType::Cursed:        editCursedGauntlet();       break;
+  case GauntletType::Cyborg:        editCyborgGauntlet();       break;
+  case GauntletType::Castle:        editCastleGauntlet();       break;
+  case GauntletType::Grave:         editGraveGauntlet();        break;
+  case GauntletType::Temple:        editTempleGauntlet();       break;
+  case GauntletType::World:         editWorldGauntlet();        break;
+  case GauntletType::Galaxy:        editGalaxyGauntlet();       break;
+  case GauntletType::Universe:      editUniverseGauntlet();     break;
+  case GauntletType::Discord:       editDiscordGauntlet();      break;
+  case GauntletType::Split:         editSplitGauntlet();        break;
+  case GauntletType::NCS:           editNCSGauntlet1();         break;
+  case GauntletType::NCS2:          editNCSGauntlet2();         break;
+  case GauntletType::Space:         editSpaceGauntlet();        break;
+  case GauntletType::Cosmos:        editCosmosGauntlet();       break;
+  case GauntletType::Random:        editRandomGauntlet();       break;
+  case GauntletType::Chance:        editChanceGauntlet();       break;
+  case GauntletType::Love:          editLoveGauntlet();         break;
+  case GauntletType::Cinema:        editCinemaGauntlet();       break;
+  case GauntletType::Future:        editFutureGauntlet();       break;
+  case GauntletType::Utopia:        editUtopiaGauntlet();       break;
   }
 
   // Fetch levels from RobTop servers
@@ -352,8 +230,7 @@ bool BetterGauntletLayer::init(GauntletType type) {
 
 // Level loading delegates
 
-void BetterGauntletLayer::loadLevelsFinished(CCArray *levels, char const *key,
-                                             int type) {
+void BetterGauntletLayer::loadLevelsFinished(CCArray *levels, char const *key, int type) {
   auto glm = GameLevelManager::get();
   if (glm->m_levelManagerDelegate == this)
     glm->m_levelManagerDelegate = nullptr;
@@ -362,9 +239,7 @@ void BetterGauntletLayer::loadLevelsFinished(CCArray *levels, char const *key,
     lc->removeFromParent();
 
   if (!levels || levels->count() == 0) {
-    Notification::create("No levels returned for this gauntlet.",
-                         NotificationIcon::Error)
-        ->show();
+    Notification::create("No levels returned for this gauntlet.", NotificationIcon::Error)->show();
     return;
   }
 
@@ -382,9 +257,7 @@ void BetterGauntletLayer::loadLevelsFailed(char const *key, int type) {
   if (auto lc = getChildByIDRecursive("loading-circle"))
     lc->removeFromParent();
 
-  Notification::create("Failed to load gauntlet levels.",
-                       NotificationIcon::Error, 1.5)
-      ->show();
+  Notification::create("Failed to load gauntlet levels.", NotificationIcon::Error, 1.5)->show();
 }
 
 // setupGauntlet - builds vault + info, then creates level buttons

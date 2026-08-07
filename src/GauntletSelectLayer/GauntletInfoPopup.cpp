@@ -43,12 +43,12 @@ void GauntletInfoPopup::onPageChanged(int page) {
 
   m_pageTitleLabel = CCLabelBMFont::create(p.title.c_str(), "goldFont.fnt");
   m_pageTitleLabel->setScale(0.7f);
-  m_pageTitleLabel->setPosition({m_size.width / 2, titleY - 2.5f});
+  m_pageTitleLabel->setPosition({m_size.width / 2, titleY - 2});
   m_pageTitleLabel->setID("page-title-label");
   m_mainLayer->addChild(m_pageTitleLabel);
 
   if (m_pageIndicatorLabel) {
-    m_pageIndicatorLabel->setPositionY(m_pageTitleLabel->getPositionY() - 12.5f);
+    m_pageIndicatorLabel->setPositionY(m_pageTitleLabel->getPositionY() - 13);
   }
 
   m_pageDescArea =

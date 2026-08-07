@@ -50,6 +50,6 @@ void PagedPopup::goToPage(int page) {
 
   if (m_pageIndicatorLabel) {
     m_pageIndicatorLabel->setString(
-        fmt::format("Page {}/{}", m_currentPage + 1, getPageCount()).c_str());
+        fmt::format("Page {} of {}", m_currentPage + 1, getPageCount()).c_str());
   }
 }

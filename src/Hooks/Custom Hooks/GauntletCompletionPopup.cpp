@@ -82,7 +82,6 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
     auto spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
     textureCache->addImage("GJ_ShopSheet.png", false);
     spriteFrameCache->addSpriteFramesWithFile("GJ_ShopSheet.plist");
-    
 
     std::string name = GauntletNode::nameForType(type);
     auto frame = GauntletNode::frameForType(type);
@@ -94,16 +93,33 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
         if (auto reward = gsm->unlockGauntletChest(gauntletID)) {
             int itemCount = reward->m_rewardObjects ? reward->m_rewardObjects->count() : 0;
             log::info("{} Gauntlet chest unlocked (id {}) - {} reward item(s), chestID {}", name, gauntletID, itemCount, reward->m_chestID);
-
-            int GauntletChestStyle = 1;
-            auto rewardsPage = RewardsPage::create();
-            if (auto unlockLayer = RewardUnlockLayer::create(GauntletChestStyle, rewardsPage)) {
-                if (unlockLayer->showCollectReward(reward)) unlockLayer->show();
-            }
+        } else {
+            log::warn("{} Gauntlet chest unlock returned no reward (id {})", name, gauntletID);
         }
     } else {
         log::info("{} Gauntlet chest already unlocked (id {})", name, gauntletID);
     }
+
+    // DEBUG: preview the vanilla chest-drop/open animation on every layer entry, using a
+    // synthetic reward built entirely in-memory. GJRewardItem::createSpecial() never touches
+    // GameStatsManager or save/server state, so repeated testing can't be flagged as re-granting
+    // or manipulating server-verified rewards. Remove this block once the animation is tuned.
+    Ref<GJRewardItem> debugReward = GJRewardItem::createSpecial(
+        static_cast<GJRewardType>(0), 100, 5,
+        static_cast<SpecialRewardItem>(0), 0,
+        static_cast<SpecialRewardItem>(0), 0,
+        0, 0
+    );
+    m_mainLayer->runAction(CCSequence::create(
+        CCDelayTime::create(5),
+        CallFuncExt::create([debugReward] {
+            auto rewardsPage = RewardsPage::create();
+            if (auto unlockLayer = RewardUnlockLayer::create(1, rewardsPage)) {
+                if (unlockLayer->showCollectReward(debugReward)) unlockLayer->show();
+            }
+        }),
+        nullptr
+    ));
  
     auto plaqueBase = CCSprite::createWithSpriteFrameName("GR_plaqueBase_001.png"_spr);
     if (plaqueBase) {

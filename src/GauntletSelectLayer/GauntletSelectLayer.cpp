@@ -547,9 +547,17 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
         auto gauntletBtn = typeinfo_cast<CCMenuItemSpriteExtra *>(obj);
         if (!gauntletBtn) continue;
 
-        auto bgNode = static_cast<CCSprite *>(
-            gauntletBtn->getChildByIDRecursive("background"));
-        if (bgNode) bgNode->setContentSize({110, 220});
+        auto oldBg = static_cast<NineSlice*>(gauntletBtn->getChildByIDRecursive("background"));
+        if (oldBg) {
+            auto bgNode = NineSlice::create("GR_squareB_01.png"_spr);
+            bgNode->setID("background");
+            bgNode->setContentSize({110, 220});
+            bgNode->setPosition(oldBg->getPosition());
+            bgNode->setAnchorPoint(oldBg->getAnchorPoint());
+            bgNode->setColor(oldBg->getColor());
+            oldBg->getParent()->addChild(bgNode, oldBg->getZOrder());
+            oldBg->removeFromParent();
+        }
 
         auto infoNode = gauntletBtn->getChildByIDRecursive("gauntlet-info-node");
         if (infoNode) infoNode->setPositionY(-2.5);
@@ -1002,7 +1010,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Doom)
+            static_cast<int>(GauntletType::Fire)
         );
     }
 

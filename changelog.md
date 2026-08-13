@@ -1,7 +1,7 @@
 # <cc>v2.0.0</c>
 - <c-c4ffc4><cg>**Added**</c> The Forgotten Gauntlets!</c>
     - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
-    - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Star** and **Moon** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
+    - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Stellar** and **Lunar** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
 - <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!</c>
     - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> a new collectable, "Crystals"!</c>
@@ -34,6 +34,8 @@
 ## Known Issues:
 - The new Gauntlets added by Better Gauntlets may not show up all the time, this is due to rate limiting. If you would like to support this mod and help fund the server's upkeep, please consider donating to my Kofi or Boosty!
 - GDUtils' "New Gauntlet Design" setting **does not work** with this update, and that is intentional. Measures have been taken to make sure the setting does not apply due to the modifications made to `GauntletNode`. Does this count as an incompatability? Maybe. Do I care? No :P
+
+<c-33333b>*The Gauntlet Keeper grows tired of waiting.*</c>
 
 ---
 

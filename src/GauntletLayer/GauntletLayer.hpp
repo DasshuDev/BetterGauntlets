@@ -37,6 +37,7 @@ protected:
     void setupGauntlet(cocos2d::CCArray* levels);
     void editGauntlets();
     void checkForUnlocks();
+    void checkGauntletCompletion();
     void playUnlockAnimation(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesIn(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesOut(cocos2d::CCNode* levelSpr, int index);

@@ -11,6 +11,6 @@ struct Fields {
 public:
     static gd::string frameForType(GauntletType type);
     void generateNode();
-    void onClaimReward();
+    // void onClaimReward();
 
 };

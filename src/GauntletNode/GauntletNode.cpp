@@ -58,11 +58,11 @@ void RedesignedGauntletNode::generateNode() {
     }
 }
 
-void RedesignedGauntletNode::onClaimReward() {
-    GauntletNode::onClaimReward();
+// void RedesignedGauntletNode::onClaimReward() {
+//     GauntletNode::onClaimReward();
 
-    // m_fields->m_claimSpr is never attached to the scene, so this was always a no-op
-    // if (!m_fields->m_claimSpr) return;
-    // m_fields->m_claimSpr->removeFromParent();
-    // m_fields->m_claimSpr = nullptr;
-}
+//     m_fields->m_claimSpr is never attached to the scene, so this was always a no-op
+//     if (!m_fields->m_claimSpr) return;
+//     m_fields->m_claimSpr->removeFromParent();
+//     m_fields->m_claimSpr = nullptr;
+// }

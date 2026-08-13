@@ -385,7 +385,7 @@ bool GauntletCreatorPopup::init(
     previewContainer->setPosition({m_mainLayer->getContentWidth() - 70, 116});
     previewContainer->setID("preview-container");
 
-    m_previewBG = NineSlice::create("GJ_squareB_01.png");
+    m_previewBG = NineSlice::create("GR_squareB_01.png"_spr);
     m_previewBG->setID("preview-background");
     m_previewBG->setContentSize({110, 220});
     m_previewBG->setColor(m_selectedNodeColor);

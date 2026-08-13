@@ -28,7 +28,7 @@ bool CustomGauntletNode::init(
     sprite->setAnchorPoint({0.5, 0.5});
     sprite->setID("gauntlet-container"_spr);
 
-    auto node = NineSlice::create("GJ_squareB_01.png");
+    auto node = NineSlice::create("GR_squareB_01.png"_spr);
     node->setContentSize({110, 220});
     node->setColor(data.nodeColor);
     node->setPosition({sprite->getContentWidth() / 2, sprite->getContentHeight() / 2});

@@ -1,6 +1,7 @@
 #include "GauntletLayer.hpp"
 #include "../GauntletInfo/GauntletInfo.hpp"
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
+#include "../Hooks/Custom Hooks/GauntletCompletionPopup.hpp"
 #include "HueLuminanceTo.hpp"
 #include <Geode/Geode.hpp>
 #include <Geode/binding/CCSpriteWithHue.hpp>
@@ -418,8 +419,7 @@ void BetterGauntletLayer::editGauntlets() {
       GJGameLevel *previousLevel = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i - 1));
       isLocked = !GameStatsManager::sharedState()->hasCompletedLevel(previousLevel);
     }
-    // No prior record (first time this gauntlet type is opened this session) ->
-    // treat as "always was this way", so nothing appears freshly unlocked.
+
     bool wasLocked = i < static_cast<int>(lastLockedStates.size()) ? lastLockedStates[i] : isLocked;
     bool justUnlocked = wasLocked && !isLocked;
 
@@ -497,13 +497,38 @@ void BetterGauntletLayer::editGauntlets() {
       lvl->runAction(levelHover);
     }
   }
+
+  checkGauntletCompletion();
 }
 
 void BetterGauntletLayer::onEnter() {
   CCLayer::onEnter();
   checkForUnlocks();
+  checkGauntletCompletion();
 }
 
+// Check gauntlet completion
+void BetterGauntletLayer::checkGauntletCompletion() {
+  if (!m_levels) return;
+
+  int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
+  if (levelCount == 0) return;
+
+  for (int i = 0; i < levelCount; i++) {
+    auto level = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i));
+    if (!level || !GameStatsManager::sharedState()->hasCompletedLevel(level)) return;
+  }
+
+  auto titleLabel = static_cast<CCLabelBMFont *>(getChildByID("title-shadow"));
+  auto highlightLabel = static_cast<CCLabelBMFont *>(getChildByID("title-highlight"_spr));
+
+  ccColor3B titleColor = titleLabel ? titleLabel->getColor() : ccWHITE;
+  ccColor3B highlightColor = highlightLabel ? highlightLabel->getColor() : ccWHITE;
+
+  GauntletCompletionPopup::create(m_gauntletType, titleColor, highlightColor)->show();
+}
+
+// Check for previously beaten level
 void BetterGauntletLayer::checkForUnlocks() {
   if (!m_levels || !m_levelsMenu || m_lockedStates.empty())
     return;
@@ -531,6 +556,7 @@ void BetterGauntletLayer::checkForUnlocks() {
 
 constexpr float kUnlockSfxPeakDelay = 1.5f;
 
+// Play new unlock animation
 void BetterGauntletLayer::playUnlockAnimation(CCNode *levelSpr, int index) {
   auto btn = static_cast<CCMenuItemSpriteExtra *>(levelSpr->getParent());
   if (btn)
@@ -556,7 +582,7 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode *levelSpr, int index) {
   if (islandSpr)
     islandShake(islandSpr, kUnlockSfxPeakDelay);
 
-  // Name/author/star pop in instantly at the sfx peak, no fade.
+  // Name/author/star pop in instantly at the sfx peak, no fade
   for (auto label : {levelName, authorName}) {
     if (!label)
       continue;
@@ -587,7 +613,7 @@ void BetterGauntletLayer::playUnlockAnimation(CCNode *levelSpr, int index) {
   }
 }
 
-// Fires at the sfx's "unlock" peak (pSender is the island sprite mid-pulse).
+// Fires at the sfx's "unlock" peak (pSender is the island sprite mid-pulse)
 void BetterGauntletLayer::onUnlockPeak(CCNode *sender) {
   auto levelSpr = sender->getParent();
   if (!levelSpr)
@@ -604,7 +630,7 @@ BetterGauntletLayer::generateShakeAction(CCPoint originalPos, float xyOffset, fl
 }
 
 void BetterGauntletLayer::islandShake(CCSprite *islandSpr, float duration) {
-  constexpr float stepDuration = 0.001f;
+  constexpr float stepDuration = 0.005f;
   constexpr float xyOffset = 3;
 
   CCPoint originalPos = islandSpr->getPosition();

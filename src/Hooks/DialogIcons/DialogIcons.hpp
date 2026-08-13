@@ -10,7 +10,5 @@ namespace DialogIcon {
 
     void setDialogObjectIcon(DialogLayer* dialog, int characterFrame);
     void setDialogObjectCustomIcon(DialogLayer* dialog, const std::string& frameName);
-    
-    // NEW: Set custom icons for each dialog in a sequence
     void setDialogSequenceCustomIcons(const std::vector<DialogObject*>& objects, const std::vector<std::string>& frameNames);
 }

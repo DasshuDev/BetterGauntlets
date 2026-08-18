@@ -100,10 +100,6 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
         log::info("{} Gauntlet chest already unlocked (id {})", name, gauntletID);
     }
 
-    // DEBUG: preview the vanilla chest-drop/open animation on every layer entry, using a
-    // synthetic reward built entirely in-memory. GJRewardItem::createSpecial() never touches
-    // GameStatsManager or save/server state, so repeated testing can't be flagged as re-granting
-    // or manipulating server-verified rewards. Remove this block once the animation is tuned.
     Ref<GJRewardItem> debugReward = GJRewardItem::createSpecial(
         static_cast<GJRewardType>(0), 100, 5,
         static_cast<SpecialRewardItem>(0), 0,
@@ -112,10 +108,10 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
     );
     m_mainLayer->runAction(CCSequence::create(
         CCDelayTime::create(5),
-        CallFuncExt::create([debugReward] {
+        CallFuncExt::create([this, debugReward] {
             auto rewardsPage = RewardsPage::create();
             if (auto unlockLayer = RewardUnlockLayer::create(1, rewardsPage)) {
-                if (unlockLayer->showCollectReward(debugReward)) unlockLayer->show();
+                if (unlockLayer->showCollectReward(debugReward)) m_mainLayer->addChild(unlockLayer, 100);
             }
         }),
         nullptr

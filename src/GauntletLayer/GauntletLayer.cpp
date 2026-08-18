@@ -525,7 +525,13 @@ void BetterGauntletLayer::checkGauntletCompletion() {
   ccColor3B titleColor = titleLabel ? titleLabel->getColor() : ccWHITE;
   ccColor3B highlightColor = highlightLabel ? highlightLabel->getColor() : ccWHITE;
 
-  GauntletCompletionPopup::create(m_gauntletType, titleColor, highlightColor)->show();
+  // Popup::show() attaches to CCDirector::getRunningScene(), which during a scene
+  // transition is the transition node itself, not this layer. Add it directly to
+  // this layer instead, so it always lands where we actually want it regardless
+  // of any transition (or transition-duration mod) in play.
+  if (auto popup = GauntletCompletionPopup::create(m_gauntletType, titleColor, highlightColor)) {
+    this->addChild(popup, 1000);
+  }
 }
 
 // Check for previously beaten level

@@ -14,11 +14,17 @@ namespace {
     }
 
     CCFiniteTimeAction* popInSettleAction() {
-        return CCEaseExponentialOut::create(CCScaleBy::create(1.5, 1/1.4));
+        return CCEaseExponentialOut::create(
+            CCScaleBy::create(1.5, 1/1.4)
+        );
     }
 
     CCFiniteTimeAction* popInAction() {
-        return CCSequence::create(popInLeadAction(), popInSettleAction(), nullptr);
+        return CCSequence::create(
+            popInLeadAction(),
+            popInSettleAction(),
+            nullptr
+        );
     }
 
     CCFiniteTimeAction* tintFlashAction(ccColor3B color) {
@@ -26,6 +32,22 @@ namespace {
             CCDelayTime::create(2),
             CCTintTo::create(0, 255, 255, 255),
             CCTintTo::create(1.5, color.r, color.g, color.b),
+            nullptr
+        );
+    }
+
+    CCFiniteTimeAction* scaleDown() {
+        return CCSequence::create(
+            CCDelayTime::create(2),
+            CCScaleTo::create(1, 0.5),
+            nullptr
+        );
+    }
+
+    CCFiniteTimeAction* fadeOut() {
+        return CCSequence::create(
+            CCDelayTime::create(2),
+            CCFadeTo::create(1, 0),
             nullptr
         );
     }
@@ -111,7 +133,10 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
         CallFuncExt::create([this, debugReward] {
             auto rewardsPage = RewardsPage::create();
             if (auto unlockLayer = RewardUnlockLayer::create(1, rewardsPage)) {
-                if (unlockLayer->showCollectReward(debugReward)) m_mainLayer->addChild(unlockLayer, 100);
+                if (unlockLayer->showCollectReward(debugReward)) {
+                    m_mainLayer->addChild(unlockLayer, 100);
+                    unlockLayer->setOpacity(0);
+                }
             }
         }),
         nullptr
@@ -170,8 +195,20 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
     }
 
     if (plaqueBase && plaqueAccent && gauntletFrame && gauntletFrameShadow && titleLabel && completeLabel) {
-        plaqueBase->runAction(CCSpawn::create(popInAction(), tintFlashAction(highlightColor), nullptr));
-        plaqueAccent->runAction(CCSpawn::create(popInAction(), tintFlashAction(titleColor), nullptr));
+        plaqueBase->runAction(CCSpawn::create(
+            popInAction(), 
+            tintFlashAction(highlightColor), 
+            scaleDown(),
+            fadeOut(),
+            nullptr
+        ));
+        plaqueAccent->runAction(CCSpawn::create(
+            popInAction(), 
+            tintFlashAction(titleColor), 
+            scaleDown(),
+            fadeOut(),
+            nullptr
+        ));
         gauntletFrame->runAction(popInAction());
         gauntletFrameShadow->runAction(popInAction());
 
@@ -196,9 +233,19 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     floatInAction(),
                     nullptr
                 ));
+                titleLabel->runAction(CCSpawn::create(
+                    scaleDown(), 
+                    fadeOut(), 
+                    nullptr
+                ));
                 completeLabel->runAction(CCSequence::create(
                     CCDelayTime::create(1.35),
                     floatInAction(),
+                    nullptr
+                ));
+                completeLabel->runAction(CCSpawn::create(
+                    scaleDown(), 
+                    fadeOut(), 
                     nullptr
                 ));
 
@@ -208,6 +255,8 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     coloredFrame->setPosition(gauntletFrame->getPosition());
                     coloredFrame->setScale(gauntletFrame->getScale());
                     coloredFrame->runAction(popInSettleAction());
+                    coloredFrame->runAction(fadeOut());
+                    coloredFrame->runAction(scaleDown());
                     m_mainLayer->addChild(coloredFrame, 2);
                 }
                 gauntletFrame->removeFromParent();

@@ -18,6 +18,7 @@
 using namespace geode::prelude;
 
 static std::unordered_map<int, std::vector<bool>> s_lastKnownLockedStates;
+static std::unordered_map<int, bool> s_lastKnownGauntletCompletion;
 
 // Helpers
 
@@ -514,10 +515,23 @@ void BetterGauntletLayer::checkGauntletCompletion() {
   int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
   if (levelCount == 0) return;
 
+  bool isComplete = true;
   for (int i = 0; i < levelCount; i++) {
     auto level = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i));
-    if (!level || !GameStatsManager::sharedState()->hasCompletedLevel(level)) return;
+    if (!level || !GameStatsManager::sharedState()->hasCompletedLevel(level)) {
+      isComplete = false;
+      break;
+    }
   }
+
+  int key = static_cast<int>(m_gauntletType);
+  auto it = s_lastKnownGauntletCompletion.find(key);
+  // No baseline yet (first check this session) -> treat as unchanged, so
+  // opening an already-finished gauntlet never replays the popup.
+  bool wasComplete = it != s_lastKnownGauntletCompletion.end() ? it->second : isComplete;
+  s_lastKnownGauntletCompletion[key] = isComplete;
+
+  if (!isComplete || wasComplete) return; // only fire on the incomplete->complete flip
 
   auto titleLabel = static_cast<CCLabelBMFont *>(getChildByID("title-shadow"));
   auto highlightLabel = static_cast<CCLabelBMFont *>(getChildByID("title-highlight"_spr));
@@ -692,6 +706,34 @@ void BetterGauntletLayer::setupInfo() {
   infoMenu->addChild(infoBtn);
   infoMenu->setID("gauntlet-info-menu"_spr);
   this->addChild(infoMenu);
+
+  if (Mod::get()->getSettingValue<bool>("debug-reward-button")) {
+    auto debugBtnSpr = ButtonSprite::create("Debug", "goldFont.fnt", "GJ_button_04.png", 0.75);
+    auto debugBtn = CCMenuItemSpriteExtra::create(
+        debugBtnSpr, this, menu_selector(BetterGauntletLayer::onDebugReward));
+    debugBtn->setScale(0.5);
+    debugBtn->m_baseScale = 0.5;
+    debugBtn->setPosition(
+        ccp(director->getScreenRight() - 45, director->getScreenBottom() + 30));
+
+    auto debugMenu = CCMenu::create();
+    debugMenu->setPosition(0, 0);
+    debugMenu->addChild(debugBtn);
+    debugMenu->setID("gauntlet-debug-menu"_spr);
+    this->addChild(debugMenu);
+  }
+}
+
+void BetterGauntletLayer::onDebugReward(CCObject *sender) {
+  auto titleLabel = static_cast<CCLabelBMFont *>(getChildByID("title-shadow"));
+  auto highlightLabel = static_cast<CCLabelBMFont *>(getChildByID("title-highlight"_spr));
+
+  ccColor3B titleColor = titleLabel ? titleLabel->getColor() : ccWHITE;
+  ccColor3B highlightColor = highlightLabel ? highlightLabel->getColor() : ccWHITE;
+
+  if (auto popup = GauntletCompletionPopup::createDebug(m_gauntletType, titleColor, highlightColor)) {
+    this->addChild(popup, 1000);
+  }
 }
 
 void BetterGauntletLayer::onInfo(CCObject *sender) {

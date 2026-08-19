@@ -34,6 +34,8 @@ protected:
     void buildLevelButtons(CCArray* levels);
     void loadIslandIcon();
     void checkForUnlocks();
+    void checkPendingReward();
+    void onDebugReward(CCObject* sender);
     void playUnlockAnimation(CCNode* levelSpr, int index);
     void playUnlockParticlesIn(CCNode* levelSpr, int index);
     void playUnlockParticlesOut(CCNode* levelSpr, int index);

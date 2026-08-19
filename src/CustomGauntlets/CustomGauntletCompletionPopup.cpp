@@ -1,24 +1,10 @@
-#include "GauntletCompletionPopup.hpp"
+#include "CustomGauntletCompletionPopup.hpp"
+#include "GUI/CCControlExtension/CCScale9Sprite.h"
 #include "Geode/cocos/CCDirector.h"
 #include "Geode/cocos/actions/CCActionEase.h"
 #include "Geode/cocos/actions/CCActionInterval.h"
 #include <Geode/binding/RewardUnlockLayer.hpp>
 #include <Geode/binding/RewardsPage.hpp>
-#include <Geode/modify/RewardUnlockLayer.hpp>
-
-class $modify(GCPRewardUnlockLayer, RewardUnlockLayer) {
-    void onClose(CCObject* sender) {
-        auto parentPopup = this->getParent()
-            ? typeinfo_cast<ForceClosablePopup*>(this->getParent())
-            : nullptr;
-
-        RewardUnlockLayer::onClose(sender); // run original close/cleanup first
-
-        if (parentPopup) {
-            parentPopup->forceCloseFromReward(sender);
-        }
-    }
-};
 
 namespace {
 
@@ -97,11 +83,41 @@ namespace {
 
         return burst;
     }
+
+    // RewardUnlockLayer doesn't expose its background panel as a named member,
+    // so find it by type instead of by child index (safer against internal
+    // ordering changes).
+    extension::CCScale9Sprite* findScale9Sprite(CCNode* root) {
+        if (!root) return nullptr;
+        if (auto self = typeinfo_cast<extension::CCScale9Sprite*>(root)) return self;
+        if (auto children = root->getChildren()) {
+            for (auto obj : CCArrayExt<CCNode*>(children)) {
+                if (auto found = findScale9Sprite(obj)) return found;
+            }
+        }
+        return nullptr;
+    }
+
+    void restyleRewardUnlockLayer(RewardUnlockLayer* unlockLayer) {
+        auto frameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
+
+        if (auto bg = findScale9Sprite(unlockLayer)) {
+            if (auto bgFrame = frameCache->spriteFrameByName("GJ_square01.png")) {
+                bg->setSpriteFrame(bgFrame);
+            }
+        }
+
+        if (unlockLayer->m_chestSprite) {
+            if (auto chestFrame = frameCache->spriteFrameByName("GR_chest01_01_001.png"_spr)) {
+                unlockLayer->m_chestSprite->setDisplayFrame(chestFrame);
+            }
+        }
+    }
 }
 
-GauntletCompletionPopup* GauntletCompletionPopup::create(GauntletType type, ccColor3B titleColor, ccColor3B highlightColor) {
-    auto ret = new GauntletCompletionPopup();
-    if (ret && ret->init(type, titleColor, highlightColor, false)) {
+CustomGauntletCompletionPopup* CustomGauntletCompletionPopup::create(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture) {
+    auto ret = new CustomGauntletCompletionPopup();
+    if (ret && ret->init(data, rewardCoins, iconTexture)) {
         ret->autorelease();
         return ret;
     }
@@ -109,60 +125,45 @@ GauntletCompletionPopup* GauntletCompletionPopup::create(GauntletType type, ccCo
     return nullptr;
 }
 
-GauntletCompletionPopup* GauntletCompletionPopup::createDebug(GauntletType type, ccColor3B titleColor, ccColor3B highlightColor) {
-    auto ret = new GauntletCompletionPopup();
-    if (ret && ret->init(type, titleColor, highlightColor, true)) {
-        ret->autorelease();
-        return ret;
-    }
-    delete ret;
-    return nullptr;
-}
-
-bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccColor3B highlightColor, bool debugReward) {
+bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture) {
     if (!Popup::init(m_size.width - 30, m_size.height - 30, "GJ_square05.png")) return false;
-    
+
     m_bgSprite->setVisible(false);
     m_closeBtn->setOpacity(0);
     m_noElasticity = true;
-    
+
     this->setOpacity(215);
 
     auto spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
     spriteFrameCache->addSpriteFramesWithFile("GJ_ShopSheet.plist");
 
-    std::string name = GauntletNode::nameForType(type);
-    auto frame = GauntletNode::frameForType(type);
-
-    auto gsm = GameStatsManager::sharedState();
-    int gauntletID = static_cast<int>(type);
+    std::string name = data.name;
+    ccColor3B titleColor = data.nameColor;
+    ccColor3B highlightColor = data.accentColor2;
+    
+    Ref<CCSpriteFrame> iconFrame;
+    if (iconTexture) {
+        iconFrame = CCSpriteFrame::createWithTexture(
+            iconTexture, {{0, 0}, iconTexture->getContentSize()}
+        );
+    }
 
     Ref<GJRewardItem> reward;
-    if (debugReward) {
-        // Fake reward for previewing the animation - never touches GameStatsManager,
-        // so it doesn't unlock or consume any real gauntlet chest.
+    if (rewardCoins > 0) {
+        int coins = data.rewardCoins;
         reward = GJRewardItem::createSpecial(
-            static_cast<GJRewardType>(0), 100, 5,
+            static_cast<GJRewardType>(0), coins * 1.5, coins,
             static_cast<SpecialRewardItem>(0), 0,
             static_cast<SpecialRewardItem>(0), 0,
             0, 0
         );
-        log::info("{} Gauntlet completion popup opened in debug mode - no real reward granted", name);
-    } else if (!gsm->isGauntletChestUnlocked(gauntletID)) {
-        if (auto r = gsm->unlockGauntletChest(gauntletID)) {
-            reward = r;
-            int itemCount = reward->m_rewardObjects ? reward->m_rewardObjects->count() : 0;
-            log::info("{} Gauntlet chest unlocked (id {}) - {} reward item(s), chestID {}", name, gauntletID, itemCount, reward->m_chestID);
-        }
-    } else {
-        log::info("{} Gauntlet chest already unlocked (id {})", name, gauntletID);
     }
 
     auto node = CCNode::create();
     node->setID("plaque-node");
     node->setPosition(CCDirector::get()->getWinSize() / 2);
     this->addChild(node);
- 
+
     auto plaqueBase = CCSprite::createWithSpriteFrameName("GR_plaqueBase_001.png"_spr);
     if (plaqueBase) {
         plaqueBase->setID("plaque-base");
@@ -193,7 +194,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
     prepareFloatIn(completeLabel);
     node->addChild(completeLabel, 3);
 
-    auto gauntletFrame = CCSpriteGrayscale::createWithSpriteFrameName(frame.c_str());
+    auto gauntletFrame = CCSpriteGrayscale::createWithSpriteFrame(iconFrame);
     if (gauntletFrame) {
         gauntletFrame->setID("grey-frame");
         gauntletFrame->setColor({128, 128, 128});
@@ -201,20 +202,20 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
         node->addChild(gauntletFrame, 2);
     }
 
-    auto gauntletFrameShadow = CCSprite::createWithSpriteFrameName(frame.c_str());
+    auto gauntletFrameShadow = CCSprite::createWithSpriteFrame(iconFrame);
     if (gauntletFrameShadow) {
         gauntletFrameShadow->setColor({0, 0, 0});
         gauntletFrameShadow->setOpacity(75);
         gauntletFrameShadow->setID("gauntlet-frame");
         gauntletFrameShadow->setPositionY(-10);
         gauntletFrameShadow->setScaleX(1.25);
-        gauntletFrameShadow->setScaleY(gauntletFrame->getScaleY() * 1.2);
+        gauntletFrameShadow->setScaleY(gauntletFrame ? gauntletFrame->getScaleY() * 1.2 : 1.2);
         node->addChild(gauntletFrameShadow, 1);
     }
 
     if (plaqueBase && plaqueAccent && gauntletFrame && gauntletFrameShadow && titleLabel && completeLabel) {
         plaqueBase->runAction(CCSpawn::create(
-            popInAction(), 
+            popInAction(),
             tintFlashAction(highlightColor),
             CCSequence::create(
                 CCDelayTime::create(3),
@@ -227,7 +228,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
             nullptr
         ));
         plaqueAccent->runAction(CCSpawn::create(
-            popInAction(), 
+            popInAction(),
             tintFlashAction(titleColor),
             CCSequence::create(
                 CCDelayTime::create(3),
@@ -277,7 +278,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
 
         node->runAction(CCSequence::create(
             CCDelayTime::create(2),
-            CallFuncExt::create([this, node, titleColor, highlightColor, gauntletFrame, frame, titleLabel, completeLabel, reward] {
+            CallFuncExt::create([this, node, titleColor, highlightColor, gauntletFrame, iconFrame, titleLabel, completeLabel] {
                 auto burstA = burstParticles(titleColor);
                 burstA->setOpacity(128);
                 burstA->setID("tint-burst");
@@ -294,8 +295,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     nullptr
                 ));
                 titleLabel->runAction(CCSpawn::create(
-                    // scaleDown(), 
-                    fadeOut(), 
+                    fadeOut(),
                     nullptr
                 ));
                 completeLabel->runAction(CCSequence::create(
@@ -304,19 +304,17 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     nullptr
                 ));
                 completeLabel->runAction(CCSpawn::create(
-                    // scaleDown(), 
-                    fadeOut(), 
+                    fadeOut(),
                     nullptr
                 ));
 
-                auto coloredFrame = CCSprite::createWithSpriteFrameName(frame.c_str());
+                auto coloredFrame = CCSprite::createWithSpriteFrame(iconFrame);
                 if (coloredFrame) {
                     coloredFrame->setID("colored-frame");
                     coloredFrame->setPosition(gauntletFrame->getPosition());
                     coloredFrame->setScale(gauntletFrame->getScale());
                     coloredFrame->runAction(popInSettleAction());
                     coloredFrame->runAction(fadeOut());
-                    // coloredFrame->runAction(scaleDown());
                     node->addChild(coloredFrame, 2);
                 }
                 gauntletFrame->removeFromParent();
@@ -332,6 +330,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     auto rewardsPage = RewardsPage::create();
                     if (auto unlockLayer = RewardUnlockLayer::create(GauntletChestStyle, rewardsPage)) {
                         if (unlockLayer->showCollectReward(reward)) {
+                            restyleRewardUnlockLayer(unlockLayer);
                             this->addChild(unlockLayer, 200);
                         }
                     }
@@ -347,7 +346,6 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
             NULL,
             false
         );
-        // inner->setPosition(CCDirector::get()->getWinSize() / 2);
         inner->setID("inner-particles");
         node->addChild(inner, -1);
     }

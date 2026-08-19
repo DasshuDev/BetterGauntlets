@@ -997,15 +997,17 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     scrollLayer->getContentLayer()->addChild(container);
     scrollLayer->getContentLayer()->setContentWidth(container->getContentWidth());
 
-    auto scrollBar = alpha::ui::AdvancedScrollBar::create(
-        scrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
-    scrollBar->setPosition(
-        {winSize.width / 2, scrollLayer->getPositionY() - 126});
-    scrollBar->setContentSize({12, winSize.height + 125});
-    scrollBar->setID("custom-gauntlet-bar"_spr);
-    scrollBar->setVisible(m_showingCustomList);
-    this->addChild(scrollBar, 1);
-    m_customGauntletScrollBar = scrollBar;
+    if (container->getChildrenCount() > 4) {
+        auto scrollBar = alpha::ui::AdvancedScrollBar::create(
+            scrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
+        scrollBar->setPosition(
+            {winSize.width / 2, scrollLayer->getPositionY() - 126});
+        scrollBar->setContentSize({12, winSize.height + 125});
+        scrollBar->setID("custom-gauntlet-bar"_spr);
+        scrollBar->setVisible(m_showingCustomList);
+        this->addChild(scrollBar, 1);
+        m_customGauntletScrollBar = scrollBar;
+        }
     }
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {

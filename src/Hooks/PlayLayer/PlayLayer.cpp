@@ -38,20 +38,17 @@ void GRPlayLayer::levelComplete() {
     if (auto* gauntlet = manager->findGauntletForLevel(levelID)) {
         if (manager->isGauntletFullyCompleted(*gauntlet)) {
             int gauntletId = gauntlet->id;
-            std::string gauntletName = gauntlet->name;
             StatsSyncManager::get()->completeGauntlet(
                 gauntletId,
-                [gauntletName](bool success, int rewardCoins, std::string const& error) {
+                [gauntletId](bool success, int rewardCoins, std::string const& error) {
                     if (!success) {
                         log::warn("Gauntlet completion sync failed: {}", error);
                         return;
                     }
-                    if (rewardCoins > 0) {
-                        Notification::create(
-                            fmt::format("{} Gauntlet complete! +{} coins", gauntletName, rewardCoins),
-                            NotificationIcon::Success
-                        )->show();
-                    }
+                    // Picked up by CustomGauntletLayer::checkPendingReward() the
+                    // next time that gauntlet's layer enters, which shows the
+                    // full CustomGauntletCompletionPopup reveal for it.
+                    CustomGauntletManager::get()->markPendingGauntletReward(gauntletId, rewardCoins);
                 }
             );
         }

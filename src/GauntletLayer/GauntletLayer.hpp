@@ -53,6 +53,7 @@ protected:
     void onLocked(cocos2d::CCObject* sender);
     void onInfo(cocos2d::CCObject* sender);
     void gauntletVault(cocos2d::CCObject* sender);
+    void onDebugReward(cocos2d::CCObject* sender);
 
     // Per-gauntlet theme functions 
     void editGauntletFallback();

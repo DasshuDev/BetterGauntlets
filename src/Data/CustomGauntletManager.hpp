@@ -24,6 +24,12 @@ public:
     bool isCustomGauntletLevel(int levelID) const;
     void markPendingGauntletAttempt(int levelID);
 
+    // Bridges the async server reward (StatsSyncManager::completeGauntlet) from
+    // wherever it resolves (PlayLayer/EndLevelLayer) to the CustomGauntletLayer
+    // instance for that gauntlet, whenever it next enters.
+    void markPendingGauntletReward(int gauntletId, int coins);
+    bool consumePendingGauntletReward(int gauntletId, int& outCoins);
+
     // Looks up the cached gauntlet that has this level ID in one of its slots.
     CustomGauntletData const* findGauntletForLevel(int levelID) const;
 
@@ -53,6 +59,8 @@ private:
     std::vector<CustomGauntletData> m_cache;
     bool m_hasCached = false;
     int m_pendingGauntletLevelID = 0;
+    int m_pendingRewardGauntletID = 0;
+    int m_pendingRewardCoins = 0;
 
     static std::string baseURL();
 };

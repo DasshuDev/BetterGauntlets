@@ -1,17 +1,20 @@
 # <cc>v2.0.0</c>
+- <c-c4ffff><cj>**Bump**</c> to Geode v5.9.0</c>
 - <c-c4ffc4><cg>**Added**</c> The Forgotten Gauntlets!</c>
     - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
     - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Stellar** and **Lunar** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
 - <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!</c>
     - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> a new collectable, "Crystals"!</c>
-    - A new form of collectable granted by completing custom Gauntlet levels.
+    - A new form of collectable granted by completing The Forgotten Gauntlets' levels.
 - <c-c4ffc4><cg>**Added**</c> a new collectable, "Gauntlet Coins"!</c>
-    - A new form of collectable granted by completing custom Gauntlets.
-- <c-c4ffc4><cg>**Added**</c>a Leaderboard!</c>
+    - A new form of collectable granted by completing The Forgotten Gauntlets.
+- <c-c4ffc4><cg>**Added**</c> Global Leaderboards!</c>
     - Check your Crystal and Gauntlet Coin count and compare them to other Better Gauntlets players around the world!
+- <c-c4ffc4><cg>**Added**</c> Account Sync!
+    - Sync your Forgotten Gauntlet collectable stats cross-client *without* needing to save/load your game data! Use the "Sync" button in the Global Leaderboards to sync your account to Better Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> Profile Badges!</c>
-    - Using the Badgified API, badges can now be set on managers' profiles to indicate manager status.
+    - Using the Badgified API, badges can now be set on managers and helpers' profiles to indicate status.
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!</c>
 - <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!</c>
     - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!
@@ -21,13 +24,13 @@
     - The reload button now affects the visible Gauntlet list as to not cause rate limiting on RobTop's servers.
 - <c-ffffc4><cy>**Updated**</c> "The Lost Gauntlets" title sprite.</c>
 - <c-ffffc4><cy>**Updated**</c> GauntletNode completion visuals.</c>
-- <c-ffffc4><cy>**Updated**</c> GauntletNode BG colors.</c>
+- <c-ffffc4><cy>**Updated**</c> GauntletNode Background colors to fade between BG and Name color.</c>
 - <c-ffffc4><cy>**Updated**</c> `CreatorLayer` to show a new Gauntlet button texture!</c>
-- <c-ffffc4><cy>**Updated**</c> Gauntlet Levels to show a new custom animation!</c>
+- <c-ffffc4><cy>**Updated**</c> Gauntlet Levels to show a new custom unlock animation!</c>
 - <c-ffffc4><cy>**Updated**</c> Gauntlet rewards to be claimed automatically upon completion!</c>
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:</c>
   - `Water, Monster, Discord`
-- <c-c4ebff><cl>**Fixed**</c> Gauntlet Level fields (name, author, stars) not appearing on unlock.</c>
+- <c-c4ebff><cl>**Fixed**</c> Gauntlet Level fields (name, author, stars) not appearing on level unlock.</c>
 - <c-c4ebff><cl>**Fixed**</c> GDPS previews being locked, and/or crashing on Gauntlet preview.</c>
 - <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.</c>
 

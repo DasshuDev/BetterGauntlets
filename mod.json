@@ -115,8 +115,15 @@
 		},
 
 		"advscroll-pos-label": {
-			"name": "AdvScrollLayer Pos Label",
+			"name": "Adv. ScrollLayer Pos Label",
 			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer.",
+			"type": "bool",
+			"default": false
+		},
+
+		"debug-reward-button": {
+			"name": "Debug Reward Button",
+			"description": "Shows a <cr>DEBUG</c> button on the Gauntlet/Custom Gauntlet screens that previews the <cg>completion popup and reward animation</c> on demand, <cy>without granting a real reward</c>.",
 			"type": "bool",
 			"default": false
 		}

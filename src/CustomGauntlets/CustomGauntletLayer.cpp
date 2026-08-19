@@ -2,6 +2,7 @@
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
 #include "../Data/CustomGauntletManager.hpp"
 #include "../GauntletLayer/HueLuminanceTo.hpp"
+#include "CustomGauntletCompletionPopup.hpp"
 #include <Geode/binding/CCSpriteWithHue.hpp>
 
 using namespace geode::prelude;
@@ -77,6 +78,24 @@ bool CustomGauntletLayer::init(CustomGauntletData const& data) {
         ccp(CCDirector::get()->getScreenLeft() + 30,
             CCDirector::get()->getScreenBottom() + 30));
     infoMenu->addChild(infoBtn);
+
+    // Debug-only: preview the completion popup/reward animation without
+    // touching real CustomGauntletManager claim/reward state.
+    if (Mod::get()->getSettingValue<bool>("debug-reward-button")) {
+        auto debugBtnSpr = ButtonSprite::create("Debug", "goldFont.fnt", "GJ_button_04.png", 0.75);
+        auto debugBtn = CCMenuItemSpriteExtra::create(
+            debugBtnSpr, this, menu_selector(CustomGauntletLayer::onDebugReward));
+        debugBtn->setScale(0.5);
+        debugBtn->m_baseScale = 0.5;
+        debugBtn->setPosition(
+            ccp(CCDirector::get()->getScreenRight() - 45, CCDirector::get()->getScreenBottom() + 30));
+
+        auto debugMenu = CCMenu::create();
+        debugMenu->setPosition(0, 0);
+        debugMenu->addChild(debugBtn);
+        debugMenu->setID("gauntlet-debug-menu"_spr);
+        this->addChild(debugMenu);
+    }
 
     // Load island icon async
     loadIslandIcon();
@@ -517,6 +536,37 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 void CustomGauntletLayer::onEnter() {
     CCLayer::onEnter();
     checkForUnlocks();
+    checkPendingReward();
+}
+
+void CustomGauntletLayer::checkPendingReward() {
+    int coins = 0;
+    if (!CustomGauntletManager::get()->consumePendingGauntletReward(m_data.id, coins)) return;
+
+    CCTexture2D* iconTex = nullptr;
+    if (auto island = m_levelsMenu ? m_levelsMenu->getChildByIDRecursive("island-1") : nullptr) {
+        iconTex = static_cast<CCSprite*>(island)->getTexture();
+    }
+
+    if (auto popup = CustomGauntletCompletionPopup::create(m_data, coins, iconTex)) {
+        // Direct child, not ->show() - during a scene transition getRunningScene()
+        // can still be the transition node, and anything attached to it gets
+        // discarded once the transition finishes and swaps scenes.
+        this->addChild(popup, 1000);
+    }
+}
+
+void CustomGauntletLayer::onDebugReward(CCObject*) {
+    // Fake coin count for previewing the animation - doesn't touch
+    // CustomGauntletManager, so no real claim/reward state is affected.
+    CCTexture2D* iconTex = nullptr;
+    if (auto island = m_levelsMenu ? m_levelsMenu->getChildByIDRecursive("island-1") : nullptr) {
+        iconTex = static_cast<CCSprite*>(island)->getTexture();
+    }
+
+    if (auto popup = CustomGauntletCompletionPopup::create(m_data, 250, iconTex)) {
+        this->addChild(popup, 1000);
+    }
 }
 
 void CustomGauntletLayer::checkForUnlocks() {

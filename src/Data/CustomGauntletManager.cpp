@@ -179,11 +179,13 @@ CustomGauntletData const* CustomGauntletManager::findGauntletForLevel(int levelI
 }
 
 bool CustomGauntletManager::isGauntletFullyCompleted(CustomGauntletData const& gauntlet) const {
+    bool hasAnyLevel = false;
     for (auto const& slot : gauntlet.levels) {
-        if (slot.id == 0) return false;
+        if (slot.id == 0) continue; // unused slot - gauntlets aren't required to fill all 5
+        hasAnyLevel = true;
         if (!isLevelRewardClaimed(slot.id)) return false;
     }
-    return true;
+    return hasAnyLevel;
 }
 
 int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
@@ -220,6 +222,19 @@ void CustomGauntletManager::markPendingGauntletAttempt(int levelID) {
 bool CustomGauntletManager::consumePendingGauntletAttempt(int levelID) {
     bool matches = m_pendingGauntletLevelID != 0 && m_pendingGauntletLevelID == levelID;
     m_pendingGauntletLevelID = 0;
+    return matches;
+}
+
+void CustomGauntletManager::markPendingGauntletReward(int gauntletId, int coins) {
+    m_pendingRewardGauntletID = gauntletId;
+    m_pendingRewardCoins = coins;
+}
+
+bool CustomGauntletManager::consumePendingGauntletReward(int gauntletId, int& outCoins) {
+    bool matches = m_pendingRewardGauntletID != 0 && m_pendingRewardGauntletID == gauntletId;
+    if (matches) outCoins = m_pendingRewardCoins;
+    m_pendingRewardGauntletID = 0;
+    m_pendingRewardCoins = 0;
     return matches;
 }
 

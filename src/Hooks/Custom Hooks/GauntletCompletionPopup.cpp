@@ -139,8 +139,6 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
 
     Ref<GJRewardItem> reward;
     if (debugReward) {
-        // Fake reward for previewing the animation - never touches GameStatsManager,
-        // so it doesn't unlock or consume any real gauntlet chest.
         reward = GJRewardItem::createSpecial(
             static_cast<GJRewardType>(0), 100, 5,
             static_cast<SpecialRewardItem>(0), 0,
@@ -316,7 +314,6 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     coloredFrame->setScale(gauntletFrame->getScale());
                     coloredFrame->runAction(popInSettleAction());
                     coloredFrame->runAction(fadeOut());
-                    // coloredFrame->runAction(scaleDown());
                     node->addChild(coloredFrame, 2);
                 }
                 gauntletFrame->removeFromParent();

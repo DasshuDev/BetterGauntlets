@@ -83,8 +83,8 @@ bool CustomGauntletNode::init(
     m_rewardNode->setPosition({node->getContentWidth() / 2, node->getContentHeight() / 2 - 60});
     sprite->addChild(m_rewardNode, 1);
 
-    m_chestSpr = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
-    m_chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
+    m_chestSpr = CCSprite::createWithSpriteFrameName("GR_chest_01_001.png"_spr);
+    m_chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest_01_001.png"_spr);
     if (m_chestSpr && m_chestSprShadow) {
         m_chestSpr->setScale(0.3);
         m_chestSprShadow->setPosition(ccp(m_chestSpr->getPositionX() + 2, m_chestSpr->getPositionY() - 2));

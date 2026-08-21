@@ -5,8 +5,101 @@
 #include "Geode/cocos/actions/CCActionInterval.h"
 #include <Geode/binding/RewardUnlockLayer.hpp>
 #include <Geode/binding/RewardsPage.hpp>
+#include <Geode/modify/GJChestSprite.hpp>
 
 namespace {
+    Ref<GJChestSprite> activeChestSprite;
+}
+
+class $modify(CGCPChestSprite, GJChestSprite) {
+    void switchToState(ChestSpriteState state, bool noGlow) {
+        GJChestSprite::switchToState(state, noGlow);
+
+        int childCount = static_cast<int>(this->getChildrenCount());
+
+        if (this != activeChestSprite) return;
+        if (static_cast<int>(state) != 4) return;
+
+        static const char* KnownFrames[] = {
+            "chest_02_01_001.png",
+            "chest_02_02_001.png",
+            "chest_02_03_001.png",
+            "chest_02_03_back_001.png",
+            "chest_02_03_glow_001.png",
+            "chest_02_04_001.png",
+            "chest_02_04_back_001.png",
+            "chest_02_04_glow_001.png",
+        };
+        auto frameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
+
+        for (int i = 0; i < std::min(childCount, 9); i++) {
+            auto colors = static_cast<CCSprite*>(this->getChildByIndex(i));
+            if (!colors) continue;
+
+            auto frame = colors->displayFrame();
+            std::string frameName = "<unknown>";
+            for (auto candidate : KnownFrames) {
+                if (frameCache->spriteFrameByName(candidate) == frame) {
+                    frameName = candidate;
+                    break;
+                }
+            }
+            log::debug("child {} - frame {}", i, frameName);
+
+            switch (i) {
+                case 3: colors->setColor({255, 200, 0}); break;
+                case 4: colors->setColor({170, 120, 0}); break;
+                case 5:
+                case 6:
+                case 7:
+                case 8: colors->setColor({84, 84, 84}); break;
+                default: break;
+            }
+        }
+    }
+};
+
+namespace {
+
+    struct ChestFrameOverride {
+        std::string vanillaName;
+        std::string customName;
+    };
+
+    const std::vector<ChestFrameOverride> ChestFrameOverrides = {
+        {"chest_02_02_001.png", "GR_chest_01_001.png"_spr},
+        {"chest_02_03_001.png", "GR_chest_02_001.png"_spr},
+        {"chest_02_03_glow_001.png", "chest_09_03_glow_001.png"},
+        {"chest_02_04_001.png", "GR_chest_03_001.png"_spr},
+        {"chest_02_04_back_001.png", "GR_chest_04_001.png"_spr},
+        {"chest_02_04_glow_001.png", "chest_09_04_glow_001.png"},
+    };
+
+    std::unordered_map<std::string, Ref<CCSpriteFrame>> s_originalChestFrames;
+
+    void applyCustomChestFrames() {
+        auto cache = CCSpriteFrameCache::sharedSpriteFrameCache();
+        for (auto const& override_ : ChestFrameOverrides) {
+            auto customFrame = cache->spriteFrameByName(override_.customName.c_str());
+            if (!customFrame) continue;
+
+            if (!s_originalChestFrames.count(override_.vanillaName)) {
+                if (auto original = cache->spriteFrameByName(override_.vanillaName.c_str())) {
+                    s_originalChestFrames[override_.vanillaName] = original;
+                }
+            }
+
+            cache->addSpriteFrame(customFrame, override_.vanillaName.c_str());
+        }
+    }
+
+    void restoreVanillaChestFrames() {
+        auto cache = CCSpriteFrameCache::sharedSpriteFrameCache();
+        for (auto& [frameName, frame] : s_originalChestFrames) {
+            cache->addSpriteFrame(frame, frameName.c_str());
+        }
+        s_originalChestFrames.clear();
+    }
 
     CCFiniteTimeAction* popInLeadAction() {
         return CCSequence::create(
@@ -84,10 +177,7 @@ namespace {
         return burst;
     }
 
-    // RewardUnlockLayer doesn't expose its background panel as a named member,
-    // so find it by type instead of by child index (safer against internal
-    // ordering changes).
-    extension::CCScale9Sprite* findScale9Sprite(CCNode* root) {
+    CCScale9Sprite* findScale9Sprite(CCNode* root) {
         if (!root) return nullptr;
         if (auto self = typeinfo_cast<extension::CCScale9Sprite*>(root)) return self;
         if (auto children = root->getChildren()) {
@@ -99,20 +189,24 @@ namespace {
     }
 
     void restyleRewardUnlockLayer(RewardUnlockLayer* unlockLayer) {
-        auto frameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
+        activeChestSprite = unlockLayer->m_chestSprite;
 
         if (auto bg = findScale9Sprite(unlockLayer)) {
-            if (auto bgFrame = frameCache->spriteFrameByName("GJ_square01.png")) {
-                bg->setSpriteFrame(bgFrame);
-            }
-        }
+            bg->setVisible(false);
 
-        if (unlockLayer->m_chestSprite) {
-            if (auto chestFrame = frameCache->spriteFrameByName("GR_chest01_01_001.png"_spr)) {
-                unlockLayer->m_chestSprite->setDisplayFrame(chestFrame);
-            }
+            auto newBG = NineSlice::create("GJ_square05.png");
+            newBG->setContentSize(bg->getContentSize());
+            newBG->setPosition(bg->getPosition());
+            if (auto parent = bg->getParent()) parent->addChild(newBG);
+            bg->removeFromParent();
         }
     }
+}
+
+void CustomGauntletCompletionPopup::onClose(CCObject* sender) {
+    restoreVanillaChestFrames();
+    activeChestSprite = nullptr;
+    Popup::onClose(sender);
 }
 
 CustomGauntletCompletionPopup* CustomGauntletCompletionPopup::create(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture) {
@@ -136,6 +230,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
 
     auto spriteFrameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
     spriteFrameCache->addSpriteFramesWithFile("GJ_ShopSheet.plist");
+    applyCustomChestFrames();
 
     std::string name = data.name;
     ccColor3B titleColor = data.nameColor;
@@ -149,8 +244,8 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
     }
 
     Ref<GJRewardItem> reward;
+    int coins = rewardCoins;
     if (rewardCoins > 0) {
-        int coins = data.rewardCoins;
         reward = GJRewardItem::createSpecial(
             static_cast<GJRewardType>(0), coins * 1.5, coins,
             static_cast<SpecialRewardItem>(0), 0,
@@ -326,9 +421,8 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
             this->runAction(CCSequence::create(
                 CCDelayTime::create(6.5),
                 CallFuncExt::create([this, reward] {
-                    int GauntletChestStyle = 2;
                     auto rewardsPage = RewardsPage::create();
-                    if (auto unlockLayer = RewardUnlockLayer::create(GauntletChestStyle, rewardsPage)) {
+                    if (auto unlockLayer = RewardUnlockLayer::create(2, rewardsPage)) {
                         if (unlockLayer->showCollectReward(reward)) {
                             restyleRewardUnlockLayer(unlockLayer);
                             this->addChild(unlockLayer, 200);

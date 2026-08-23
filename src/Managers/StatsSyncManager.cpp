@@ -88,6 +88,45 @@ void StatsSyncManager::completeGauntlet(int gauntletId, CompleteCallback callbac
     );
 }
 
+void StatsSyncManager::completeLevel(int levelId, SyncCallback callback) {
+    if (!argon::signedIn()) {
+        if (callback) callback(false, "Not signed into a GD account");
+        return;
+    }
+
+    auto account = argon::getGameAccountData();
+    int accountId = account.accountId;
+
+    m_completeLevelArgonHolder.spawn(
+        argon::startAuth(account),
+        [this, accountId, levelId, callback](Result<std::string> result) {
+            if (!result.isOk()) {
+                auto err = result.unwrapErr();
+                log::warn("StatsSyncManager: complete-level auth failed - {}", err);
+                if (callback) callback(false, err);
+                return;
+            }
+            auto token = std::move(result).unwrap();
+
+            m_completeLevelHolder.spawn(
+                StatsAPI::get()->completeLevel(accountId, token, levelId),
+                [callback](web::WebResponse res) {
+                    if (!res.ok()) {
+                        auto err = fmt::format("HTTP {}", res.code());
+                        log::warn(
+                            "StatsSyncManager: complete-level failed - {} - {}",
+                            err, res.string().unwrapOr("")
+                        );
+                        if (callback) callback(false, err);
+                        return;
+                    }
+                    if (callback) callback(true, "");
+                }
+            );
+        }
+    );
+}
+
 void StatsSyncManager::resetSelf(SyncCallback callback) {
     if (!argon::signedIn()) {
         if (callback) callback(false, "Not signed into a GD account");

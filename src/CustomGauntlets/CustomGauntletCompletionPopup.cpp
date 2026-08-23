@@ -9,11 +9,17 @@
 
 namespace {
     Ref<GJChestSprite> activeChestSprite;
+    void restyleCurrencyIcons(CCNode* root, int attemptsLeft = 10);
 }
 
 class $modify(CGCPChestSprite, GJChestSprite) {
     void switchToState(ChestSpriteState state, bool noGlow) {
         GJChestSprite::switchToState(state, noGlow);
+
+        log::debug(
+            "CGCPChestSprite::switchToState - state={} isActive={}",
+            static_cast<int>(state), this == activeChestSprite
+        );
 
         int childCount = static_cast<int>(this->getChildrenCount());
 
@@ -36,16 +42,6 @@ class $modify(CGCPChestSprite, GJChestSprite) {
             auto colors = static_cast<CCSprite*>(this->getChildByIndex(i));
             if (!colors) continue;
 
-            auto frame = colors->displayFrame();
-            std::string frameName = "<unknown>";
-            for (auto candidate : KnownFrames) {
-                if (frameCache->spriteFrameByName(candidate) == frame) {
-                    frameName = candidate;
-                    break;
-                }
-            }
-            log::debug("child {} - frame {}", i, frameName);
-
             switch (i) {
                 case 3: colors->setColor({255, 200, 0}); break;
                 case 4: colors->setColor({170, 120, 0}); break;
@@ -56,6 +52,10 @@ class $modify(CGCPChestSprite, GJChestSprite) {
                 default: break;
             }
         }
+
+        CCNode* root = this;
+        while (auto parent = root->getParent()) root = parent;
+        restyleCurrencyIcons(root);
     }
 };
 
@@ -66,6 +66,7 @@ namespace {
         std::string customName;
     };
 
+    // replace chest sprites with GR chest sprites
     const std::vector<ChestFrameOverride> ChestFrameOverrides = {
         {"chest_02_02_001.png", "GR_chest_01_001.png"_spr},
         {"chest_02_03_001.png", "GR_chest_02_001.png"_spr},
@@ -201,6 +202,101 @@ namespace {
             bg->removeFromParent();
         }
     }
+
+    CurrencyRewardLayer* findCurrencyRewardLayer(CCNode* root) {
+        if (!root) return nullptr;
+        if (auto self = typeinfo_cast<CurrencyRewardLayer*>(root)) return self;
+        if (auto children = root->getChildren()) {
+            for (auto obj : CCArrayExt<CCNode*>(children)) {
+                if (auto found = findCurrencyRewardLayer(obj)) return found;
+            }
+        }
+        return nullptr;
+    }
+
+    CCSpriteFrame* frameFromFile(char const* frameName) {
+        auto spr = CCSprite::create(frameName);
+        if (!spr) return nullptr;
+        auto tex = spr->getTexture();
+        if (!tex) return nullptr;
+        return CCSpriteFrame::createWithTexture(tex, {{0, 0}, tex->getContentSize()});
+    }
+
+    void removeNonCurrencySprites(CCSpriteBatchNode* batchNode) {
+        if (!batchNode) return;
+
+        std::vector<CCNode*> toRemove;
+        if (auto children = batchNode->getChildren()) {
+            for (auto obj : CCArrayExt<CCNode*>(children)) {
+                if (!typeinfo_cast<CurrencySprite*>(obj)) toRemove.push_back(obj);
+            }
+        }
+        for (auto child : toRemove) batchNode->removeChild(child, true);
+    }
+
+    // restyle vanilla currency with GR variants
+    void restyleCurrencyIcons(CCNode* root, int attemptsLeft) {
+        log::debug("restyleCurrencyIcons - called, searching from {} ({} attempts left)",
+            root ? typeid(*root).name() : "null root", attemptsLeft);
+
+        auto rewardLayer = findCurrencyRewardLayer(root);
+        if (!rewardLayer) {
+            if (attemptsLeft <= 0) {
+                log::warn("restyleCurrencyIcons - gave up waiting for CurrencyRewardLayer");
+                return;
+            }
+            if (root) {
+                root->runAction(CCSequence::create(
+                    CCDelayTime::create(0.2f),
+                    CallFuncExt::create([root, attemptsLeft] {
+                        restyleCurrencyIcons(root, attemptsLeft - 1);
+                    }),
+                    nullptr
+                ));
+            }
+            return;
+        }
+        log::debug("restyleCurrencyIcons - found CurrencyRewardLayer, m_objects count = {}",
+            rewardLayer->m_objects ? rewardLayer->m_objects->count() : 0);
+
+        auto coinFrame = frameFromFile("GR_gauntletCoin_001.png"_spr);
+        auto crystalFrame = frameFromFile("GR_crystal_001.png"_spr);
+        log::debug("restyleCurrencyIcons - coinFrame={} crystalFrame={}", coinFrame != nullptr, crystalFrame != nullptr);
+        log::debug(
+            "restyleCurrencyIcons - m_orbsSprite={} m_diamondsSprite={} m_orbBatchNode={} m_currencyBatchNode={}",
+            rewardLayer->m_orbsSprite != nullptr, rewardLayer->m_diamondsSprite != nullptr,
+            rewardLayer->m_orbBatchNode != nullptr, rewardLayer->m_currencyBatchNode != nullptr
+        );
+
+        if (rewardLayer->m_orbsSprite && coinFrame)
+            rewardLayer->m_orbsSprite->setDisplayFrame(coinFrame);
+        if (rewardLayer->m_diamondsSprite && crystalFrame)
+            rewardLayer->m_diamondsSprite->setDisplayFrame(crystalFrame);
+
+        if (rewardLayer->m_orbBatchNode && coinFrame) {
+            rewardLayer->m_orbBatchNode->setTexture(coinFrame->getTexture());
+            removeNonCurrencySprites(rewardLayer->m_orbBatchNode);
+        }
+        if (rewardLayer->m_currencyBatchNode && crystalFrame) {
+            rewardLayer->m_currencyBatchNode->setTexture(crystalFrame->getTexture());
+            removeNonCurrencySprites(rewardLayer->m_currencyBatchNode);
+        }
+
+        int spriteCount = 0;
+        for (auto sprite : CCArrayExt<CurrencySprite*>(rewardLayer->m_objects)) {
+            if (!sprite) continue;
+            spriteCount++;
+
+            if (sprite->m_spriteType == CurrencySpriteType::Diamond) {
+                if (crystalFrame) sprite->setDisplayFrame(crystalFrame);
+            } else {
+                if (coinFrame) sprite->setDisplayFrame(coinFrame);
+            }
+        }
+        log::debug("restyleCurrencyIcons - restyled {} CurrencySprite object(s)", spriteCount);
+
+        if (rewardLayer->m_mainNode) rewardLayer->m_mainNode->updateLayout();
+    }
 }
 
 void CustomGauntletCompletionPopup::onClose(CCObject* sender) {
@@ -220,7 +316,10 @@ CustomGauntletCompletionPopup* CustomGauntletCompletionPopup::create(CustomGaunt
 }
 
 bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture) {
-    if (!Popup::init(m_size.width - 30, m_size.height - 30, "GJ_square05.png")) return false;
+    log::debug("CustomGauntletCompletionPopup::init - rewardCoins param = {}, data.rewardCoins = {}", rewardCoins, data.rewardCoins);
+
+    CCSize winSize = CCDirector::get()->getWinSize();
+    if (!Popup::init(winSize.width - 30, winSize.height - 30, "GJ_square05.png")) return false;
 
     m_bgSprite->setVisible(false);
     m_closeBtn->setOpacity(0);
@@ -308,7 +407,14 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         node->addChild(gauntletFrameShadow, 1);
     }
 
-    if (plaqueBase && plaqueAccent && gauntletFrame && gauntletFrameShadow && titleLabel && completeLabel) {
+    log::debug(
+        "CustomGauntletCompletionPopup gate - plaqueBase={} plaqueAccent={} gauntletFrame={} gauntletFrameShadow={} node={} (iconTexture={}, iconFrame={})",
+        plaqueBase != nullptr, plaqueAccent != nullptr, gauntletFrame != nullptr,
+        gauntletFrameShadow != nullptr, node != nullptr,
+        iconTexture != nullptr, iconFrame != nullptr
+    );
+
+    if (plaqueBase && plaqueAccent && gauntletFrame && gauntletFrameShadow && node) {
         plaqueBase->runAction(CCSpawn::create(
             popInAction(),
             tintFlashAction(highlightColor),
@@ -419,15 +525,59 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
 
         if (reward) {
             this->runAction(CCSequence::create(
-                CCDelayTime::create(6.5),
+                CCDelayTime::create(5.25),
                 CallFuncExt::create([this, reward] {
+                    log::debug("CustomGauntletCompletionPopup - reward reveal CallFuncExt firing");
+
                     auto rewardsPage = RewardsPage::create();
-                    if (auto unlockLayer = RewardUnlockLayer::create(2, rewardsPage)) {
-                        if (unlockLayer->showCollectReward(reward)) {
-                            restyleRewardUnlockLayer(unlockLayer);
-                            this->addChild(unlockLayer, 200);
+                    auto unlockLayer = RewardUnlockLayer::create(2, rewardsPage);
+                    if (!unlockLayer) {
+                        log::warn("CustomGauntletCompletionPopup - RewardUnlockLayer::create returned null");
+                        return;
+                    }
+                    if (!unlockLayer->showCollectReward(reward)) {
+                        log::warn("CustomGauntletCompletionPopup - showCollectReward returned false");
+                        return;
+                    }
+
+                    restyleRewardUnlockLayer(unlockLayer);
+                    if (auto innerLayer = unlockLayer->getChildByIndex(0)) {
+                        int cornerCount = static_cast<int>(innerLayer->getChildrenCount());
+                        for (int i = 0; i < cornerCount; i++) {
+                            auto corner = typeinfo_cast<CCSpriteWithHue*>(innerLayer->getChildByIndex(i));
+                            if (!corner) continue;
+                            auto newCorner = CCSprite::createWithSpriteFrameName("GR_rewardCorner_001.png"_spr);
+                            newCorner->setID(fmt::format("corner-{}", i));
+                            innerLayer->addChild(newCorner);
+
+                            switch (i) {
+                                case 0: {
+                                    newCorner->setPosition({corner->getPositionX() - 1, corner->getPositionY() - 1.25f});
+                                    break;
+                                }
+                                case 1: {
+                                    newCorner->setPosition({corner->getPositionX() - 1, corner->getPositionY() + 1.25f});
+                                    newCorner->setFlipY(true);
+                                    break;
+                                }
+                                case 2: {
+                                    newCorner->setPosition({corner->getPositionX() + 1, corner->getPositionY() + 1.25f});
+                                    newCorner->setFlipY(true);
+                                    newCorner->setFlipX(true);
+                                    break;
+                                }
+                                case 3: {
+                                    newCorner->setPosition({corner->getPositionX() + 1, corner->getPositionY() - 1.25f});
+                                    newCorner->setFlipX(true);
+                                    break;
+                                }
+                                default: break;
+                            }
+                            corner->setVisible(false);
                         }
                     }
+
+                    this->addChild(unlockLayer, 200);
                 }),
                 nullptr
             ));

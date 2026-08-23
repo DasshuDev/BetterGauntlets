@@ -549,22 +549,17 @@ void CustomGauntletLayer::checkPendingReward() {
     }
 
     if (auto popup = CustomGauntletCompletionPopup::create(m_data, coins, iconTex)) {
-        // Direct child, not ->show() - during a scene transition getRunningScene()
-        // can still be the transition node, and anything attached to it gets
-        // discarded once the transition finishes and swaps scenes.
         this->addChild(popup, 1000);
     }
 }
 
 void CustomGauntletLayer::onDebugReward(CCObject*) {
-    // Fake coin count for previewing the animation - doesn't touch
-    // CustomGauntletManager, so no real claim/reward state is affected.
     CCTexture2D* iconTex = nullptr;
     if (auto island = m_levelsMenu ? m_levelsMenu->getChildByIDRecursive("island-1") : nullptr) {
         iconTex = static_cast<CCSprite*>(island)->getTexture();
     }
 
-    if (auto popup = CustomGauntletCompletionPopup::create(m_data, 250, iconTex)) {
+    if (auto popup = CustomGauntletCompletionPopup::create(m_data, m_data.rewardCoins, iconTex)) {
         this->addChild(popup, 1000);
     }
 }

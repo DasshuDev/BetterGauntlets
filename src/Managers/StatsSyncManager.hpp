@@ -15,6 +15,7 @@ public:
     void sync(int crystals, int coins, SyncCallback callback = nullptr);
     void resetSelf(SyncCallback callback = nullptr);
     void completeGauntlet(int gauntletId, CompleteCallback callback = nullptr);
+    void completeLevel(int levelId, SyncCallback callback = nullptr);
 
 private:
     StatsSyncManager() = default;
@@ -27,4 +28,7 @@ private:
 
     async::TaskHolder<geode::Result<std::string>> m_completeArgonHolder;
     async::TaskHolder<web::WebResponse> m_completeHolder;
+
+    async::TaskHolder<geode::Result<std::string>> m_completeLevelArgonHolder;
+    async::TaskHolder<web::WebResponse> m_completeLevelHolder;
 };

@@ -140,7 +140,8 @@ std::vector<CustomGauntletData> CustomGauntletManager::parse(std::string const& 
             if (info.size() >= 4) d.infoAccID      = toInt(info[3]);
         }
 
-        if (f.count(17)) d.featured = toInt(f[17]) != 0;
+        if (f.count(17)) d.featured    = toInt(f[17]) != 0;
+        if (f.count(18)) d.rewardCoins = toInt(f[18], 0);
 
         m_cache.push_back(d);
     }

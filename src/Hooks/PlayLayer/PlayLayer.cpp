@@ -34,23 +34,25 @@ void GRPlayLayer::levelComplete() {
 
     StatsSyncManager::get()->sync(manager->getCrystalTotal(), 0);
 
-    // If this was the gauntlet's last unclaimed slot, credit its coin reward.
-    if (auto* gauntlet = manager->findGauntletForLevel(levelID)) {
-        if (manager->isGauntletFullyCompleted(*gauntlet)) {
-            int gauntletId = gauntlet->id;
-            StatsSyncManager::get()->completeGauntlet(
-                gauntletId,
-                [gauntletId](bool success, int rewardCoins, std::string const& error) {
-                    if (!success) {
-                        log::warn("Gauntlet completion sync failed: {}", error);
-                        return;
-                    }
-                    // Picked up by CustomGauntletLayer::checkPendingReward() the
-                    // next time that gauntlet's layer enters, which shows the
-                    // full CustomGauntletCompletionPopup reveal for it.
-                    CustomGauntletManager::get()->markPendingGauntletReward(gauntletId, rewardCoins);
-                }
-            );
+    StatsSyncManager::get()->completeLevel(levelID, [manager, levelID](bool success, std::string const& error) {
+        if (!success) {
+            log::warn("Level completion sync failed: {}", error);
+            return;
         }
-    }
+
+        auto* gauntlet = manager->findGauntletForLevel(levelID);
+        if (!gauntlet || !manager->isGauntletFullyCompleted(*gauntlet)) return;
+
+        int gauntletId = gauntlet->id;
+        StatsSyncManager::get()->completeGauntlet(
+            gauntletId,
+            [gauntletId](bool success, int rewardCoins, std::string const& error) {
+                if (!success) {
+                    log::warn("Gauntlet completion sync failed: {}", error);
+                    return;
+                }
+                CustomGauntletManager::get()->markPendingGauntletReward(gauntletId, rewardCoins);
+            }
+        );
+    });
 }

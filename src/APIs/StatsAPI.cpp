@@ -44,3 +44,15 @@ web::WebFuture StatsAPI::completeGauntlet(int accountId, std::string const& toke
         .bodyString(body.dump())
         .post(baseURL() + "/gauntlet-complete");
 }
+
+web::WebFuture StatsAPI::completeLevel(int accountId, std::string const& token, int levelId) {
+    auto body = matjson::Value();
+    body["level_id"] = levelId;
+
+    return web::WebRequest()
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer " + token)
+        .header("X-Account-Id", std::to_string(accountId))
+        .bodyString(body.dump())
+        .post(baseURL() + "/level-complete");
+}

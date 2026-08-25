@@ -1012,7 +1012,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Fire)
+            static_cast<int>(GauntletType::Doom)
         );
     }
 
@@ -1248,7 +1248,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "Beat the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+                "Conquer the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
                 1,
                 0.85,
                 false,
@@ -1256,7 +1256,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "Now, with that being said<d045>.<d045>.<d045>.",
+                "Now, with that being said<d015>.<d015>.<d015>.",
                 1,
                 1,
                 false,
@@ -1267,7 +1267,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
                 "<s260><cr>BEGONE</c></s>!",
                 1,
                 2,
-                false,
+                true,
                 ccWHITE
             ),
         };

@@ -8,13 +8,16 @@
 
 class $modify(GCPRewardUnlockLayer, RewardUnlockLayer) {
     void onClose(CCObject* sender) {
+        log::debug("GCPRewardUnlockLayer::onClose - entered");
         auto parentPopup = this->getParent()
             ? typeinfo_cast<ForceClosablePopup*>(this->getParent())
             : nullptr;
+        log::debug("GCPRewardUnlockLayer::onClose - parentPopup found={}", parentPopup != nullptr);
 
         RewardUnlockLayer::onClose(sender); // run original close/cleanup first
 
         if (parentPopup) {
+            log::debug("GCPRewardUnlockLayer::onClose - forwarding close to parent popup");
             parentPopup->forceCloseFromReward(sender);
         }
     }

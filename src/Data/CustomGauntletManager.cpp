@@ -194,22 +194,22 @@ int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
 
     if (level->m_demon.value()) {
         switch (static_cast<DemonDifficultyType>(level->m_demonDifficulty)) {
-            case DemonDifficultyType::EasyDemon:    return 10;
-            case DemonDifficultyType::MediumDemon:  return 15;
-            case DemonDifficultyType::HardDemon:    return 20;
-            case DemonDifficultyType::InsaneDemon:  return 25;
-            case DemonDifficultyType::ExtremeDemon: return 30;
-            default:                                return 20; // unrated demon defaults to hard
+            case DemonDifficultyType::EasyDemon:    return 30;
+            case DemonDifficultyType::MediumDemon:  return 40;
+            case DemonDifficultyType::HardDemon:    return 50;
+            case DemonDifficultyType::InsaneDemon:  return 75;
+            case DemonDifficultyType::ExtremeDemon: return 100;
+            default:                                return 50; // unrated demon defaults to hard
         }
     }
 
     switch (static_cast<GJDifficulty>(level->getAverageDifficulty())) {
-        case GJDifficulty::Auto:   return 1;
-        case GJDifficulty::Easy:   return 2;
-        case GJDifficulty::Normal: return 3;
-        case GJDifficulty::Hard:   return 5;
-        case GJDifficulty::Harder: return 7;
-        case GJDifficulty::Insane: return 9;
+        case GJDifficulty::Auto:   return 0;
+        case GJDifficulty::Easy:   return 5;
+        case GJDifficulty::Normal: return 10;
+        case GJDifficulty::Hard:   return 15;
+        case GJDifficulty::Harder: return 20;
+        case GJDifficulty::Insane: return 25;
         default:                   return 0;  // NA / unrated
     }
 }
@@ -270,6 +270,19 @@ void CustomGauntletManager::addCrystals(int amount) {
 
 void CustomGauntletManager::resetCrystals() {
     Mod::get()->setSavedValue("crystal-total", 0);
+}
+
+int CustomGauntletManager::getCoinTotal() const {
+    return Mod::get()->getSavedValue<int>("coin-total", 0);
+}
+
+void CustomGauntletManager::addCoins(int amount) {
+    if (amount <= 0) return;
+    Mod::get()->setSavedValue("coin-total", getCrystalTotal() + amount);
+}
+
+void CustomGauntletManager::resetCoins() {
+    Mod::get()->setSavedValue("coin-total", 0);
 }
 
 void CustomGauntletManager::resetClaimedRewards() {

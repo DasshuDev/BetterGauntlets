@@ -425,11 +425,11 @@ bool GauntletCreatorPopup::init(
     rewardLabelShadow->setColor({0, 0, 0});
     rewardLabelShadow->setOpacity(60);
 
-    auto chestSpr = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
+    auto chestSpr = CCSprite::createWithSpriteFrameName("GR_chest_01_001.png"_spr);
     chestSpr->setPosition({rewardLabel->getPositionX(), rewardLabel->getPositionY() + 13.5f});
     chestSpr->setScale(0.3);
 
-    auto chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest01_01_001.png"_spr);
+    auto chestSprShadow = CCSprite::createWithSpriteFrameName("GR_chest_01_001.png"_spr);
     chestSprShadow->setPosition({chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2});
     chestSprShadow->setScale(0.3);
     chestSprShadow->setColor({0, 0, 0});

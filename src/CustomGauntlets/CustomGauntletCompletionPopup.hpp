@@ -7,7 +7,7 @@
 
 using namespace geode::prelude;
 
-class CustomGauntletCompletionPopup : public Popup, public ForceClosablePopup {
+class CustomGauntletCompletionPopup : public Popup, public ForceClosablePopup, public CoinCrystalStylablePopup {
 protected:
     bool init(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture);
     void onClose(CCObject* sender) override;

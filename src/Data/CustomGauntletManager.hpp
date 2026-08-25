@@ -46,6 +46,10 @@ public:
     int getCrystalTotal() const;
     void addCrystals(int amount);
     void resetCrystals();
+    
+    int getCoinTotal() const;
+    void addCoins(int amount);
+    void resetCoins();
 
     // Clears every claimed level reward, so previously-completed gauntlet
     // levels can be replayed for crystals and locked slots re-lock.

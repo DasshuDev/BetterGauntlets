@@ -8,7 +8,7 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v2.0.0-alpha.87",
+	"version": "v2.0.0-alpha.93",
 	"developer": "DasshuDev",
 	"description": "Give life to the Lost Gauntlets!",
 	"links": {
@@ -96,17 +96,6 @@
 			"type": "bool",
 			"default": true
 		},
-		
-		"stats": {
-			"name": "Stats",
-			"type": "title"
-		},
-
-		"reset-stats": {
-			"name": "Reset Stats",
-			"description": "Resets your <cy>Crystal</c> and <cg>Coin</c> totals and <cc>custom Gauntlet completions</c> back to <cr>default (0)</c>, and syncs the reset to the server immediately.",
-			"type": "custom:reset-stats"
-		},
 
 		"developer": {
 			"name": "Developer Settings",
@@ -116,7 +105,7 @@
 
 		"advscroll-pos-label": {
 			"name": "Adv. ScrollLayer Pos Label",
-			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer.",
+			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer. Duh.",
 			"type": "bool",
 			"default": false
 		},
@@ -126,6 +115,17 @@
 			"description": "Shows a <cr>DEBUG</c> button on the Gauntlet/Custom Gauntlet screens that previews the <cg>completion popup and reward animation</c> on demand, <cy>without granting a real reward</c>.",
 			"type": "bool",
 			"default": false
+		},
+
+        "account": {
+			"name": "Account",
+			"type": "title"
+		},
+
+		"reset-stats": {
+			"name": "Reset Stats",
+			"description": "Resets your <cy>Crystal</c> and <cg>Coin</c> totals and <cc>custom Gauntlet completions</c> back to <cr>default (0)</c>, and syncs the reset to the server immediately.",
+			"type": "custom:reset-stats"
 		}
 	},
 	"early-load": true

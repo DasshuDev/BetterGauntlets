@@ -28,7 +28,7 @@ bool LeaderboardPopup::init(float width, float height, char const* bg) {
 
     auto syncMenu = CCMenu::create();
     syncMenu->setID("sync-menu");
-    syncMenu->setPosition({m_size.width - 45, m_size.height - 20});
+    syncMenu->setPosition({m_size.width - 35, m_size.height - 20});
     m_mainLayer->addChild(syncMenu);
 
     auto syncSpr = ButtonSprite::create("Sync", "bigFont.fnt", "GJ_button_01.png");
@@ -70,7 +70,7 @@ bool LeaderboardPopup::init(float width, float height, char const* bg) {
     listClip->addChild(m_listLayer);
 
     m_infoMenu = CCMenu::create();
-    m_infoMenu->setPosition({25, 25});
+    m_infoMenu->setPosition(m_size.width, m_size.height);
     m_mainLayer->addChild(m_infoMenu, 5);
 
     auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
@@ -385,8 +385,8 @@ void LeaderboardPopup::getUserInfoFinished(GJUserScore* score) {
 
     if (score) {
         log::debug(
-            "LeaderboardPopup: fetched accountId={} iconType={} playerCube={} color1={} color2={} glow={}",
-            score->m_accountID, (int)score->m_iconType, score->m_playerCube,
+            "accID={}, cube_{:03}, c1: {:03}, c2: {:03}, glow={}",
+            score->m_accountID, score->m_playerCube,
             score->m_color1, score->m_color2, score->m_glowEnabled
         );
         auto it = m_pendingIconPlayers.find(score->m_accountID);
@@ -394,10 +394,10 @@ void LeaderboardPopup::getUserInfoFinished(GJUserScore* score) {
             applyIcon(it->second, score);
             m_pendingIconPlayers.erase(it);
         } else {
-            log::debug("LeaderboardPopup: no pending row waiting for accountId={}", score->m_accountID);
+            log::debug("no pending row waiting for accID={}", score->m_accountID);
         }
     } else {
-        log::debug("LeaderboardPopup: getUserInfoFinished called with a null score");
+        log::debug("getUserInfoFinished called with a null score");
     }
 
     fetchNextIcon();
@@ -416,10 +416,12 @@ void LeaderboardPopup::getUserInfoFailed(int accountId) {
 void LeaderboardPopup::onInfo(CCObject*) {
     MDPopup::create(
         "Leaderboard Info",
-        "This leaderboard tracks two stats: <cy>Crystals</c>, earned by completing "
-        "Gauntlet levels, and <co>Coins</c>, earned by fully completing Custom Gauntlets. "
-        "Use the tabs above to switch between rankings, and tap <cg>Sync</c> to push your "
-        "latest stats to the server.",
+        "The Global Leaderboard tracks two main statistics; <cy>Crystals</c> and <co>Coins</c>. "
+        "These are collectables you can earn by completing levels found in <cc>The Forgotten Gauntlets</c>. "
+        "While <cy>Crystals</c> are obtained for both completing levels and Gauntlets, <co>Coins</c> are <cr>gauntlet-completion exclusive</c>. "
+        "Use the buttons above the Leaderboard list to navigate. "
+        "Use the <cg>Sync</c> button in the top-right corner of the Leaderboard to sync your account stats to Better Gauntlets' server. "
+        "Only the <cl>greater amount</c> of stats will sync.",
         "OK"
     )->show();
 }

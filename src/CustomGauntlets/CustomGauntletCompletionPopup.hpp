@@ -11,6 +11,7 @@ class CustomGauntletCompletionPopup : public Popup, public ForceClosablePopup, p
 protected:
     bool init(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture);
     void onClose(CCObject* sender) override;
+    void keyBackClicked() override {}
 
 public:
     static CustomGauntletCompletionPopup* create(CustomGauntletData const& data, int rewardCoins, CCTexture2D* iconTexture);

@@ -9,11 +9,7 @@ namespace {
 Ref<CurrencyRewardLayer> m_activeCrystalLayer;
 Ref<CurrencyRewardLayer> m_activeGauntletRewardLayer;
 
-// GR_gauntletCoin_001.png and GR_crystal_001.png have very different native
-// pixel dimensions, so a flat scale multiplier makes them render at very
-// different on-screen sizes. Instead, derive scale from each sprite's own
-// measured content size (as it actually appears in the tree, post frame-swap)
-// so both land at roughly the same visual footprint.
+// derive scale from each sprite's actual content size, since the coin and crystal art have very different native pixel dimensions
 constexpr float kGauntletCurrencySpriteTargetSize = 24.f;
 
 float gauntletCurrencyTargetScale(CCSprite *sprite) {

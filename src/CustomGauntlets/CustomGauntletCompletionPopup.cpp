@@ -98,6 +98,7 @@ namespace {
         return CCSequence::create(
             CCScaleBy::create(0, 0.5),
             CCEaseExponentialOut::create(CCScaleBy::create(1.5, 2)),
+            CCDelayTime::create(0.4),
             CCEaseExponentialIn::create(CCScaleBy::create(0.5, 1.4)),
             nullptr
         );
@@ -117,9 +118,15 @@ namespace {
         );
     }
 
+    void playPlaqueSfx() {
+        auto FMOD = FMODAudioEngine::get();
+        auto sfx = FMOD->playEffect("unlockPath.ogg");
+        FMOD->setChannelVolume(sfx, AudioTargetType::SFXChannel, FMOD->m_sfxVolume);
+    }
+
     CCFiniteTimeAction* tintFlashAction(ccColor3B color) {
         return CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
             CCTintTo::create(0, 255, 255, 255),
             CCTintTo::create(1.5, color.r, color.g, color.b),
             nullptr
@@ -128,7 +135,7 @@ namespace {
 
     CCFiniteTimeAction* scaleDown() {
         return CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
             CCEaseExponentialIn::create(CCScaleTo::create(1.25, 0.375)),
             nullptr
         );
@@ -136,7 +143,15 @@ namespace {
 
     CCFiniteTimeAction* fadeOut() {
         return CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
+            CCFadeTo::create(1, 0),
+            nullptr
+        );
+    }
+
+    CCFiniteTimeAction* labelFadeOut() {
+        return CCSequence::create(
+            CCDelayTime::create(3),
             CCFadeTo::create(1, 0),
             nullptr
         );
@@ -245,7 +260,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
     int coins = rewardCoins;
     if (rewardCoins > 0) {
         reward = GJRewardItem::createSpecial(
-            static_cast<GJRewardType>(0), coins * 1.5, coins,
+            static_cast<GJRewardType>(0), coins * 3, coins,
             static_cast<SpecialRewardItem>(0), 0,
             static_cast<SpecialRewardItem>(0), 0,
             0, 0
@@ -305,13 +320,13 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         gauntletFrameShadow->setScaleY(gauntletFrame ? gauntletFrame->getScaleY() * 1.2 : 1.2);
         node->addChild(gauntletFrameShadow, 1);
     }
-
+    
     if (plaqueBase && plaqueAccent && gauntletFrame && gauntletFrameShadow && node) {
         plaqueBase->runAction(CCSpawn::create(
             popInAction(),
             tintFlashAction(highlightColor),
             CCSequence::create(
-                CCDelayTime::create(2),
+                CCDelayTime::create(3),
                 CCSpawn::create(
                     fadeOut(),
                     nullptr
@@ -324,7 +339,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
             popInAction(),
             tintFlashAction(titleColor),
             CCSequence::create(
-                CCDelayTime::create(2),
+                CCDelayTime::create(3),
                 CCSpawn::create(
                     fadeOut(),
                     nullptr
@@ -336,7 +351,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         gauntletFrame->runAction(CCSpawn::create(
             popInAction(),
             CCSequence::create(
-                CCDelayTime::create(2),
+                CCDelayTime::create(3),
                 CCSpawn::create(
                     fadeOut(),
                     nullptr
@@ -348,7 +363,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         gauntletFrameShadow->runAction(CCSpawn::create(
             popInAction(),
             CCSequence::create(
-                CCDelayTime::create(2),
+                CCDelayTime::create(3),
                 CCSpawn::create(
                     fadeOut(),
                     nullptr
@@ -359,7 +374,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         ));
         node->runAction(CCSpawn::create(
             CCSequence::create(
-                CCDelayTime::create(1.75),
+                CCDelayTime::create(2.75),
                 CCSpawn::create(
                     scaleDown(),
                     nullptr
@@ -370,7 +385,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         ));
 
         node->runAction(CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
             CallFuncExt::create([this, node, titleColor, highlightColor, gauntletFrame, iconFrame, titleLabel, completeLabel] {
                 auto burstA = burstParticles(titleColor);
                 burstA->setOpacity(128);
@@ -388,7 +403,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
                     nullptr
                 ));
                 titleLabel->runAction(CCSpawn::create(
-                    fadeOut(),
+                    labelFadeOut(),
                     nullptr
                 ));
                 completeLabel->runAction(CCSequence::create(
@@ -397,7 +412,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
                     nullptr
                 ));
                 completeLabel->runAction(CCSpawn::create(
-                    fadeOut(),
+                    labelFadeOut(),
                     nullptr
                 ));
 
@@ -407,7 +422,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
                     coloredFrame->setPosition(gauntletFrame->getPosition());
                     coloredFrame->setScale(gauntletFrame->getScale());
                     coloredFrame->runAction(popInSettleAction());
-                    coloredFrame->runAction(fadeOut());
+                    coloredFrame->runAction(labelFadeOut());
                     node->addChild(coloredFrame, 2);
                 }
                 gauntletFrame->removeFromParent();
@@ -417,7 +432,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
 
         if (reward) {
             this->runAction(CCSequence::create(
-                CCDelayTime::create(5.25),
+                CCDelayTime::create(6.5),
                 CallFuncExt::create([this, reward, rewardCoins] {
 
                     auto rewardsPage = RewardsPage::create();
@@ -431,9 +446,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
                         return;
                     }
 
-                    // Real server-granted coin count for m_orbsLabel/m_diamondsLabel
-                    // to show, instead of the fabricated orbs/diamonds numbers the
-                    // GJRewardItem above was built with just to drive the reveal.
+                    // real coin count to display, since the reward item above is fabricated just to drive the reveal
                     GRCurrencyRewardLayer::setGauntletRewardCoins(rewardCoins);
                     restyleRewardUnlockLayer(unlockLayer);
 
@@ -478,11 +491,12 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
                 nullptr
             ));
         }
+        playPlaqueSfx();
     }
 
     {
         CCParticleSystemQuad* inner = GameToolbox::particleFromString(
-            "200a1.5a2a0a100a-180a180a0a0a200a200a0a0a-2000a0a0a0a5a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a3.5a0a0a0a0a0a0a0a0a0a0a0a0",
+            "250a1.5a2a0a125a-180a180a0a0a300a300a0a0a-1000a250a0a0a0a0a0a62a1a0a1a0a1a0a0.35a0.15a2a5a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a3.5a0a0a0a0a0a0a0a0a-1a0a0a0",
             NULL,
             false
         );

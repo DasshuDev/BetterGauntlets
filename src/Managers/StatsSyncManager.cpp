@@ -1,5 +1,6 @@
 #include "StatsSyncManager.hpp"
 #include "../APIs/StatsAPI.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 #include <argon/argon.hpp>
 
 StatsSyncManager* StatsSyncManager::get() {
@@ -40,6 +41,16 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
                         if (callback) callback(false, err);
                         return;
                     }
+
+                    // the server reconciles via GREATEST(local, server) and returns
+                    // that in the response - apply it back so a lower value pushed
+                    // from this device (or a higher one already on the server from
+                    // another device) doesn't leave the local totals stale.
+                    auto json = res.json().unwrapOr(matjson::Value());
+                    auto manager = CustomGauntletManager::get();
+                    manager->setCrystalTotal(json["crystals"].asInt().unwrapOr(manager->getCrystalTotal()));
+                    manager->setCoinTotal(json["coins"].asInt().unwrapOr(manager->getCoinTotal()));
+
                     if (callback) callback(true, "");
                 }
             );

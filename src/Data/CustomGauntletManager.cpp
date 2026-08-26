@@ -278,11 +278,19 @@ int CustomGauntletManager::getCoinTotal() const {
 
 void CustomGauntletManager::addCoins(int amount) {
     if (amount <= 0) return;
-    Mod::get()->setSavedValue("coin-total", getCrystalTotal() + amount);
+    Mod::get()->setSavedValue("coin-total", getCoinTotal() + amount);
 }
 
 void CustomGauntletManager::resetCoins() {
     Mod::get()->setSavedValue("coin-total", 0);
+}
+
+void CustomGauntletManager::setCrystalTotal(int value) {
+    Mod::get()->setSavedValue("crystal-total", value);
+}
+
+void CustomGauntletManager::setCoinTotal(int value) {
+    Mod::get()->setSavedValue("coin-total", value);
 }
 
 void CustomGauntletManager::resetClaimedRewards() {

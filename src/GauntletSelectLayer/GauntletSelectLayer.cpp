@@ -6,6 +6,7 @@
     #include "../Hooks/DialogIcons/DialogIcons.hpp"
     #include "../Managers/GauntletManagerPopup.hpp"
     #include "../Managers/LeaderboardPopup.hpp"
+    #include "../Managers/StatsSyncManager.hpp"
     #include "GauntletInfoPopup.hpp"
     #include <Geode/Geode.hpp>
     #include <Geode/Loader.hpp>
@@ -91,6 +92,9 @@
     buildCustomList();
 
     checkManagerStatus();
+
+    auto* mgr = CustomGauntletManager::get();
+    StatsSyncManager::get()->sync(mgr->getCrystalTotal(), mgr->getCoinTotal());
 
     return true;
     }
@@ -359,15 +363,6 @@ void BetterGauntletSelectLayer::buildMenus() {
     }
 
     buildCustomListToggle(topMenu);
-
-    // Crystal counter
-    m_crystalLabel = CCLabelBMFont::create("0", "bigFont.fnt");
-    m_crystalLabel->setID("crystal-counter-label"_spr);
-    m_crystalLabel->setAnchorPoint({0.5, 0.5});
-    m_crystalLabel->setAlignment(kCCTextAlignmentLeft);
-    m_crystalLabel->setScale(0.6f);
-    topMenu->addChild(m_crystalLabel);
-    updateCrystalLabel();
 }
 
 // Level loading delegates
@@ -647,16 +642,6 @@ void BetterGauntletSelectLayer::loadScrollPos() {
 void BetterGauntletSelectLayer::onEnterTransitionDidFinish() {
     CCLayer::onEnterTransitionDidFinish();
     m_exiting = false;
-
-    updateCrystalLabel();
-}
-
-void BetterGauntletSelectLayer::updateCrystalLabel() {
-    if (!m_crystalLabel)
-        return;
-    m_crystalLabel->setString(
-        fmt::format("{}", CustomGauntletManager::get()->getCrystalTotal())
-            .c_str());
 }
 
 void BetterGauntletSelectLayer::onPlay(CCObject *sender) {
@@ -1312,7 +1297,9 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     blackOut->setID("gauntlet-keeper-transition-blackout"_spr);
     CCDirector::sharedDirector()->getRunningScene()->addChild(blackOut, 1000);
 
-    FMODAudioEngine::get()->playEffect("GR_doorSlam_sfx.mp3"_spr);
+    auto FMOD = FMODAudioEngine::get();
+    auto sfx = FMOD->playEffect("GR_doorSlam_sfx.mp3"_spr);
+    FMOD->setChannelVolume(sfx, AudioTargetType::SFXChannel, FMOD->m_sfxVolume);
 
     this->runAction(CCSequence::create(
         CCDelayTime::create(0.5f),

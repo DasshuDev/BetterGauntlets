@@ -9,6 +9,7 @@ using namespace geode::prelude;
 class GauntletCompletionPopup : public Popup, public ForceClosablePopup {
 protected:
     bool init(GauntletType type, ccColor3B titleColor, ccColor3B highlightColor, bool debugReward);
+    void keyBackClicked() override {}
 
 public:
     static GauntletCompletionPopup* create(GauntletType type, ccColor3B titleColor, ccColor3B highlightColor);

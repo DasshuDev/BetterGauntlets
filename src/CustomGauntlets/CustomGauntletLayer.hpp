@@ -13,6 +13,7 @@ public:
 protected:
     bool init(CustomGauntletData const& data);
     void onEnter() override;
+    void keyBackClicked() override;
 
     CustomGauntletData              m_data;
     CCArray*                        m_loadedLevels = nullptr;

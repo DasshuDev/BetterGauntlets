@@ -51,6 +51,7 @@ void GRPlayLayer::levelComplete() {
                     log::warn("Gauntlet completion sync failed: {}", error);
                     return;
                 }
+                CustomGauntletManager::get()->addCoins(rewardCoins);
                 CustomGauntletManager::get()->markPendingGauntletReward(gauntletId, rewardCoins);
             }
         );

@@ -79,8 +79,7 @@ bool CustomGauntletLayer::init(CustomGauntletData const& data) {
             CCDirector::get()->getScreenBottom() + 30));
     infoMenu->addChild(infoBtn);
 
-    // Debug-only: preview the completion popup/reward animation without
-    // touching real CustomGauntletManager claim/reward state.
+    // debug only, previews the reward popup without touching real claim state
     if (Mod::get()->getSettingValue<bool>("debug-reward-button")) {
         auto debugBtnSpr = ButtonSprite::create("Debug", "goldFont.fnt", "GJ_button_04.png", 0.75);
         auto debugBtn = CCMenuItemSpriteExtra::create(
@@ -382,7 +381,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
 
         // Sprite PH
         auto islandSpr = CCSpriteWithHue::create("GR_unknownGauntlet_001.png"_spr);
-        if (!islandSpr) continue; // bundled resource, should never actually fail to load
+        if (!islandSpr) continue; // bundled resource, should never fail to load
         islandSpr->setID(fmt::format("island-{}", i + 1).c_str());
         islandSpr->setPosition(levelSpr->getContentSize() / 2);
         if (isLocked) islandSpr->setColor({128, 128, 128});
@@ -580,7 +579,7 @@ void CustomGauntletLayer::checkForUnlocks() {
     }
 }
 
-constexpr float kUnlockSfxPeakDelay = 1.5f;
+constexpr float UnlockSfxPeakDelay = 1.5f;
 
 void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     auto btn = static_cast<CCMenuItemSpriteExtra*>(levelSpr->getParent());
@@ -596,20 +595,20 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
 
     if (lockSpr) {
         lockSpr->runAction(CCSequence::create(
-            CCFadeOut::create(kUnlockSfxPeakDelay),
+            CCFadeOut::create(UnlockSfxPeakDelay),
             CCRemoveSelf::create(),
             nullptr
         ));
     }
 
     playUnlockParticlesIn(levelSpr, index);
-    if (islandSpr) islandShake(islandSpr, kUnlockSfxPeakDelay);
+    if (islandSpr) islandShake(islandSpr, UnlockSfxPeakDelay);
 
     // Name/author/crystal pop in instantly at the sfx peak, no fade.
     for (auto label : { nameLabel, authorLabel }) {
         if (!label) continue;
         label->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCDelayTime::create(UnlockSfxPeakDelay),
             CCShow::create(),
             nullptr
         ));
@@ -618,7 +617,7 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     if (crystalNode) {
         crystalNode->setScale(0.5);
         crystalNode->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCDelayTime::create(UnlockSfxPeakDelay),
             CCShow::create(),
             nullptr
         ));
@@ -627,7 +626,7 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
     if (islandSpr) {
         islandSpr->setColor(ccc3(128, 128, 128));
         islandSpr->runAction(CCSequence::create(
-            CCDelayTime::create(kUnlockSfxPeakDelay),
+            CCDelayTime::create(UnlockSfxPeakDelay),
             CCCallFuncN::create(this, callfuncN_selector(CustomGauntletLayer::onUnlockPeak)),
             CCSpawn::create(
                 CCTintTo::create(0.3, 255, 255, 255),
@@ -842,4 +841,8 @@ void CustomGauntletLayer::gauntletVault(CCObject*) {
     auto scene = CCScene::create();
     scene->addChild(browserLayer);
     director->pushScene(CCTransitionFade::create(0.5, scene));
+}
+
+void CustomGauntletLayer::keyBackClicked() {
+    onBack(nullptr);
 }

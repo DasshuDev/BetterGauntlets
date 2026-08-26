@@ -38,7 +38,6 @@ protected:
   void buildDecorations();
   void buildMenus();
   void buildGauntletNodes(cocos2d::CCArray *gauntlets);
-  void updateCrystalLabel();
 
   // Navigation
   void setupScrollMode();
@@ -76,7 +75,6 @@ protected:
   CCNode *m_loadingCircle = nullptr;
   CCMenuItemSpriteExtra *m_refreshButton = nullptr;
   CCMenuItemSpriteExtra *m_leaderboardButton = nullptr;
-  CCLabelBMFont *m_crystalLabel = nullptr;
 
   alpha::ui::AdvancedScrollLayer *m_customGauntletScrollLayer = nullptr;
   alpha::ui::AdvancedScrollBar *m_customGauntletScrollBar = nullptr;

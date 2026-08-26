@@ -46,10 +46,15 @@ public:
     int getCrystalTotal() const;
     void addCrystals(int amount);
     void resetCrystals();
-    
+
     int getCoinTotal() const;
     void addCoins(int amount);
     void resetCoins();
+
+    // Overwrites the local totals outright, for applying the server's
+    // GREATEST(local, server) reconciled values back after a sync push.
+    void setCrystalTotal(int value);
+    void setCoinTotal(int value);
 
     // Clears every claimed level reward, so previously-completed gauntlet
     // levels can be replayed for crystals and locked slots re-lock.

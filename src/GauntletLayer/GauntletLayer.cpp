@@ -526,8 +526,7 @@ void BetterGauntletLayer::checkGauntletCompletion() {
 
   int key = static_cast<int>(m_gauntletType);
   auto it = s_lastKnownGauntletCompletion.find(key);
-  // No baseline yet (first check this session) -> treat as unchanged, so
-  // opening an already-finished gauntlet never replays the popup.
+  // no baseline yet this session, so an already-finished gauntlet doesn't replay the popup on first open
   bool wasComplete = it != s_lastKnownGauntletCompletion.end() ? it->second : isComplete;
   s_lastKnownGauntletCompletion[key] = isComplete;
 
@@ -539,10 +538,7 @@ void BetterGauntletLayer::checkGauntletCompletion() {
   ccColor3B titleColor = titleLabel ? titleLabel->getColor() : ccWHITE;
   ccColor3B highlightColor = highlightLabel ? highlightLabel->getColor() : ccWHITE;
 
-  // Popup::show() attaches to CCDirector::getRunningScene(), which during a scene
-  // transition is the transition node itself, not this layer. Add it directly to
-  // this layer instead, so it always lands where we actually want it regardless
-  // of any transition (or transition-duration mod) in play.
+  // added directly instead of via show(), which attaches to the transition node during a scene transition
   if (auto popup = GauntletCompletionPopup::create(m_gauntletType, titleColor, highlightColor)) {
     this->addChild(popup, 1000);
   }

@@ -29,6 +29,7 @@ namespace {
         return CCSequence::create(
             CCScaleBy::create(0, 0.5),
             CCEaseExponentialOut::create(CCScaleBy::create(1.5, 2)),
+            CCDelayTime::create(0.4),
             CCEaseExponentialIn::create(CCScaleBy::create(0.5, 1.4)),
             nullptr
         );
@@ -50,7 +51,7 @@ namespace {
 
     CCFiniteTimeAction* tintFlashAction(ccColor3B color) {
         return CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
             CCTintTo::create(0, 255, 255, 255),
             CCTintTo::create(1.5, color.r, color.g, color.b),
             nullptr
@@ -59,15 +60,23 @@ namespace {
 
     CCFiniteTimeAction* scaleDown() {
         return CCSequence::create(
-            CCDelayTime::create(2),
-            CCEaseExponentialIn::create(CCScaleTo::create(1.25, 0.25)),
+            CCDelayTime::create(2.4),
+            CCEaseExponentialIn::create(CCScaleTo::create(1.25, 0.375)),
             nullptr
         );
     }
 
     CCFiniteTimeAction* fadeOut() {
         return CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
+            CCFadeTo::create(1, 0),
+            nullptr
+        );
+    }
+
+    CCFiniteTimeAction* labelFadeOut() {
+        return CCSequence::create(
+            CCDelayTime::create(3),
             CCFadeTo::create(1, 0),
             nullptr
         );
@@ -83,6 +92,12 @@ namespace {
             CCEaseExponentialOut::create(CCMoveBy::create(duration, {0, riseDistance})),
             nullptr
         );
+    }
+
+    void playPlaqueSfx() {
+        auto FMOD = FMODAudioEngine::get();
+        auto sfx = FMOD->playEffect("unlockPath.ogg");
+        FMOD->setChannelVolume(sfx, AudioTargetType::SFXChannel, FMOD->m_sfxVolume);
     }
 
     template <typename T>
@@ -126,7 +141,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
     if (!Popup::init(m_size.width - 30, m_size.height - 30, "GJ_square05.png")) return false;
     
     m_bgSprite->setVisible(false);
-    m_closeBtn->setOpacity(0);
+    m_closeBtn->removeFromParent();
     m_noElasticity = true;
     
     this->setOpacity(215);
@@ -277,7 +292,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
         ));
 
         node->runAction(CCSequence::create(
-            CCDelayTime::create(2),
+            CCDelayTime::create(2.4),
             CallFuncExt::create([this, node, titleColor, highlightColor, gauntletFrame, frame, titleLabel, completeLabel, reward] {
                 auto burstA = burstParticles(titleColor);
                 burstA->setOpacity(128);
@@ -295,8 +310,8 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     nullptr
                 ));
                 titleLabel->runAction(CCSpawn::create(
-                    // scaleDown(), 
-                    fadeOut(), 
+                    // scaleDown(),
+                    labelFadeOut(),
                     nullptr
                 ));
                 completeLabel->runAction(CCSequence::create(
@@ -305,8 +320,8 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     nullptr
                 ));
                 completeLabel->runAction(CCSpawn::create(
-                    // scaleDown(), 
-                    fadeOut(), 
+                    // scaleDown(),
+                    labelFadeOut(),
                     nullptr
                 ));
 
@@ -316,7 +331,7 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                     coloredFrame->setPosition(gauntletFrame->getPosition());
                     coloredFrame->setScale(gauntletFrame->getScale());
                     coloredFrame->runAction(popInSettleAction());
-                    coloredFrame->runAction(fadeOut());
+                    coloredFrame->runAction(labelFadeOut());
                     node->addChild(coloredFrame, 2);
                 }
                 gauntletFrame->removeFromParent();
@@ -339,11 +354,12 @@ bool GauntletCompletionPopup::init(GauntletType type, ccColor3B titleColor, ccCo
                 nullptr
             ));
         }
+        playPlaqueSfx();
     }
 
     {
         CCParticleSystemQuad* inner = GameToolbox::particleFromString(
-            "200a1.5a2a0a100a-180a180a0a0a200a200a0a0a-2000a0a0a0a5a0a0a62a1a0a1a0a1a0a0.35a0.15a0a0a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a3.5a0a0a0a0a0a0a0a0a0a0a0a0",
+            "250a1.5a2a0a125a-180a180a0a0a300a300a0a0a-1000a250a0a0a0a0a0a62a1a0a1a0a1a0a0.35a0.15a2a5a0a87a1a0a1a0a1a0a0.15a0.05a0.2a0a0.5a0.15a75a25a0a0a0a0a0a2a1a0a0a0a0a0a3.5a0a0a0a0a0a0a0a0a-1a0a0a0",
             NULL,
             false
         );

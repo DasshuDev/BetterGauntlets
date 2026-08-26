@@ -5,7 +5,7 @@
 
 using namespace geode::prelude;
 
-class $modify(MyCreatorLayer, CreatorLayer) {
+class $modify(BGCreatorLayer, CreatorLayer) {
     bool init();
     void onGauntlets(cocos2d::CCObject* sender);
 };

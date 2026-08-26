@@ -15,7 +15,7 @@ LeaderboardPopup* LeaderboardPopup::create() {
 bool LeaderboardPopup::init(float width, float height, char const* bg) {
     if (!Popup::init(width, height, bg)) return false;
 
-    auto title = CCLabelBMFont::create("Leaderboard", "goldFont.fnt");
+    auto title = CCLabelBMFont::create("Global Leaderboard", "goldFont.fnt");
     title->setPosition(m_size.width / 2, m_size.height - 20);
     title->setScale(0.75);
     m_mainLayer->addChild(title);
@@ -68,6 +68,19 @@ bool LeaderboardPopup::init(float width, float height, char const* bg) {
     m_listLayer->setContentSize(listBG->getContentSize());
     m_listLayer->ignoreAnchorPointForPosition(false);
     listClip->addChild(m_listLayer);
+
+    m_infoMenu = CCMenu::create();
+    m_infoMenu->setPosition({25, 25});
+    m_mainLayer->addChild(m_infoMenu, 5);
+
+    auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
+    infoSpr->setScale(0.75);
+    auto infoBtn = CCMenuItemSpriteExtra::create(
+        infoSpr,
+        this,
+        menu_selector(LeaderboardPopup::onInfo)
+    );
+    m_infoMenu->addChild(infoBtn);
 
     buildTabMenu();
     fetchLeaderboard();
@@ -196,6 +209,7 @@ void LeaderboardPopup::buildList() {
         ->setAutoGrowAxis(true)
         ->setAutoScale(false)
         ->setAxisAlignment(AxisAlignment::End)
+        ->setAxisReverse(true)
     );
 
     auto scroll = ScrollLayer::create(m_listLayer->getContentSize(), true, true);
@@ -397,4 +411,15 @@ void LeaderboardPopup::getUserInfoFailed(int accountId) {
 
     m_pendingIconPlayers.erase(accountId);
     fetchNextIcon();
+}
+
+void LeaderboardPopup::onInfo(CCObject*) {
+    MDPopup::create(
+        "Leaderboard Info",
+        "This leaderboard tracks two stats: <cy>Crystals</c>, earned by completing "
+        "Gauntlet levels, and <co>Coins</c>, earned by fully completing Custom Gauntlets. "
+        "Use the tabs above to switch between rankings, and tap <cg>Sync</c> to push your "
+        "latest stats to the server.",
+        "OK"
+    )->show();
 }

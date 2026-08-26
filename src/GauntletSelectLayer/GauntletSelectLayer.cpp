@@ -1050,9 +1050,8 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         auto accountID = GJAccountManager::get()->m_accountID;
         Ref<BetterGauntletSelectLayer> self(this);
         GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
-            if (!isManager) log::info("User is not a Gauntlet Manager");
-            if (!self->getParent()) log::info("BetterGauntletSelectLayer is not in the scene graph");
-            if (self->m_managerButton) log::info("Manager button already exists");
+            if (!isManager) return;
+            if (self->m_managerButton) return;
 
             auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
             if (!BLMenu) return;

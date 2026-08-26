@@ -3,18 +3,19 @@
 
 using namespace geode::prelude;
 
-bool MyCreatorLayer::init() {
+bool BGCreatorLayer::init() {
     if (!CreatorLayer::init()) return false;
 
-    // Find the gauntlets button and swap its callback to open our standalone layer
     auto gauntletsBtn = static_cast<CCMenuItemSpriteExtra*>(
         this->getChildByIDRecursive("gauntlets-button")
     );
+
     auto newSprite = CCSprite::create("GR_gauntletBtn_001.png"_spr);
     newSprite->setScale(0.8);
+
     if (gauntletsBtn) {
         gauntletsBtn->setSprite(newSprite);
-        gauntletsBtn->setTarget(this, menu_selector(MyCreatorLayer::onGauntlets));
+        gauntletsBtn->setTarget(this, menu_selector(BGCreatorLayer::onGauntlets));
     } else {
         log::warn("Could not find gauntlets-button");
     }
@@ -22,10 +23,15 @@ bool MyCreatorLayer::init() {
     return true;
 }
 
-void MyCreatorLayer::onGauntlets(CCObject* sender) {
+void BGCreatorLayer::onGauntlets(CCObject* sender) {
     auto scene = BetterGauntletSelectLayer::scene();
     if (scene) {
-        CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
+        auto node = typeinfo_cast<CCNode*>(sender);
+        if (node && (node->getTag() == 20260814 || node->getUserFlag("please-set-from-redash"_spr))) {
+            CCDirector::get()->pushScene(CCTransitionFade::create(0.5, scene));
+        } else {
+            CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
+        }
     } else {
         CreatorLayer::onGauntlets(sender);
     }

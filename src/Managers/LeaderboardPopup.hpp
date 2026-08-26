@@ -18,6 +18,7 @@ protected:
     CCLayer*       m_listLayer     = nullptr;
     CCMenu*        m_entryList     = nullptr;
     CCMenu*        m_tabMenu       = nullptr;
+    CCMenu*        m_infoMenu      = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
     CCLabelBMFont* m_errorLabel    = nullptr;
     float m_tabBarY = 0;
@@ -40,6 +41,7 @@ protected:
     void applyIcon(SimplePlayer* player, GJUserScore* score);
     void getUserInfoFinished(GJUserScore* score) override;
     void getUserInfoFailed(int accountId) override;
+    void onInfo(cocos2d::CCObject*);
 
 public:
     static LeaderboardPopup* create();

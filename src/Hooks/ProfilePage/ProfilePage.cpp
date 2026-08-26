@@ -62,7 +62,30 @@ $execute {
         });
     });
 
+    // Supporters
+    registerBadge(
+        "supporter"_spr,
+        "Gauntlet Supporter",
+        "This user supported <cc>Better Gauntlets</c> server by donating to "
+        "the developer's <co>Ko-fi</c> or (if you are in the Russian region) <cy>Boosty</c>. "
+        "If you would like this badge, consider <cd>donating</c> to the developer to keep <cg>server costs</c> steady!",
+        [] (const Badge& badge) {
+            if (badge.modStatus == ModStatus::Regular) showBadge(badge, CCSprite::createWithSpriteFrameName("modBadge_01_001.png"));
+        }
+    );
+
+    setProfileCallback(
+        "supporter"_spr,
+        [] (const Badge& badge) {
+        GauntletManagerCache::get()->isSupporter(badge.user->m_accountID, [badge](bool isSupporter) {
+            if (!isSupporter) return;
+            if (badge.location == Location::Profile || badge.location == Location::Comment) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeSupporter_001.png"_spr));
+            if (badge.location == Location::InfoPopup) showBadge(badge, CCSprite::createWithSpriteFrameName("GR_badgeSupporter_xlarge_001.png"_spr));
+        });
+    });
+
     // Comment colors
     setCommentColor("manager"_spr, ccc3(255, 185, 225));
     setCommentColor("helper"_spr, ccc3(150, 210, 225));
+    setCommentColor("supporter"_spr, ccc3(255, 210, 130));
 }

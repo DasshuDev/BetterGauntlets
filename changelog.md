@@ -4,23 +4,23 @@
     - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
     - To celebrate the release of Better Gauntlets v2.0.0 and the capabilities for new Gauntlets, the **Stellar** and **Lunar** Gauntlets are now available to play! Select the star next to the layer title ("The Lost Gauntlets") to see them!
 - <c-c4ffc4><cg>**Added**</c> Slider navigation to the Gauntlets!</c>
-    - All gauntlets now load on one page instead of three per-page, and this page is able to scroll horizontally. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
+    - All gauntlets now load on one scrollable page instead of three per-page. Use either dragging or the scroll bar at the bottom of the screen to navigate the Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> a new collectable, "Crystals"!</c>
     - A new form of collectable granted by completing The Forgotten Gauntlets' levels.
-- <c-c4ffc4><cg>**Added**</c> a new collectable, "Gauntlet Coins"!</c>
+- <c-c4ffc4><cg>**Added**</c> a new collectable, "(Gauntlet) Coins"!</c>
     - A new form of collectable granted by completing The Forgotten Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> Global Leaderboards!</c>
-    - Check your Crystal and Gauntlet Coin count and compare them to other Better Gauntlets players around the world!
+    - Check your Crystal and Coin count and compare them to other Better Gauntlets players around the world!
 - <c-c4ffc4><cg>**Added**</c> Account Sync!
     - Sync your Forgotten Gauntlet collectable stats cross-client *without* needing to save/load your game data! Use the "Sync" button in the Global Leaderboards to sync your account to Better Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> Profile Badges!</c>
-    - Using the Badgified API, badges can now be set on managers and helpers' profiles to indicate status.
+    - Using the Badgified API, badges can now be set on managers and helpers' profiles to indicate managerial status.
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!</c>
 - <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!</c>
     - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!
 - <c-ffffc4><cy>**Updated**</c> Gauntlet Info to be paged.</c>
-    - Difference between "The Lost Gauntlets" and "The Forgotten Gauntlets" info will be separated by pages.
-- <c-ffffc4><cy>**Updated**</c> Reload button.</c>
+    - Information between "The Lost Gauntlets" and "The Forgotten Gauntlets" will be separated by pages as to not stir confusion.
+- <c-ffffc4><cy>**Updated**</c> Gauntlet reload button.</c>
     - The reload button now affects the visible Gauntlet list as to not cause rate limiting on RobTop's servers.
 - <c-ffffc4><cy>**Updated**</c> "The Lost Gauntlets" title sprite.</c>
 - <c-ffffc4><cy>**Updated**</c> GauntletNode completion visuals.</c>
@@ -35,8 +35,9 @@
 - <c-ffc4c4><cr>**Removed**</c> Rescale Loading Circle setting.</c>
 
 ## Known Issues:
-- The new Gauntlets added by Better Gauntlets may not show up all the time, this is due to rate limiting. If you would like to support this mod and help fund the server's upkeep, please consider donating to my Kofi or Boosty!
+- The new Gauntlet icons added by Better Gauntlets may not show up all the time, this is due to rate limiting and personal internet speeds. If you would like to support this mod and help fund the server's upkeep, please consider donating to my Kofi or Boosty!
 - GDUtils' "New Gauntlet Design" setting **does not work** with this update, and that is intentional. Measures have been taken to make sure the setting does not apply due to the modifications made to `GauntletNode`. Does this count as an incompatability? Maybe. Do I care? No :P
+- New or existing mods that hook either `GauntletSelectLayer` and/or `GauntletLayer` must now hook to `BetterGauntletSelectLayer` and `BetterGauntletLayer` for their mods' changes to be reflected in-game.
 
 <c-33333b>*The Gauntlet Keeper grows tired of waiting.*</c>
 
@@ -136,12 +137,6 @@
     - `Fire, Poison, Demon, Death, Christmas`
 - <c-ffc4c4><cr>**Removed**</c> the Gauntlet Level Vault __dependency__. It it still recommended you install, though!</c>
 - <c-ffc4c4><cr>**Removed**</c> the Custom Keybinds dependency for iOS as it's not available yet.</c>
-
-
----
-
-## <c-ffffff>v1.4.2
-- April Fools update :)</c>
 
 ---
 

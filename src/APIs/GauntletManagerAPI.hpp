@@ -50,6 +50,7 @@ public:
     web::WebFuture uploadIcon(std::filesystem::path const& path);
     web::WebFuture fetchManagers();
     web::WebFuture fetchHelpers();
+    web::WebFuture fetchSupporters();
 
     bool isLoggedIn() const;
     void setToken(std::string const& token);

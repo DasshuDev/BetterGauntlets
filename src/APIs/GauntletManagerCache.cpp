@@ -74,14 +74,50 @@ void GauntletManagerCache::fetchHelpers() {
     );
 }
 
+void GauntletManagerCache::fetchSupporters() {
+    if (m_supporterRequest.isPending()) return;
+
+    m_supporterRequest.spawn(
+        GauntletManagerAPI::get()->fetchSupporters(),
+        [this](web::WebResponse res) {
+            if (res.ok()) {
+                std::unordered_set<int> ids;
+                auto json = res.json().unwrapOr(matjson::Value::object());
+                if (json.contains("supporters") && json["supporters"].isArray()) {
+                    for (auto const& row : json["supporters"]) {
+                        if (auto id = row["account_id"].asInt(); id.isOk()) {
+                            ids.insert(id.unwrap());
+                        }
+                    }
+                }
+                m_supporterIDs = std::move(ids);
+                m_hasFetchedSupporters = true;
+            } else {
+                log::warn(
+                    "[GauntletManagerCache] Failed to fetch supporter list (code {}): {}",
+                    res.code(), res.string().unwrapOr("<no body>")
+                );
+            }
+
+            auto waiting = std::move(m_waitingSupporters);
+            m_waitingSupporters.clear();
+            for (auto& [accountID, cb] : waiting) {
+                cb(m_supporterIDs.contains(accountID));
+            }
+        }
+    );
+}
+
 void GauntletManagerCache::warm() {
     if (!m_hasFetched) fetch();
     if (!m_hasFetchedHelpers) fetchHelpers();
+    if (!m_hasFetchedSupporters) fetchSupporters();
 }
 
 void GauntletManagerCache::refresh() {
     fetch();
     fetchHelpers();
+    fetchSupporters();
 }
 
 void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> callback) {
@@ -102,4 +138,14 @@ void GauntletManagerCache::isHelper(int accountID, std::function<void(bool)> cal
 
     m_waitingHelpers.push_back({accountID, std::move(callback)});
     fetchHelpers();
+}
+
+void GauntletManagerCache::isSupporter(int accountID, std::function<void(bool)> callback) {
+    if (m_hasFetchedSupporters) {
+        callback(m_supporterIDs.contains(accountID));
+        return;
+    }
+
+    m_waitingSupporters.push_back({accountID, std::move(callback)});
+    fetchSupporters();
 }

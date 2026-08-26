@@ -133,3 +133,7 @@ web::WebFuture GauntletManagerAPI::fetchManagers() {
 web::WebFuture GauntletManagerAPI::fetchHelpers() {
     return web::WebRequest().get(baseURL() + "/helpers");
 }
+
+web::WebFuture GauntletManagerAPI::fetchSupporters() {
+    return web::WebRequest().get(baseURL() + "/supporters");
+}

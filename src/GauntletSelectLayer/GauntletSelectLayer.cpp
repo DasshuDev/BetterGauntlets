@@ -733,10 +733,11 @@ void BetterGauntletSelectLayer::unblockPlay() {
 void BetterGauntletSelectLayer::boom(CCObject *sender) {
     auto sfx = FMODAudioEngine::get()->playEffect("vine-boom.mp3"_spr);
 
+    auto winSize = CCDirector::get()->getWinSize();
     auto absGauntSpr = CCSprite::create("absolutegauntlets.png"_spr);
-    absGauntSpr->setPosition(CCDirector::get()->getWinSize() / 2);
-    absGauntSpr->setScaleX(CCDirector::sharedDirector()->getScreenScaleFactorW() * 2);
-    absGauntSpr->setScaleY(CCDirector::sharedDirector()->getScreenScaleFactorH() * 2);
+    absGauntSpr->setPosition(winSize / 2);
+    absGauntSpr->setScaleX(winSize.width / absGauntSpr->getContentWidth());
+    absGauntSpr->setScaleY(winSize.height / absGauntSpr->getContentHeight());
     addChild(absGauntSpr, 9999);
 
     absGauntSpr->runAction(CCSequence::create(

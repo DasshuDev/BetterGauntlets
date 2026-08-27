@@ -27,6 +27,9 @@ bool CustomGauntletNode::init(
     sprite->setContentSize({110, 234});
     sprite->setAnchorPoint({0.5, 0.5});
     sprite->setID("gauntlet-container"_spr);
+#if defined(GEODE_IS_ANDROID) || defined(GEODE_IS_IOS)
+    sprite->setScale(0.5f);
+#endif
 
     auto node = NineSlice::create("GR_squareB_01.png"_spr);
     node->setContentSize({110, 220});
@@ -147,12 +150,11 @@ bool CustomGauntletNode::init(
     gradient->setVector({1, 0});
     gradient->setContentSize(sprite->getContentSize());
     gradient->setAnchorPoint({0.5, 0.5});
-    gradient->setPositionY(-35);
-    gradient->setScaleX(1.5);
-    gradient->setScaleY(2);
+    gradient->setPositionY(-110);
+    gradient->setScaleX(2);
+    gradient->setScaleY(1.2);
     gradient->setRotation(67);
-    gradient->setID("gradient");
-    gradient->setBlendFunc({GL_ONE, GL_ONE});
+    gradient->setID("gradient-sprite");
     gradientClip->addChild(gradient);
 
     if (completed == 5) {
@@ -214,6 +216,11 @@ bool CustomGauntletNode::init(
 void CustomGauntletNode::loadIcon() {
     if (m_data.iconURL.empty()) return;
 
+    if (auto cached = CustomGauntletManager::get()->getCachedIcon(m_data.iconURL)) {
+        applyIconTexture(cached);
+        return;
+    }
+
     m_iconHolder.spawn(
         web::WebRequest().get(m_data.iconURL),
         [this](web::WebResponse res) {
@@ -221,8 +228,6 @@ void CustomGauntletNode::loadIcon() {
             auto bytes = res.data();
             Ref<CustomGauntletNode> self(this);
             queueInMainThread([self, bytes]() {
-                if (!self->getParent()) return;
-
                 auto img = new CCImage();
                 if (!img->initWithImageData(
                         const_cast<unsigned char*>(bytes.data()), bytes.size())) {
@@ -232,31 +237,39 @@ void CustomGauntletNode::loadIcon() {
                 tex->initWithImage(img);
                 delete img;
 
-                auto icon = CCSprite::createWithTexture(tex);
-                auto shadow = CCSprite::createWithTexture(tex);
+                // handed off to the manager's cache before dropping our own ref, so it outlives this node
+                CustomGauntletManager::get()->cacheIcon(self->m_data.iconURL, tex);
                 tex->release();
-                if (!icon || !shadow) return;
 
-                auto container = self->getChildByID("gauntlet-container"_spr);
-                if (!container) return;
-
-                icon->setID("gauntlet-icon");
-                icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 15});
-
-                shadow->setScaleX(icon->getScaleX());
-                shadow->setScaleY(icon->getScaleY() * 1.2);
-                shadow->setID("gauntlet-icon-shadow");
-                shadow->setColor({0, 0, 0});
-                shadow->setOpacity(50);
-                shadow->setPosition({icon->getPositionX(), icon->getPositionY() - 10});
-
-                if (auto ph = container->getChildByIDRecursive("icon-placeholder")) ph->removeFromParent();
-                if (auto phs = container->getChildByIDRecursive("icon-placeholder-shadow")) phs->removeFromParent();
-                container->addChild(shadow);
-                container->addChild(icon, 1);
+                if (!self->getParent()) return;
+                self->applyIconTexture(tex);
             });
         }
     );
+}
+
+void CustomGauntletNode::applyIconTexture(CCTexture2D* tex) {
+    auto icon = CCSprite::createWithTexture(tex);
+    auto shadow = CCSprite::createWithTexture(tex);
+    if (!icon || !shadow) return;
+
+    auto container = getChildByID("gauntlet-container"_spr);
+    if (!container) return;
+
+    icon->setID("gauntlet-icon");
+    icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 15});
+
+    shadow->setScaleX(icon->getScaleX());
+    shadow->setScaleY(icon->getScaleY() * 1.2);
+    shadow->setID("gauntlet-icon-shadow");
+    shadow->setColor({0, 0, 0});
+    shadow->setOpacity(50);
+    shadow->setPosition({icon->getPositionX(), icon->getPositionY() - 10});
+
+    if (auto ph = container->getChildByIDRecursive("icon-placeholder")) ph->removeFromParent();
+    if (auto phs = container->getChildByIDRecursive("icon-placeholder-shadow")) phs->removeFromParent();
+    container->addChild(shadow);
+    container->addChild(icon, 1);
 }
 
 void CustomGauntletNode::onTap(CCObject*) {

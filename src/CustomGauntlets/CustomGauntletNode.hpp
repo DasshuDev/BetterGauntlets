@@ -29,4 +29,5 @@ private:
     bool init(CustomGauntletData const& data, GauntletTapCallback callback);
     void onTap(CCObject* sender);
     void loadIcon();
+    void applyIconTexture(CCTexture2D* tex);
 };

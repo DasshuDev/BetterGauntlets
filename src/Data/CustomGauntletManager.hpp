@@ -1,6 +1,7 @@
 #pragma once
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
+#include <Geode/utils/async.hpp>
 #include "CustomGauntletData.hpp"
 
 using namespace geode::prelude;
@@ -19,6 +20,20 @@ public:
     bool hasCached() const;
     std::vector<CustomGauntletData> const& getCached() const;
     void clearCache();
+
+    // Kicks off (or joins) the initial gauntlet-list fetch as early as possible, so the list
+    // is usually already cached by the time the player opens the custom gauntlet tab.
+    void warm();
+
+    // Registers a callback for when the cache is ready - joins an in-flight fetch (from warm()
+    // or a previous call) instead of starting a duplicate one. Callers should check hasCached()
+    // first to skip straight to getCached() on the already-warm fast path.
+    void whenReady(std::function<void(bool ok, int code)> callback);
+
+    // Icon textures decoded from each gauntlet's iconURL, shared across every
+    // CustomGauntletNode instance instead of re-downloading/re-decoding per node.
+    cocos2d::CCTexture2D* getCachedIcon(std::string const& url) const;
+    void cacheIcon(std::string const& url, cocos2d::CCTexture2D* texture);
 
     // Is this level ID one of the slots across all cached custom gauntlets?
     bool isCustomGauntletLevel(int levelID) const;
@@ -65,11 +80,19 @@ public:
 
 private:
     CustomGauntletManager() = default;
+    void beginFetch();
+
     std::vector<CustomGauntletData> m_cache;
     bool m_hasCached = false;
     int m_pendingGauntletLevelID = 0;
     int m_pendingRewardGauntletID = 0;
     int m_pendingRewardCoins = 0;
+
+    bool m_isFetching = false;
+    async::TaskHolder<web::WebResponse> m_fetchHolder;
+    std::vector<std::function<void(bool, int)>> m_waitingCallbacks;
+
+    std::unordered_map<std::string, Ref<cocos2d::CCTexture2D>> m_iconCache;
 
     static std::string baseURL();
 };

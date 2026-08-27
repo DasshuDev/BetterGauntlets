@@ -18,8 +18,8 @@ public:
   static CCScene *scene();
   ~BetterGauntletSelectLayer() override;
 
-  inline static float s_scrollLocation = 0;
-  inline static bool s_showCustomList = false;
+  inline static float m_scrollLocation = 0;
+  inline static bool m_showCustomList = false;
 
 protected:
   bool init() override;
@@ -57,6 +57,7 @@ protected:
   void toggleList(cocos2d::CCObject *sender);
   void onLockedListToggle(cocos2d::CCObject *sender);
   void unblockPlay();
+  void boom(cocos2d::CCObject *sender);
 
   // Custom gauntlets
   void buildCustomList();
@@ -72,6 +73,7 @@ protected:
   CCLabelBMFont *m_sliderLabel = nullptr;
   CCSprite *m_vanillaTitle = nullptr;
   CCSprite *m_betterTitle = nullptr;
+  CCMenuItemSpriteExtra *m_absoluteGauntlets = nullptr;
   CCNode *m_loadingCircle = nullptr;
   CCMenuItemSpriteExtra *m_refreshButton = nullptr;
   CCMenuItemSpriteExtra *m_leaderboardButton = nullptr;
@@ -89,6 +91,4 @@ protected:
   bool m_dialogExitsToCreator = false;
   int m_dialogIndex = 0;
   cocos2d::CCArray *m_gauntletPacks = nullptr;
-
-  async::TaskHolder<web::WebResponse> m_fetchHolder;
 };

@@ -161,6 +161,44 @@ void CustomGauntletManager::clearCache() {
     m_hasCached = false;
 }
 
+void CustomGauntletManager::beginFetch() {
+    m_isFetching = true;
+    m_fetchHolder.spawn(fetchAll(), [this](web::WebResponse res) {
+        m_isFetching = false;
+        bool ok = res.ok();
+        if (ok) parse(res.string().unwrapOr(""));
+
+        auto waiting = std::move(m_waitingCallbacks);
+        m_waitingCallbacks.clear();
+        for (auto& cb : waiting) cb(ok, res.code());
+    });
+}
+
+void CustomGauntletManager::warm() {
+    if (m_hasCached || m_isFetching) return;
+    beginFetch();
+}
+
+void CustomGauntletManager::whenReady(std::function<void(bool, int)> callback) {
+    if (m_hasCached) {
+        callback(true, 200);
+        return;
+    }
+    m_waitingCallbacks.push_back(std::move(callback));
+    if (!m_isFetching) beginFetch();
+}
+
+cocos2d::CCTexture2D* CustomGauntletManager::getCachedIcon(std::string const& url) const {
+    auto it = m_iconCache.find(url);
+    if (it == m_iconCache.end()) return nullptr;
+    return it->second;
+}
+
+void CustomGauntletManager::cacheIcon(std::string const& url, cocos2d::CCTexture2D* texture) {
+    if (!texture) return;
+    m_iconCache[url] = texture;
+}
+
 bool CustomGauntletManager::isCustomGauntletLevel(int levelID) const {
     for (auto const& gauntlet : m_cache) {
         for (auto const& slot : gauntlet.levels) {

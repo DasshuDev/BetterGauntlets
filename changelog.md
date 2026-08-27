@@ -15,7 +15,7 @@
     - Sync your Forgotten Gauntlet collectable stats cross-client *without* needing to save/load your game data! Use the "Sync" button in the Global Leaderboards to sync your account to Better Gauntlets.
 - <c-c4ffc4><cg>**Added**</c> Profile Badges!</c>
     - Using the Badgified API, badges can now be set on managers and helpers' profiles to indicate managerial status.
-    - Badges for *Supporters* can also be set! Subscribe to the Ko-fi monthly plan starting at *$5 USD per month* to get the badge.
+    - Badges for *Supporters* can also be set! Donate *$5 USD* or more to get the badge.
 - <c-ffffc4><cy>**Updated**</c>: `GauntletSelectLayer` now uses the `BetterGauntletSelectLayer` class!</c>
 - <c-ffffc4><cy>**Updated**</c>: `GauntletLayer` now uses the `BetterGauntletLayer` class!</c>
     - With these class changes, Better Gauntlets no longer relies on RobTop's vanilla Gauntlet layers, and can be easily updated when a new version of Geode and/or Geometry Dash releases!

@@ -17,8 +17,8 @@
 
 using namespace geode::prelude;
 
-static std::unordered_map<int, std::vector<bool>> s_lastKnownLockedStates;
-static std::unordered_map<int, bool> s_lastKnownGauntletCompletion;
+static std::unordered_map<int, std::vector<bool>> m_lastKnownLockedStates;
+static std::unordered_map<int, bool> m_lastKnownGauntletCompletion;
 
 // Helpers
 
@@ -315,7 +315,7 @@ void BetterGauntletLayer::editGauntlets() {
 
   int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
   auto &lastLockedStates =
-      s_lastKnownLockedStates[static_cast<int>(m_gauntletType)];
+      m_lastKnownLockedStates[static_cast<int>(m_gauntletType)];
 
   for (int i = 0; i < levelCount; i++) {
     GJGameLevel *levelNode =
@@ -515,9 +515,9 @@ void BetterGauntletLayer::checkGauntletCompletion() {
   }
 
   int key = static_cast<int>(m_gauntletType);
-  auto it = s_lastKnownGauntletCompletion.find(key);
-  bool wasComplete = it != s_lastKnownGauntletCompletion.end() ? it->second : isComplete;
-  s_lastKnownGauntletCompletion[key] = isComplete;
+  auto it = m_lastKnownGauntletCompletion.find(key);
+  bool wasComplete = it != m_lastKnownGauntletCompletion.end() ? it->second : isComplete;
+  m_lastKnownGauntletCompletion[key] = isComplete;
 
   if (!isComplete) return;
 

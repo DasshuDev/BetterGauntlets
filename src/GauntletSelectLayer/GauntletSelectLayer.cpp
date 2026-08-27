@@ -353,14 +353,20 @@ void BetterGauntletSelectLayer::buildMenus() {
     }
 
     m_betterTitle = CCSprite::create("GR_gauntletTitle_02_001.png"_spr);
-    if (m_betterTitle) {
-        m_betterTitle->setID("better-title"_spr);
-        m_betterTitle->setAnchorPoint(ccp(0.5, 0.5));
-        m_betterTitle->setZOrder(10);
-        m_betterTitle->setScale(0.575);
-        m_betterTitle->setVisible(false);
-        topMenu->addChild(m_betterTitle);
-    }
+
+    m_absoluteGauntlets = CCMenuItemSpriteExtra::create(
+        m_betterTitle,
+        this,
+        menu_selector(BetterGauntletSelectLayer::boom)
+    );
+    m_absoluteGauntlets->setID("better-title"_spr);
+    m_absoluteGauntlets->setAnchorPoint(ccp(0.5, 0.5));
+    m_absoluteGauntlets->setZOrder(10);
+    m_absoluteGauntlets->setScale(0.575);
+    m_absoluteGauntlets->setVisible(false);
+    m_absoluteGauntlets->m_baseScale = 0.575;
+    m_absoluteGauntlets->m_scaleMultiplier = 1.075;
+    topMenu->addChild(m_absoluteGauntlets);
 
     buildCustomListToggle(topMenu);
 }
@@ -461,7 +467,7 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     styleGauntletButtons();
     loadScrollPos();
 
-    if (s_showCustomList) {
+    if (m_showCustomList) {
         toggleList(nullptr);
     }
     }
@@ -619,19 +625,19 @@ void BetterGauntletSelectLayer::saveScrollPos() {
     if (m_customScrollLayer) {
         float max = m_customScrollLayer->getHorizontalMax();
         if (max > 0)
-        s_scrollLocation = m_customScrollLayer->getScrollPoint().x;
+        m_scrollLocation = m_customScrollLayer->getScrollPoint().x;
     }
 }
 
 void BetterGauntletSelectLayer::loadScrollPos() {
-    if (s_scrollLocation > 0 && m_customScrollLayer) {
-        m_customScrollLayer->setScrollX(s_scrollLocation, false);
+    if (m_scrollLocation > 0 && m_customScrollLayer) {
+        m_customScrollLayer->setScrollX(m_scrollLocation, false);
     }
 
     if (Mod::get()->getSettingValue<bool>("advscroll-pos-label") &&
         m_sliderLabel && m_customScrollLayer) {
         m_sliderLabel->setString(
-            fmt::format("{:.4f} / {:.4f}", s_scrollLocation,
+            fmt::format("{:.4f} / {:.4f}", m_scrollLocation,
                         m_customScrollLayer->getHorizontalMax())
                 .c_str());
     }
@@ -724,15 +730,32 @@ void BetterGauntletSelectLayer::unblockPlay() {
     m_playBlocked = false;
 }
 
+void BetterGauntletSelectLayer::boom(CCObject *sender) {
+    auto sfx = FMODAudioEngine::get()->playEffect("vine-boom.mp3"_spr);
+
+    auto absGauntSpr = CCSprite::create("absolutegauntlets.png"_spr);
+    absGauntSpr->setPosition(CCDirector::get()->getWinSize() / 2);
+    absGauntSpr->setScaleX(CCDirector::sharedDirector()->getScreenScaleFactorW() * 2);
+    absGauntSpr->setScaleY(CCDirector::sharedDirector()->getScreenScaleFactorH() * 2);
+    addChild(absGauntSpr, 9999);
+
+    absGauntSpr->runAction(CCSequence::create(
+        CCDelayTime::create(0.25),
+        CCFadeTo::create(1.15, 0),
+        CallFuncExt::create([absGauntSpr] { absGauntSpr->removeFromParent(); }),
+        nullptr
+    ));
+}
+
 void BetterGauntletSelectLayer::keyBackClicked() {
     onBack(nullptr);
 }
 
 void BetterGauntletSelectLayer::onBack(CCObject *sender) {
     if (m_exiting) return;
-  m_exiting = true;
-    s_scrollLocation = 0;
-    s_showCustomList = false;
+    m_exiting = true;
+    m_scrollLocation = 0;
+    m_showCustomList = false;
 
     if (CCScene::get()->getUserFlag("from-redash"_spr)) {
         CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
@@ -849,12 +872,12 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     void BetterGauntletSelectLayer::toggleList(CCObject *sender) {
     m_showingCustomList = !m_showingCustomList;
-    s_showCustomList = m_showingCustomList;
+    m_showCustomList = m_showingCustomList;
 
     if (m_customScrollLayer) m_customScrollLayer->setVisible(!m_showingCustomList);
     if (m_customScrollBar) m_customScrollBar->setVisible(!m_showingCustomList);
     if (m_vanillaTitle) m_vanillaTitle->setVisible(!m_showingCustomList);
-    if (m_betterTitle) m_betterTitle->setVisible(m_showingCustomList);
+    if (m_absoluteGauntlets) m_absoluteGauntlets->setVisible(m_showingCustomList);
     if (m_customGauntletScrollLayer) m_customGauntletScrollLayer->setVisible(m_showingCustomList);
     if (m_customGauntletScrollBar) m_customGauntletScrollBar->setVisible(m_showingCustomList);
     if (m_customListLoadingCircle) m_customListLoadingCircle->setVisible(m_showingCustomList);
@@ -885,44 +908,43 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     this->addChild(loadingCircle, 10);
     m_customListLoadingCircle = loadingCircle;
 
-    m_fetchHolder.spawn(
-        CustomGauntletManager::get()->fetchAll(), [this](web::WebResponse res) {
-            if (m_customListLoadingCircle) {
-            m_customListLoadingCircle->removeFromParent();
-            m_customListLoadingCircle = nullptr;
-            }
+    Ref<BetterGauntletSelectLayer> self(this);
+    CustomGauntletManager::get()->whenReady([self](bool ok, int code) {
+        if (!self->getParent()) return; // layer already closed
 
-            if (!res.ok()) {
-            if (m_showingCustomList) {
+        if (self->m_customListLoadingCircle) {
+            self->m_customListLoadingCircle->removeFromParent();
+            self->m_customListLoadingCircle = nullptr;
+        }
+
+        if (!ok) {
+            if (self->m_showingCustomList) {
                 Notification::create(
-                    fmt::format("Failed to load custom gauntlets: HTTP {}",
-                                res.code()),
+                    fmt::format("Failed to load custom gauntlets: HTTP {}", code),
                     NotificationIcon::Error, 2)
                     ->show();
-                m_showingCustomList = false;
-                s_showCustomList = false;
-                if (m_customScrollLayer) m_customScrollLayer->setVisible(true);
-                if (m_customScrollBar) m_customScrollBar->setVisible(true);
-                if (m_vanillaTitle) m_vanillaTitle->setVisible(true);
-                if (m_betterTitle) m_betterTitle->setVisible(false);
+                self->m_showingCustomList = false;
+                m_showCustomList = false;
+                if (self->m_customScrollLayer) self->m_customScrollLayer->setVisible(true);
+                if (self->m_customScrollBar) self->m_customScrollBar->setVisible(true);
+                if (self->m_vanillaTitle) self->m_vanillaTitle->setVisible(true);
+                if (self->m_absoluteGauntlets) self->m_absoluteGauntlets->setVisible(false);
             }
-
             return;
-            }
+        }
 
-            auto body = res.string().unwrapOr("");
-            if (body.empty() || body == "-1") {
-            if (m_showingCustomList) {
+        auto const& gauntlets = CustomGauntletManager::get()->getCached();
+        if (gauntlets.empty()) {
+            if (self->m_showingCustomList) {
                 Notification::create("There are no Gauntlets yet!",
                                     NotificationIcon::Warning, 2)
                     ->show();
             }
             return;
-            }
+        }
 
-            auto gauntlets = CustomGauntletManager::get()->parse(body);
-            populateCustomList(gauntlets);
-        });
+        self->populateCustomList(gauntlets);
+    });
     }
 
     void BetterGauntletSelectLayer::populateCustomList(
@@ -1002,8 +1024,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     if (container->getChildrenCount() > 4) {
         auto scrollBar = alpha::ui::AdvancedScrollBar::create(
             scrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
-        scrollBar->setPosition(
-            {winSize.width / 2, scrollLayer->getPositionY() - 126});
+        scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
         scrollBar->setContentSize({12, winSize.height + 125});
         scrollBar->setID("custom-gauntlet-bar"_spr);
         scrollBar->setVisible(m_showingCustomList);
@@ -1014,7 +1035,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Doom)
+            static_cast<int>(GauntletType::Fire)
         );
     }
 

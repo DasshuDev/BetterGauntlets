@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editSpikeGauntlet() {
+void BetterGauntletLayer::editSpikeGauntlet() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     int backgroundValue = 15;
@@ -15,8 +15,7 @@ void RedesignedGauntletLayer::editSpikeGauntlet() {
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {
         // sand
-		auto bgParticleNode1 = CCParticleSystemQuad::create();
-        if (bgParticleNode1) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "500a-1a2a0a200a-25a0a500a100a0a400a0a0a0a0a111a39a3a0a0a43a0.847059a0a0.729412a0a0.352941a0a1a0a6a0a0a38a0.811765a0a0.611765a0a0.254902a0a0.5a0.15a0a0a0a0a0a0a0a0a0a0a0a2a0a0a0a0a25a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -27,8 +26,7 @@ void RedesignedGauntletLayer::editSpikeGauntlet() {
             this->addChild(bgParticles);
         }
         // dust
-		auto bgParticleNode2 = CCParticleSystemQuad::create();
-        if (bgParticleNode2) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "200a-1a2a0a81a-25a0a500a100a0a400a0a0a0a0a111a39a200a0a0a43a0.282353a0a0.215686a0a0.00392157a0a0.11a0a200a0a0a38a0.152941a0a0.0980392a0a0a0a0.1a0.15a0a0a0a0a0a0a0a0a0a0a0a2a1a0a0a0a46a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,

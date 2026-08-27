@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editDoomGauntlet() {
+void BetterGauntletLayer::editDoomGauntlet() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     int backgroundValue = 35;
@@ -14,8 +14,7 @@ void RedesignedGauntletLayer::editDoomGauntlet() {
 
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {
-		auto bgParticleNode = CCParticleSystemQuad::create();
-        if (bgParticleNode) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "13a-1a2a0.45a5a90a20a250a10a300a0a0a-225a0a0a0a0a10a15a0a43a1a0a1a0a1a0a1a0.05a3a0a0a38a1a0a1a0a1a0a0a0a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a145a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -25,8 +24,7 @@ void RedesignedGauntletLayer::editDoomGauntlet() {
             bgParticles->setZOrder(-98);
             this->addChild(bgParticles);
         }
-        auto bgParticleNode2 = CCParticleSystemQuad::create();
-        if (bgParticleNode2) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "8a-1a2a0.45a3a90a20a303a40a300a0a0a-260a0a0a0a39a20a5a0a0a1a0a1a0a1a0a0.3a0.15a15a0a0a92a1a0a1a0a1a0a0a0a0a0a0.45a0a0a0a0a0a0a0a0a2a1a0a0a0a34a0a1a0.3a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,

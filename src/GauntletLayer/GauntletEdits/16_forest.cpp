@@ -2,7 +2,7 @@
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editForestGauntlet() {
+void BetterGauntletLayer::editForestGauntlet() {
     CCDirector* director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
     int backgroundValue = 26;
@@ -15,8 +15,7 @@ void RedesignedGauntletLayer::editForestGauntlet() {
     auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
 	if (enableParticles) {
         // leaves 1
-		auto bgParticleNode1 = CCParticleSystemQuad::create();
-        if (bgParticleNode1) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "50a-1a3a0.45a8a-118a0a143a0a300a0a0a0a0a0a0a56a10a2a0a50a0.25a0.25a0.5a0.35a0a0a1a0.05a5a0a0a53a0.054902a0a0.45098a0a0a0a0.5a0a0a0a0.15a0a0a0a0a0a0a0a0a2a1a0a0a0a146a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -27,8 +26,7 @@ void RedesignedGauntletLayer::editForestGauntlet() {
             this->addChild(bgParticles);
         }
         // leaves 2
-		auto bgParticleNode2 = CCParticleSystemQuad::create();
-        if (bgParticleNode2) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "50a-1a3a0.45a8a-118a0a71a0a300a0a0a0a0a0a0a35a5a2a0a50a0.25a0.25a0.5a0.35a0a0a1a0.05a3a0a0a53a0.054902a0a0.45098a0a0a0a0.5a0a0a0a0.15a0a0a0a0a0a0a0a0a2a1a0a0a0a146a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,
@@ -39,8 +37,7 @@ void RedesignedGauntletLayer::editForestGauntlet() {
             this->addChild(bgParticles);
         }
         // leaves 3
-        auto bgParticleNode3 = CCParticleSystemQuad::create();
-        if (bgParticleNode3) {
+        {
             CCParticleSystemQuad* bgParticles = GameToolbox::particleFromString(
                 "14a-1a3a0.45a4a-118a0a294a0a400a0a0a0a0a0a0a56a200a50a0a50a0.25a0.25a0.5a0.35a0a0a0.25a0.05a100a0a0a53a0.054902a0a0.45098a0a0a0a0.1a0a0a0a0.15a0a0a0a0a0a0a0a0a2a1a0a0a0a25a0a0a0a0a0a0a0a0a0a0a0a0a0a0",
                 NULL,

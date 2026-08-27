@@ -1,18 +1,19 @@
 # **Better Gauntlets**
-This mod aims to bring life to the Gauntlets with custom colors, fonts, QoL tweaks, and more, truly a **Better Gauntlet** experience!
+The __ultimate__ Gauntlet rewrite; bringing the Gauntlets to life! Truly giving a *Better Gauntlet* experience!
 
 ---
 
 ## Features
 - **Reworked** UI!
 - **Brand new** Navigation!
+- **New** Gauntlets!
+- And more to come!
 
 ---
 
 ## Recommendations
 These mods are recommended you download to *further enhance* the liveliness of the Gauntlets:
-- **Alphas UI Pack** by __Alphalaneous__ enables for some more freedom of movement in the Gauntlets.
-- **Gauntlets Deluxe** by __ArcticWoof__ adds Gauntlets made by the community, and there are more being added every day!
+- **Gauntlets Deluxe** by __ArcticWoof__ and __Supernova3339__
 
 ---
 
@@ -23,9 +24,9 @@ These mods are recommended you download to *further enhance* the liveliness of t
 
 ## Credits:
 
-- **[Dasshu](https://twitter.com/dasshudev)**: Coding the mod
-- **[LimeGradient](https://twitter.com/limegradient)**: Initial setup and help
-- **[Capeling](https://twitter.com/capelingg)**: Early backend development and bugfixes
+- **[Dasshu](https://twitter.com/dasshudev)**: Better Gauntlets' developer
+- **[LimeGradient](https://twitter.com/limegradient)**: Initial setup and early help
+- **[Capeling](https://twitter.com/capelingg)**: Early backend development, bugfixes, and pointing out that i'm dumb
 - **[Erymanthus](https://bsky.app/profile/erymanthus.bsky.social)**: Bugfixes
 
 ---

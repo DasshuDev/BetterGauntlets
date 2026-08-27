@@ -1,9 +1,8 @@
 #include "GauntletLayer.hpp"
-// #include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
-void RedesignedGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
+void BetterGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccColor3B bgColor, cocos2d::ccColor3B titleColor, cocos2d::ccColor3B highlightColor) {
 
     CCSize winSize = CCDirector::sharedDirector()->getWinSize();
     CCDirector* director = CCDirector::sharedDirector();
@@ -17,31 +16,27 @@ void RedesignedGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccCo
     CCLabelBMFont* shadowText = static_cast<CCLabelBMFont*>(this->getChildByID("title"));
     CCLabelBMFont* outlineText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontOutline.fnt"_spr);
     CCLabelBMFont* highlightText = CCLabelBMFont::create(std::string("The " + title + " Gauntlet").c_str(), "GR_OxygeneFontHighlight.fnt"_spr);
-    
-    titleText->setString(std::string("The " + title + " Gauntlet").c_str());
-    shadowText->setString(std::string("The " + title + " Gauntlet").c_str());
+
+    if (titleText) titleText->setString(std::string("The " + title + " Gauntlet").c_str());
+    if (shadowText) shadowText->setString(std::string("The " + title + " Gauntlet").c_str());
 
     highlightText->setID("title-highlight"_spr);
     highlightText->setFntFile("GR_OxygeneFontHighlight.fnt"_spr);
     highlightText->setScale(0.75);
     highlightText->setPosition(winSize.width / 2 + 2, winSize.height - 30);
     highlightText->setZOrder(37);
-    
+
     outlineText->setID("title-outline"_spr);
     outlineText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
     outlineText->setScale(0.75);
     outlineText->setPosition(winSize.width / 2 - 1.5, winSize.height - 30);
 
-    if (!titleText || !shadowText) {
-        return;
-    }
+    if (!titleText || !shadowText) return;
 
-    this->addChild(outlineText);    
+    this->addChild(outlineText);
     this->addChild(highlightText);
 
-    // ------------------------------------------------------------------------------------ //
-
-    // Left Corner
+    // Left Corner 
     CCNode* TLParent = CCNode::create();
     TLParent->setID("top-left"_spr);
     TLParent->setPosition(director->getScreenLeft() - 1, director->getScreenTop() + 1);
@@ -63,8 +58,6 @@ void RedesignedGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccCo
     TLHighlight->setZOrder(1);
     TLHighlight->setScaleY(TLHighlight->getScaleY() * -1);
     TLParent->addChild(TLHighlight);
-
-    // ------------------------------------------------------------------------------------ //
 
     // Right Corner 
     CCNode* TRParent = CCNode::create();
@@ -89,11 +82,9 @@ void RedesignedGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccCo
     TRHighlight->setScale(TRHighlight->getScale() * -1);
     TRParent->addChild(TRHighlight);
 
-    // ------------------------------------------------------------------------------------ //    
-
-    // Colors
+    // Apply colors 
     m_backgroundSprite->setColor(bgColor);
-    titleText->setColor(titleColor);
+    if (titleText) titleText->setColor(titleColor);
     highlightText->setColor(highlightColor);
     TLColor->setColor(titleColor);
     TRColor->setColor(titleColor);

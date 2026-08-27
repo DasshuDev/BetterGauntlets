@@ -1,5 +1,5 @@
 {
-	"geode": "5.7.0",
+	"geode": "5.9.0",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -8,24 +8,25 @@
 	},
 	"id": "dasshu.better-gauntlets",
 	"name": "Better Gauntlets",
-	"version": "v1.8.0-beta.26",
+	"version": "v2.0.0",
 	"developer": "DasshuDev",
-	"description": "Bring the Gauntlets to life!",
+	"description": "Give life to the Lost Gauntlets!",
 	"links": {
 		"source": "https://github.com/DasshuDev/BetterGauntlets",
-		"community": "https://discord.gg/F94qat6N3D",
+		"community": "https://discord.gg/hrXwujWeYW",
 		"homepage": "https://dasshu.dev/"
 	},
 	"issues": {
 		"info": "https://github.com/DasshuDev/BetterGauntlets/issues"
 	},
 	"tags": [
-		"customization", "enhancement", "interface"
+		"content", "enhancement", "gameplay", "interface", "online"
 	],
 	"resources": {
 		"files": [
 			"resources/fonts/*.fnt",
-			"resources/fonts/*.png"
+			"resources/fonts/*.png",
+			"resources/SFX/*.mp3"
 		],
 		"sprites": [
 			"resources/*.png",
@@ -41,36 +42,28 @@
 			],
 			"DialogIconSheet_001":[
 				"resources/DialogIcons/*.png"
+			],
+			"BadgeSheet_001":[
+				"resources/Badges/*.png"
+			],
+			"RewardSheet_001":[
+				"resources/GauntletSelectLayer/RewardNode/*.png"
+			],
+			"ManagerSheet":[
+				"resources/Manager/*.png"
 			]
 		}
 	},
 	"dependencies": {
-		"geode.node-ids": {"version": ">=1.19.0", "required": true},
+		"geode.node-ids": {"version": ">=1.23.3", "required": true},
 		"alphalaneous.alphas-ui-pack": {"version": ">=1.0.0", "required": true},
-		"arcticwoof.gauntlets_deluxe": {"version": ">=1.0.0", "required": false}
+		"dasshu.badgified": {"version": ">=1.0.0", "required": true}
 	},
 	"settings": {
 
 		"general": {
 			"name": "General Settings",
 			"type": "title"
-		},
-
-		"rescale-refresh-spr": {
-			"name": "Rescale Loading Circle",
-			"description": "<cg>Rescales</c> the loading circle visible when loading Gauntlet Levels. <cy>Use the arrows for better accuracy</c>!",
-			"type": "float",
-			"default": 1.0,
-			"min": 0.75,
-			"max": 1.25,
-			"control": {
-				"arrows": true,
-				"big-arrows": false,
-				"slider": true,
-				"arrow-step": 0.01,
-				"slider-step": 0.05,
-				"input": false
-			}
 		},
 
 		"enable-background-particles": {
@@ -85,15 +78,6 @@
 			"type": "title"
 		},
 
-		"gauntlet-scroll": {
-			"name": "Gauntlets Scroll",
-			"description": "Enables <cg>scrolling</c> on the Gauntlet Select Layer using ScrollLayer.",
-			"type": "bool",
-			"default": false,
-			"enable-if": "loaded:alphalaneous.alphas-ui-pack",
-			"enable-if-description": "This feature requires the Alphas UI Pack API."
-		},
-
 		"GauntletLayer": {
 			"name": "GauntletLayer",
 			"type": "title"
@@ -101,7 +85,7 @@
 
 		"level-hover": {
 			"name": "Islands Hover",
-			"description": "Gauntlet Islands will have a <cg>hovering animation</c>.",
+			"description": "Gauntlet Islands will have a <cg>hovering animation</c> when in view.",
 			"type": "bool",
 			"default": true
 		},
@@ -112,11 +96,37 @@
 			"type": "bool",
 			"default": true
 		},
-		
-		"experimental": {
-			"name": "Experimental Settings",
+
+		"developer": {
+			"name": "Developer Settings",
 			"type": "title",
-			"description": "Category used for <cr>experimental features/settings</c>."
+			"description": "Category used for <cr>experimental features/settings</c>. Best used if you are a developer or want to enable features that may cause issues. <cr>Use with caution</c>!"
+		},
+
+		"advscroll-pos-label": {
+			"name": "Adv. ScrollLayer Pos Label",
+			"description": "Enable the AdvancedScrollLayer position label. This shows, well, the position of the scroll layer. Duh.",
+			"type": "bool",
+			"default": false
+		},
+
+		"debug-reward-button": {
+			"name": "Debug Reward Button",
+			"description": "Shows a <cr>DEBUG</c> button on the Gauntlet/Custom Gauntlet screens that previews the <cg>completion popup and reward animation</c> on demand, <cy>without granting a real reward</c>.",
+			"type": "bool",
+			"default": false
+		},
+
+        "account": {
+			"name": "Account",
+			"type": "title"
+		},
+
+		"reset-stats": {
+			"name": "Reset Stats",
+			"description": "Resets your <cy>Crystal</c> and <cg>Coin</c> totals and <cc>custom Gauntlet completions</c> back to <cr>default (0)</c>, and syncs the reset to the server immediately.",
+			"type": "custom:reset-stats"
 		}
-	}
+	},
+	"early-load": true
 }

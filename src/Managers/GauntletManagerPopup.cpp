@@ -1,0 +1,896 @@
+#include "GauntletManagerPopup.hpp"
+#include "GauntletCreatorPopup.hpp"
+#include "../Data/CustomGauntletData.hpp"
+#include <argon/argon.hpp>
+
+static CustomGauntletData parseGauntletJson(matjson::Value const& g) {
+    CustomGauntletData data;
+    data.id          = g["id"].asInt().unwrapOr(0);
+    data.name        = g["name"].asString().unwrapOr("");
+    data.description = g["description"].asString().unwrapOr("");
+    data.iconURL     = g["icon_url"].asString().unwrapOr("");
+    data.bgIndex     = g["background"].asInt().unwrapOr(1);
+    data.nameColor   = {
+        (GLubyte)g["name_color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["name_color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["name_color_b"].asInt().unwrapOr(255)
+    };
+    data.nodeColor   = {
+        (GLubyte)g["node_color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["node_color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["node_color_b"].asInt().unwrapOr(255)
+    };
+    data.bgColor     = {
+        (GLubyte)g["color_r"].asInt().unwrapOr(255),
+        (GLubyte)g["color_g"].asInt().unwrapOr(255),
+        (GLubyte)g["color_b"].asInt().unwrapOr(255)
+    };
+    data.accentColor1 = {
+        (GLubyte)g["accent_color1_r"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color1_g"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color1_b"].asInt().unwrapOr(255)
+    };
+    data.accentColor2 = {
+        (GLubyte)g["accent_color2_r"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color2_g"].asInt().unwrapOr(255),
+        (GLubyte)g["accent_color2_b"].asInt().unwrapOr(255)
+    };
+    data.infoDate      = g["info_date"].asString().unwrapOr("");
+    data.infoVersion   = g["info_version"].asString().unwrapOr("");
+    data.infoSuggester = g["info_suggester"].asString().unwrapOr("");
+    data.infoAccID     = g["info_acc_id"].asInt().unwrapOr(0);
+    data.featured      = g["featured"].asBool().unwrapOr(false);
+    data.rewardCoins   = g["reward_coins"].asInt().unwrapOr(0);
+
+    if (g.contains("levels") && g["levels"].isArray()) {
+        int i = 0;
+        for (auto const& lvl : g["levels"]) {
+            if (i >= 5) break;
+            data.levels[i].id      = lvl["level_id"].asInt().unwrapOr(0);
+            data.levels[i].name    = lvl["level_name"].asString().unwrapOr("");
+            data.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+            data.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+            i++;
+        }
+    }
+
+    return data;
+}
+
+static std::vector<CustomGauntletData> parseGauntletsResponse(matjson::Value const& json) {
+    std::vector<CustomGauntletData> result;
+
+    std::unordered_map<int, std::vector<matjson::Value const*>> levelsByGauntlet;
+    if (json.contains("levels") && json["levels"].isArray()) {
+        for (auto const& lvl : json["levels"]) {
+            int gid = lvl["gauntlet_id"].asInt().unwrapOr(0);
+            if (gid) levelsByGauntlet[gid].push_back(&lvl);
+        }
+    }
+
+    if (json.contains("gauntlets") && json["gauntlets"].isArray()) {
+        for (auto const& g : json["gauntlets"]) {
+            int gid = g["id"].asInt().unwrapOr(0);
+            auto copy = g;
+            if (levelsByGauntlet.count(gid)) {
+                auto arr = matjson::Value::array();
+                for (auto* lvl : levelsByGauntlet[gid]) {
+                    arr.push(*lvl);
+                }
+                copy["levels"] = arr;
+            }
+            result.push_back(parseGauntletJson(copy));
+        }
+    }
+    return result;
+}
+
+static bool isReadyToPush(GauntletEditData const& data) {
+    if (data.name.empty()) return false;
+    if (data.description.empty()) return false;
+    if (data.iconURL.empty()) return false;
+    for (int i = 0; i < 5; i++) {
+        if (data.levels[i].id == 0) return false;
+    }
+    return true;
+}
+
+GauntletManagerPopup* GauntletManagerPopup::create() {
+    auto ret = new GauntletManagerPopup();
+    if (ret && ret->init(400, 270, "GJ_square05.png")) {
+        ret->autorelease();
+        return ret;
+    }
+    delete ret;
+    return nullptr;
+}
+
+bool GauntletManagerPopup::init(float width, float height, char const* bg) {
+    if (!Popup::init(width, height, bg)) return false;
+
+    // Title
+    auto title = CCLabelBMFont::create("Gauntlet Manager", "goldFont.fnt");
+    title->setPosition(m_size.width / 2, m_size.height - 20);
+    title->setScale(0.75);
+    m_mainLayer->addChild(title);
+
+    // Loading circle
+    m_loadingCircle = LoadingCircle::create();
+    m_loadingCircle->setPosition(m_size / 2);
+    m_loadingCircle->setVisible(false);
+    m_loadingCircle->ignoreAnchorPointForPosition(false);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+    m_mainLayer->addChild(m_loadingCircle, 10);
+
+    if (GauntletManagerAPI::get()->isLoggedIn()) {
+        loadStaged();
+        buildPanelView();
+        fetchGauntlets();
+    } else {
+        loadStaged();
+        startArgonAuth();
+    }
+
+    return true;
+}
+
+void GauntletManagerPopup::startArgonAuth() {
+    m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+
+    m_argonHolder.spawn(
+        argon::startAuth(),
+           [this](Result<std::string> result) {
+            m_loadingCircle->setVisible(false);
+
+            if (auto label = m_mainLayer->getChildByID("auth-label"))
+                label->removeFromParent();
+
+            if (!result.isOk()) {
+                Notification::create(
+                    fmt::format("Auth failed: {}", result.unwrapErr()),
+                    NotificationIcon::Error
+                )->show();
+                this->onClose(nullptr);
+                return;
+            }
+
+            auto token = std::move(result).unwrap();
+            auto accountID = GJAccountManager::sharedState()->m_accountID;
+            m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+
+            m_fetchHolder.spawn(
+                web::WebRequest()
+                    .header("Authorization", "Bearer " + token)
+                    .header("X-Account-Id", std::to_string(accountID))
+                    .get("https://bettergauntlets.dev/manage"),
+                [this, token](web::WebResponse res) {
+                    m_loadingCircle->setVisible(false);
+
+                    if (res.code() == 403) {
+                        Notification::create(
+                            "You are not a manager.", NotificationIcon::Error
+                        )->show();
+                        this->onClose(nullptr);
+                        return;
+                    }
+                    if (!res.ok()) {
+                        Notification::create(
+                            fmt::format("Server error {}", res.code()), NotificationIcon::Error
+                        )->show();
+                        this->onClose(nullptr);
+                        return;
+                    }
+
+                    GauntletManagerAPI::get()->setToken(token);
+
+                    auto json = res.json().unwrapOr(matjson::Value());
+                    m_gauntlets = parseGauntletsResponse(json);
+                    buildPanelView();
+                    buildGauntletList();
+                }
+            );
+        }
+    );
+}
+
+void GauntletManagerPopup::saveStaged() {
+    auto arr = matjson::Value::array();
+    for (auto const& g : m_staged) {
+        auto levels = matjson::Value::array();
+        for (auto const& slot : g.levels) {
+            auto lvl = matjson::Value();
+            lvl["id"]      = slot.id;
+            lvl["name"]    = slot.name;
+            lvl["creator"] = slot.creator;
+            lvl["stars"]   = slot.stars;
+            levels.push(lvl);
+        }
+        auto obj = matjson::Value();
+        obj["id"]              = g.id;
+        obj["name"]            = g.name;
+        obj["description"]     = g.description;
+        obj["iconURL"]         = g.iconURL;
+        obj["nameColor_r"]     = (int)g.nameColor.r;
+        obj["nameColor_g"]     = (int)g.nameColor.g;
+        obj["nameColor_b"]     = (int)g.nameColor.b;
+        obj["nodeColor_r"]     = (int)g.nodeColor.r;
+        obj["nodeColor_g"]     = (int)g.nodeColor.g;
+        obj["nodeColor_b"]     = (int)g.nodeColor.b;
+        obj["bgColor_r"]       = (int)g.bgColor.r;
+        obj["bgColor_g"]       = (int)g.bgColor.g;
+        obj["bgColor_b"]       = (int)g.bgColor.b;
+        obj["bgIndex"]         = g.bgIndex;
+        obj["accentColor1_r"]  = (int)g.accentColor1.r;
+        obj["accentColor1_g"]  = (int)g.accentColor1.g;
+        obj["accentColor1_b"]  = (int)g.accentColor1.b;
+        obj["accentColor2_r"]  = (int)g.accentColor2.r;
+        obj["accentColor2_g"]  = (int)g.accentColor2.g;
+        obj["accentColor2_b"]  = (int)g.accentColor2.b;
+        obj["infoDate"]        = g.infoDate;
+        obj["infoVersion"]     = g.infoVersion;
+        obj["infoSuggester"]   = g.infoSuggester;
+        obj["infoAccID"]       = g.infoAccID;
+        obj["rewardCoins"]     = g.rewardCoins;
+        obj["levels"]          = levels;
+        arr.push(obj);
+    }
+    Mod::get()->setSavedValue("staged-gauntlets", arr);
+}
+
+void GauntletManagerPopup::loadStaged() {
+    m_staged.clear();
+    auto saved = Mod::get()->getSavedValue<matjson::Value>(
+        "staged-gauntlets", matjson::Value::array()
+    );
+    if (!saved.isArray()) return;
+
+    for (auto const& obj : saved) {
+        GauntletEditData g;
+        g.id          = obj["id"].asInt().unwrapOr(0);
+        g.name        = obj["name"].asString().unwrapOr("");
+        g.description = obj["description"].asString().unwrapOr("");
+        g.iconURL     = obj["iconURL"].asString().unwrapOr("");
+        g.nameColor   = {
+            (GLubyte)obj["nameColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["nameColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["nameColor_b"].asInt().unwrapOr(255)
+        };
+        g.nodeColor   = {
+            (GLubyte)obj["nodeColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["nodeColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["nodeColor_b"].asInt().unwrapOr(255)
+        };
+        g.bgColor     = {
+            (GLubyte)obj["bgColor_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["bgColor_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["bgColor_b"].asInt().unwrapOr(255)
+        };
+        g.bgIndex     = obj["bgIndex"].asInt().unwrapOr(1);
+        g.accentColor1 = {
+            (GLubyte)obj["accentColor1_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor1_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor1_b"].asInt().unwrapOr(255)
+        };
+        g.accentColor2 = {
+            (GLubyte)obj["accentColor2_r"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor2_g"].asInt().unwrapOr(255),
+            (GLubyte)obj["accentColor2_b"].asInt().unwrapOr(255)
+        };
+        g.infoDate      = obj["infoDate"].asString().unwrapOr("");
+        g.infoVersion   = obj["infoVersion"].asString().unwrapOr("");
+        g.infoSuggester = obj["infoSuggester"].asString().unwrapOr("");
+        g.infoAccID     = obj["infoAccID"].asInt().unwrapOr(0);
+        g.rewardCoins   = obj["rewardCoins"].asInt().unwrapOr(0);
+
+        if (obj.contains("levels") && obj["levels"].isArray()) {
+            int i = 0;
+            for (auto const& lvl : obj["levels"]) {
+                if (i >= 5) break;
+                g.levels[i].id      = lvl["id"].asInt().unwrapOr(0);
+                g.levels[i].name    = lvl["name"].asString().unwrapOr("");
+                g.levels[i].creator = lvl["creator"].asString().unwrapOr("");
+                g.levels[i].stars   = lvl["stars"].asInt().unwrapOr(0);
+                i++;
+            }
+        }
+        m_staged.push_back(g);
+    }
+}
+
+void GauntletManagerPopup::buildPanelView() {
+    if (m_panelLayer) {
+        m_panelLayer->removeFromParent();
+        m_panelLayer = nullptr;
+        m_listLayer = nullptr;
+        m_listBG = nullptr;
+        m_gauntletList = nullptr;
+        m_tabMenu = nullptr;
+    }
+
+    m_panelLayer = CCLayer::create();
+    m_panelLayer->setPosition({0, 0});
+    m_panelLayer->setContentSize(m_mainLayer->getContentSize());
+    m_panelLayer->setID("panel");
+    m_mainLayer->addChild(m_panelLayer);
+
+    // New gauntlet button - top right of popup
+    auto createMenu = CCMenu::create();
+    createMenu->setPosition({m_size.width - 55, m_size.height - 20});
+    m_panelLayer->addChild(createMenu);
+
+    auto createSpr = ButtonSprite::create("Create", "bigFont.fnt", "GJ_button_01.png");
+    createSpr->setScale(0.55);
+    auto createBtn = CCMenuItemExt::createSpriteExtra(
+        createSpr,
+        [this](CCMenuItemSpriteExtra*) { onCreateNew(nullptr); }
+    );
+    createMenu->addChild(createBtn);
+
+    // List container with dark background - shrunk to leave room for the tab bar above it
+    float tabAreaHeight = 22;
+    float listHeight = m_size.height - 60 - tabAreaHeight;
+    float listCenterY = 20 + listHeight / 2;
+    m_tabBarY = 26 + listHeight + tabAreaHeight / 2;
+
+    m_listBG = NineSlice::create("square02b_001.png");
+    m_listBG->setContentSize({m_size.width - 40, listHeight});
+    m_listBG->setPosition({m_size.width / 2, listCenterY});
+    m_listBG->setColor({ 0, 0, 0 });
+    m_listBG->setOpacity(80);
+    m_panelLayer->addChild(m_listBG);
+
+    auto listOutline = NineSlice::create("GJ_square07.png");
+    listOutline->setContentSize({m_size.width - 38, listHeight + 6});
+    listOutline->setPosition({m_size.width / 2, listCenterY});
+    listOutline->setColor({67, 67, 67});
+    m_panelLayer->addChild(listOutline, 1);
+
+    auto listClip = CCClippingNode::create(m_listBG);
+    listClip->setAlphaThreshold(0);
+    m_panelLayer->addChild(listClip);
+
+    m_listLayer = CCLayer::create();
+    m_listLayer->setAnchorPoint({0, 0});
+    m_listLayer->setPosition({20, 20});
+    m_listLayer->setID("list");
+    m_listLayer->setContentSize(m_listBG->getContentSize());
+    m_listLayer->ignoreAnchorPointForPosition(false);
+    listClip->addChild(m_listLayer);
+
+    buildTabMenu();
+}
+
+void GauntletManagerPopup::buildTabMenu() {
+    if (m_tabMenu) {
+        m_tabMenu->removeFromParent();
+        m_tabMenu = nullptr;
+    }
+
+    m_tabMenu = CCMenu::create();
+    m_tabMenu->setID("tab-menu");
+    m_tabMenu->setPosition({m_size.width / 2, m_tabBarY});
+    m_tabMenu->setLayout(RowLayout::create()->setGap(6));
+    m_panelLayer->addChild(m_tabMenu);
+
+    auto makeTabBtn = [this](std::string const& text, int tab) {
+        bool active = (m_activeTab == tab);
+        auto spr = ButtonSprite::create(
+            text.c_str(), "bigFont.fnt",
+            active ? "GJ_button_02.png" : "GJ_button_05.png"
+        );
+        spr->setScale(0.5);
+        if (!active) spr->setOpacity(180);
+        return CCMenuItemExt::createSpriteExtra(spr, [this, tab](CCMenuItemSpriteExtra*) {
+            onSwitchTab(tab);
+        });
+    };
+
+    m_tabMenu->addChild(makeTabBtn(fmt::format("Published ({})", m_gauntlets.size()), 0));
+    m_tabMenu->addChild(makeTabBtn(fmt::format("Staged ({})", m_staged.size()), 1));
+    m_tabMenu->updateLayout();
+}
+
+void GauntletManagerPopup::onSwitchTab(int tab) {
+    if (m_activeTab == tab) return;
+    m_activeTab = tab;
+    buildGauntletList();
+}
+
+void GauntletManagerPopup::fetchGauntlets() {
+    m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+
+    m_fetchHolder.spawn(
+        GauntletManagerAPI::get()->fetchAll(),
+        [this](web::WebResponse res) {
+            m_loadingCircle->setVisible(false);
+
+            // Token expired - clear it and re-authenticate
+            if (res.code() == 401 || res.code() == 403) {
+                GauntletManagerAPI::get()->setToken("");
+                startArgonAuth();
+                return;
+            }
+
+            if (!res.ok()) {
+                Notification::create(
+                    fmt::format("Failed to load gauntlets. ({})", res.code()),
+                    NotificationIcon::Error
+                )->show();
+                return;
+            }
+
+            auto json = res.json().unwrapOr(matjson::Value());
+            m_gauntlets = parseGauntletsResponse(json);
+
+            buildGauntletList();
+        }
+    );
+}
+
+void GauntletManagerPopup::buildGauntletList() {
+    if (!m_listLayer) return;
+    m_rowIconHolders.clear();
+    m_listLayer->removeAllChildren();
+
+    m_gauntletList = CCMenu::create();
+    m_gauntletList->setID("gauntlet-list");
+    m_gauntletList->setAnchorPoint({0.5, 1});
+    m_gauntletList->setContentSize({m_listLayer->getContentWidth(), 0});
+    m_gauntletList->setLayout(ColumnLayout::create()
+        ->setGap(0)
+        ->setAutoGrowAxis(true)
+        ->setAutoScale(false)
+        ->setAxisAlignment(AxisAlignment::End)
+    );
+
+    auto scroll = ScrollLayer::create(m_listLayer->getContentSize(), true, true);
+    scroll->m_contentLayer->addChild(m_gauntletList);
+
+    m_listLayer->addChild(scroll);
+
+    if (m_activeTab == 0) {
+        for (auto const& g : m_gauntlets) {
+            buildGauntletRow(g);
+        }
+    } else {
+        for (int i = 0; i < (int)m_staged.size(); i++) {
+            buildStagedRow(m_staged[i], i);
+        }
+    }
+
+    m_gauntletList->updateLayout();
+    
+    scroll->m_contentLayer->setContentSize({m_listLayer->getContentWidth(), m_gauntletList->getContentHeight()});
+
+    m_gauntletList->setPosition({m_listLayer->getContentWidth() / 2, scroll->m_contentLayer->getContentHeight()});
+
+    scroll->moveToTop();
+
+    buildTabMenu();
+}
+
+// Already added Gauntlets
+
+struct RowChrome {
+    CCNode* row;
+    CCNode* iconNode;
+    CCMenu* actionMenu;
+};
+
+static RowChrome buildRowChrome(
+    float listWidth, ccColor3B nodeColor, ccColor3B nameColor,
+    std::string const& name, std::string const& description
+) {
+    auto row = CCNode::create();
+    row->setContentSize({listWidth, 60});
+
+    // Background with gauntlet's node color
+    auto accent1 = CCScale9Sprite::create("square.png");
+    accent1->setContentSize(row->getContentSize());
+    accent1->setColor(nodeColor);
+    accent1->setAnchorPoint({0, 0});
+    row->addChild(accent1);
+
+    // Gradient overlay with name color
+    auto accent2 = CCLayerGradient::create(
+        {nameColor.r, nameColor.g, nameColor.b, 0},
+        {nameColor.r, nameColor.g, nameColor.b, 120}
+    );
+    accent2->setVector({1, 0});
+    accent2->setContentSize(row->getContentSize());
+    accent2->setAnchorPoint({1, 0});
+    row->addChild(accent2);
+
+    // Icon placeholder - filled async by loadRowIcon()
+    auto iconNode = CCNode::create();
+    iconNode->setID("icon-node");
+    iconNode->setContentSize({50, 50});
+    iconNode->setPosition({30, row->getContentHeight() / 2});
+    iconNode->setAnchorPoint({0.5, 0.5});
+    row->addChild(iconNode);
+
+    // Name with gauntlet's name color
+    auto nameLabel = CCLabelBMFont::create(fmt::format("{} Gauntlet", name).c_str(), "bigFont.fnt");
+    nameLabel->setScale(0.575);
+    nameLabel->setID("gauntlet-name");
+    nameLabel->setColor(nameColor);
+    nameLabel->setAnchorPoint({0, 0.5});
+    nameLabel->setPosition({58, row->getContentHeight() / 2 + 17.5f});
+    row->addChild(nameLabel, 1);
+
+    auto nameShadow = CCLabelBMFont::create(fmt::format("{} Gauntlet", name).c_str(), "bigFont.fnt");
+    nameShadow->setScale(0.575);
+    nameShadow->setID("gauntlet-name-shadow");
+    nameShadow->setColor({0, 0, 0});
+    nameShadow->setOpacity(60);
+    nameShadow->setAnchorPoint({0, 0.5});
+    nameShadow->setPosition({nameLabel->getPositionX() + 2, nameLabel->getPositionY() - 2});
+    row->addChild(nameShadow, 0);
+
+    auto descBox = NineSlice::create("square02b_small.png");
+    descBox->setContentSize({185, 25});
+    descBox->setAnchorPoint({0, 0});
+    descBox->setPosition(nameLabel->getPositionX(), row->getContentHeight() / 2 - 22.5);
+    descBox->setColor({0, 0, 0});
+    descBox->setOpacity(80);
+    row->addChild(descBox);
+
+    auto descriptionArea = TextArea::create(
+        description,
+        "chatFont.fnt",
+        0.5,
+        160,
+        {0, 0.5},
+        7.5,
+        false
+    );
+    descriptionArea->setAnchorPoint({0, 0});
+    descriptionArea->setContentSize({180, 20});
+    descriptionArea->setPosition({descBox->getPositionX() + 2.5f, (descBox->getPositionY() + descBox->getContentHeight() / 2)});
+    row->addChild(descriptionArea);
+
+    auto actionMenu = CCMenu::create();
+    actionMenu->setAnchorPoint({1, 0.5});
+    actionMenu->setPosition({row->getContentWidth() - 12, row->getContentHeight() / 2});
+    actionMenu->setLayout(RowLayout::create()->setGap(5)->setAxisAlignment(AxisAlignment::End));
+    row->addChild(actionMenu);
+
+    return {row, iconNode, actionMenu};
+}
+
+void GauntletManagerPopup::loadRowIcon(CCNode* iconNode, std::string const& iconURL) {
+    if (iconURL.empty()) return;
+
+    m_rowIconHolders.emplace_back();
+    m_rowIconHolders.back().spawn(
+        web::WebRequest().get(iconURL),
+        [iconNode](web::WebResponse res) {
+            if (!res.ok()) return;
+            auto bytes = res.data();
+            queueInMainThread([iconNode, bytes]() {
+                if (!iconNode) return;
+                auto img = new CCImage();
+                if (!img->initWithImageData(
+                        const_cast<unsigned char*>(bytes.data()), bytes.size())) {
+                    delete img; return;
+                }
+                auto tex = new CCTexture2D();
+                tex->initWithImage(img);
+                delete img;
+                auto icon = CCSprite::createWithTexture(tex);
+                auto iconShadow = CCSprite::createWithTexture(tex);
+                tex->release();
+                icon->setScale(iconNode->getContentHeight() * 1.15 / icon->getContentHeight() * 1.15);
+                icon->setPosition(iconNode->getContentSize() / 2);
+                icon->setAnchorPoint({0.5, 0.5});
+                iconShadow->setScaleX(icon->getScaleX());
+                iconShadow->setScaleY(icon->getScaleY() * 1.2);
+                iconShadow->setPosition({icon->getPositionX(), icon->getPositionY() - 5});
+                iconShadow->setAnchorPoint({0.5, 0.5});
+                iconShadow->setColor({0, 0, 0});
+                iconShadow->setOpacity(50);
+                if (auto ph = iconNode->getChildByID("icon-placeholder"))
+                    ph->removeFromParent();
+                iconNode->addChild(icon, 1);
+                iconNode->addChild(iconShadow, 0);
+            });
+        }
+    );
+}
+
+CCMenuItemToggler* GauntletManagerPopup::createFeatureToggle(bool featured, int gauntletId) {
+    auto on = CCSprite::createWithSpriteFrameName("GJ_starsIcon_001.png");
+    auto off = CCSpriteGrayscale::createWithSpriteFrameName("GJ_starsIcon_001.png");
+    off->setColor({0, 0, 0});
+    off->setOpacity(100);
+
+    auto toggle = CCMenuItemExt::createToggler(
+        on,
+        off,
+        [this, gauntletId](CCMenuItemToggler*) { onToggleFeatured(gauntletId); }
+    );
+    toggle->toggle(featured);
+    return toggle;
+}
+
+void GauntletManagerPopup::buildGauntletRow(CustomGauntletData const& g) {
+    auto chrome = buildRowChrome(
+        m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
+    );
+
+    int gid = g.id;
+
+    // Check if this gauntlet has a staged update pending
+    int stagedIndex = -1;
+    for (int si = 0; si < (int)m_staged.size(); si++) {
+        if (m_staged[si].id == gid) { stagedIndex = si; break; }
+    }
+
+    if (stagedIndex >= 0 && isReadyToPush(m_staged[stagedIndex])) {
+        auto updateSpr = CCSprite::createWithSpriteFrameName("GR_updateBtn_001.png"_spr);
+        updateSpr->setScale(0.85);
+        auto updateBtn = CCMenuItemExt::createSpriteExtra(updateSpr,
+            [this, stagedIndex](CCMenuItemSpriteExtra*) { onPushStaged(stagedIndex); });
+        chrome.actionMenu->addChild(updateBtn);
+    }
+
+    auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
+    editSpr->setScale(0.85);
+    auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
+        [this, gid](CCMenuItemSpriteExtra*) { onEdit(gid); });
+    chrome.actionMenu->addChild(editBtn);
+
+    auto delSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+    delSpr->setScale(0.85);
+    auto delBtn = CCMenuItemExt::createSpriteExtra(delSpr,
+        [this, gid](CCMenuItemSpriteExtra*) { onDelete(gid); });
+    chrome.actionMenu->addChild(delBtn);
+
+    chrome.actionMenu->updateLayout();
+
+    auto featureMenu = CCMenu::create();
+    featureMenu->setID("feature-menu"_spr);
+    featureMenu->setPosition({10, chrome.row->getContentHeight() - 8});
+    auto featureToggle = createFeatureToggle(g.featured, gid);
+    featureToggle->setScale(0.45);
+    featureMenu->addChild(featureToggle);
+    chrome.row->addChild(featureMenu, 2);
+
+    m_gauntletList->addChild(chrome.row);
+
+    loadRowIcon(chrome.iconNode, g.iconURL);
+}
+
+void GauntletManagerPopup::onEdit(int gauntletId) {
+    auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
+        [gauntletId](auto const& g) { return g.id == gauntletId; });
+    if (it == m_gauntlets.end()) return;
+
+    GauntletEditData data;
+    data.id            = it->id;
+    data.name          = it->name;
+    data.description   = it->description;
+    data.iconURL       = it->iconURL;
+    data.bgIndex       = it->bgIndex;
+    data.nameColor     = it->nameColor;
+    data.nodeColor     = it->nodeColor;
+    data.bgColor       = it->bgColor;
+    data.accentColor1  = it->accentColor1;
+    data.accentColor2  = it->accentColor2;
+    data.infoDate      = it->infoDate;
+    data.infoVersion   = it->infoVersion;
+    data.infoSuggester = it->infoSuggester;
+    data.infoAccID     = it->infoAccID;
+    data.rewardCoins   = it->rewardCoins;
+    for (int i = 0; i < 5; i++) {
+        data.levels[i].id      = it->levels[i].id;
+        data.levels[i].name    = it->levels[i].name;
+        data.levels[i].creator = it->levels[i].creator;
+        data.levels[i].stars   = it->levels[i].stars;
+    }
+
+    GauntletCreatorPopup::create(data, [this, gauntletId](GauntletEditData const& updated) {
+        // Remove any previous staged update for this gauntlet
+        m_staged.erase(
+            std::remove_if(m_staged.begin(), m_staged.end(),
+                [gauntletId](auto const& s) { return s.id == gauntletId; }),
+            m_staged.end()
+        );
+        // Stage the update locally (id != 0 means it's an update, not a create)
+        m_staged.push_back(updated);
+        saveStaged();
+        buildGauntletList();
+        Notification::create(
+            fmt::format("\"{}\" update staged.", updated.name),
+            NotificationIcon::Success
+        )->show();
+    })->show();
+}
+
+void GauntletManagerPopup::onCreateNew(CCObject*) {
+    GauntletEditData empty;
+    GauntletCreatorPopup::create(empty, [this](GauntletEditData const& data) {
+        m_staged.push_back(data);
+        saveStaged();
+        buildGauntletList();
+        Notification::create(
+            fmt::format("\"{}\" staged.", data.name),
+            NotificationIcon::Success
+        )->show();
+    })->show();
+}
+
+void GauntletManagerPopup::onEditStaged(int index) {
+    if (index < 0 || index >= (int)m_staged.size()) return;
+    auto existing = m_staged[index];
+    GauntletCreatorPopup::create(existing, [this, index](GauntletEditData const& data) {
+        m_staged[index] = data;
+        saveStaged();
+        buildGauntletList();
+    })->show();
+}
+
+void GauntletManagerPopup::buildStagedRow(GauntletEditData const& g, int index) {
+    auto chrome = buildRowChrome(
+        m_gauntletList->getContentWidth(), g.nodeColor, g.nameColor, g.name, g.description
+    );
+
+    // Staged Gauntlet
+    std::string badgeFrame = g.id != 0 ? "GR_addedTag_001.png"_spr : "GR_stagedTag_001.png"_spr;
+    auto badge = CCSprite::createWithSpriteFrameName(badgeFrame.c_str());
+    badge->setScale(0.35);
+    badge->setAnchorPoint({0.5, 1});
+    badge->setPosition({10, chrome.row->getContentHeight()});
+    chrome.row->addChild(badge);
+
+    if (isReadyToPush(g)) {
+        auto pushSpr = CCSprite::createWithSpriteFrameName("GR_addBtn_001.png"_spr);
+        pushSpr->setScale(0.85);
+        auto pushBtn = CCMenuItemExt::createSpriteExtra(pushSpr,
+            [this, index](CCMenuItemSpriteExtra*) { onPushStaged(index); });
+        chrome.actionMenu->addChild(pushBtn);
+    }
+
+    auto editSpr = CCSprite::createWithSpriteFrameName("GR_editBtn_001.png"_spr);
+    editSpr->setScale(0.85);
+    auto editBtn = CCMenuItemExt::createSpriteExtra(editSpr,
+        [this, index](CCMenuItemSpriteExtra*) { onEditStaged(index); });
+    chrome.actionMenu->addChild(editBtn);
+
+    auto deleteSpr = CCSprite::createWithSpriteFrameName("GR_deleteBtn_001.png"_spr);
+    deleteSpr->setScale(0.85);
+    auto deleteBtn = CCMenuItemExt::createSpriteExtra(deleteSpr,
+        [this, index](CCMenuItemSpriteExtra*) { onDeleteStaged(index); });
+    chrome.actionMenu->addChild(deleteBtn);
+
+    chrome.actionMenu->updateLayout();
+    m_gauntletList->addChild(chrome.row);
+
+    loadRowIcon(chrome.iconNode, g.iconURL);
+}
+
+void GauntletManagerPopup::onPushStaged(int index) {
+    if (index < 0 || index >= (int)m_staged.size()) return;
+    auto data = m_staged[index];
+
+    createQuickPopup(
+        "Push Gauntlet",
+        fmt::format("Push the <cy>{} Gauntlet</c> to the server?", data.name).c_str(),
+        "Cancel", "Push",
+        [this, data, index](FLAlertLayer*, bool confirmed) {
+            if (!confirmed) return;
+            m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+
+            auto future = data.id == 0
+                ? GauntletManagerAPI::get()->create(data)
+                : GauntletManagerAPI::get()->update(data);
+
+            m_pushHolder.spawn(std::move(future), [this, index](web::WebResponse res) {
+                m_loadingCircle->setVisible(false);
+                if (!res.ok()) {
+                    log::error("Push failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
+                    Notification::create(
+                        fmt::format("Push failed: HTTP {}", res.code()),
+                        NotificationIcon::Error
+                    )->show();
+                    return;
+                }
+                m_staged.erase(m_staged.begin() + index);
+                saveStaged();
+                Notification::create("Gauntlet pushed!", NotificationIcon::Success)->show();
+                fetchGauntlets(); // refresh server list
+            });
+        }
+    );
+}
+
+void GauntletManagerPopup::onDelete(int gauntletId) {
+    createQuickPopup(
+        "Delete Gauntlet",
+        "Are you sure? This <cr>cannot</c> be undone.",
+        "Cancel", "Delete",
+        [this, gauntletId](FLAlertLayer*, bool confirmed) {
+            if (!confirmed) return;
+            m_loadingCircle->setVisible(true);
+            m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+            m_deleteHolder.spawn(
+                GauntletManagerAPI::get()->remove(gauntletId),
+                [this, gauntletId](web::WebResponse res) {
+                    m_loadingCircle->setVisible(false);
+                    if (!res.ok()) {
+                        log::error("Delete failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
+                        Notification::create(fmt::format("Delete failed. Err {}", res.code()), NotificationIcon::Error)->show();
+                        return;
+                    }
+                    // Remove from local list immediately so the UI updates
+                    m_gauntlets.erase(
+                        std::remove_if(m_gauntlets.begin(), m_gauntlets.end(),
+                            [gauntletId](auto const& g) { return g.id == gauntletId; }),
+                        m_gauntlets.end()
+                    );
+                    // Also remove any staged updates for this gauntlet
+                    m_staged.erase(
+                        std::remove_if(m_staged.begin(), m_staged.end(),
+                            [gauntletId](auto const& s) { return s.id == gauntletId; }),
+                        m_staged.end()
+                    );
+                    saveStaged();
+                    buildGauntletList();
+                    Notification::create("Gauntlet deleted.", NotificationIcon::Success)->show();
+                }
+            );
+        }
+    );
+}
+
+void GauntletManagerPopup::onToggleFeatured(int gauntletId) {
+    auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
+        [gauntletId](auto const& g) { return g.id == gauntletId; });
+    if (it == m_gauntlets.end()) return;
+    bool wasFeatured = it->featured;
+
+    m_loadingCircle->setVisible(true);
+    m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
+    m_featureHolder.spawn(
+        GauntletManagerAPI::get()->setFeatured(gauntletId),
+        [this, gauntletId, wasFeatured](web::WebResponse res) {
+            m_loadingCircle->setVisible(false);
+            if (!res.ok()) {
+                log::error("Feature failed: HTTP {} - {}", res.code(), res.string().unwrapOr(""));
+                Notification::create(fmt::format("Failed to feature. Err {}", res.code()), NotificationIcon::Error)->show();
+                return;
+            }
+            auto it = std::find_if(m_gauntlets.begin(), m_gauntlets.end(),
+                [gauntletId](auto& g) { return g.id == gauntletId; });
+            if (it != m_gauntlets.end()) it->featured = !wasFeatured;
+            Notification::create(
+                wasFeatured ? "Unfeatured" : "Featured",
+                NotificationIcon::Success,
+                0.5f
+            )->show();
+        }
+    );
+}
+
+void GauntletManagerPopup::onDeleteStaged(int index) {
+    if (index < 0 || index >= (int)m_staged.size()) return;
+    auto name = m_staged[index].name;
+
+    createQuickPopup(
+        "Remove Staged Gauntlet",
+        fmt::format("Discard the staged <cy>{} Gauntlet</c>? This <cr>cannot</c> be undone.", name).c_str(),
+        "Cancel", "Discard",
+        [this, index](FLAlertLayer*, bool confirmed) {
+            if (!confirmed) return;
+            if (index < 0 || index >= (int)m_staged.size()) return;
+            m_staged.erase(m_staged.begin() + index);
+            saveStaged();
+            buildGauntletList();
+            Notification::create("Staged gauntlet removed.", NotificationIcon::Success)->show();
+        }
+    );
+}

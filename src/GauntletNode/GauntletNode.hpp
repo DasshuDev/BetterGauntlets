@@ -1,10 +1,15 @@
-#ifndef GAUNTLETNODE_HPP
-#define GAUNTLETNODE_HPP
-
+// GauntletNode.hpp
+#pragma once
 #include <Geode/DefaultInclude.hpp>
 #include <Geode/modify/GauntletNode.hpp>
 
 class $modify(RedesignedGauntletNode, GauntletNode) {
-    static gd::string frameForType(GauntletType);
+struct Fields {
+    cocos2d::CCLayerGradient* m_gradient = nullptr;
+    cocos2d::CCParticleSystemQuad* m_gradientParticles = nullptr;
 };
-#endif
+public:
+    static gd::string frameForType(GauntletType type);
+    void generateNode();
+
+};

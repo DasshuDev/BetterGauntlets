@@ -126,8 +126,6 @@ void LeaderboardPopup::onSwitchSort(std::string const& sortBy) {
 }
 
 void LeaderboardPopup::onClose(CCObject* sender) {
-    auto glm = GameLevelManager::get();
-    if (glm->m_userInfoDelegate == this) glm->m_userInfoDelegate = nullptr;
     Popup::onClose(sender);
 }
 
@@ -194,9 +192,6 @@ void LeaderboardPopup::fetchLeaderboard() {
 
 void LeaderboardPopup::buildList() {
     if (!m_listLayer) return;
-
-    m_iconFetchQueue.clear();
-    m_pendingIconPlayers.clear();
 
     m_listLayer->removeAllChildren();
 
@@ -273,11 +268,8 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     player->setScale(0.85);
     row->addChild(player);
 
-    auto glm = GameLevelManager::get();
-    if (auto score = glm->userInfoForAccountID(entry.accountId)) {
-        applyIcon(player, score);
-    } else {
-        queueIconFetch(entry.accountId, player);
+    if (entry.iconId > 0) {
+        applyIcon(player, entry.iconId, entry.iconType, entry.color1, entry.color2, entry.color3, entry.glow);
     }
 
     auto nameLabel = CCLabelBMFont::create(entry.username.c_str(), "goldFont.fnt");
@@ -343,70 +335,14 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     m_entryList->addChild(row);
 }
 
-void LeaderboardPopup::queueIconFetch(int accountId, SimplePlayer* player) {
-    m_pendingIconPlayers[accountId] = player;
-    m_iconFetchQueue.push_back(accountId);
-    if (!m_fetchingIcon) fetchNextIcon();
-}
-
-void LeaderboardPopup::fetchNextIcon() {
-    if (m_iconFetchQueue.empty()) {
-        m_fetchingIcon = false;
-        return;
-    }
-    m_fetchingIcon = true;
-
-    int accountId = m_iconFetchQueue.front();
-    m_iconFetchQueue.erase(m_iconFetchQueue.begin());
-
-    auto glm = GameLevelManager::get();
-    glm->m_userInfoDelegate = this;
-    glm->getGJUserInfo(accountId);
-}
-
-void LeaderboardPopup::applyIcon(SimplePlayer* player, GJUserScore* score) {
-    if (!player || !score) return;
-    int iconId = score->m_playerCube;
-    player->updatePlayerFrame(iconId, score->m_iconType);
+void LeaderboardPopup::applyIcon(SimplePlayer* player, int playerCube, IconType iconType, int color1, int color2, int color3, bool glowEnabled) {
+    if (!player) return;
+    player->updatePlayerFrame(playerCube, iconType);
 
     auto gm = GameManager::sharedState();
-    player->setColors(gm->colorForIdx(score->m_color1), gm->colorForIdx(score->m_color2));
-    if (score->m_glowEnabled) player->setGlowOutline(gm->colorForIdx(score->m_color3));
+    player->setColors(gm->colorForIdx(color1), gm->colorForIdx(color2));
+    if (glowEnabled) player->setGlowOutline(gm->colorForIdx(color3));
     else player->disableGlowOutline();
-}
-
-void LeaderboardPopup::getUserInfoFinished(GJUserScore* score) {
-    auto glm = GameLevelManager::get();
-    if (glm->m_userInfoDelegate == this) glm->m_userInfoDelegate = nullptr;
-
-    if (score) {
-        log::debug(
-            "accID={}, cube_{:03}, c1: {:03}, c2: {:03}, glow={}",
-            score->m_accountID, score->m_playerCube,
-            score->m_color1, score->m_color2, score->m_glowEnabled
-        );
-        auto it = m_pendingIconPlayers.find(score->m_accountID);
-        if (it != m_pendingIconPlayers.end()) {
-            applyIcon(it->second, score);
-            m_pendingIconPlayers.erase(it);
-        } else {
-            log::debug("no pending row waiting for accID={}", score->m_accountID);
-        }
-    } else {
-        log::debug("getUserInfoFinished called with a null score");
-    }
-
-    fetchNextIcon();
-}
-
-void LeaderboardPopup::getUserInfoFailed(int accountId) {
-    auto glm = GameLevelManager::get();
-    if (glm->m_userInfoDelegate == this) glm->m_userInfoDelegate = nullptr;
-
-    log::warn("LeaderboardPopup: getUserInfoFailed for accountId={}", accountId);
-
-    m_pendingIconPlayers.erase(accountId);
-    fetchNextIcon();
 }
 
 void LeaderboardPopup::onInfo(CCObject*) {

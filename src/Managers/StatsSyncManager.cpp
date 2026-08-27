@@ -18,9 +18,17 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
     int accountId = account.accountId;
     std::string username = account.username;
 
+    auto gm = GameManager::sharedState();
+    IconType iconType = gm->m_playerIconType;
+    int iconId = gm->activeIconForType(iconType);
+    int color1 = gm->getPlayerColor();
+    int color2 = gm->getPlayerColor2();
+    int color3 = gm->getPlayerGlowColor();
+    bool glow  = gm->getPlayerGlow();
+
     m_argonHolder.spawn(
         argon::startAuth(account),
-        [this, accountId, username, crystals, coins, callback](Result<std::string> result) {
+        [this, accountId, username, crystals, coins, iconId, iconType, color1, color2, color3, glow, callback](Result<std::string> result) {
             if (!result.isOk()) {
                 auto err = result.unwrapErr();
                 log::warn("StatsSyncManager: auth failed - {}", err);
@@ -30,7 +38,10 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
             auto token = std::move(result).unwrap();
 
             m_pushHolder.spawn(
-                StatsAPI::get()->push(accountId, username, token, crystals, coins),
+                StatsAPI::get()->push(
+                    accountId, username, token, crystals, coins,
+                    iconId, static_cast<int>(iconType), color1, color2, color3, glow
+                ),
                 [callback](web::WebResponse res) {
                     if (!res.ok()) {
                         auto err = fmt::format("HTTP {}", res.code());
@@ -42,10 +53,6 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
                         return;
                     }
 
-                    // the server reconciles via GREATEST(local, server) and returns
-                    // that in the response - apply it back so a lower value pushed
-                    // from this device (or a higher one already on the server from
-                    // another device) doesn't leave the local totals stale.
                     auto json = res.json().unwrapOr(matjson::Value());
                     auto manager = CustomGauntletManager::get();
                     manager->setCrystalTotal(json["crystals"].asInt().unwrapOr(manager->getCrystalTotal()));

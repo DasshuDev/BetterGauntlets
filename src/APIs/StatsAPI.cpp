@@ -11,12 +11,19 @@ std::string StatsAPI::baseURL() {
 
 web::WebFuture StatsAPI::push(
     int accountId, std::string const& username, std::string const& token,
-    int crystals, int coins
+    int crystals, int coins,
+    int iconId, int iconType, int color1, int color2, int color3, bool glow
 ) {
     auto body = matjson::Value();
-    body["username"] = username;
-    body["crystals"] = crystals;
-    body["coins"]    = coins;
+    body["username"]  = username;
+    body["crystals"]  = crystals;
+    body["coins"]     = coins;
+    body["icon_id"]   = iconId;
+    body["icon_type"] = iconType;
+    body["color1"]    = color1;
+    body["color2"]    = color2;
+    body["color3"]    = color3;
+    body["glow"]      = glow;
 
     return web::WebRequest()
         .header("Content-Type", "application/json")

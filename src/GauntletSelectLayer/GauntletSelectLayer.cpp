@@ -704,12 +704,19 @@ void BetterGauntletSelectLayer::onPlay(CCObject *sender) {
 
         return;
     }
-
+    
     m_exiting = true;
     saveScrollPos();
 
     auto scene = BetterGauntletLayer::scene(type);
-    if (scene) CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+    if (scene) {
+        if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+            scene->setUserFlag("from-redash"_spr, true);
+            CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, scene));
+        } else {
+            CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, scene));
+        }
+    }
     else m_exiting = false;
 }
 
@@ -723,9 +730,15 @@ void BetterGauntletSelectLayer::keyBackClicked() {
 
 void BetterGauntletSelectLayer::onBack(CCObject *sender) {
     if (m_exiting) return;
-    m_exiting = true;
+  m_exiting = true;
     s_scrollLocation = 0;
     s_showCustomList = false;
+
+    if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+        CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
+        return;
+    }
+
     auto scene = CreatorLayer::scene();
     CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
 }
@@ -929,9 +942,13 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         auto node =
             CustomGauntletNode::create(data, [](CustomGauntletData const &tapped) {
             auto sc = CustomGauntletLayer::scene(tapped);
-            if (sc)
-                CCDirector::sharedDirector()->replaceScene(
-                    CCTransitionFade::create(0.5f, sc));
+            if (!sc) return;
+            if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+                sc->setUserFlag("from-redash"_spr, true);
+                CCDirector::sharedDirector()->pushScene(CCTransitionFade::create(0.5f, sc));
+            } else {
+                CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, sc));
+            }
             });
         if (!node) continue;
 

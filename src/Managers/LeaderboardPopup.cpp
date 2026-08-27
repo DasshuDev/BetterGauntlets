@@ -231,7 +231,6 @@ void LeaderboardPopup::buildList() {
 
 void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float listWidth) {
     auto row = CCNode::create();
-    auto inset = 0;
     row->setContentSize({listWidth, 55});
 
     auto rowBG = CCScale9Sprite::create("square.png");
@@ -254,16 +253,13 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     else if (rank <= 24) trophy = "rankIcon_top500_001.png";
     else if (rank <= 49) trophy = "rankIcon_top2500_001.png";
 
-    auto gradient = NineSlice::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    gradient->setInsetTop(inset);
-    gradient->setInsetLeft(inset);
-    gradient->setInsetRight(inset);
-    gradient->setInsetBottom(inset);
-    gradient->setPositionX(-75);
-    gradient->setColor({rankColor.r, rankColor.g, rankColor.b});
-    gradient->setOpacity(rankColor.a);
+    auto gradient = CCLayerGradient::create(
+        {rankColor.r, rankColor.g, rankColor.b, 0},
+        {rankColor.r, rankColor.g, rankColor.b, rankColor.a}
+    );
+    gradient->setVector({1, 0});
     gradient->setContentSize(row->getContentSize());
-    gradient->setAnchorPoint({1, 1});
+    gradient->setAnchorPoint({0.5, 0.5});
     gradient->setRotation(180);
     row->addChild(gradient);
 

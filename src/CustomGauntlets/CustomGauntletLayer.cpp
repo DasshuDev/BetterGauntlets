@@ -702,6 +702,12 @@ void CustomGauntletLayer::onBack(CCObject*) {
         if (glm->m_levelManagerDelegate == this)
             glm->m_levelManagerDelegate = nullptr;
     if (m_loadedLevels) { m_loadedLevels->release(); m_loadedLevels = nullptr; }
+
+    if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+        CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
+        return;
+    }
+
     auto scene = BetterGauntletSelectLayer::scene();
     if (scene) {
         CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));
@@ -717,6 +723,9 @@ void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto lil   = LevelInfoLayer::create(level, false);
     auto scene  = CCScene::create();
     scene->addChild(lil);
+    if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+        scene->setUserFlag("from-redash"_spr, true);
+    }
     CCDirector::get()->pushScene(CCTransitionFade::create(0.5, scene));
 }
 

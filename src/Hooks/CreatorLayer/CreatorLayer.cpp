@@ -28,6 +28,7 @@ void BGCreatorLayer::onGauntlets(CCObject* sender) {
     if (scene) {
         auto node = typeinfo_cast<CCNode*>(sender);
         if (node && (node->getTag() == 20260814 || node->getUserFlag("please-set-from-redash"_spr))) {
+            scene->setUserFlag("from-redash"_spr, true);
             CCDirector::get()->pushScene(CCTransitionFade::create(0.5, scene));
         } else {
             CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, scene));

@@ -1,6 +1,0 @@
-TODO:
-
-- create completion animation for gauntlets, reward player *within* gauntletlayer
-- gauntlet completion sync (?)
-
-lock in, jay

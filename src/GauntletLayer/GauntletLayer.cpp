@@ -451,21 +451,11 @@ void BetterGauntletLayer::editGauntlets() {
     float posY = 50;
 
     switch (i + 1) {
-    case 1:
-      btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY);
-      break;
-    case 2:
-      btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY);
-      break;
-    case 3:
-      btn->setPosition(winSize.width / 2, winSize.height / 2 - posY);
-      break;
-    case 4:
-      btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY);
-      break;
-    case 5:
-      btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY);
-      break;
+    case 1: btn->setPosition(winSize.width / 2 - posFarX, winSize.height / 2 - posY); break;
+    case 2: btn->setPosition(winSize.width / 2 - posCloseX, winSize.height / 2 + posY); break;
+    case 3: btn->setPosition(winSize.width / 2, winSize.height / 2 - posY); break;
+    case 4: btn->setPosition(winSize.width / 2 + posCloseX, winSize.height / 2 + posY); break;
+    case 5: btn->setPosition(winSize.width / 2 + posFarX, winSize.height / 2 - posY); break;
     }
 
     m_levelsMenu->addChild(btn);
@@ -526,11 +516,13 @@ void BetterGauntletLayer::checkGauntletCompletion() {
 
   int key = static_cast<int>(m_gauntletType);
   auto it = s_lastKnownGauntletCompletion.find(key);
-  // no baseline yet this session, so an already-finished gauntlet doesn't replay the popup on first open
   bool wasComplete = it != s_lastKnownGauntletCompletion.end() ? it->second : isComplete;
   s_lastKnownGauntletCompletion[key] = isComplete;
 
-  if (!isComplete || wasComplete) return; // only fire on the incomplete->complete flip
+  if (!isComplete) return;
+
+  bool rewardUnclaimed = !GameStatsManager::sharedState()->isGauntletChestUnlocked(key);
+  if (wasComplete && !rewardUnclaimed) return;
 
   auto titleLabel = static_cast<CCLabelBMFont *>(getChildByID("title-shadow"));
   auto highlightLabel = static_cast<CCLabelBMFont *>(getChildByID("title-highlight"_spr));
@@ -538,7 +530,6 @@ void BetterGauntletLayer::checkGauntletCompletion() {
   ccColor3B titleColor = titleLabel ? titleLabel->getColor() : ccWHITE;
   ccColor3B highlightColor = highlightLabel ? highlightLabel->getColor() : ccWHITE;
 
-  // added directly instead of via show(), which attaches to the transition node during a scene transition
   if (auto popup = GauntletCompletionPopup::create(m_gauntletType, titleColor, highlightColor)) {
     this->addChild(popup, 1000);
   }
@@ -739,29 +730,23 @@ void BetterGauntletLayer::onInfo(CCObject *sender) {
   MDPopup *popup =
       MDPopup::create(("The " + gauntletName + " Gauntlet").c_str(), gauntletDesc.c_str(), "OK");
 
-  std::string date =
-      fmt::format("Released on: {}", getGauntletDate(m_gauntletType));
-  std::string version =
-      fmt::format("Version: {}", getGauntletVersion(m_gauntletType));
-  std::string infoCredit =
-      fmt::format("Description by: {}", getGauntletInfoCredits(m_gauntletType));
+  std::string date = fmt::format("Released on: {}", getGauntletDate(m_gauntletType));
+  std::string version = fmt::format("Version: {}", getGauntletVersion(m_gauntletType));
+  std::string infoCredit = fmt::format("Description by: {}", getGauntletInfoCredits(m_gauntletType));
 
-  CCLabelBMFont *releaseDate =
-      CCLabelBMFont::create(date.c_str(), "chatFont.fnt");
+  CCLabelBMFont *releaseDate = CCLabelBMFont::create(date.c_str(), "chatFont.fnt");
   releaseDate->setPosition(383.5, 25);
   releaseDate->setScale(0.5);
   releaseDate->setAnchorPoint(ccp(1, 0));
   releaseDate->setOpacity(51);
 
-  CCLabelBMFont *releaseVer =
-      CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
+  CCLabelBMFont *releaseVer = CCLabelBMFont::create(version.c_str(), "chatFont.fnt");
   releaseVer->setPosition(383.5, 15);
   releaseVer->setScale(0.5);
   releaseVer->setAnchorPoint(ccp(1, 0));
   releaseVer->setOpacity(51);
 
-  CCLabelBMFont *credit =
-      CCLabelBMFont::create(infoCredit.c_str(), "chatFont.fnt");
+  CCLabelBMFont *credit = CCLabelBMFont::create(infoCredit.c_str(), "chatFont.fnt");
   credit->setPosition(15.5, 15);
   credit->setScale(0.5);
   credit->setAnchorPoint(ccp(0, 0));
@@ -779,12 +764,20 @@ void BetterGauntletLayer::onInfo(CCObject *sender) {
 
 // Callbacks
 
-void BetterGauntletLayer::keyBackClicked() { onBack(nullptr); }
+void BetterGauntletLayer::keyBackClicked() {
+  onBack(nullptr);
+}
 
 void BetterGauntletLayer::onBack(CCObject *sender) {
   if (m_exiting)
     return;
   m_exiting = true;
+
+  if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+    CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
+    return;
+  }
+
   auto scene = BetterGauntletSelectLayer::scene();
   if (scene) {
     CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
@@ -819,6 +812,9 @@ void BetterGauntletLayer::onLevel(CCObject *sender) {
   auto lil = LevelInfoLayer::create(levelNode, false);
   auto scene = CCScene::create();
   scene->addChild(lil);
+  if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+    scene->setUserFlag("from-redash"_spr, true);
+  }
   CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
 }
 

@@ -109,8 +109,6 @@ bool CustomGauntletNode::init(
     m_rewardNode->addChild(m_rewardLabel, 1);
     m_rewardNode->addChild(m_rewardLabelShadow, 0);
 
-    // Completion Badge - counts levels completed *through the gauntlet*
-    // (crystal reward claimed), not just completed some other way.
     int completed = 0;
     for (auto const& slot : data.levels) {
         if (slot.id == 0) continue;
@@ -142,9 +140,13 @@ bool CustomGauntletNode::init(
     gradientClip->setPosition({55, 117});
     sprite->addChild(gradientClip);
 
-    auto gradient = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    gradient->setColor(data.nameColor);
-    gradient->setOpacity(128);
+    auto gradient = CCLayerGradient::create(
+        {data.nameColor.r, data.nameColor.g, data.nameColor.b, 0},
+        {data.nameColor.r, data.nameColor.g, data.nameColor.b, 128}
+    );
+    gradient->setVector({1, 0});
+    gradient->setContentSize(sprite->getContentSize());
+    gradient->setAnchorPoint({0.5, 0.5});
     gradient->setPositionY(-35);
     gradient->setScaleX(1.5);
     gradient->setScaleY(2);

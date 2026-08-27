@@ -42,10 +42,13 @@ class $modify(GauntletLayerRedirect, GauntletLayer) {
     if (!GauntletLayer::init(type))
       return false;
     auto t = type;
-    Loader::get()->queueInMainThread([t]() {
+    bool fromRedash = CCScene::get() && CCScene::get()->getUserFlag("from-redash"_spr);
+    Loader::get()->queueInMainThread([t, fromRedash]() {
       auto s = BetterGauntletLayer::scene(t);
-      if (s)
+      if (s) {
+        if (fromRedash) s->setUserFlag("from-redash"_spr, true);
         CCDirector::get()->replaceScene(CCTransitionFade::create(0.5, s));
+      }
     });
     return true;
   }
@@ -137,6 +140,10 @@ class $modify(GauntletLevelInfoLayer, LevelInfoLayer) {
               m_level ? m_level->m_gauntletLevel : false);
 
     if (m_level && m_level->m_gauntletLevel) {
+      if (CCScene::get()->getUserFlag("from-redash"_spr)) {
+        CCDirector::get()->popSceneWithTransition(.5f, kPopTransitionFade);
+        return;
+      }
       auto type = findGauntletTypeForLevel(m_level->m_levelID.value());
       log::info("[GauntletRedirect] Redirecting to type {}", (int)type);
       auto scene = BetterGauntletLayer::scene(type);

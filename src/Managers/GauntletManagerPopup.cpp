@@ -495,13 +495,13 @@ static RowChrome buildRowChrome(
     row->addChild(accent1);
 
     // Gradient overlay with name color
-    auto accent2 = CCSprite::createWithSpriteFrameName("GR_pureGradient_001.png"_spr);
-    accent2->setScaleX(2.5);
-    accent2->setScaleY(0.475);
-    accent2->setColor(nameColor);
-    accent2->setOpacity(120);
+    auto accent2 = CCLayerGradient::create(
+        {nameColor.r, nameColor.g, nameColor.b, 0},
+        {nameColor.r, nameColor.g, nameColor.b, 120}
+    );
+    accent2->setVector({1, 0});
+    accent2->setContentSize(row->getContentSize());
     accent2->setAnchorPoint({1, 0});
-    accent2->setPosition({row->getContentWidth(), 0});
     row->addChild(accent2);
 
     // Icon placeholder - filled async by loadRowIcon()

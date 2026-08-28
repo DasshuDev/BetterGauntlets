@@ -2,6 +2,7 @@
 #include <Geode/modify/LoadingLayer.hpp>
 #include "../../APIs/GauntletManagerCache.hpp"
 #include "../../Data/CustomGauntletManager.hpp"
+#include "../../Managers/StatsSyncManager.hpp"
 
 using namespace geode::prelude;
 
@@ -11,6 +12,9 @@ class $modify(GRLoadingLayer, LoadingLayer) {
 
         GauntletManagerCache::get()->warm();
         CustomGauntletManager::get()->warm();
+
+        auto* mgr = CustomGauntletManager::get();
+        StatsSyncManager::get()->sync(mgr->getCrystalTotal(), mgr->getCoinTotal());
 
         auto accountID = GJAccountManager::get()->m_accountID;
         GauntletManagerCache::get()->isManager(accountID, [accountID](bool isManager) {

@@ -10,7 +10,8 @@ public:
 
     web::WebFuture push(
         int accountId, std::string const& username, std::string const& token,
-        int crystals, int coins
+        int crystals, int coins,
+        int iconId, int iconType, int color1, int color2, int color3, bool glow
     );
 
     web::WebFuture resetSelf(int accountId, std::string const& token);

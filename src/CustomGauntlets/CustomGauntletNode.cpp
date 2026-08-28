@@ -27,9 +27,6 @@ bool CustomGauntletNode::init(
     sprite->setContentSize({110, 234});
     sprite->setAnchorPoint({0.5, 0.5});
     sprite->setID("gauntlet-container"_spr);
-#if defined(GEODE_IS_ANDROID) || defined(GEODE_IS_IOS)
-    sprite->setScale(0.5f);
-#endif
 
     auto node = NineSlice::create("GR_squareB_01.png"_spr);
     node->setContentSize({110, 220});
@@ -258,6 +255,15 @@ void CustomGauntletNode::applyIconTexture(CCTexture2D* tex) {
 
     icon->setID("gauntlet-icon");
     icon->setPosition({container->getContentWidth() / 2, container->getContentHeight() / 2 + 15});
+    float iconScale = 1.f;
+#if defined(GEODE_IS_ANDROID) || defined(GEODE_IS_IOS)
+    iconScale = 0.5f;
+#endif
+    switch (CCDirector::sharedDirector()->getLoadedTextureQuality()) {
+        case kTextureQualityMedium: iconScale /= 2.f; break;
+        case kTextureQualityLow:    iconScale /= 4.f; break;
+        default: break; // kTextureQualityHigh keeps the high-res scale (i cant believe i forgot this)
+    }
 
     shadow->setScaleX(icon->getScaleX());
     shadow->setScaleY(icon->getScaleY() * 1.2);
@@ -265,6 +271,9 @@ void CustomGauntletNode::applyIconTexture(CCTexture2D* tex) {
     shadow->setColor({0, 0, 0});
     shadow->setOpacity(50);
     shadow->setPosition({icon->getPositionX(), icon->getPositionY() - 10});
+
+    icon->setScale(iconScale);
+    shadow->setScale(iconScale);
 
     if (auto ph = container->getChildByIDRecursive("icon-placeholder")) ph->removeFromParent();
     if (auto phs = container->getChildByIDRecursive("icon-placeholder-shadow")) phs->removeFromParent();

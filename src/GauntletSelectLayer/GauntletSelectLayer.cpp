@@ -1036,7 +1036,8 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Fire)
+            // static_cast<int>(GauntletType::Fire) // (debugging only)
+            static_cast<int>(GauntletType::Doom)
         );
     }
 

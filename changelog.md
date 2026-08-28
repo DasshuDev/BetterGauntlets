@@ -1,4 +1,9 @@
-# <cc>v2.0.2</c>
+# <cc>v2.0.3</c>
+- <c-c4ebff><cl>**Fixed**</c> mod not loading on start and/or crashing the game.</c>
+
+---
+
+## <c-ffffff>v2.0.2</c>
 - <c-c4ffc4><cg>**Added**</c>: "New Gauntlet Button Texture" setting.</c>
 - <c-ffffc4><cy>**Updated**</c> the Gauntlet Keeper's dialog images and speech.</c>
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method for real this time I hope...</c>

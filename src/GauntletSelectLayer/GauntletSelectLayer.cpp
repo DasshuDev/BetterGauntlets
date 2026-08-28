@@ -1036,7 +1036,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     bool BetterGauntletSelectLayer::isCustomListUnlocked() {
         return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            static_cast<int>(GauntletType::Fire)
+            static_cast<int>(GauntletType::Doom)
         );
     }
 
@@ -1119,7 +1119,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         std::vector<DialogObject *> GK_Dialog = {
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "You should not be here.",
+                "A newcomer...",
                 1,
                 0.85,
                 false,
@@ -1127,7 +1127,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "This is a place for the <cy>worthy</c>. <d050>Only those who have <co>overcome the challenges</c> may enter.",
+                "You should not be here. This is a place for the <cy>worthy</c>.",
                 1,
                 0.85,
                 false,
@@ -1135,7 +1135,15 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "<cr>You have not yet proven yourself to be worthy.</c>",
+                "Only those who have <co>overcome the challenges</c> may enter.",
+                1,
+                0.85,
+                false,
+                ccWHITE
+            ),
+            DialogObject::create(
+                "The Gauntlet Keeper",
+                "<cr>You have not yet proven yourself to be worthy</c>.",
                 1,
                 1,
                 false,
@@ -1167,11 +1175,12 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         if (GK_Dialog[0]) {
             DialogIcon::setDialogSequenceCustomIcons(
                 GK_Dialog, {
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_1.png"_spr,
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_1.png"_spr
+                "GKDialog_1.png"_spr,
+                "GKDialog_3.png"_spr,
+                "GKDialog_3.png"_spr,
+                "GKDialog_11.png"_spr,
+                "GKDialog_1.png"_spr,
+                "GKDialog_11.png"_spr
             });
             auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
             static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
@@ -1192,7 +1201,31 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "You must be an eager adventurer.",
+                "Those who are declared <co>conquerer</c> may step foot...",
+                1,
+                1,
+                false,
+                ccWHITE
+            ),
+            DialogObject::create(
+                "The Gauntlet Keeper",
+                "...or <d025>slide...",
+                1,
+                1,
+                false,
+                ccWHITE
+            ),
+            DialogObject::create(
+                "The Gauntlet Keeper",
+                "...Into these <cy>forgotten halls</c>.",
+                1,
+                1,
+                false,
+                ccWHITE
+            ),
+            DialogObject::create(
+                "The Gauntlet Keeper",
+                "You must be an eager adventurer...",
                 1,
                 1,
                 false,
@@ -1203,7 +1236,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
                 "An <cr>annoying</c> one at that.",
                 1,
                 0.67,
-                true,
+                false,
                 ccWHITE
             ),
             DialogObject::create(
@@ -1230,11 +1263,14 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         if (GK_Dialog[0]) {
             DialogIcon::setDialogSequenceCustomIcons(
                 GK_Dialog, {
-                "GauntletKeeper_2.png"_spr,
-                "GauntletKeeper_2.png"_spr,
-                "GauntletKeeper_4.png"_spr,
-                "GauntletKeeper_2.png"_spr,
-                "GauntletKeeper_1.png"_spr
+                "GKDialog_1.png"_spr,
+                "GKDialog_1.png"_spr,
+                "GKDialog_5.png"_spr,
+                "GKDialog_3.png"_spr,
+                "GKDialog_3.png"_spr,
+                "GKDialog_10.png"_spr,
+                "GKDialog_3.png"_spr,
+                "GKDialog_11.png"_spr
             });
             auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
             static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
@@ -1255,7 +1291,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             ),
             DialogObject::create(
                 "The Gauntlet Keeper",
-                "<cy>You. <d045>are. <d045>not. <d045>worthy.</c>",
+                "<cy>You</c>. <d045><cy>are</c>. <d045><cy>not</c>. <d045><cy>worthy</c>.",
                 1,
                 1,
                 false,
@@ -1272,6 +1308,14 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             DialogObject::create(
                 "The Gauntlet Keeper",
                 "Conquer the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+                1,
+                0.85,
+                false,
+                ccWHITE
+            ),
+            DialogObject::create(
+                "The Gauntlet Keeper",
+                "Prove to me that you are a true Gauntlet conquerer.",
                 1,
                 0.85,
                 false,
@@ -1303,12 +1347,13 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
         if (GK_Dialog[0]) {
             DialogIcon::setDialogSequenceCustomIcons(
                 GK_Dialog, {
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_1.png"_spr,
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_9.png"_spr,
-                "GauntletKeeper_1.png"_spr
+                "GKDialog_7.png"_spr,
+                "GKDialog_11.png"_spr,
+                "GKDialog_9.png"_spr,
+                "GKDialog_7.png"_spr,
+                "GKDialog_7.png"_spr,
+                "GKDialog_9.png"_spr,
+                "GKDialog_12.png"_spr
             });
             auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
             static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});

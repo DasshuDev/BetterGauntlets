@@ -1,5 +1,5 @@
 # <cc>v2.0.2</c>
-- <c-c4ffc4><cg>**Added**</c>: "Toggle New Gauntlet Button" setting.</c>
+- <c-c4ffc4><cg>**Added**</c>: "New Gauntlet Button Texture" setting.</c>
 - <c-ffffc4><cy>**Updated**</c> the Gauntlet Keeper's dialog images and speech.</c>
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method for real this time I hope...</c>
 

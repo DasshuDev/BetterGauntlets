@@ -73,9 +73,11 @@
 			"default": true
 		},
 
-		"GauntletSelectLayer": {
-			"name": "GauntletSelectLayer",
-			"type": "title"
+		"toggle-cl-sprite": {
+			"name": "New Gauntlet Button Texture",
+			"description": "Changes the button texture for the Gauntlets in CreatorLayer to showcase the Gauntlets added by <cc>Better Gauntlets</c>. Use this if you prefer the vanilla texture, or are using a texture pack.",
+			"type": "bool",
+			"default": true
 		},
 
 		"GauntletLayer": {
@@ -118,7 +120,7 @@
 		},
 
         "account": {
-			"name": "Account",
+			"name": "Account Stats",
 			"type": "title"
 		},
 

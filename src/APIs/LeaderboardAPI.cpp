@@ -29,6 +29,12 @@ std::vector<LeaderboardEntry> LeaderboardAPI::parse(matjson::Value const& json) 
         entry.username  = row["username"].asString().unwrapOr("Unknown");
         entry.crystals  = parseIntField(row["crystals"]);
         entry.coins     = parseIntField(row["coins"]);
+        entry.iconId    = parseIntField(row["icon_id"]);
+        entry.iconType  = static_cast<IconType>(parseIntField(row["icon_type"]));
+        entry.color1    = parseIntField(row["color1"]);
+        entry.color2    = parseIntField(row["color2"]);
+        entry.color3    = parseIntField(row["color3"]);
+        entry.glow      = row["glow"].asBool().unwrapOr(false);
         result.push_back(entry);
     }
     return result;

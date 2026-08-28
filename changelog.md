@@ -1,4 +1,11 @@
-# <cc>v2.0.0</c>
+# <cc>v2.0.1</c>
+- <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method.</c>
+- <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet sprites being bigger on lower-quality devices.</c>
+- <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet requirement to match Gauntlet Keeper dialog. Oops.</c>
+
+---
+
+## <c-ffffff>v2.0.0</c>
 - <c-c4ffff><cj>**Bump**</c> to Geode v5.9.0</c>
 - <c-c4ffc4><cg>**Added**</c> The Forgotten Gauntlets!</c>
     - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!

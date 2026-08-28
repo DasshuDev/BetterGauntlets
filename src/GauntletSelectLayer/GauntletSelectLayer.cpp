@@ -1177,8 +1177,8 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             DialogIcon::setDialogSequenceCustomIcons(
                 GK_Dialog, {
                 "GKDialog_1.png"_spr,
-                "GKDialog_3.png"_spr,
-                "GKDialog_3.png"_spr,
+                "GKDialog_2.png"_spr,
+                "GKDialog_2.png"_spr,
                 "GKDialog_11.png"_spr,
                 "GKDialog_1.png"_spr,
                 "GKDialog_11.png"_spr
@@ -1270,7 +1270,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
                 "GKDialog_3.png"_spr,
                 "GKDialog_3.png"_spr,
                 "GKDialog_10.png"_spr,
-                "GKDialog_3.png"_spr,
+                "GKDialog_2.png"_spr,
                 "GKDialog_11.png"_spr
             });
             auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);

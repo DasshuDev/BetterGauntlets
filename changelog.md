@@ -1,4 +1,11 @@
-# <cc>v2.0.1</c>
+# <cc>v2.0.2</c>
+- <c-c4ffc4><cg>**Added**</c>: "Toggle New Gauntlet Button" setting.</c>
+- <c-ffffc4><cy>**Updated**</c> the Gauntlet Keeper's dialog images and speech.</c>
+- <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method for real this time I hope...</c>
+
+---
+
+## <c-ffffff>v2.0.1</c>
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method.</c>
 - <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet sprites being bigger on lower-quality devices.</c>
 - <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet requirement to match Gauntlet Keeper dialog. Oops.</c>

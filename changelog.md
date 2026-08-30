@@ -1,6 +1,9 @@
 # <cc>v2.0.3</c>
-- <c-c4ebff><cl>**Fixed**</c> mod not loading on start and/or crashing the game.</c>
+- <c-c4ffc4><cg>**Added**</c> support for **[Gauntlets Deluxe]**(mod:arcticwoof.gauntlets_deluxe)!</c>
+- <c-ffc4c4><cr>**Removed**</c> the Leaderboard button ***temporarily***.</c>
 
+## Known Issues:
+- The Leaderboard is bound to rate limit the user for an hour when clicking. <cr>This is NOT intentional.</c> It has been removed until the issue can be solved.
 ---
 
 ## <c-ffffff>v2.0.2</c>

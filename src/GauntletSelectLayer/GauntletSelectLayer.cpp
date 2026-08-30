@@ -1,37 +1,47 @@
-    #include "GauntletSelectLayer.hpp"
-    #include "../APIs/GauntletManagerCache.hpp"
-    #include "../CustomGauntlets/CustomGauntletLayer.hpp"
-    #include "../CustomGauntlets/CustomGauntletNode.hpp"
-    #include "../Data/CustomGauntletManager.hpp"
-    #include "../Hooks/DialogIcons/DialogIcons.hpp"
-    #include "../Managers/GauntletManagerPopup.hpp"
-    #include "../Managers/LeaderboardPopup.hpp"
-    #include "../Managers/StatsSyncManager.hpp"
-    #include "GauntletInfoPopup.hpp"
-    #include <Geode/Geode.hpp>
-    #include <Geode/Loader.hpp>
-    #include <Geode/binding/DialogObject.hpp>
-    #include <Geode/ui/Layout.hpp>
-    #include <Geode/ui/SimpleAxisLayout.hpp>
-    #include <alphalaneous.alphas-ui-pack/include/API.hpp>
-    #include <argon/argon.hpp>
-    #include <cctype>
+#include "GauntletSelectLayer.hpp"
+#include "../APIs/GauntletManagerCache.hpp"
+#include "../CustomGauntlets/CustomGauntletLayer.hpp"
+#include "../CustomGauntlets/CustomGauntletNode.hpp"
+#include "../Data/CustomGauntletManager.hpp"
+#include "../Hooks/DialogIcons/DialogIcons.hpp"
+#include "../Managers/GauntletManagerPopup.hpp"
+#include "../Managers/LeaderboardPopup.hpp"
+#include "../Managers/StatsSyncManager.hpp"
+#include "GauntletInfoPopup.hpp"
+#include <Geode/Geode.hpp>
+#include <Geode/Loader.hpp>
+#include <Geode/binding/DialogObject.hpp>
+#include <Geode/ui/Layout.hpp>
+#include <Geode/ui/SimpleAxisLayout.hpp>
+#include <alphalaneous.alphas-ui-pack/include/API.hpp>
+#include <argon/argon.hpp>
+#include <cctype>
+// #include <Geode/Modify/GauntletSelectLayer.hpp>
 
+using namespace geode::prelude;
 
-    using namespace geode::prelude;
+// class $modify(MyGauntletSelectLayer, GauntletSelectLayer) {
+//     bool init(int unused) {
+//         if (!GauntletSelectLayer::init(int unused)) return false;
 
-    // create / scene
+//         if (auto GDX = Loader::get()->getLoadedMod("arcticwoof.gauntlets-deluxe")) {
+//             log::info("GDX installed!");
+//         }
+//     }
+// }
 
-    CCScene *BetterGauntletSelectLayer::scene() {
+// create / scene
+
+CCScene *BetterGauntletSelectLayer::scene() {
     auto layer = BetterGauntletSelectLayer::create();
     if (!layer)
         return nullptr;
     auto sc = CCScene::create();
     sc->addChild(layer);
     return sc;
-    }
+}
 
-    BetterGauntletSelectLayer::~BetterGauntletSelectLayer() {
+BetterGauntletSelectLayer::~BetterGauntletSelectLayer() {
     auto glm = GameLevelManager::get();
     if (glm->m_levelManagerDelegate == this)
         glm->m_levelManagerDelegate = nullptr;
@@ -39,9 +49,9 @@
         m_gauntletPacks->release();
         m_gauntletPacks = nullptr;
     }
-    }
+}
 
-    BetterGauntletSelectLayer *BetterGauntletSelectLayer::create() {
+BetterGauntletSelectLayer *BetterGauntletSelectLayer::create() {
     auto ret = new BetterGauntletSelectLayer();
     if (ret && ret->init()) {
         ret->autorelease();
@@ -49,11 +59,11 @@
     }
     delete ret;
     return nullptr;
-    }
+}
 
     // init
 
-    bool BetterGauntletSelectLayer::init() {
+bool BetterGauntletSelectLayer::init() {
     if (!CCLayer::init())
         return false;
 
@@ -97,11 +107,11 @@
     StatsSyncManager::get()->sync(mgr->getCrystalTotal(), mgr->getCoinTotal());
 
     return true;
-    }
+}
 
     // Background
 
-    void BetterGauntletSelectLayer::buildBackground() {
+void BetterGauntletSelectLayer::buildBackground() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
@@ -157,11 +167,11 @@
         TRCornerNew->setColor({67, 67, 67});
         this->addChild(TRCornerNew);
     }
-    }
+}
 
     // Decorations
 
-    void BetterGauntletSelectLayer::buildDecorations() {
+void BetterGauntletSelectLayer::buildDecorations() {
     auto director = CCDirector::sharedDirector();
     auto winSize = director->getWinSize();
 
@@ -210,8 +220,7 @@
     }
 
     // Background particles
-    auto enableParticles =
-        Mod::get()->getSettingValue<bool>("enable-background-particles");
+    auto enableParticles = Mod::get()->getSettingValue<bool>("enable-background-particles");
     if (enableParticles) {
         CCParticleSystemQuad *bgParticlesA = GameToolbox::particleFromString(
             "100a-1a4a2a16a90a90a0a0a300a0a128a-25a0a60a0a0a400a0a90a60a0a0a0a0a0a0a0.05a0.02a400a0a90a67a0a0a0a0a0a0a0a0.05a1a0a0.5a0a0a0a0a0a0a0a0a2a0a0a0a0a182a0a1.8a0a0a0a0a0a0a0a0a0a0a0a0",
@@ -272,15 +281,22 @@ void BetterGauntletSelectLayer::buildMenus() {
     // Top-right menu
     auto TRMenu = CCMenu::create();
     TRMenu->setID("top-right-menu");
-    TRMenu->setPosition(director->getScreenRight() - 24, 254.5);
+    TRMenu->setPosition(director->getScreenRight() - 24, director->getScreenTop() - 6.5);
     TRMenu->setContentHeight(125);
+    TRMenu->ignoreAnchorPointForPosition(false);
+    TRMenu->setAnchorPoint({0.5, 1});
+    TRMenu->setLayout(ColumnLayout::create()
+        ->setAxisReverse(false)
+        ->setAxisAlignment(AxisAlignment::Start)
+        ->setGap(5.0)
+        ->setAutoGrowAxis(true));
     this->addChild(TRMenu, 1);
 
     // Bottom-left menu (info + discord)
     auto BLMenu = CCMenu::create();
     BLMenu->setID("bottom-left-menu");
     BLMenu->setAnchorPoint({0.5, 0});
-    BLMenu->setPosition({director->getScreenLeft() + 30, 12.5});
+    BLMenu->setPosition({director->getScreenLeft() + 24, 6.5});
     BLMenu->setLayout(ColumnLayout::create()->setAutoGrowAxis(true));
     this->addChild(BLMenu, 1);
 
@@ -311,7 +327,7 @@ void BetterGauntletSelectLayer::buildMenus() {
     auto BRMenu = CCMenu::create();
     BRMenu->setID("bottom-right-menu");
     BRMenu->setAnchorPoint({0.5, 0});
-    BRMenu->setPosition({director->getScreenRight() - 30, 12.5});
+    BRMenu->setPosition({director->getScreenRight() - 24, 6.5});
     BRMenu->setLayout(ColumnLayout::create()
         ->setAxisReverse(false)
         ->setAxisAlignment(AxisAlignment::Start)
@@ -333,7 +349,7 @@ void BetterGauntletSelectLayer::buildMenus() {
         leaderboardSpr, this,
         menu_selector(BetterGauntletSelectLayer::onLeaderboard));
     m_leaderboardButton->setID("leaderboard-button");
-    BRMenu->addChild(m_leaderboardButton);
+    // BRMenu->addChild(m_leaderboardButton);
 
     BRMenu->updateLayout();
 
@@ -367,6 +383,25 @@ void BetterGauntletSelectLayer::buildMenus() {
     m_absoluteGauntlets->m_baseScale = 0.575;
     m_absoluteGauntlets->m_scaleMultiplier = 1.075;
     topMenu->addChild(m_absoluteGauntlets);
+
+    if (auto GDX = Loader::get()->getLoadedMod("arcticwoof.gauntlets_deluxe")) {
+        auto glm = GameLevelManager::get();
+        auto previousDelegate = glm->m_levelManagerDelegate;
+
+        if (auto vanillaLayer = GauntletSelectLayer::create(0)) {
+            glm->m_levelManagerDelegate = previousDelegate;
+
+            if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button")) {
+                gdxButton->retain();
+                gdxButton->removeFromParentAndCleanup(false);
+                TRMenu->addChild(gdxButton);
+                TRMenu->updateLayout();
+                gdxButton->release();
+            } else {
+                log::warn("GauntletSelectLayer: Gauntlets Deluxe is loaded but its button wasn't found");
+            }
+        }
+    }
 
     buildCustomListToggle(topMenu);
 }
@@ -470,11 +505,11 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     if (m_showCustomList) {
         toggleList(nullptr);
     }
-    }
+}
 
     // Scroll mode
 
-    void BetterGauntletSelectLayer::setupScrollMode() {
+void BetterGauntletSelectLayer::setupScrollMode() {
     CCDirector *director = CCDirector::sharedDirector();
     CCSize winSize = director->getWinSize();
 
@@ -530,9 +565,9 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     m_sliderLabel->setPosition(
         {winSize.width / 2, director->getScreenBottom() + 6.5f});
     this->addChild(m_sliderLabel);
-    }
+}
 
-    void BetterGauntletSelectLayer::styleGauntletButtons() {
+void BetterGauntletSelectLayer::styleGauntletButtons() {
     auto scrollLayer = m_customScrollLayer;
     if (!scrollLayer)
         return;
@@ -853,7 +888,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     GauntletInfoPopup::create(pages)->show();
 }
 
-    void BetterGauntletSelectLayer::onDiscord(CCObject *sender) {
+void BetterGauntletSelectLayer::onDiscord(CCObject *sender) {
     createQuickPopup(
         "Join the Community",
         "Come join the community Discord and talk about current and upcoming "
@@ -867,7 +902,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     void BetterGauntletSelectLayer::onLeaderboard(CCObject *sender) {
     LeaderboardPopup::create()->show();
-    }
+}
 
     // Custom gauntlets toggle
 
@@ -884,10 +919,9 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
     if (m_customListLoadingCircle) m_customListLoadingCircle->setVisible(m_showingCustomList);
 
     buildCustomList();
-    }
+}
 
-    void BetterGauntletSelectLayer::buildCustomList() {
-    // Already built, or a fetch is already in flight - safe to call repeatedly.
+void BetterGauntletSelectLayer::buildCustomList() {
     if (m_customGauntletScrollLayer || m_customListLoadingCircle)
         return;
 
@@ -946,10 +980,9 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
         self->populateCustomList(gauntlets);
     });
-    }
+}
 
-    void BetterGauntletSelectLayer::populateCustomList(
-        std::vector<CustomGauntletData> const &gauntlets) {
+void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletData> const &gauntlets) {
     auto winSize = CCDirector::sharedDirector()->getWinSize();
 
     auto container = CCMenu::create();
@@ -972,27 +1005,27 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             } else {
                 CCDirector::sharedDirector()->replaceScene(CCTransitionFade::create(0.5f, sc));
             }
-            });
+        });
         if (!node) continue;
 
         if (data.featured) {
-        auto glow = NineSlice::create("GR_featureGlow_001.png"_spr);
-        glow->setContentSize({85, 160});
-        glow->setScale(1.475);
-        glow->setColor({255, 200, 67});
-        glow->setPosition(node->getContentSize() / 2);
-        glow->setID("feature-glow"_spr);
-        node->addChild(glow, -1);
+            auto glow = NineSlice::create("GR_featureGlow_001.png"_spr);
+            glow->setContentSize({85, 160});
+            glow->setScale(1.475);
+            glow->setColor({255, 200, 67});
+            glow->setPosition(node->getContentSize() / 2);
+            glow->setID("feature-glow"_spr);
+            node->addChild(glow, -1);
 
-        auto stars = GameToolbox::particleFromString(
-            "8a-1a1.75a0.25a4a90a180a0a20a45a100a0a0a0a0a0a0a50a0a90a53a0."
-            "964706a0a0.847059a0a0.329412a0a0.5a0a10a0a90a53a0.321569a0a0."
-            "192157a0a0a0a0.25a0a0.35a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0."
-            "5a0a0a0a0a0a0a0a0a0a0a0",
-            NULL, false);
-        stars->setPosition(node->getContentSize() / 2);
-        stars->setID("stars");
-        node->addChild(stars, 1);
+            auto stars = GameToolbox::particleFromString(
+                "8a-1a1.75a0.25a4a90a180a0a20a45a100a0a0a0a0a0a0a50a0a90a53a0."
+                "964706a0a0.847059a0a0.329412a0a0.5a0a10a0a90a53a0.321569a0a0."
+                "192157a0a0a0a0.25a0a0.35a0a1a0a0a0a0a0a0a0a0a2a1a0a0a0a169a0a0a0."
+                "5a0a0a0a0a0a0a0a0a0a0a0",
+                NULL, false);
+            stars->setPosition(node->getContentSize() / 2);
+            stars->setID("stars");
+            node->addChild(stars, 1);
         }
 
         container->addChild(node);
@@ -1007,8 +1040,7 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     container->updateLayout();
 
-    auto scrollLayer =
-        alpha::ui::AdvancedScrollLayer::create(container->getContentSize());
+    auto scrollLayer = alpha::ui::AdvancedScrollLayer::create(container->getContentSize());
     scrollLayer->setHorizontalScroll(true);
     scrollLayer->setVerticalScroll(false);
     scrollLayer->setPosition(winSize.width / 2, winSize.height / 2 - 19);
@@ -1024,351 +1056,353 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
 
     if (container->getChildrenCount() > 4) {
         auto scrollBar = alpha::ui::AdvancedScrollBar::create(
-            scrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
+            scrollLayer,
+            alpha::ui::ScrollOrientation::HORIZONTAL
+        );
         scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
         scrollBar->setContentSize({12, winSize.height + 125});
         scrollBar->setID("custom-gauntlet-bar"_spr);
         scrollBar->setVisible(m_showingCustomList);
         this->addChild(scrollBar, 1);
         m_customGauntletScrollBar = scrollBar;
-        }
     }
+}
 
-    bool BetterGauntletSelectLayer::isCustomListUnlocked() {
-        return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-            // static_cast<int>(GauntletType::Fire) // (debugging only)
-            static_cast<int>(GauntletType::Doom)
-        );
-    }
+bool BetterGauntletSelectLayer::isCustomListUnlocked() {
+    return GameStatsManager::sharedState()->isGauntletChestUnlocked(
+        // static_cast<int>(GauntletType::Fire) // (debugging only)
+        static_cast<int>(GauntletType::Doom)
+    );
+}
 
-    void BetterGauntletSelectLayer::buildCustomListToggle(CCMenu *topMenu) {
-        if (auto existing = topMenu->getChildByID("toggle-list-button"))
-            existing->removeFromParent();
+void BetterGauntletSelectLayer::buildCustomListToggle(CCMenu *topMenu) {
+    if (auto existing = topMenu->getChildByID("toggle-list-button"))
+        existing->removeFromParent();
 
-        auto toggleOff = CCSpriteGrayscale::create("GR_gauntletStar_001.png"_spr);
-        toggleOff->setOpacity(80);
-        toggleOff->setColor(ccc3(128, 128, 128));
+    auto toggleOff = CCSpriteGrayscale::create("GR_gauntletStar_001.png"_spr);
+    toggleOff->setOpacity(80);
+    toggleOff->setColor(ccc3(128, 128, 128));
 
-        // Check to see if the Doom Gauntlet is completed.
-        if (!isCustomListUnlocked()) {
-            auto lockedBtn = CCMenuItemSpriteExtra::create(
-                toggleOff,
-                this,
-                menu_selector(BetterGauntletSelectLayer::onLockedListToggle)
-            );
-            lockedBtn->setID("toggle-list-button");
-            lockedBtn->setPosition({102, 17.5});
-            lockedBtn->setScale(0.65);
-            lockedBtn->setOpacity(80);
-            lockedBtn->m_baseScale = 0.65f;
-            topMenu->addChild(lockedBtn);
-
-            auto lockSpr = CCSprite::createWithSpriteFrameName("gauntletLock_001.png");
-            lockSpr->setID("custom-list-lock"_spr);
-            lockSpr->setPosition({18, 26});
-            lockSpr->setZOrder(5);
-            lockedBtn->addChild(lockSpr);
-            lockedBtn->m_baseScale = 0.65f;
-            return;
-        }
-
-        auto toggleOn = CCSprite::create("GR_gauntletStar_001.png"_spr);
-        auto toggleBtn = CCMenuItemToggler::create(
+    // Check to see if the Doom Gauntlet is completed.
+    if (!isCustomListUnlocked()) {
+        auto lockedBtn = CCMenuItemSpriteExtra::create(
             toggleOff,
-            toggleOn,
             this,
-            menu_selector(BetterGauntletSelectLayer::toggleList)
+            menu_selector(BetterGauntletSelectLayer::onLockedListToggle)
         );
-        toggleBtn->setID("toggle-list-button");
-        toggleBtn->setPosition({102, 17.5});
-        toggleBtn->setScale(0.65);
-        toggleBtn->setOpacity(80);
-        topMenu->addChild(toggleBtn);
+        lockedBtn->setID("toggle-list-button");
+        lockedBtn->setPosition({102, 17.5});
+        lockedBtn->setScale(0.65);
+        lockedBtn->setOpacity(80);
+        lockedBtn->m_baseScale = 0.65f;
+        topMenu->addChild(lockedBtn);
+
+        auto lockSpr = CCSprite::createWithSpriteFrameName("gauntletLock_001.png");
+        lockSpr->setID("custom-list-lock"_spr);
+        lockSpr->setPosition({18, 26});
+        lockSpr->setZOrder(5);
+        lockedBtn->addChild(lockSpr);
+        lockedBtn->m_baseScale = 0.65f;
+        return;
     }
 
-    void BetterGauntletSelectLayer::checkManagerStatus() {
-        auto accountID = GJAccountManager::get()->m_accountID;
-        Ref<BetterGauntletSelectLayer> self(this);
-        GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
-            if (!isManager) return;
-            if (self->m_managerButton) return;
+    auto toggleOn = CCSprite::create("GR_gauntletStar_001.png"_spr);
+    auto toggleBtn = CCMenuItemToggler::create(
+        toggleOff,
+        toggleOn,
+        this,
+        menu_selector(BetterGauntletSelectLayer::toggleList)
+    );
+    toggleBtn->setID("toggle-list-button");
+    toggleBtn->setPosition({102, 17.5});
+    toggleBtn->setScale(0.65);
+    toggleBtn->setOpacity(80);
+    topMenu->addChild(toggleBtn);
+}
 
-            auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
-            if (!BLMenu) return;
+void BetterGauntletSelectLayer::checkManagerStatus() {
+    auto accountID = GJAccountManager::get()->m_accountID;
+    Ref<BetterGauntletSelectLayer> self(this);
+    GauntletManagerCache::get()->isManager(accountID, [self](bool isManager) {
+        if (!isManager) return;
+        if (self->m_managerButton) return;
 
-            auto managerBtnSpr = CircleButtonSprite::createWithSprite(
-                "GR_gauntletStar_001.png"_spr,
-                1,
-                CircleBaseColor::DarkPurple,
-                CircleBaseSize::Medium
-            );
-            managerBtnSpr->setScale(0.75);
+        auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
+        if (!BLMenu) return;
 
-            auto manageBtn = CCMenuItemExt::createSpriteExtra(
-                managerBtnSpr,
-                [](CCMenuItemSpriteExtra *) {GauntletManagerPopup::create()->show();});
-            manageBtn->setID("manager-button"_spr);
-            self->m_managerButton = manageBtn;
-            BLMenu->addChild(manageBtn);
-            BLMenu->updateLayout();
+        auto managerBtnSpr = CircleButtonSprite::createWithSprite(
+            "GR_gauntletStar_001.png"_spr,
+            1,
+            CircleBaseColor::DarkPurple,
+            CircleBaseSize::Medium
+        );
+        managerBtnSpr->setScale(0.75);
+
+        auto manageBtn = CCMenuItemExt::createSpriteExtra(
+            managerBtnSpr,
+            [](CCMenuItemSpriteExtra *) {GauntletManagerPopup::create()->show();});
+        manageBtn->setID("manager-button"_spr);
+        self->m_managerButton = manageBtn;
+        BLMenu->addChild(manageBtn);
+        BLMenu->updateLayout();
+    });
+}
+
+void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
+
+    if (m_dialogIndex == 0) {
+    std::vector<DialogObject *> GK_Dialog = {
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "A newcomer...",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "You should not be here. This is a place for the <cy>worthy</c>.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Only those who have <co>overcome the challenges</c> may enter.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "<cr>You have not yet proven yourself to be worthy</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Do not bother me again. Next time we meet, I will not be so<d045>.<d045>.<d045>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "<cy>Forgiving</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+    };
+
+    auto dialogArray = CCArray::create();
+    for (auto dialog : GK_Dialog) {
+        dialogArray->addObject(dialog);
+    }
+
+    if (GK_Dialog[0]) {
+        DialogIcon::setDialogSequenceCustomIcons(
+            GK_Dialog, {
+            "GKDialog_1.png"_spr,
+            "GKDialog_2.png"_spr,
+            "GKDialog_2.png"_spr,
+            "GKDialog_11.png"_spr,
+            "GKDialog_1.png"_spr,
+            "GKDialog_11.png"_spr
         });
+        auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
+        static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
+        dialog->addToMainScene();
+        dialog->animateInRandomSide();
+        }
     }
 
-    void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
+    if (m_dialogIndex == 1) {
+    std::vector<DialogObject *> GK_Dialog = {
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Have you not understood my words? <d050>These <cy>Gauntlets</c> are for the <co>worthy</c>, <d045>the <co>skilled</c>.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Those who are declared <co>conquerer</c> may step foot...",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "...or <d025>slide...",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "...Into these <cy>forgotten halls</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "You must be an eager adventurer...",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "An <cr>annoying</c> one at that.",
+            1,
+            0.67,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Now leave me be. <d040>I have <cy>important matters to attend to</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "<cr>Do not anger me</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+    };
 
-        if (m_dialogIndex == 0) {
-        std::vector<DialogObject *> GK_Dialog = {
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "A newcomer...",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "You should not be here. This is a place for the <cy>worthy</c>.",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Only those who have <co>overcome the challenges</c> may enter.",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cr>You have not yet proven yourself to be worthy</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Do not bother me again. Next time we meet, I will not be so<d045>.<d045>.<d045>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cy>Forgiving</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-        };
+    auto dialogArray = CCArray::create();
+    for (auto dialog : GK_Dialog) dialogArray->addObject(dialog);
 
-        auto dialogArray = CCArray::create();
-        for (auto dialog : GK_Dialog) {
-            dialogArray->addObject(dialog);
+    if (GK_Dialog[0]) {
+        DialogIcon::setDialogSequenceCustomIcons(
+            GK_Dialog, {
+            "GKDialog_1.png"_spr,
+            "GKDialog_1.png"_spr,
+            "GKDialog_5.png"_spr,
+            "GKDialog_3.png"_spr,
+            "GKDialog_3.png"_spr,
+            "GKDialog_10.png"_spr,
+            "GKDialog_2.png"_spr,
+            "GKDialog_11.png"_spr
+        });
+        auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
+        static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
+        dialog->addToMainScene();
+        dialog->animateInRandomSide();
         }
-
-        if (GK_Dialog[0]) {
-            DialogIcon::setDialogSequenceCustomIcons(
-                GK_Dialog, {
-                "GKDialog_1.png"_spr,
-                "GKDialog_2.png"_spr,
-                "GKDialog_2.png"_spr,
-                "GKDialog_11.png"_spr,
-                "GKDialog_1.png"_spr,
-                "GKDialog_11.png"_spr
-            });
-            auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
-            static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
-            dialog->addToMainScene();
-            dialog->animateInRandomSide();
-            }
-        }
-
-        if (m_dialogIndex == 1) {
-        std::vector<DialogObject *> GK_Dialog = {
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Have you not understood my words? <d050>These <cy>Gauntlets</c> are for the <co>worthy</c>, <d045>the <co>skilled</c>.",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Those who are declared <co>conquerer</c> may step foot...",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "...or <d025>slide...",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "...Into these <cy>forgotten halls</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "You must be an eager adventurer...",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "An <cr>annoying</c> one at that.",
-                1,
-                0.67,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Now leave me be. <d040>I have <cy>important matters to attend to</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cr>Do not anger me</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-        };
-
-        auto dialogArray = CCArray::create();
-        for (auto dialog : GK_Dialog) dialogArray->addObject(dialog);
-
-        if (GK_Dialog[0]) {
-            DialogIcon::setDialogSequenceCustomIcons(
-                GK_Dialog, {
-                "GKDialog_1.png"_spr,
-                "GKDialog_1.png"_spr,
-                "GKDialog_5.png"_spr,
-                "GKDialog_3.png"_spr,
-                "GKDialog_3.png"_spr,
-                "GKDialog_10.png"_spr,
-                "GKDialog_2.png"_spr,
-                "GKDialog_11.png"_spr
-            });
-            auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
-            static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
-            dialog->addToMainScene();
-            dialog->animateInRandomSide();
-            }
-        }
-
-        if (m_dialogIndex == 2) {
-        std::vector<DialogObject *> GK_Dialog = {
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "I have told you this before, <d045>but you do not listen.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "<cy>You</c>. <d045><cy>are</c>. <d045><cy>not</c>. <d045><cy>worthy</c>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "I shall tell you this, <d045>however.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Conquer the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Prove to me that you are a true Gauntlet conquerer.",
-                1,
-                0.85,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "Now, with that being said<d015>.<d015>.<d015>.",
-                1,
-                1,
-                false,
-                ccWHITE
-            ),
-            DialogObject::create(
-                "The Gauntlet Keeper",
-                "<s260><cr>BEGONE</c></s>!",
-                1,
-                2,
-                true,
-                ccWHITE
-            ),
-        };
-
-        auto dialogArray = CCArray::create();
-        for (auto dialog : GK_Dialog) {
-            dialogArray->addObject(dialog);
-        }
-
-        if (GK_Dialog[0]) {
-            DialogIcon::setDialogSequenceCustomIcons(
-                GK_Dialog, {
-                "GKDialog_7.png"_spr,
-                "GKDialog_11.png"_spr,
-                "GKDialog_9.png"_spr,
-                "GKDialog_7.png"_spr,
-                "GKDialog_7.png"_spr,
-                "GKDialog_9.png"_spr,
-                "GKDialog_12.png"_spr
-            });
-            auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
-            static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
-            m_dialogExitsToCreator = true;
-            dialog->m_delegate = this;
-            dialog->addToMainScene();
-            dialog->animateInRandomSide();
-            }
-        }
-
-        m_dialogIndex++;
     }
 
-    void BetterGauntletSelectLayer::dialogClosed(DialogLayer *layer) {
+    if (m_dialogIndex == 2) {
+    std::vector<DialogObject *> GK_Dialog = {
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "I have told you this before, <d045>but you do not listen.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "<cy>You</c>. <d045><cy>are</c>. <d045><cy>not</c>. <d045><cy>worthy</c>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "I shall tell you this, <d045>however.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Conquer the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Prove to me that you are a true Gauntlet conquerer.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Now, with that being said<d015>.<d015>.<d015>.",
+            1,
+            1,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "<s260><cr>BEGONE</c></s>!",
+            1,
+            2,
+            true,
+            ccWHITE
+        ),
+    };
+
+    auto dialogArray = CCArray::create();
+    for (auto dialog : GK_Dialog) {
+        dialogArray->addObject(dialog);
+    }
+
+    if (GK_Dialog[0]) {
+        DialogIcon::setDialogSequenceCustomIcons(
+            GK_Dialog, {
+            "GKDialog_7.png"_spr,
+            "GKDialog_11.png"_spr,
+            "GKDialog_9.png"_spr,
+            "GKDialog_7.png"_spr,
+            "GKDialog_7.png"_spr,
+            "GKDialog_9.png"_spr,
+            "GKDialog_12.png"_spr
+        });
+        auto dialog = DialogLayer::createDialogLayer(GK_Dialog[0], dialogArray, 5);
+        static_cast<NineSlice*>(dialog->m_mainLayer->getChildByIndex(0))->setColor({128, 128, 128});
+        m_dialogExitsToCreator = true;
+        dialog->m_delegate = this;
+        dialog->addToMainScene();
+        dialog->animateInRandomSide();
+        }
+    }
+
+    m_dialogIndex++;
+}
+
+void BetterGauntletSelectLayer::dialogClosed(DialogLayer *layer) {
     unblockPlay();
 
     if (!m_dialogExitsToCreator) return;
@@ -1402,5 +1436,6 @@ void BetterGauntletSelectLayer::onNewInfo(CCObject *sender) {
             CallFuncExt::create([blackIn] { blackIn->removeFromParent(); }),
             nullptr));
         }),
-        nullptr));
-    }
+        nullptr
+    ));
+}

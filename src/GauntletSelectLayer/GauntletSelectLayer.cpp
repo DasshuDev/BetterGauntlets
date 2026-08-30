@@ -391,7 +391,8 @@ void BetterGauntletSelectLayer::buildMenus() {
         if (auto vanillaLayer = GauntletSelectLayer::create(0)) {
             glm->m_levelManagerDelegate = previousDelegate;
 
-            if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button")) {
+            // if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button")) {
+            if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/rated-layouts-gauntlets-button")) {
                 gdxButton->retain();
                 gdxButton->removeFromParentAndCleanup(false);
                 TRMenu->addChild(gdxButton);

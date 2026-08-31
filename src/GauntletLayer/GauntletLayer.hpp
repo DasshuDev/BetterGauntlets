@@ -6,7 +6,7 @@
 
 using namespace geode::prelude;
 
-class BetterGauntletLayer : public CCLayer, public LevelManagerDelegate {
+class BetterGauntletLayer : public CCLayer, public LevelManagerDelegate, public DialogDelegate {
 public:
     static BetterGauntletLayer* create(GauntletType type);
     static CCScene* scene(GauntletType type);
@@ -38,6 +38,9 @@ protected:
     void editGauntlets();
     void checkForUnlocks();
     void checkGauntletCompletion();
+    bool isGauntletFullyComplete();
+    void doExit();
+    void dialogClosed(DialogLayer* layer) override;
     void playUnlockAnimation(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesIn(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesOut(cocos2d::CCNode* levelSpr, int index);
@@ -117,4 +120,6 @@ protected:
     void editFutureGauntlet();
     void editUtopiaGauntlet();
     void editLoveGauntlet();
+    // void editDualityGauntlet();
+    // void editParadoxGauntlet();
 };

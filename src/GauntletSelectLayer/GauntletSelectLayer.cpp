@@ -6,7 +6,6 @@
 #include "../Hooks/DialogIcons/DialogIcons.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
 #include "../Managers/LeaderboardPopup.hpp"
-#include "../Managers/StatsSyncManager.hpp"
 #include "GauntletInfoPopup.hpp"
 #include <Geode/Geode.hpp>
 #include <Geode/Loader.hpp>
@@ -102,9 +101,6 @@ bool BetterGauntletSelectLayer::init() {
     buildCustomList();
 
     checkManagerStatus();
-
-    auto* mgr = CustomGauntletManager::get();
-    StatsSyncManager::get()->sync(mgr->getCrystalTotal(), mgr->getCoinTotal());
 
     return true;
 }
@@ -391,8 +387,12 @@ void BetterGauntletSelectLayer::buildMenus() {
         if (auto vanillaLayer = GauntletSelectLayer::create(0)) {
             glm->m_levelManagerDelegate = previousDelegate;
 
-            // if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button")) {
-            if (auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/rated-layouts-gauntlets-button")) {
+            auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button");
+            if (!gdxButton) {
+                gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/rated-layouts-gauntlets-button");
+            }
+
+            if (gdxButton) {
                 gdxButton->retain();
                 gdxButton->removeFromParentAndCleanup(false);
                 TRMenu->addChild(gdxButton);
@@ -449,8 +449,7 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     auto gm = GameManager::sharedState();
     for (auto *obj : CCArrayExt<GJMapPack *>(gauntlets)) {
 
-        // Chaos Gauntlet stays hidden until the player has spoken to the Demon
-        // Guardian (UGV 19)
+        // Chaos Gauntlet stays hidden until the player has spoken to the Demon Guardian (UGV 19)
         if (static_cast<GauntletType>(obj->m_packID) == GauntletType::Chaos &&
             !gm->getUGV("19")) continue;
 
@@ -477,7 +476,10 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
         }
 
         auto btn = CCMenuItemSpriteExtra::create(
-            gauntletNode, this, menu_selector(BetterGauntletSelectLayer::onPlay));
+            gauntletNode,
+            this,
+            menu_selector(BetterGauntletSelectLayer::onPlay)
+        );
         btn->setUserObject(pack);
         btn->setTag(pack->m_packID);
         btn->setContentSize({110, 220});
@@ -497,8 +499,7 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
 
     m_gauntletBtnContainer->updateLayout();
 
-    m_customScrollLayer->getContentLayer()->setContentWidth(
-        m_gauntletBtnContainer->getContentWidth());
+    m_customScrollLayer->getContentLayer()->setContentWidth(m_gauntletBtnContainer->getContentWidth());
 
     styleGauntletButtons();
     loadScrollPos();
@@ -539,10 +540,10 @@ void BetterGauntletSelectLayer::setupScrollMode() {
         ->setAxisAlignment(AxisAlignment::Start)
         ->setGap(3)
         ->setAutoGrowAxis(true)
-        ->setPadding({60, 0, 60, 0}));
+        ->setPadding({60, 0, 60, 0})
+    );
 
-    m_customScrollLayer = alpha::ui::AdvancedScrollLayer::create(
-        m_gauntletBtnContainer->getContentSize());
+    m_customScrollLayer = alpha::ui::AdvancedScrollLayer::create(m_gauntletBtnContainer->getContentSize());
     m_customScrollLayer->setHorizontalScroll(true);
     m_customScrollLayer->setVerticalScroll(false);
     m_customScrollLayer->setPosition(winSize.width / 2, winSize.height / 2 - 19);
@@ -551,10 +552,8 @@ void BetterGauntletSelectLayer::setupScrollMode() {
     m_customScrollLayer->ignoreAnchorPointForPosition(false);
     this->addChild(m_customScrollLayer);
 
-    m_customScrollBar = alpha::ui::AdvancedScrollBar::create(
-        m_customScrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
-    m_customScrollBar->setPosition(
-        {winSize.width / 2, m_customScrollLayer->getPositionY() - 126});
+    m_customScrollBar = alpha::ui::AdvancedScrollBar::create(m_customScrollLayer, alpha::ui::ScrollOrientation::HORIZONTAL);
+    m_customScrollBar->setPosition({winSize.width / 2, m_customScrollLayer->getPositionY() - 126});
     m_customScrollBar->setContentSize({12, winSize.height + 125});
     m_customScrollBar->setID("gauntlet-scrollbar"_spr);
     this->addChild(m_customScrollBar);

@@ -1,5 +1,17 @@
-# <cc>v2.0.3</c>
-- <c-c4ffc4><cg>**Added**</c> support for **[Gauntlets Deluxe]**(mod:arcticwoof.gauntlets_deluxe)!</c>
+# <cc>v2.0.5</c>
+ - <c-c4ffc4><cg>**Added**</c> **[Better Touch Prio](mod:alk.better-touch-prio)** as a dependency.</c>
+    - This fixes the scrolling on all devices due to touch prio mis-match.
+
+---
+
+## <c-ffffff>v2.0.4</c>
+- <c-c4ebff><cl>**Fixed**</c> support for Gauntlets Deluxe.</c>
+    - Used the wrong ID, oops!
+
+---
+
+## <c-ffffff>v2.0.3</c>
+- <c-c4ffc4><cg>**Added**</c> support for **[Gauntlets Deluxe](mod:arcticwoof.gauntlets_deluxe)**!</c>
 - <c-ffc4c4><cr>**Removed**</c> the Leaderboard button ***temporarily***.</c>
 
 ## Known Issues:

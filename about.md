@@ -14,8 +14,6 @@ The <cy>ultimate</c> Gauntlet rewrite; bringing the Gauntlets to <cg>life</c>! T
 ## Recommendations
 These mods are recommended you download to <cp>further enhance</c> the liveliness of the Gauntlets:
 
----
-
 <mod:arcticwoof.gauntlets_deluxe>
 
 ---

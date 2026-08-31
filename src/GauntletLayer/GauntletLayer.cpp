@@ -5,6 +5,7 @@
 #include "HueLuminanceTo.hpp"
 #include <Geode/Geode.hpp>
 #include <Geode/binding/CCSpriteWithHue.hpp>
+#include <Geode/binding/DialogObject.hpp>
 #include <Geode/binding/GJGameLevel.hpp>
 #include <Geode/ui/BasedButtonSprite.hpp>
 #include <Geode/ui/Layout.hpp>
@@ -158,7 +159,7 @@ bool BetterGauntletLayer::init(GauntletType type) {
   loadCircle->setPosition(winSize / 2);
   this->addChild(loadCircle, 10);
 
-  // Apply per-gauntlet theme (background, corners, particles)
+  // Apply per-gauntlet theme
   switch (m_gauntletType) {
   default:                          editGauntletFallback();     break;
   case GauntletType::Fire:          editFireGauntlet();         break;
@@ -221,6 +222,8 @@ bool BetterGauntletLayer::init(GauntletType type) {
   case GauntletType::Cinema:        editCinemaGauntlet();       break;
   case GauntletType::Future:        editFutureGauntlet();       break;
   case GauntletType::Utopia:        editUtopiaGauntlet();       break;
+  // case GauntletType::Duality:       editFutureGauntlet();       break;
+  // case GauntletType::Paradox:       editUtopiaGauntlet();       break;
   }
 
   // Fetch levels from RobTop servers
@@ -351,8 +354,7 @@ void BetterGauntletLayer::editGauntlets() {
     shadowSpr->setColor(ccc3(0, 0, 0));
     shadowSpr->setOpacity(75);
     shadowSpr->setScaleY(1.2);
-    shadowSpr->setPosition(
-        {islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
+    shadowSpr->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
     shadowSpr->setID(fmt::format("island-{}-shadow", i + 1));
 
     levelSpr->addChild(islandSpr);
@@ -363,35 +365,32 @@ void BetterGauntletLayer::editGauntlets() {
         CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
     limitLabelWidth(levelName, 120.0, 0.4, 0.3);
     levelName->setID("level-name"_spr);
-    levelName->setPosition(
-        {islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
+    levelName->setPosition({islandSpr->getPositionX(), islandSpr->getPositionY() - 10});
 
-    CCLabelBMFont *authorName =
-        CCLabelBMFont::create(user.c_str(), "goldFont.fnt");
+    CCLabelBMFont *authorName = CCLabelBMFont::create(user.c_str(), "goldFont.fnt");
     limitLabelWidth(authorName, 120.0, 0.4, 0.25);
     authorName->setID("creator-name"_spr);
     authorName->setAlignment(kCCTextAlignmentCenter);
-    authorName->setPosition(
-        {levelName->getPositionX(), levelName->getPositionY() - 10});
+    authorName->setPosition({levelName->getPositionX(), levelName->getPositionY() - 10});
 
     // Star row
     CCNode *starNode = CCNode::create();
-    starNode->setPosition(
-        {levelName->getPositionX(), levelName->getPositionY() - 27.5f});
+    starNode->setPosition({levelName->getPositionX(), levelName->getPositionY() - 27.5f});
     starNode->setID("star-node"_spr);
     starNode->setScale(0.65);
     starNode->setAnchorPoint({0.5, 0.5});
     starNode->setLayout(
-        RowLayout::create()->setGap(5)->setAutoGrowAxis(true)->setAxisAlignment(
-            AxisAlignment::Center));
+        RowLayout::create()
+        ->setGap(5)
+        ->setAutoGrowAxis(true)
+        ->setAxisAlignment(AxisAlignment::Center)
+      );
 
-    CCLabelBMFont *starCount = CCLabelBMFont::create(
-        fmt::format("{}", levelNode->m_stars.value()).c_str(), "bigFont.fnt");
+    CCLabelBMFont *starCount = CCLabelBMFont::create(fmt::format("{}", levelNode->m_stars.value()).c_str(), "bigFont.fnt");
     starCount->setID("star-count"_spr);
     starCount->setScale(0.65);
 
-    CCSprite *starSpr =
-        CCSprite::createWithSpriteFrameName("GJ_bigStar_001.png");
+    CCSprite *starSpr = CCSprite::createWithSpriteFrameName("GJ_bigStar_001.png");
     starSpr->setID("star-icon"_spr);
     starSpr->setAnchorPoint(ccp(0.5, 0.5));
     starSpr->setScale(0.65);
@@ -768,11 +767,21 @@ void BetterGauntletLayer::keyBackClicked() {
   onBack(nullptr);
 }
 
-void BetterGauntletLayer::onBack(CCObject *sender) {
-  if (m_exiting)
-    return;
-  m_exiting = true;
+bool BetterGauntletLayer::isGauntletFullyComplete() {
+  if (!m_levels) return false;
 
+  int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
+  if (levelCount == 0) return false;
+
+  for (int i = 0; i < levelCount; i++) {
+    auto level = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i));
+    if (!level || !GameStatsManager::sharedState()->hasCompletedLevel(level))
+      return false;
+  }
+  return true;
+}
+
+void BetterGauntletLayer::doExit() {
   if (CCScene::get()->getUserFlag("from-redash"_spr)) {
     CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
     return;
@@ -782,6 +791,43 @@ void BetterGauntletLayer::onBack(CCObject *sender) {
   if (scene) {
     CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
   }
+}
+
+void BetterGauntletLayer::onBack(CCObject *sender) {
+  if (m_exiting)
+    return;
+  m_exiting = true;
+
+  if (m_gauntletType == GauntletType::Doom &&
+      !GameManager::sharedState()->getUGV("DoomGauntletComplete"_spr) &&
+      isGauntletFullyComplete()) {
+    GameManager::sharedState()->setUGV("DoomGauntletComplete"_spr, true);
+
+    std::vector<DialogObject*> testDialog = {
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            "Test dialog - the Doom Gauntlet has been conquered.",
+            2,
+            1,
+            false,
+            ccWHITE
+        )
+    };
+    auto dialogArray = CCArray::create();
+    for (auto dialog : testDialog) dialogArray->addObject(dialog);
+
+    auto dialog = DialogLayer::createDialogLayer(testDialog[0], dialogArray, 1);
+    dialog->m_delegate = this;
+    dialog->addToMainScene();
+    dialog->animateInRandomSide();
+    return; // doExit() runs from dialogClosed() once the player dismisses it
+  }
+
+  doExit();
+}
+
+void BetterGauntletLayer::dialogClosed(DialogLayer *layer) {
+  doExit();
 }
 
 void BetterGauntletLayer::onLocked(CCObject *sender) {

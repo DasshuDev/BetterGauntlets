@@ -38,9 +38,6 @@ protected:
     void editGauntlets();
     void checkForUnlocks();
     void checkGauntletCompletion();
-    bool isGauntletFullyComplete();
-    void doExit();
-    void dialogClosed(DialogLayer* layer) override;
     void playUnlockAnimation(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesIn(cocos2d::CCNode* levelSpr, int index);
     void playUnlockParticlesOut(cocos2d::CCNode* levelSpr, int index);

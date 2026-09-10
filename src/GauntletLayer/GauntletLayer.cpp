@@ -767,21 +767,11 @@ void BetterGauntletLayer::keyBackClicked() {
   onBack(nullptr);
 }
 
-bool BetterGauntletLayer::isGauntletFullyComplete() {
-  if (!m_levels) return false;
+void BetterGauntletLayer::onBack(CCObject *sender) {
+  if (m_exiting)
+    return;
+  m_exiting = true;
 
-  int levelCount = std::min(static_cast<int>(m_levels->count()), 5);
-  if (levelCount == 0) return false;
-
-  for (int i = 0; i < levelCount; i++) {
-    auto level = static_cast<GJGameLevel *>(m_levels->objectAtIndex(i));
-    if (!level || !GameStatsManager::sharedState()->hasCompletedLevel(level))
-      return false;
-  }
-  return true;
-}
-
-void BetterGauntletLayer::doExit() {
   if (CCScene::get()->getUserFlag("from-redash"_spr)) {
     CCDirector::get()->popSceneWithTransition(0.5f, kPopTransitionFade);
     return;
@@ -791,43 +781,6 @@ void BetterGauntletLayer::doExit() {
   if (scene) {
     CCDirector::get()->replaceScene(CCTransitionFade::create(0.5f, scene));
   }
-}
-
-void BetterGauntletLayer::onBack(CCObject *sender) {
-  if (m_exiting)
-    return;
-  m_exiting = true;
-
-  if (m_gauntletType == GauntletType::Doom &&
-      !GameManager::sharedState()->getUGV("DoomGauntletComplete"_spr) &&
-      isGauntletFullyComplete()) {
-    GameManager::sharedState()->setUGV("DoomGauntletComplete"_spr, true);
-
-    std::vector<DialogObject*> testDialog = {
-        DialogObject::create(
-            "The Gauntlet Keeper",
-            "Test dialog - the Doom Gauntlet has been conquered.",
-            2,
-            1,
-            false,
-            ccWHITE
-        )
-    };
-    auto dialogArray = CCArray::create();
-    for (auto dialog : testDialog) dialogArray->addObject(dialog);
-
-    auto dialog = DialogLayer::createDialogLayer(testDialog[0], dialogArray, 1);
-    dialog->m_delegate = this;
-    dialog->addToMainScene();
-    dialog->animateInRandomSide();
-    return; // doExit() runs from dialogClosed() once the player dismisses it
-  }
-
-  doExit();
-}
-
-void BetterGauntletLayer::dialogClosed(DialogLayer *layer) {
-  doExit();
 }
 
 void BetterGauntletLayer::onLocked(CCObject *sender) {

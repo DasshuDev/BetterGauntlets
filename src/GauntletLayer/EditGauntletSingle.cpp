@@ -29,7 +29,13 @@ void BetterGauntletLayer::editGauntletLayer(std::string title, cocos2d::ccColor3
     outlineText->setID("title-outline"_spr);
     outlineText->setFntFile("GR_OxygeneFontOutline.fnt"_spr);
     outlineText->setScale(0.75);
-    outlineText->setPosition(winSize.width / 2 - 1.5, winSize.height - 30);
+
+    switch (CCDirector::sharedDirector()->getLoadedTextureQuality()) {
+        case kTextureQualityHigh: outlineText->setPosition(winSize.width / 2 - 1.5, winSize.height - 30); break;
+        case kTextureQualityMedium: outlineText->setPosition(winSize.width / 2 - 1.25, winSize.height - 30); break;
+        case kTextureQualityLow: outlineText->setPosition(winSize.width / 2 - 1.5, winSize.height - 30); break;
+        default: break; // kTextureQualityHigh keeps the high-res scale (i cant believe i forgot this)
+    }
 
     if (!titleText || !shadowText) return;
 

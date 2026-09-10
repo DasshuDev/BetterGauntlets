@@ -235,7 +235,7 @@ void CustomGauntletLayer::buildTitle() {
     outline->setID("title-outline");
     outline->setScale(0.75);
     outline->setColor({ 255, 255, 255 });
-    outline->setPosition(m_titleLabel->getPositionX() - 1.5, m_titleLabel->getPositionY());
+    outline->setPosition(m_titleLabel->getPositionX() - 1.25, m_titleLabel->getPositionY());
     outline->setZOrder(36);
     this->addChild(outline);
 

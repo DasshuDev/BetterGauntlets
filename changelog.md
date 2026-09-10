@@ -1,6 +1,6 @@
 # <cc>v2.0.5</c>
  - <c-c4ffc4><cg>**Added**</c> **[Better Touch Prio](mod:alk.better-touch-prio)** as a dependency.</c>
-    - This fixes the scrolling on all devices due to touch prio mis-match.
+    - This fixes the scrolling and button clicking on all devices due to touch prio mis-match.
 
 ---
 

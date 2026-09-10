@@ -10,7 +10,7 @@ CustomGauntletManager* CustomGauntletManager::get() {
 }
 
 std::string CustomGauntletManager::baseURL() {
-    return "https://bettergauntlets.dev";
+    return "https://api.bettergauntlets.dev";
 }
 
 web::WebFuture CustomGauntletManager::fetchAll() {

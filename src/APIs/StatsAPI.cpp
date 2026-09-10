@@ -6,7 +6,7 @@ StatsAPI* StatsAPI::get() {
 }
 
 std::string StatsAPI::baseURL() {
-    return std::string("https://bettergauntlets.dev");
+    return std::string("https://api.bettergauntlets.dev");
 }
 
 web::WebFuture StatsAPI::push(

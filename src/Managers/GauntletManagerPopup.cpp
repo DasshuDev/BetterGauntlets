@@ -164,7 +164,7 @@ void GauntletManagerPopup::startArgonAuth() {
                 web::WebRequest()
                     .header("Authorization", "Bearer " + token)
                     .header("X-Account-Id", std::to_string(accountID))
-                    .get("https://bettergauntlets.dev/manage"),
+                    .get("https://api.bettergauntlets.dev/manage"),
                 [this, token](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
 

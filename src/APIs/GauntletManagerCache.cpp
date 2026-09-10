@@ -25,12 +25,8 @@ void GauntletManagerCache::fetch() {
                 m_managerIDs = std::move(ids);
                 m_hasFetched = true;
             } else {
-                log::warn(
-                    "[GauntletManagerCache] Failed to fetch manager list (code {}): {}",
-                    res.code(), res.string().unwrapOr("<no body>")
-                );
+                log::error("Failed to fetch manager list ({})", res.code());
             }
-
             auto waiting = std::move(m_waiting);
             m_waiting.clear();
             for (auto& [accountID, cb] : waiting) {
@@ -59,10 +55,7 @@ void GauntletManagerCache::fetchHelpers() {
                 m_helperIDs = std::move(ids);
                 m_hasFetchedHelpers = true;
             } else {
-                log::warn(
-                    "[GauntletManagerCache] Failed to fetch helper list (code {}): {}",
-                    res.code(), res.string().unwrapOr("<no body>")
-                );
+                log::error("Failed to fetch helper list ({})", res.code());
             }
 
             auto waiting = std::move(m_waitingHelpers);
@@ -93,10 +86,7 @@ void GauntletManagerCache::fetchSupporters() {
                 m_supporterIDs = std::move(ids);
                 m_hasFetchedSupporters = true;
             } else {
-                log::warn(
-                    "[GauntletManagerCache] Failed to fetch supporter list (code {}): {}",
-                    res.code(), res.string().unwrapOr("<no body>")
-                );
+                log::error("Failed to fetch supporter list ({})", res.code());
             }
 
             auto waiting = std::move(m_waitingSupporters);

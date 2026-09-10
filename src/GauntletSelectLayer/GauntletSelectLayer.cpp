@@ -345,7 +345,7 @@ void BetterGauntletSelectLayer::buildMenus() {
         leaderboardSpr, this,
         menu_selector(BetterGauntletSelectLayer::onLeaderboard));
     m_leaderboardButton->setID("leaderboard-button");
-    // BRMenu->addChild(m_leaderboardButton);
+    BRMenu->addChild(m_leaderboardButton);
 
     BRMenu->updateLayout();
 

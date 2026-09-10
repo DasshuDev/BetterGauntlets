@@ -6,7 +6,7 @@ LeaderboardAPI* LeaderboardAPI::get() {
 }
 
 std::string LeaderboardAPI::baseURL() {
-    return std::string("https://bettergauntlets.dev");
+    return std::string("https://api.bettergauntlets.dev");
 }
 
 web::WebFuture LeaderboardAPI::fetch(int limit, std::string const& sortBy) {

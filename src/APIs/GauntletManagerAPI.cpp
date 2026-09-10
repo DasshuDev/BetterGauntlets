@@ -6,7 +6,7 @@ GauntletManagerAPI* GauntletManagerAPI::get() {
 }
 
 std::string GauntletManagerAPI::baseURL() {
-    return std::string("https://bettergauntlets.dev");
+    return std::string("https://api.bettergauntlets.dev");
 }
 
 bool GauntletManagerAPI::isLoggedIn() const { return !m_token.empty(); }

@@ -1,16 +1,20 @@
 # <cc>v2.0.5</c>
- - <c-c4ffc4><cg>**Added**</c> **[Better Touch Prio](mod:alk.better-touch-prio)** as a dependency.</c>
+- <c-c4ffc4><cg>**Added**</c> **[Better Touch Prio](mod:alk.better-touch-prio)** as a dependency.</c>
     - This fixes the scrolling and button clicking on all devices due to touch prio mis-match.
+- <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching AGAIN to use Better Gauntlets' servers instead of RobTop's.</c>
+    - If you have any issue regarding rate limiting, please let me know!
+
+<c-33333b>Hey, down here! Click the Forgotten Gauntlets title!</c>
 
 ---
 
-## <c-ffffff>v2.0.4</c>
+## v2.0.4
 - <c-c4ebff><cl>**Fixed**</c> support for Gauntlets Deluxe.</c>
     - Used the wrong ID, oops!
 
 ---
 
-## <c-ffffff>v2.0.3</c>
+## v2.0.3
 - <c-c4ffc4><cg>**Added**</c> support for **[Gauntlets Deluxe](mod:arcticwoof.gauntlets_deluxe)**!</c>
 - <c-ffc4c4><cr>**Removed**</c> the Leaderboard button ***temporarily***.</c>
 
@@ -18,21 +22,21 @@
 - The Leaderboard is bound to rate limit the user for an hour when clicking. <cr>This is NOT intentional.</c> It has been removed until the issue can be solved.
 ---
 
-## <c-ffffff>v2.0.2</c>
+## v2.0.2
 - <c-c4ffc4><cg>**Added**</c>: "New Gauntlet Button Texture" setting.</c>
 - <c-ffffc4><cy>**Updated**</c> the Gauntlet Keeper's dialog images and speech.</c>
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method for real this time I hope...</c>
 
 ---
 
-## <c-ffffff>v2.0.1</c>
+## v2.0.1
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching method.</c>
 - <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet sprites being bigger on lower-quality devices.</c>
 - <c-c4ebff><cl>**Fixed**</c> Forgotten Gauntlet requirement to match Gauntlet Keeper dialog. Oops.</c>
 
 ---
 
-## <c-ffffff>v2.0.0</c>
+## v2.0.0
 - <c-c4ffff><cj>**Bump**</c> to Geode v5.9.0</c>
 - <c-c4ffc4><cg>**Added**</c> The Forgotten Gauntlets!</c>
     - Finally we no longer need to rely on RobTop to add new Gauntlets, as Better Gauntlets' **Gauntlet Managers** can now create official-quality *custom Gauntlets* with ease! These new Gauntlets can be mixed in gameplay type to create a unique Gauntlet experience!
@@ -78,14 +82,14 @@
 
 ---
 
-## <c-ffffff>v1.7.2
+## v1.7.2
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:</c>
   - `Split`
 - <c-c4ebff><cl>**Fixed**</c> particles not appearing in the <c-f9e6aa>**Power**</c> Gauntlet.</c>
 
 ---
 
-## <c-ffffff>v1.7.1
+## v1.7.1
 - <c-ffffc4><cy>**Updated**</c> support for the following Gauntlets:</c>
   - `Bonus, Time, Doom, Death, Forest, Rune, Force, Spooky, Water, Power, Toxic, Treasure, Random, Chance, Love, Cinema, Future, Utopia`
 - <c-c4ebff><cl>**Fixed**</c> unintentional particles in the <c-31ff00>**Monster**</c> Gauntlet.</c>
@@ -94,7 +98,7 @@
 
 ---
  
-## <c-ffffff>v1.7.0
+## v1.7.0
 - <c-c4ffff><cj>**Bump**</c> to Geode v5.0.0 and GD 2.2081</c>
 - <c-c4ffc4><cg>**Added**</c> iOS Jit-less support!</c>
 - <c-c4ffc4><cg>**Added**</c> a Level Safe!</c>
@@ -112,18 +116,18 @@
 
 ---
 
-## <c-ffffff>v1.6.11
+## v1.6.11
 - <c-c4ebff><cl>**Fixed**</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled, for real this time.</c>
 
 ---
 
-## <c-ffffff>v1.6.1
+## v1.6.1
 - <c-c4ebff><cl>**Fixed**</c> a layering issue with GDUtils' "New Gauntlets Design" setting enabled.</c>
     - Reported by `AlphaQuata`. Thank you!
 
 ---
 
-## <c-ffffff>v1.6.0
+## v1.6.0
 - <c-c4ffff><cj>**Bump**</c> to Geode 4.5.0.</c>
 - <c-c4ffc4><cg>**Added**</c> new settings:</c>
     - "Path Blending"
@@ -145,7 +149,7 @@
 
 ---
 
-## <c-ffffff>v1.5.2
+## v1.5.2
 - <c-c4ffc4><cg>**Added**</c> Path Opacity Editing!</c>
     - Found in Experimental Settings, you can change the opacity of your Gauntlet Path Dots.
 - <c-c4ffc4><cg>**Added**</c> a <cg>settings button</c> in the Gauntlet Select menu!</c>
@@ -158,12 +162,12 @@
 
 ---
 
-## <c-ffffff>v1.5.1
+## v1.5.1
 - <c-c4ebff><cl>**Fixed**</c> an error in the Changelog.</c>
 
 ---
 
-## <c-ffffff>v1.5.0
+## v1.5.0
 - <c-c4ffff><cj>**Bump**</c> to Geode 4.4.0.</c>
 - <c-c4ffc4><cg>**Added**</c> iOS Support!</c>
 - <c-c4ffc4><cg>**Added**</c> support to the following Gauntlets:</c>
@@ -175,13 +179,13 @@
 
 ---
 
-## <c-ffffff>v1.4.1
+## v1.4.1
 - <c-c4ffff><cj>**Bump**</c> to Geode 4.3.0.</c>
 - <c-c4ebff><cl>**Fixed**</c> the background in the <c-f9aaf4>**Split**</c> Gauntlet from being properly loaded.</c>
 
 ---
 
-## <c-ffffff> v1.4.0
+## v1.4.0
 - <c-c4ffc4><cg>**Added**</c> Gauntlet information popups.</c>
 - <c-c4ffc4><cg>**Added**</c> particles to the following Gauntlets:</c>
     - `Water, Treasure, Portal, NCS 1, NCS 2`
@@ -190,7 +194,7 @@
 
 ---
 
-## <c-ffffff>v1.3.0
+## v1.3.0
 - <c-c4ffff><cf>Integrated</c> [**Gauntlet Level Vault**](mod:jacob375.gauntletlevelvault) by Jacob375!</c>
     - This mod is recommended you download!
 - <c-c4ffc4><cg>**Added**</c> a fourth chain to `GauntletSelectLayer`.</c>
@@ -213,12 +217,12 @@
 
 ---
 
-## <c-ffffff>v1.2.1
+## v1.2.1
 - <c-c4ebff><cl>**Fixed**</c> platform requirements for Custom Keybinds.</c>
 
 ---
 
-## <c-ffffff>v1.2.0
+## v1.2.0
 - <c-c4ffff><cj>**Bump**</c> to Geode 4.2.0.</c>
 - <c-c4ffff><cj>**Bump**</c> Node IDs dependency from <cr>v1.15.0</c> -> <cg>**v1.19.0**</c>
 - <c-c4ffc4><cg>**Added**</c> keybind support on all platforms!</c>
@@ -235,8 +239,7 @@
 
 ---
 
-## <c-ffffff>v1.1.3
-- <cr>jaydasshu</c> -> <cg>**DasshuDEV**</c>
+## v1.1.3
 - <c-c4ffc4><cg>**Added**</c> Corner UI to `GauntletLayer`, responsive to the selected Gauntlets' header text color.</c>
 - <c-ffffc4><cy>**Updated**</c> the following Gauntlets' visuals:</c>
     - `Fire, Ice`
@@ -248,7 +251,7 @@
 
 ---
 
-## <c-ffffff>v1.1.0 - v1.1.2
+## v1.1.0 - v1.1.2
 - <c-c4ffc4><cg>**Added**</c> particles around the stars of completed Gauntlet levels.</c>
 - <c-c4ffc4><cg>**Added**</c> a new setting: "Update Discord Sprite".</c>
     - Changed the sprite of the <c-6199ff>**Discord**</c> Gauntlet to match with the company's current logo.
@@ -265,5 +268,5 @@
 
 ---
 
-## <c-ffffff>v1.0.0
+## v1.0.0
 - Initial release of <cc>**Better Gauntlets**</c>!

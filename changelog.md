@@ -1,6 +1,5 @@
 # <cc>v2.0.6</c>
-- <c-ffffc4><cy>**Updated**</c> Argon to now handle dead tokens accordingly.
-- 
+- <c-ffffc4><cy>**Updated**</c> Argon to now handle dead tokens accordingly.</c>
 
 ---
 

@@ -138,9 +138,12 @@ void GauntletManagerPopup::startArgonAuth() {
     m_loadingCircle->setVisible(true);
     m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
+    auto account = argon::getGameAccountData();
+    int accountID = account.accountId;
+
     m_argonHolder.spawn(
-        argon::startAuth(),
-           [this](Result<std::string> result) {
+        argon::startAuth(account),
+           [this, accountID](Result<std::string> result) {
             m_loadingCircle->setVisible(false);
 
             if (auto label = m_mainLayer->getChildByID("auth-label"))
@@ -156,7 +159,6 @@ void GauntletManagerPopup::startArgonAuth() {
             }
 
             auto token = std::move(result).unwrap();
-            auto accountID = GJAccountManager::sharedState()->m_accountID;
             m_loadingCircle->setVisible(true);
             m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
@@ -165,10 +167,11 @@ void GauntletManagerPopup::startArgonAuth() {
                     .header("Authorization", "Bearer " + token)
                     .header("X-Account-Id", std::to_string(accountID))
                     .get("https://api.bettergauntlets.dev/manage"),
-                [this, token](web::WebResponse res) {
+                [this, token, accountID](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
 
                     if (res.code() == 403) {
+                        log::error("GauntletManagerPopup: /manage returned 403 - {}", res.string().unwrapOr(""));
                         Notification::create(
                             "You are not a manager.", NotificationIcon::Error
                         )->show();
@@ -176,6 +179,12 @@ void GauntletManagerPopup::startArgonAuth() {
                         return;
                     }
                     if (!res.ok()) {
+                        log::error("GauntletManagerPopup: /manage returned {} - {}", res.code(), res.string().unwrapOr(""));
+                        if (res.code() == 401) {
+                            // the server rejected this token specifically - evict it so the next
+                            // attempt forces a fresh handshake instead of reusing the same dead one
+                            argon::clearToken(accountID);
+                        }
                         Notification::create(
                             fmt::format("Server error {}", res.code()), NotificationIcon::Error
                         )->show();

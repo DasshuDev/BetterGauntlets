@@ -1,4 +1,10 @@
-# <cc>v2.0.5</c>
+# <cc>v2.0.6</c>
+- <c-ffffc4><cy>**Updated**</c> Argon to now handle dead tokens accordingly.
+- 
+
+---
+
+## v2.0.5
 - <c-c4ffc4><cg>**Added**</c> **[Better Touch Prio](mod:alk.better-touch-prio)** as a dependency.</c>
     - This fixes the scrolling and button clicking on all devices due to touch prio mis-match.
 - <c-ffffc4><cy>**Updated**</c> Leaderboard icon caching AGAIN to use Better Gauntlets' servers instead of RobTop's.</c>

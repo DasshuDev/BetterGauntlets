@@ -64,6 +64,7 @@ protected:
   void populateCustomList(std::vector<CustomGauntletData> const &gauntlets);
   void checkManagerStatus();
   bool isCustomListUnlocked();
+  int completedGauntlets();
   void buildCustomListToggle(cocos2d::CCMenu *topMenu);
 
   // Members

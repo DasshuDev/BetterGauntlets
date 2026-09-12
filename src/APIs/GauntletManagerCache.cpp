@@ -6,136 +6,81 @@ GauntletManagerCache* GauntletManagerCache::get() {
     return &instance;
 }
 
-void GauntletManagerCache::fetch() {
-    if (m_request.isPending()) return;
+GauntletManagerCache::GauntletManagerCache() {
+    m_managers.fetch     = [] { return GauntletManagerAPI::get()->fetchManagers(); };
+    m_managers.jsonKey   = "managers";
+    m_managers.label     = "manager";
 
-    m_request.spawn(
-        GauntletManagerAPI::get()->fetchManagers(),
-        [this](web::WebResponse res) {
+    m_helpers.fetch      = [] { return GauntletManagerAPI::get()->fetchHelpers(); };
+    m_helpers.jsonKey    = "helpers";
+    m_helpers.label      = "helper";
+
+    m_supporters.fetch   = [] { return GauntletManagerAPI::get()->fetchSupporters(); };
+    m_supporters.jsonKey = "supporters";
+    m_supporters.label   = "supporter";
+}
+
+void GauntletManagerCache::fetchRole(RoleCache& cache) {
+    if (cache.request.isPending()) return;
+
+    cache.request.spawn(
+        cache.fetch(),
+        [&cache](web::WebResponse res) {
             if (res.ok()) {
                 std::unordered_set<int> ids;
                 auto json = res.json().unwrapOr(matjson::Value::object());
-                if (json.contains("managers") && json["managers"].isArray()) {
-                    for (auto const& row : json["managers"]) {
+                if (json.contains(cache.jsonKey) && json[cache.jsonKey].isArray()) {
+                    for (auto const& row : json[cache.jsonKey]) {
                         if (auto id = row["account_id"].asInt(); id.isOk()) {
                             ids.insert(id.unwrap());
                         }
                     }
                 }
-                m_managerIDs = std::move(ids);
-                m_hasFetched = true;
+                cache.ids = std::move(ids);
+                cache.hasFetched = true;
             } else {
-                log::error("Failed to fetch manager list ({})", res.code());
+                log::error("Failed to fetch {} list ({})", cache.label, res.code());
             }
-            auto waiting = std::move(m_waiting);
-            m_waiting.clear();
+
+            auto waiting = std::move(cache.waiting);
+            cache.waiting.clear();
             for (auto& [accountID, cb] : waiting) {
-                cb(m_managerIDs.contains(accountID));
+                cb(cache.ids.contains(accountID));
             }
         }
     );
 }
 
-void GauntletManagerCache::fetchHelpers() {
-    if (m_helperRequest.isPending()) return;
+void GauntletManagerCache::checkRole(RoleCache& cache, int accountID, std::function<void(bool)> callback) {
+    if (cache.hasFetched) {
+        callback(cache.ids.contains(accountID));
+        return;
+    }
 
-    m_helperRequest.spawn(
-        GauntletManagerAPI::get()->fetchHelpers(),
-        [this](web::WebResponse res) {
-            if (res.ok()) {
-                std::unordered_set<int> ids;
-                auto json = res.json().unwrapOr(matjson::Value::object());
-                if (json.contains("helpers") && json["helpers"].isArray()) {
-                    for (auto const& row : json["helpers"]) {
-                        if (auto id = row["account_id"].asInt(); id.isOk()) {
-                            ids.insert(id.unwrap());
-                        }
-                    }
-                }
-                m_helperIDs = std::move(ids);
-                m_hasFetchedHelpers = true;
-            } else {
-                log::error("Failed to fetch helper list ({})", res.code());
-            }
-
-            auto waiting = std::move(m_waitingHelpers);
-            m_waitingHelpers.clear();
-            for (auto& [accountID, cb] : waiting) {
-                cb(m_helperIDs.contains(accountID));
-            }
-        }
-    );
-}
-
-void GauntletManagerCache::fetchSupporters() {
-    if (m_supporterRequest.isPending()) return;
-
-    m_supporterRequest.spawn(
-        GauntletManagerAPI::get()->fetchSupporters(),
-        [this](web::WebResponse res) {
-            if (res.ok()) {
-                std::unordered_set<int> ids;
-                auto json = res.json().unwrapOr(matjson::Value::object());
-                if (json.contains("supporters") && json["supporters"].isArray()) {
-                    for (auto const& row : json["supporters"]) {
-                        if (auto id = row["account_id"].asInt(); id.isOk()) {
-                            ids.insert(id.unwrap());
-                        }
-                    }
-                }
-                m_supporterIDs = std::move(ids);
-                m_hasFetchedSupporters = true;
-            } else {
-                log::error("Failed to fetch supporter list ({})", res.code());
-            }
-
-            auto waiting = std::move(m_waitingSupporters);
-            m_waitingSupporters.clear();
-            for (auto& [accountID, cb] : waiting) {
-                cb(m_supporterIDs.contains(accountID));
-            }
-        }
-    );
+    cache.waiting.push_back({accountID, std::move(callback)});
+    fetchRole(cache);
 }
 
 void GauntletManagerCache::warm() {
-    if (!m_hasFetched) fetch();
-    if (!m_hasFetchedHelpers) fetchHelpers();
-    if (!m_hasFetchedSupporters) fetchSupporters();
+    if (!m_managers.hasFetched) fetchRole(m_managers);
+    if (!m_helpers.hasFetched) fetchRole(m_helpers);
+    if (!m_supporters.hasFetched) fetchRole(m_supporters);
 }
 
 void GauntletManagerCache::refresh() {
-    fetch();
-    fetchHelpers();
-    fetchSupporters();
+    fetchRole(m_managers);
+    fetchRole(m_helpers);
+    fetchRole(m_supporters);
 }
 
 void GauntletManagerCache::isManager(int accountID, std::function<void(bool)> callback) {
-    if (m_hasFetched) {
-        callback(m_managerIDs.contains(accountID));
-        return;
-    }
-
-    m_waiting.push_back({accountID, std::move(callback)});
-    fetch();
+    checkRole(m_managers, accountID, std::move(callback));
 }
 
 void GauntletManagerCache::isHelper(int accountID, std::function<void(bool)> callback) {
-    if (m_hasFetchedHelpers) {
-        callback(m_helperIDs.contains(accountID));
-        return;
-    }
-
-    m_waitingHelpers.push_back({accountID, std::move(callback)});
-    fetchHelpers();
+    checkRole(m_helpers, accountID, std::move(callback));
 }
 
 void GauntletManagerCache::isSupporter(int accountID, std::function<void(bool)> callback) {
-    if (m_hasFetchedSupporters) {
-        callback(m_supporterIDs.contains(accountID));
-        return;
-    }
-
-    m_waitingSupporters.push_back({accountID, std::move(callback)});
-    fetchSupporters();
+    checkRole(m_supporters, accountID, std::move(callback));
 }

@@ -256,17 +256,22 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
     gradient->setContentSize(row->getContentSize());
     gradient->setAnchorPoint({0.5, 0.5});
     gradient->setRotation(180);
-    row->addChild(gradient);
+    row->addChild(gradient, -1);
 
     auto rankIcon = CCSprite::createWithSpriteFrameName(trophy.c_str());
     rankIcon->setScale(0.75);
     rankIcon->setPosition({22.5, row->getContentHeight() / 2});
-    row->addChild(rankIcon);
-
+    row->addChild(rankIcon, 1);
+    
     auto player = SimplePlayer::create(0);
-    player->setPosition({55, row->getContentHeight() / 2});
+    player->setPosition({55, row->getContentHeight() / 2 + 6.5f});
     player->setScale(0.85);
     row->addChild(player);
+    
+    auto rankLabel = CCLabelBMFont::create(std::to_string(rank).c_str(), "goldFont.fnt");
+    rankLabel->setScale(0.6);
+    rankLabel->setPosition({player->getPositionX(), player->getPositionY() - 21});
+    row->addChild(rankLabel, 1);
 
     if (entry.iconId > 0) {
         applyIcon(player, entry.iconId, entry.iconType, entry.color1, entry.color2, entry.color3, entry.glow);
@@ -287,7 +292,6 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
         [accountId](CCMenuItemSpriteExtra*) {
         ProfilePage::create(accountId, false)->show();
     });
-    // nameBtn->setScale(0.7);
     nameBtn->setAnchorPoint({0, 0.4});
     nameMenu->addChild(nameBtn);
 
@@ -312,7 +316,6 @@ void LeaderboardPopup::buildRow(int rank, LeaderboardEntry const& entry, float l
         secondaryRightX = icon->getPositionX() - icon->getScaledContentWidth();
     }
 
-    // The other stat, shown smaller and dimmer - vanity only, doesn't affect rank
     auto secondaryLabel = CCLabelBMFont::create(std::to_string(secondaryValue).c_str(), "bigFont.fnt");
     secondaryLabel->setScale(0.3);
     secondaryLabel->setOpacity(130);

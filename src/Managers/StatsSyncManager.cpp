@@ -42,14 +42,13 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
                     accountId, username, token, crystals, coins,
                     iconId, static_cast<int>(iconType), color1, color2, color3, glow
                 ),
-                [accountId, callback](web::WebResponse res) {
+                [callback](web::WebResponse res) {
                     if (!res.ok()) {
                         auto err = fmt::format("HTTP {}", res.code());
                         log::warn(
                             "StatsSyncManager: push failed - {} - {}",
                             err, res.string().unwrapOr("")
                         );
-                        if (res.code() == 401) argon::clearToken(accountId);
                         if (callback) callback(false, err);
                         return;
                     }
@@ -88,14 +87,13 @@ void StatsSyncManager::completeGauntlet(int gauntletId, CompleteCallback callbac
 
             m_completeHolder.spawn(
                 StatsAPI::get()->completeGauntlet(accountId, token, gauntletId),
-                [accountId, callback](web::WebResponse res) {
+                [callback](web::WebResponse res) {
                     if (!res.ok()) {
                         auto err = fmt::format("HTTP {}", res.code());
                         log::warn(
                             "StatsSyncManager: complete-gauntlet failed - {} - {}",
                             err, res.string().unwrapOr("")
                         );
-                        if (res.code() == 401) argon::clearToken(accountId);
                         if (callback) callback(false, 0, err);
                         return;
                     }
@@ -130,14 +128,13 @@ void StatsSyncManager::completeLevel(int levelId, SyncCallback callback) {
 
             m_completeLevelHolder.spawn(
                 StatsAPI::get()->completeLevel(accountId, token, levelId),
-                [accountId, callback](web::WebResponse res) {
+                [callback](web::WebResponse res) {
                     if (!res.ok()) {
                         auto err = fmt::format("HTTP {}", res.code());
                         log::warn(
                             "StatsSyncManager: complete-level failed - {} - {}",
                             err, res.string().unwrapOr("")
                         );
-                        if (res.code() == 401) argon::clearToken(accountId);
                         if (callback) callback(false, err);
                         return;
                     }
@@ -170,14 +167,13 @@ void StatsSyncManager::resetSelf(SyncCallback callback) {
 
             m_resetHolder.spawn(
                 StatsAPI::get()->resetSelf(accountId, token),
-                [accountId, callback](web::WebResponse res) {
+                [callback](web::WebResponse res) {
                     if (!res.ok()) {
                         auto err = fmt::format("HTTP {}", res.code());
                         log::warn(
                             "StatsSyncManager: reset failed - {} - {}",
                             err, res.string().unwrapOr("")
                         );
-                        if (res.code() == 401) argon::clearToken(accountId);
                         if (callback) callback(false, err);
                         return;
                     }

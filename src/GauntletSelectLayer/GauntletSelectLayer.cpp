@@ -15,19 +15,8 @@
 #include <alphalaneous.alphas-ui-pack/include/API.hpp>
 #include <argon/argon.hpp>
 #include <cctype>
-// #include <Geode/Modify/GauntletSelectLayer.hpp>
 
 using namespace geode::prelude;
-
-// class $modify(MyGauntletSelectLayer, GauntletSelectLayer) {
-//     bool init(int unused) {
-//         if (!GauntletSelectLayer::init(int unused)) return false;
-
-//         if (auto GDX = Loader::get()->getLoadedMod("arcticwoof.gauntlets-deluxe")) {
-//             log::info("GDX installed!");
-//         }
-//     }
-// }
 
 // create / scene
 
@@ -428,6 +417,10 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     m_gauntletPacks->retain();
 
     buildGauntletNodes(levels);
+
+    if (auto topMenu = static_cast<CCMenu*>(this->getChildByIDRecursive("top-menu"_spr))) {
+        buildCustomListToggle(topMenu);
+    }
     }
 
     void BetterGauntletSelectLayer::loadLevelsFailed(char const *key, int type) {
@@ -1060,7 +1053,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
             alpha::ui::ScrollOrientation::HORIZONTAL
         );
         scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
-        scrollBar->setContentSize({12, winSize.height + 125});
+        scrollBar->setContentSize({12, winSize.width + 125});
         scrollBar->setID("custom-gauntlet-bar"_spr);
         scrollBar->setVisible(m_showingCustomList);
         this->addChild(scrollBar, 1);
@@ -1068,11 +1061,21 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
     }
 }
 
+constexpr int RequiredGauntletCount = 10;
+
+int BetterGauntletSelectLayer::completedGauntlets() {
+    if (!m_gauntletPacks) return 0;
+
+    auto gsm = GameStatsManager::sharedState();
+    int completed = 0;
+    for (auto* pack : CCArrayExt<GJMapPack*>(m_gauntletPacks)) {
+        if (gsm->isGauntletChestUnlocked(pack->m_packID)) completed++;
+    }
+    return completed;
+}
+
 bool BetterGauntletSelectLayer::isCustomListUnlocked() {
-    return GameStatsManager::sharedState()->isGauntletChestUnlocked(
-        // static_cast<int>(GauntletType::Fire) // (debugging only)
-        static_cast<int>(GauntletType::Doom)
-    );
+    return completedGauntlets() >= RequiredGauntletCount;
 }
 
 void BetterGauntletSelectLayer::buildCustomListToggle(CCMenu *topMenu) {
@@ -1083,7 +1086,6 @@ void BetterGauntletSelectLayer::buildCustomListToggle(CCMenu *topMenu) {
     toggleOff->setOpacity(80);
     toggleOff->setColor(ccc3(128, 128, 128));
 
-    // Check to see if the Doom Gauntlet is completed.
     if (!isCustomListUnlocked()) {
         auto lockedBtn = CCMenuItemSpriteExtra::create(
             toggleOff,
@@ -1156,7 +1158,7 @@ void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
             "The Gauntlet Keeper",
             "A newcomer...",
             1,
-            0.85,
+            1,
             false,
             ccWHITE
         ),
@@ -1164,7 +1166,7 @@ void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
             "The Gauntlet Keeper",
             "You should not be here. This is a place for the <cy>worthy</c>.",
             1,
-            0.85,
+            1,
             false,
             ccWHITE
         ),
@@ -1314,6 +1316,21 @@ void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
         }
     }
 
+    auto reaction = "";
+
+    switch (int(completedGauntlets())) {
+        case 0: reaction = "You aren't even trying."; break;
+        case 1: reaction = "A noble start<d025>.<d025>.<d025>. But <cr>not even close</c>."; break;
+        case 2: reaction = "Nice try, but <cy>nothing to show</c> for it."; break;
+        case 3: reaction = "You're getting there, but not quite yet."; break;
+        case 4: reaction = "Keep going, you're on the right track."; break;
+        case 5: reaction = "Not bad, but there's room for improvement."; break;
+        case 6: reaction = "Quick progress, <cj>respectable</c>."; break;
+        case 7: reaction = "Nearly there, I see."; break;
+        case 8: reaction = "<cy>Impressive</c>. Few remain for you."; break;
+        case 9: reaction = "I see I have given you a simple challenge, <cg>well done</c>."; break;
+    }
+
     if (m_dialogIndex == 2) {
     std::vector<DialogObject *> GK_Dialog = {
         DialogObject::create(
@@ -1342,7 +1359,15 @@ void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
         ),
         DialogObject::create(
             "The Gauntlet Keeper",
-            "Conquer the <cr>Doom Gauntlet</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+            "Conquer <cr>10 Gauntlets</c>, and I shall give you passage to the <cy>Forgotten Gauntlets</c>.",
+            1,
+            0.85,
+            false,
+            ccWHITE
+        ),
+        DialogObject::create(
+            "The Gauntlet Keeper",
+            fmt::format("You have beaten <cy>{}</c>. <d050>{}.", completedGauntlets(), reaction).c_str(),
             1,
             0.85,
             false,
@@ -1385,6 +1410,7 @@ void BetterGauntletSelectLayer::onLockedListToggle(CCObject *sender) {
             "GKDialog_7.png"_spr,
             "GKDialog_11.png"_spr,
             "GKDialog_9.png"_spr,
+            "GKDialog_7.png"_spr,
             "GKDialog_7.png"_spr,
             "GKDialog_7.png"_spr,
             "GKDialog_9.png"_spr,

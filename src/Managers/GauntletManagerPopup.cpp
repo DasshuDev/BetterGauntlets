@@ -135,6 +135,14 @@ bool GauntletManagerPopup::init(float width, float height, char const* bg) {
 }
 
 void GauntletManagerPopup::startArgonAuth() {
+    if (!argon::signedIn()) {
+        Notification::create(
+            "Not signed into a GD account.", NotificationIcon::Error
+        )->show();
+        this->onClose(nullptr);
+        return;
+    }
+
     m_loadingCircle->setVisible(true);
     m_loadingCircle->runAction(CCRepeatForever::create(CCRotateBy::create(1.0, 360.0)));
 
@@ -167,7 +175,7 @@ void GauntletManagerPopup::startArgonAuth() {
                     .header("Authorization", "Bearer " + token)
                     .header("X-Account-Id", std::to_string(accountID))
                     .get("https://api.bettergauntlets.dev/manage"),
-                [this, token, accountID](web::WebResponse res) {
+                [this, token](web::WebResponse res) {
                     m_loadingCircle->setVisible(false);
 
                     if (res.code() == 403) {
@@ -180,11 +188,6 @@ void GauntletManagerPopup::startArgonAuth() {
                     }
                     if (!res.ok()) {
                         log::error("GauntletManagerPopup: /manage returned {} - {}", res.code(), res.string().unwrapOr(""));
-                        if (res.code() == 401) {
-                            // the server rejected this token specifically - evict it so the next
-                            // attempt forces a fresh handshake instead of reusing the same dead one
-                            argon::clearToken(accountID);
-                        }
                         Notification::create(
                             fmt::format("Server error {}", res.code()), NotificationIcon::Error
                         )->show();
@@ -416,10 +419,20 @@ void GauntletManagerPopup::fetchGauntlets() {
         [this](web::WebResponse res) {
             m_loadingCircle->setVisible(false);
 
-            // Token expired - clear it and re-authenticate
-            if (res.code() == 401 || res.code() == 403) {
+            if (res.code() == 401) {
                 GauntletManagerAPI::get()->setToken("");
-                startArgonAuth();
+                Notification::create(
+                    "Auth expired - please reopen the manager panel.", NotificationIcon::Error
+                )->show();
+                this->onClose(nullptr);
+                return;
+            }
+
+            if (res.code() == 403) {
+                Notification::create(
+                    "You are not a manager.", NotificationIcon::Error
+                )->show();
+                this->onClose(nullptr);
                 return;
             }
 

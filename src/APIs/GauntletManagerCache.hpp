@@ -18,23 +18,22 @@ public:
     void isSupporter(int accountID, std::function<void(bool)> callback);
 
 private:
-    GauntletManagerCache() = default;
-    void fetch();
-    void fetchHelpers();
-    void fetchSupporters();
+    GauntletManagerCache();
+    struct RoleCache {
+        std::function<web::WebFuture()> fetch;
+        std::string jsonKey;
+        std::string label;
 
-    std::unordered_set<int> m_managerIDs;
-    bool m_hasFetched = false;
-    std::vector<std::pair<int, std::function<void(bool)>>> m_waiting;
-    async::TaskHolder<web::WebResponse> m_request;
+        std::unordered_set<int> ids;
+        bool hasFetched = false;
+        std::vector<std::pair<int, std::function<void(bool)>>> waiting;
+        async::TaskHolder<web::WebResponse> request;
+    };
 
-    std::unordered_set<int> m_helperIDs;
-    bool m_hasFetchedHelpers = false;
-    std::vector<std::pair<int, std::function<void(bool)>>> m_waitingHelpers;
-    async::TaskHolder<web::WebResponse> m_helperRequest;
+    void fetchRole(RoleCache& cache);
+    void checkRole(RoleCache& cache, int accountID, std::function<void(bool)> callback);
 
-    std::unordered_set<int> m_supporterIDs;
-    bool m_hasFetchedSupporters = false;
-    std::vector<std::pair<int, std::function<void(bool)>>> m_waitingSupporters;
-    async::TaskHolder<web::WebResponse> m_supporterRequest;
+    RoleCache m_managers;
+    RoleCache m_helpers;
+    RoleCache m_supporters;
 };

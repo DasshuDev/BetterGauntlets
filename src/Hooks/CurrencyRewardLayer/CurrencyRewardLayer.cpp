@@ -249,20 +249,13 @@ void GRCurrencyRewardLayer::restyleRewardUnlockLayerIcons(CurrencyRewardLayer *l
   }
 
   auto rewardUnlockLayer = findAncestorRewardUnlockLayer(layer);
-  if (!rewardUnlockLayer) {
-    auto parent = layer->getParent();
-    return;
-  }
+  if (!rewardUnlockLayer) return;
 
   auto innerLayer = rewardUnlockLayer->getChildByIndex(0);
   if (!innerLayer) {
     log::warn("GRCurrencyRewardLayer::restyleRewardUnlockLayerIcons - RewardUnlockLayer has no child 0 (innerLayer)");
     return;
   }
-  log::debug(
-      "GRCurrencyRewardLayer::restyleRewardUnlockLayerIcons - found innerLayer with {} children",
-      innerLayer->getChildrenCount()
-  );
 
   auto coinFrame = frameFromFile("GR_gauntletCoin_001.png"_spr);
   auto crystalFrame = frameFromFile("GR_crystal_001.png"_spr);
@@ -307,32 +300,22 @@ bool GRCurrencyRewardLayer::init(
     CCPoint position, CurrencyRewardType rewardType,
     float yOffset, float time
 ) {
-  log::debug(
-      "[X] GRCurrencyRewardLayer::init - entered, orbs={} diamonds={} stylingActive={}",
-      orbs, diamonds, m_gauntletRewardStylingActive
-  );
-
   if (!CurrencyRewardLayer::init(
           orbs, stars, moons, diamonds, demonKey, keyCount, shardType,
           shardsCount, position, rewardType, yOffset, time
       ))
     return false;
-  log::debug("[X] GRCurrencyRewardLayer::init - base CurrencyRewardLayer::init succeeded");
 
   if (m_gauntletRewardStylingActive) {
     restyleForGauntletReward(this);
-    log::debug("[X] GRCurrencyRewardLayer::init - restyleForGauntletReward returned, scheduling delayed icon fix");
 
     this->runAction(CCSequence::create(
         CCDelayTime::create(0.05f),
         CallFuncExt::create([this] {
-          log::debug("[X] GRCurrencyRewardLayer::init - delayed action fired, calling restyleRewardUnlockLayerIcons");
           restyleRewardUnlockLayerIcons(this);
         }),
         nullptr
     ));
-  } else {
-    log::debug("[X] GRCurrencyRewardLayer::init - gauntlet reward styling not active, skipping restyle");
   }
 
   return true;

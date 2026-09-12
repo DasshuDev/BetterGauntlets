@@ -69,10 +69,6 @@ static matjson::Value buildGauntletBody(GauntletEditData const& data) {
 }
 
 web::WebFuture GauntletManagerAPI::create(GauntletEditData const& data) {
-    log::debug(
-        "create: token empty={}, accountId={}, body={}",
-        m_token.empty(), GJAccountManager::get()->m_accountID, buildGauntletBody(data).dump()
-    );
     return web::WebRequest()
         .header("Content-Type", "application/json")
         .header("Authorization", "Bearer " + m_token)
@@ -91,10 +87,6 @@ web::WebFuture GauntletManagerAPI::update(GauntletEditData const& data) {
 }
 
 web::WebFuture GauntletManagerAPI::remove(int id) {
-    log::debug(
-        "remove: token empty={}, accountId={}, id={}",
-        m_token.empty(), GJAccountManager::get()->m_accountID, id
-    );
     return web::WebRequest()
         .header("Authorization", "Bearer " + m_token)
         .header("X-Account-Id", std::to_string(GJAccountManager::get()->m_accountID))

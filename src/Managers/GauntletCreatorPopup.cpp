@@ -713,6 +713,42 @@ bool GauntletCreatorPopup::init(
         removeBtn->m_scaleMultiplier = 1.15;
         removeMenu->addChild(removeBtn);
 
+        // buttons to swap X slot's level params with neighbor
+        auto reorderMenu = CCMenu::create();
+        reorderMenu->setID("reorder-menu");
+        reorderMenu->setPosition({row->getContentWidth() / 2, 8});
+        reorderMenu->setLayout(RowLayout::create()->setGap(20));
+        row->addChild(reorderMenu, 2);
+
+        auto moveLeftSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+        moveLeftSpr->setScale(0.35);
+        auto moveLeftBtn = CCMenuItemExt::createSpriteExtra(moveLeftSpr,
+            [this, i](CCMenuItemSpriteExtra*) {
+                if (i > 0 && i < (int)m_levels.size()) {
+                    std::swap(m_levels[i], m_levels[i - 1]);
+                    refreshLevels();
+                }
+            }
+        );
+        moveLeftBtn->setID("move-left-button");
+        reorderMenu->addChild(moveLeftBtn);
+
+        auto moveRightSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+        moveRightSpr->setScale(0.35);
+        moveRightSpr->setFlipX(true);
+        auto moveRightBtn = CCMenuItemExt::createSpriteExtra(moveRightSpr,
+            [this, i](CCMenuItemSpriteExtra*) {
+                if (i + 1 < (int)m_levels.size()) {
+                    std::swap(m_levels[i], m_levels[i + 1]);
+                    refreshLevels();
+                }
+            }
+        );
+        moveRightBtn->setID("move-right-button");
+        reorderMenu->addChild(moveRightBtn);
+
+        reorderMenu->updateLayout();
+
         levelListMenu->addChild(row);
 
         if (i == 0) row->setPosition({25, 35});
@@ -1323,6 +1359,12 @@ void GauntletCreatorPopup::refreshLevels() {
 
         if (auto bg = dynamic_cast<CCScale9Sprite*>(row->getChildByID("row-bg")))
             bg->setColor(hasLevel ? ccColor3B{40, 80, 40} : ccColor3B{20, 20, 20});
+
+        if (auto btn = row->getChildByIDRecursive("move-left-button"))
+            btn->setVisible(hasLevel && i > 0);
+
+        if (auto btn = row->getChildByIDRecursive("move-right-button"))
+            btn->setVisible(hasLevel && i + 1 < (int)m_levels.size());
     }
 
     // m_previewLevelCount is never assigned, so this branch never runs

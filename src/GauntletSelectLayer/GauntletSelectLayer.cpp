@@ -376,20 +376,32 @@ void BetterGauntletSelectLayer::buildMenus() {
         if (auto vanillaLayer = GauntletSelectLayer::create(0)) {
             glm->m_levelManagerDelegate = previousDelegate;
 
-            auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button");
-            if (!gdxButton) {
-                gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/rated-layouts-gauntlets-button");
-            }
+            vanillaLayer->retain();
+            this->runAction(CCSequence::create(
+                CCDelayTime::create(0.f),
+                CallFuncExt::create([this, vanillaLayer] {
+                    auto gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/gauntlets-deluxe-button");
+                    if (!gdxButton) {
+                        gdxButton = vanillaLayer->getChildByIDRecursive("arcticwoof.gauntlets_deluxe/rated-layouts-gauntlets-button");
+                    }
 
-            if (gdxButton) {
-                gdxButton->retain();
-                gdxButton->removeFromParentAndCleanup(false);
-                TRMenu->addChild(gdxButton);
-                TRMenu->updateLayout();
-                gdxButton->release();
-            } else {
-                log::warn("GauntletSelectLayer: Gauntlets Deluxe is loaded but its button wasn't found");
-            }
+                    if (gdxButton) {
+                        auto targetMenu = static_cast<CCMenu*>(this->getChildByID("top-right-menu"));
+                        if (targetMenu) {
+                            gdxButton->retain();
+                            gdxButton->removeFromParentAndCleanup(false);
+                            targetMenu->addChild(gdxButton);
+                            targetMenu->updateLayout();
+                            gdxButton->release();
+                        }
+                    } else {
+                        log::warn("GauntletSelectLayer: Gauntlets Deluxe is loaded but its button wasn't found");
+                    }
+
+                    vanillaLayer->release();
+                }),
+                nullptr
+            ));
         }
     }
 
@@ -1119,6 +1131,7 @@ void BetterGauntletSelectLayer::buildCustomListToggle(CCMenu *topMenu) {
     toggleBtn->setPosition({102, 17.5});
     toggleBtn->setScale(0.65);
     toggleBtn->setOpacity(80);
+    toggleBtn->toggle(m_showingCustomList);
     topMenu->addChild(toggleBtn);
 }
 

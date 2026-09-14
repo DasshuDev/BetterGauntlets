@@ -1,3 +1,9 @@
+# <cc>v2.0.8</c>
+- <c-ffffc4><cy>**Updated**</c> Account caching process.
+
+
+---
+
 # <cc>v2.0.7</c>
 - <c-ffffc4><cy>**Updated**</c> Argon verification *further*.</c>
 - <c-ffffc4><cy>**Updated**</c> The Gauntlet Keeper's requirements from the Doom Gauntlet to just 10 Gauntlets total.</c>

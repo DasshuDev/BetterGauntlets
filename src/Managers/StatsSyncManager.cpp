@@ -14,6 +14,13 @@ void StatsSyncManager::sync(int crystals, int coins, SyncCallback callback) {
         return;
     }
 
+    auto now = std::chrono::steady_clock::now();
+    if (now - m_lastSync < std::chrono::seconds(60)) {
+        if (callback) callback(true, "");
+        return;
+    }
+    m_lastSync = now;
+
     auto account = argon::getGameAccountData();
     int accountId = account.accountId;
     std::string username = account.username;
@@ -143,6 +150,58 @@ void StatsSyncManager::completeLevel(int levelId, SyncCallback callback) {
             );
         }
     );
+}
+
+void StatsSyncManager::retryPendingCompletions() {
+    if (!argon::signedIn()) return;
+    retryPendingLevelSync(CustomGauntletManager::get()->getPendingLevelSyncs(), 0);
+}
+
+void StatsSyncManager::retryPendingLevelSync(std::vector<int> pending, size_t index) {
+    if (index >= pending.size()) {
+        retryPendingGauntletSync(CustomGauntletManager::get()->getPendingGauntletSyncs(), 0);
+        return;
+    }
+
+    int levelId = pending[index];
+    completeLevel(levelId, [this, pending, index, levelId](bool success, std::string const& error) {
+        auto* manager = CustomGauntletManager::get();
+        if (success) {
+            manager->clearLevelSyncPending(levelId);
+            auto* gauntlet = manager->findGauntletForLevel(levelId);
+            if (gauntlet && manager->isGauntletFullyCompleted(*gauntlet) && !manager->isGauntletRewardSynced(gauntlet->id)) {
+                manager->markGauntletSyncPending(gauntlet->id);
+            }
+        } else {
+            log::warn("Retry: level completion sync failed again - {}", error);
+        }
+        retryPendingLevelSync(pending, index + 1);
+    });
+}
+
+void StatsSyncManager::retryPendingGauntletSync(std::vector<int> pending, size_t index) {
+    if (index >= pending.size()) return;
+
+    int gauntletId = pending[index];
+    auto* manager = CustomGauntletManager::get();
+    if (manager->isGauntletRewardSynced(gauntletId)) {
+        manager->clearGauntletSyncPending(gauntletId);
+        retryPendingGauntletSync(pending, index + 1);
+        return;
+    }
+
+    completeGauntlet(gauntletId, [this, pending, index, gauntletId](bool success, int rewardCoins, std::string const& error) {
+        auto* manager = CustomGauntletManager::get();
+        if (success) {
+            manager->clearGauntletSyncPending(gauntletId);
+            manager->markGauntletRewardSynced(gauntletId);
+            manager->addCoins(rewardCoins);
+            manager->markPendingGauntletReward(gauntletId, rewardCoins);
+        } else {
+            log::warn("Retry: gauntlet completion sync failed again - {}", error);
+        }
+        retryPendingGauntletSync(pending, index + 1);
+    });
 }
 
 void StatsSyncManager::resetSelf(SyncCallback callback) {

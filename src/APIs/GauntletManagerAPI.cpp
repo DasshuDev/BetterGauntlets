@@ -118,14 +118,6 @@ web::WebFuture GauntletManagerAPI::uploadIcon(std::filesystem::path const& path)
         .post(baseURL() + "/upload");
 }
 
-web::WebFuture GauntletManagerAPI::fetchManagers() {
-    return web::WebRequest().get(baseURL() + "/managers");
-}
-
-web::WebFuture GauntletManagerAPI::fetchHelpers() {
-    return web::WebRequest().get(baseURL() + "/helpers");
-}
-
-web::WebFuture GauntletManagerAPI::fetchSupporters() {
-    return web::WebRequest().get(baseURL() + "/supporters");
+web::WebFuture GauntletManagerAPI::fetchRoles() {
+    return web::WebRequest().get(baseURL() + "/roles");
 }

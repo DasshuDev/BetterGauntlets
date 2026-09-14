@@ -101,6 +101,43 @@ static std::string stripPrefix(std::string const& str, std::string const& prefix
     return str;
 }
 
+static bool savedIntSetContains(char const* key, int value) {
+    auto arr = Mod::get()->getSavedValue<matjson::Value>(key, matjson::Value::array());
+    if (!arr.isArray()) return false;
+    for (auto const& id : arr) {
+        if (id.asInt().unwrapOr(0) == value) return true;
+    }
+    return false;
+}
+
+static void savedIntSetAdd(char const* key, int value) {
+    auto arr = Mod::get()->getSavedValue<matjson::Value>(key, matjson::Value::array());
+    if (!arr.isArray()) arr = matjson::Value::array();
+    for (auto const& id : arr) {
+        if (id.asInt().unwrapOr(0) == value) return;
+    }
+    arr.push(value);
+    Mod::get()->setSavedValue(key, arr);
+}
+
+static void savedIntSetRemove(char const* key, int value) {
+    auto arr = Mod::get()->getSavedValue<matjson::Value>(key, matjson::Value::array());
+    if (!arr.isArray()) return;
+    auto result = matjson::Value::array();
+    for (auto const& id : arr) {
+        if (id.asInt().unwrapOr(0) != value) result.push(id);
+    }
+    Mod::get()->setSavedValue(key, result);
+}
+
+static std::vector<int> savedIntSetAll(char const* key) {
+    std::vector<int> out;
+    auto arr = Mod::get()->getSavedValue<matjson::Value>(key, matjson::Value::array());
+    if (!arr.isArray()) return out;
+    for (auto const& id : arr) out.push_back(id.asInt().unwrapOr(0));
+    return out;
+}
+
 // parse 
 
 std::vector<CustomGauntletData> CustomGauntletManager::parse(std::string const& body) {
@@ -278,23 +315,43 @@ bool CustomGauntletManager::consumePendingGauntletReward(int gauntletId, int& ou
 }
 
 bool CustomGauntletManager::isLevelRewardClaimed(int levelID) const {
-    auto claimed = Mod::get()->getSavedValue<matjson::Value>(
-        "claimed-level-rewards", matjson::Value::array()
-    );
-    if (!claimed.isArray()) return false;
-    for (auto const& id : claimed) {
-        if (id.asInt().unwrapOr(0) == levelID) return true;
-    }
-    return false;
+    return savedIntSetContains("claimed-level-rewards", levelID);
 }
 
 void CustomGauntletManager::markLevelRewardClaimed(int levelID) {
-    auto claimed = Mod::get()->getSavedValue<matjson::Value>(
-        "claimed-level-rewards", matjson::Value::array()
-    );
-    if (!claimed.isArray()) claimed = matjson::Value::array();
-    claimed.push(levelID);
-    Mod::get()->setSavedValue("claimed-level-rewards", claimed);
+    savedIntSetAdd("claimed-level-rewards", levelID);
+}
+
+std::vector<int> CustomGauntletManager::getPendingLevelSyncs() const {
+    return savedIntSetAll("pending-level-syncs");
+}
+
+void CustomGauntletManager::markLevelSyncPending(int levelID) {
+    savedIntSetAdd("pending-level-syncs", levelID);
+}
+
+void CustomGauntletManager::clearLevelSyncPending(int levelID) {
+    savedIntSetRemove("pending-level-syncs", levelID);
+}
+
+std::vector<int> CustomGauntletManager::getPendingGauntletSyncs() const {
+    return savedIntSetAll("pending-gauntlet-syncs");
+}
+
+void CustomGauntletManager::markGauntletSyncPending(int gauntletId) {
+    savedIntSetAdd("pending-gauntlet-syncs", gauntletId);
+}
+
+void CustomGauntletManager::clearGauntletSyncPending(int gauntletId) {
+    savedIntSetRemove("pending-gauntlet-syncs", gauntletId);
+}
+
+bool CustomGauntletManager::isGauntletRewardSynced(int gauntletId) const {
+    return savedIntSetContains("synced-gauntlet-rewards", gauntletId);
+}
+
+void CustomGauntletManager::markGauntletRewardSynced(int gauntletId) {
+    savedIntSetAdd("synced-gauntlet-rewards", gauntletId);
 }
 
 int CustomGauntletManager::getCrystalTotal() const {
@@ -333,4 +390,7 @@ void CustomGauntletManager::setCoinTotal(int value) {
 
 void CustomGauntletManager::resetClaimedRewards() {
     Mod::get()->setSavedValue("claimed-level-rewards", matjson::Value::array());
+    Mod::get()->setSavedValue("pending-level-syncs", matjson::Value::array());
+    Mod::get()->setSavedValue("pending-gauntlet-syncs", matjson::Value::array());
+    Mod::get()->setSavedValue("synced-gauntlet-rewards", matjson::Value::array());
 }

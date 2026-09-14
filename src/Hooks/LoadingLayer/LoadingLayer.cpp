@@ -16,6 +16,10 @@ class $modify(GRLoadingLayer, LoadingLayer) {
         auto* mgr = CustomGauntletManager::get();
         StatsSyncManager::get()->sync(mgr->getCrystalTotal(), mgr->getCoinTotal());
 
+        CustomGauntletManager::get()->whenReady([](bool ok, int) {
+            if (ok) StatsSyncManager::get()->retryPendingCompletions();
+        });
+
         auto accountID = GJAccountManager::get()->m_accountID;
         GauntletManagerCache::get()->isManager(accountID, [accountID](bool isManager) {
             log::info("Account {} is {}a Gauntlet Manager", accountID, isManager ? "" : "not ");

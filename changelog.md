@@ -1,10 +1,13 @@
 # <cc>v2.0.8</c>
-- <c-ffffc4><cy>**Updated**</c> Account caching process.
-
+- <c-ffffc4><cy>**Updated**</c> Account caching/fetching process EVEN FURTHER.</c>
+- <c-c4ebff><cl>**Fixed**</c> the Forgotten Gauntlets toggle to show proper list status when exiting a custom Gauntlet.</c>
+- <c-c4ebff><cl>**Fixed**</c> a rare bug where the Gauntlets Deluxe button would not appear.</c>
+- <c-c4ebff><cl>**Fixed**</c> possible rate limit issues.</c>
+- <c-c4ebff><cl>**Fixed**</c> the Forgotten Gauntlet's scrollbar scale being inaccurate.</c>
 
 ---
 
-# <cc>v2.0.7</c>
+## v2.0.7
 - <c-ffffc4><cy>**Updated**</c> Argon verification *further*.</c>
 - <c-ffffc4><cy>**Updated**</c> The Gauntlet Keeper's requirements from the Doom Gauntlet to just 10 Gauntlets total.</c>
     - Their dialog updates with your Gauntlet progress!</c>

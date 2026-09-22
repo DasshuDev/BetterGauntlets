@@ -1065,7 +1065,7 @@ void BetterGauntletSelectLayer::populateCustomList(std::vector<CustomGauntletDat
             alpha::ui::ScrollOrientation::HORIZONTAL
         );
         scrollBar->setPosition({winSize.width / 2, scrollLayer->getPositionY() - 126});
-        scrollBar->setContentSize({12, winSize.width + 125});
+        scrollBar->setContentSize({12, winSize.height + 125});
         scrollBar->setID("custom-gauntlet-bar"_spr);
         scrollBar->setVisible(m_showingCustomList);
         this->addChild(scrollBar, 1);

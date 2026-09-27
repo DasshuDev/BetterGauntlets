@@ -132,10 +132,10 @@ void LeaderboardPopup::onClose(CCObject* sender) {
 void LeaderboardPopup::onSync(CCObject*) {
     m_loadingCircle->setVisible(true);
 
-    int crystals = CustomGauntletManager::get()->getCrystalTotal();
+    auto manager = CustomGauntletManager::get();
 
     Ref<LeaderboardPopup> self(this);
-    StatsSyncManager::get()->sync(crystals, 0, [self](bool success, std::string const& error) {
+    StatsSyncManager::get()->sync(manager->getCrystalTotal(), manager->getCoinTotal(), [self](bool success, std::string const& error) {
         if (!self->getParent()) return; // popup already closed
 
         self->m_loadingCircle->setVisible(false);

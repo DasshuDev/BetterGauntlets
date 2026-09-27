@@ -8,6 +8,7 @@
 #include <Geode/binding/RewardsPage.hpp>
 #include <Geode/modify/GJChestSprite.hpp>
 #include "../Hooks/CurrencyRewardLayer/CurrencyRewardLayer.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 
 namespace {
     Ref<GJChestSprite> activeChestSprite;
@@ -306,7 +307,7 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
     if (gauntletFrame) {
         gauntletFrame->setID("grey-frame");
         gauntletFrame->setColor({128, 128, 128});
-        gauntletFrame->setScale(1.25);
+        gauntletFrame->setScale(1.25 * CustomGauntletManager::iconScale());
         node->addChild(gauntletFrame, 2);
     }
 
@@ -316,8 +317,9 @@ bool CustomGauntletCompletionPopup::init(CustomGauntletData const& data, int rew
         gauntletFrameShadow->setOpacity(75);
         gauntletFrameShadow->setID("gauntlet-frame");
         gauntletFrameShadow->setPositionY(-10);
-        gauntletFrameShadow->setScaleX(1.25);
-        gauntletFrameShadow->setScaleY(gauntletFrame ? gauntletFrame->getScaleY() * 1.2 : 1.2);
+        float frameScale = 1.25 * CustomGauntletManager::iconScale();
+        gauntletFrameShadow->setScaleX(frameScale);
+        gauntletFrameShadow->setScaleY(frameScale * 1.2);
         node->addChild(gauntletFrameShadow, 1);
     }
     

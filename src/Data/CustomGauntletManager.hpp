@@ -26,7 +26,9 @@ public:
     void cacheIcon(std::string const& url, cocos2d::CCTexture2D* texture);
 
     bool isCustomGauntletLevel(int levelID) const;
-    void markPendingGauntletAttempt(int levelID);
+    // true if the level sits in an unlocked slot of any cached gauntlet
+    bool isLevelUnlocked(int levelID) const;
+    static bool isSlotUnlocked(CustomGauntletData const& gauntlet, int index);
 
     void markPendingGauntletReward(int gauntletId, int coins);
     bool consumePendingGauntletReward(int gauntletId, int& outCoins);
@@ -34,8 +36,6 @@ public:
     CustomGauntletData const* findGauntletForLevel(int levelID) const;
 
     bool isGauntletFullyCompleted(CustomGauntletData const& gauntlet) const;
-
-    bool consumePendingGauntletAttempt(int levelID);
 
     bool isLevelRewardClaimed(int levelID) const;
     void markLevelRewardClaimed(int levelID);
@@ -65,13 +65,16 @@ public:
 
     static int crystalsForLevel(GJGameLevel* level);
 
+    // Downloaded icons are authored at UHD (4x). A raw texture's point size is pixels / content scale factor,
+    // so this brings it back to its UHD point size on every platform and texture quality.
+    static float iconScale();
+
 private:
     CustomGauntletManager() = default;
     void beginFetch();
 
     std::vector<CustomGauntletData> m_cache;
     bool m_hasCached = false;
-    int m_pendingGauntletLevelID = 0;
     int m_pendingRewardGauntletID = 0;
     int m_pendingRewardCoins = 0;
 

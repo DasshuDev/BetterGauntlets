@@ -9,6 +9,7 @@ class CustomGauntletLayer : public CCLayer, public LevelManagerDelegate {
 public:
     static CustomGauntletLayer* create(CustomGauntletData const& data);
     static CCScene* scene(CustomGauntletData const& data);
+    ~CustomGauntletLayer() override;
 
 protected:
     bool init(CustomGauntletData const& data);

@@ -289,16 +289,29 @@ int CustomGauntletManager::crystalsForLevel(GJGameLevel* level) {
     }
 }
 
-// Player progress
-
-void CustomGauntletManager::markPendingGauntletAttempt(int levelID) {
-    m_pendingGauntletLevelID = levelID;
+float CustomGauntletManager::iconScale() {
+    return CCDirector::get()->getContentScaleFactor() / 4.f;
 }
 
-bool CustomGauntletManager::consumePendingGauntletAttempt(int levelID) {
-    bool matches = m_pendingGauntletLevelID != 0 && m_pendingGauntletLevelID == levelID;
-    m_pendingGauntletLevelID = 0;
-    return matches;
+// Player progress
+
+bool CustomGauntletManager::isSlotUnlocked(CustomGauntletData const& gauntlet, int index) {
+    // unlocked once the nearest earlier filled slot is claimed; empty slots don't block progression
+    for (int i = index - 1; i >= 0; i--) {
+        int prevID = gauntlet.levels[i].id;
+        if (prevID == 0) continue;
+        return get()->isLevelRewardClaimed(prevID);
+    }
+    return true;
+}
+
+bool CustomGauntletManager::isLevelUnlocked(int levelID) const {
+    for (auto const& gauntlet : m_cache) {
+        for (int i = 0; i < 5; i++) {
+            if (gauntlet.levels[i].id == levelID && isSlotUnlocked(gauntlet, i)) return true;
+        }
+    }
+    return false;
 }
 
 void CustomGauntletManager::markPendingGauntletReward(int gauntletId, int coins) {

@@ -1,5 +1,6 @@
 #include <ctime>
 #include "GauntletCreatorPopup.hpp"
+#include "../Data/CustomGauntletManager.hpp"
 
 using namespace geode::prelude;
 
@@ -662,7 +663,7 @@ bool GauntletCreatorPopup::init(
                         delete img;
                         auto icon = CCSprite::createWithTexture(tex);
                         tex->release();
-                        icon->setScale(0.75);
+                        icon->setScale(0.75 * CustomGauntletManager::iconScale());
                         icon->setPosition({row->getContentWidth() / 2, row->getContentHeight() / 2});
                         icon->setID("gauntlet-icon-bg");
                         if (auto old = row->getChildByID("row-bg")) old->removeFromParent();
@@ -871,7 +872,7 @@ bool GauntletCreatorPopup::init(
                     auto icon = CCSprite::createWithTexture(tex);
                     icon->setID("preview-icon");
                     icon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 10});
-                    icon->setScale(1.05);
+                    icon->setScale(1.05 * CustomGauntletManager::iconScale());
                     auto shadow = CCSprite::createWithTexture(tex);
                     shadow->setID("preview-icon-shadow");
                     shadow->setColor({0, 0, 0});
@@ -1113,7 +1114,7 @@ void GauntletCreatorPopup::onPickIcon(CCObject*) {
 
                 previewIcon->setID("preview-icon");
                 previewIcon->setPosition({container->getContentWidth() / 2, (container->getContentHeight() / 2) + 10});
-                previewIcon->setScale(1.05);
+                previewIcon->setScale(1.05 * CustomGauntletManager::iconScale());
 
                 previewIconShadow->setID("preview-icon-shadow");
                 previewIconShadow->setPosition({previewIcon->getPositionX(), previewIcon->getPositionY() - 10});
@@ -1139,7 +1140,7 @@ void GauntletCreatorPopup::onPickIcon(CCObject*) {
                             auto slotIcon = CCSprite::create(path.string().c_str());
                             if (!slotIcon) continue;
                             slotIcon->setID("gauntlet-icon-bg");
-                            slotIcon->setScale(0.75);
+                            slotIcon->setScale(0.75 * CustomGauntletManager::iconScale());
                             slotIcon->setPosition({rowNode->getContentWidth() / 2, rowNode->getContentHeight() / 2});
                             rowNode->addChild(slotIcon, 1);
                         }

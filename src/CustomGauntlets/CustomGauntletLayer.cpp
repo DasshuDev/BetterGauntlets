@@ -15,7 +15,17 @@ static void limitLabel(CCLabelBMFont* lbl, float max, float orig, float minS) {
     lbl->setScale(w > max ? std::max(max / lbl->getContentSize().width, minS) : orig);
 }
 
-// create / scene 
+// create / scene
+
+CustomGauntletLayer::~CustomGauntletLayer() {
+    auto glm = GameLevelManager::get();
+    if (glm->m_levelManagerDelegate == this)
+        glm->m_levelManagerDelegate = nullptr;
+    if (m_loadedLevels) {
+        m_loadedLevels->release();
+        m_loadedLevels = nullptr;
+    }
+}
 
 CCScene* CustomGauntletLayer::scene(CustomGauntletData const& data) {
     auto layer = CustomGauntletLayer::create(data);
@@ -274,6 +284,9 @@ void CustomGauntletLayer::loadIslandIcon() {
                 delete img;
 
                 if (self->m_levelsMenu) {
+                    // setTexture keeps the placeholder's rect, so reset it to the full icon and rescale
+                    CCRect rect = {{0, 0}, tex->getContentSize()};
+                    float scale = CustomGauntletManager::iconScale();
                     for (int i = 1; i <= 5; i++) {
                         auto btn = self->m_levelsMenu->getChildByID(
                             fmt::format("level-{}", i).c_str());
@@ -283,11 +296,16 @@ void CustomGauntletLayer::loadIslandIcon() {
                         if (auto island = static_cast<CCSprite*>(
                                 levelSpr->getChildByID(fmt::format("island-{}", i).c_str()))) {
                             island->setTexture(tex);
+                            island->setTextureRect(rect);
+                            island->setScale(scale);
                         }
                         if (auto shadow = static_cast<CCSprite*>(
                                 levelSpr->getChildByID(
                                     fmt::format("island-{}-shadow", i).c_str()))) {
                             shadow->setTexture(tex);
+                            shadow->setTextureRect(rect);
+                            shadow->setScaleX(scale);
+                            shadow->setScaleY(scale * 1.2);
                         }
                     }
                 }
@@ -366,11 +384,7 @@ void CustomGauntletLayer::buildLevelButtons(CCArray* levels) {
         auto obj = levels->objectAtIndex(i);
         auto level = typeinfo_cast<GJGameLevel*>(obj);
         bool hasCompleted = CustomGauntletManager::get()->isLevelRewardClaimed(slotData.id);
-        bool isLocked = false;
-        if (i > 0) {
-            auto& prevSlotData = m_data.levels[i - 1];
-            isLocked = !CustomGauntletManager::get()->isLevelRewardClaimed(prevSlotData.id);
-        }
+        bool isLocked = !CustomGauntletManager::isSlotUnlocked(m_data, i);
         m_lockedStates.push_back(isLocked);
 
         // Island Node
@@ -569,9 +583,7 @@ void CustomGauntletLayer::checkForUnlocks() {
     for (int i = 0; i < 5 && i < static_cast<int>(m_lockedStates.size()); i++) {
         if (!m_lockedStates[i]) continue;
 
-        auto& prevSlotData = m_data.levels[i - 1];
-        bool stillLocked = !CustomGauntletManager::get()->isLevelRewardClaimed(prevSlotData.id);
-        if (stillLocked) continue;
+        if (!CustomGauntletManager::isSlotUnlocked(m_data, i)) continue;
 
         m_lockedStates[i] = false;
         auto levelSpr = m_levelsMenu->getChildByIDRecursive(fmt::format("gauntlet-{}", i + 1));
@@ -632,8 +644,9 @@ void CustomGauntletLayer::playUnlockAnimation(CCNode* levelSpr, int index) {
                 CCTintTo::create(0.3, 255, 255, 255),
                 HueLuminanceTo::create(0.6, 1, 0.),
                 CCSequence::create(
-                    CCEaseInOut::create(CCScaleTo::create(0.25, 1.35), 2.),
-                    CCEaseBackOut::create(CCScaleTo::create(0.35, 1.)),
+                    // relative so the icon's base scale survives the pulse
+                    CCEaseInOut::create(CCScaleBy::create(0.25, 1.35), 2.),
+                    CCEaseBackOut::create(CCScaleBy::create(0.35, 1. / 1.35)),
                     nullptr
                 ),
                 nullptr
@@ -718,7 +731,6 @@ void CustomGauntletLayer::onLevel(CCObject* sender) {
     auto btn   = static_cast<CCMenuItemSpriteExtra*>(sender);
     auto level = static_cast<GJGameLevel*>(btn->getUserObject());
     if (!level) return;
-    CustomGauntletManager::get()->markPendingGauntletAttempt(level->m_levelID.value());
 
     auto lil   = LevelInfoLayer::create(level, false);
     auto scene  = CCScene::create();

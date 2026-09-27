@@ -5,34 +5,31 @@
 
 using namespace geode::prelude;
 
-bool GRPlayLayer::init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
-    if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
-
-    int levelID = level ? level->m_levelID.value() : 0;
-    m_fields->m_isGauntletAttempt =
-        CustomGauntletManager::get()->consumePendingGauntletAttempt(levelID);
-
-    return true;
-}
-
 void GRPlayLayer::levelComplete() {
     PlayLayer::levelComplete();
 
-    if (!m_fields->m_isGauntletAttempt) return;
     if (m_isPracticeMode || !m_level) return;
 
     int levelID = m_level->m_levelID.value();
 
+    // eligibility comes from saved progress (same rule as the island locks), not from how the level was opened,
+    // so replays after exiting, vault entries etc. all count
     auto* manager = CustomGauntletManager::get();
     if (!manager->isCustomGauntletLevel(levelID)) return;
     if (manager->isLevelRewardClaimed(levelID)) return;
+    if (!manager->isLevelUnlocked(levelID)) return;
 
     int reward = CustomGauntletManager::crystalsForLevel(m_level);
     manager->markLevelRewardClaimed(levelID);
     manager->addCrystals(reward);
+
+    // flush now so a crash before the game's normal save doesn't lose the claim
+    if (auto res = Mod::get()->saveData(); res.isErr()) {
+        log::warn("Failed to save claimed level reward: {}", res.unwrapErr());
+    }
     GRCurrencyRewardLayer::queueCrystalReward(reward);
 
-    StatsSyncManager::get()->sync(manager->getCrystalTotal(), 0);
+    StatsSyncManager::get()->sync(manager->getCrystalTotal(), manager->getCoinTotal());
 
     manager->markLevelSyncPending(levelID);
     StatsSyncManager::get()->completeLevel(levelID, [manager, levelID](bool success, std::string const& error) {

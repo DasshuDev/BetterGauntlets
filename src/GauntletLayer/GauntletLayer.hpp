@@ -23,6 +23,7 @@ public:
     bool m_loaded = false;
     bool m_exiting = false;
     std::vector<bool> m_lockedStates;
+    async::TaskHolder<web::WebResponse> m_unreleasedListener;
 
 protected:
     bool init(GauntletType type);

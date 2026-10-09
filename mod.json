@@ -81,6 +81,13 @@
 			"default": true
 		},
 
+		"unreleased-gauntlets": {
+			"name": "Unreleased Gauntlets",
+			"description": "Shows <cg>every Gauntlet</c> in the Gauntlet list, including ones that <cr>haven't been released</c> by RobTop yet. Unreleased Gauntlets use a <cy>placeholder level set</c>.\n\nYou'll need to <cj>reload</c> the layer to see changes (exit and re-enter the Gauntlet Screen).",
+			"type": "bool",
+			"default": false
+		},
+
 		"GauntletLayer": {
 			"name": "GauntletLayer",
 			"type": "title"

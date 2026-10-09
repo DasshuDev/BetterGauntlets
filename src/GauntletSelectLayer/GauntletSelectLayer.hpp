@@ -54,6 +54,7 @@ protected:
   void onNewInfo(cocos2d::CCObject *sender);
   void onDiscord(cocos2d::CCObject *sender);
   void onLeaderboard(cocos2d::CCObject *sender);
+  void onKofi(cocos2d::CCObject *sender);
   void toggleList(cocos2d::CCObject *sender);
   void onLockedListToggle(cocos2d::CCObject *sender);
   void unblockPlay();

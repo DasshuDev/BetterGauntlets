@@ -2,6 +2,7 @@
 #include "../GauntletInfo/GauntletInfo.hpp"
 #include "../GauntletSelectLayer/GauntletSelectLayer.hpp"
 #include "../Hooks/Custom Hooks/GauntletCompletionPopup.hpp"
+#include "../Hooks/UnreleasedGauntlets/UnreleasedGauntlets.hpp"
 #include "HueLuminanceTo.hpp"
 #include <Geode/Geode.hpp>
 #include <Geode/binding/CCSpriteWithHue.hpp>
@@ -256,8 +257,7 @@ void BetterGauntletLayer::loadLevelsFinished(CCArray *levels, char const *key, i
 
 void BetterGauntletLayer::loadLevelsFailed(char const *key, int type) {
   auto glm = GameLevelManager::get();
-  if (glm->m_levelManagerDelegate == this)
-    glm->m_levelManagerDelegate = nullptr;
+  if (glm->m_levelManagerDelegate == this) glm->m_levelManagerDelegate = nullptr;
 
   if (auto lc = getChildByIDRecursive("loading-circle"))
     lc->removeFromParent();

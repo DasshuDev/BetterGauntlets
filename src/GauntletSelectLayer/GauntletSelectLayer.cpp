@@ -4,6 +4,7 @@
 #include "../CustomGauntlets/CustomGauntletNode.hpp"
 #include "../Data/CustomGauntletManager.hpp"
 #include "../Hooks/DialogIcons/DialogIcons.hpp"
+#include "../Hooks/UnreleasedGauntlets/UnreleasedGauntlets.hpp"
 #include "../Managers/GauntletManagerPopup.hpp"
 #include "../Managers/LeaderboardPopup.hpp"
 #include "GauntletInfoPopup.hpp"
@@ -308,6 +309,19 @@ void BetterGauntletSelectLayer::buildMenus() {
     BLMenu->addChild(discordBtn);
     BLMenu->updateLayout();
 
+    auto kofiIcon = CCSprite::create("GR_kofi_001.png"_spr);
+    auto kofiSpr = CircleButtonSprite::create(kofiIcon, CircleBaseColor::Green, CircleBaseSize::Medium);
+    kofiSpr->setScale(0.75);
+    auto kofiBtn = CCMenuItemSpriteExtra::create(
+        kofiSpr,
+        this,
+        menu_selector(BetterGauntletSelectLayer::onKofi)
+    );
+    kofiBtn->setID("kofi-button"_spr);
+    kofiIcon->setScale(kofiIcon->getScale() * 1.25);
+    BLMenu->addChild(kofiBtn);
+    BLMenu->updateLayout();
+
     // Bottom-right menu (refresh)
     auto BRMenu = CCMenu::create();
     BRMenu->setID("bottom-right-menu");
@@ -450,11 +464,14 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
     // Build gauntlet nodes from server data
 
     void BetterGauntletSelectLayer::buildGauntletNodes(CCArray *gauntlets) {
+    auto allGauntlets = CCArray::create();
+    allGauntlets->addObjectsFromArray(gauntlets);
+    UnreleasedGauntlets::appendMissingGauntlets(allGauntlets);
+
     std::vector<GJMapPack *> packs;
     auto gm = GameManager::sharedState();
-    for (auto *obj : CCArrayExt<GJMapPack *>(gauntlets)) {
+    for (auto *obj : CCArrayExt<GJMapPack *>(allGauntlets)) {
 
-        // Chaos Gauntlet stays hidden until the player has spoken to the Demon Guardian (UGV 19)
         if (static_cast<GauntletType>(obj->m_packID) == GauntletType::Chaos &&
             !gm->getUGV("19")) continue;
 
@@ -491,6 +508,17 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
         btn->m_scaleMultiplier = 1.05;
         gauntletNode->setPosition(btn->getContentSize() / 2);
 
+        if (UnreleasedGauntlets::isUnreleased(static_cast<GauntletType>(pack->m_packID))) {
+            btn->setEnabled(false);
+
+            if (auto pop = CCSprite::createWithSpriteFrameName("GR_errorPop_001.png"_spr)) {
+                pop->setID("unreleased-pop"_spr);
+                pop->setPosition({btn->getContentSize() - 10});
+                pop->setScale(0.75);
+                btn->addChild(pop, 10);
+            }
+        }
+
         m_gauntletBtnContainer->addChild(btn);
     }
 
@@ -513,8 +541,6 @@ void BetterGauntletSelectLayer::loadLevelsFinished(CCArray *levels, char const *
         toggleList(nullptr);
     }
 }
-
-    // Scroll mode
 
 void BetterGauntletSelectLayer::setupScrollMode() {
     CCDirector *director = CCDirector::sharedDirector();
@@ -574,15 +600,11 @@ void BetterGauntletSelectLayer::setupScrollMode() {
 
 void BetterGauntletSelectLayer::styleGauntletButtons() {
     auto scrollLayer = m_customScrollLayer;
-    if (!scrollLayer)
-        return;
-
+    if (!scrollLayer) return;
     auto btnNode = scrollLayer->getContentLayer()->getChildByID("gauntlet-btns");
-    if (!btnNode)
-        return;
+    if (!btnNode) return;
     auto btnContainer = btnNode->getChildren();
-    if (!btnContainer)
-        return;
+    if (!btnContainer) return;
 
     for (auto obj : CCArrayExt(btnContainer)) {
         auto gauntletBtn = typeinfo_cast<CCMenuItemSpriteExtra *>(obj);
@@ -621,26 +643,27 @@ void BetterGauntletSelectLayer::styleGauntletButtons() {
 
         auto chestSpr = static_cast<CCSprite *>(
             gauntletBtn->getChildByIDRecursive("chest-sprite"));
+
         auto chestShadowSpr = static_cast<CCSprite *>(
             gauntletBtn->getChildByIDRecursive("chest-shadow-sprite"));
         if (chestSpr && chestShadowSpr) {
-        chestSpr->setPositionY(-64.5);
-        chestSpr->setScale(0.3);
-        chestShadowSpr->setPosition(ccp(chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2));
-        chestShadowSpr->setScale(0.3);
+            chestSpr->setPositionY(-64.5);
+            chestSpr->setScale(0.3);
+            chestShadowSpr->setPosition(ccp(chestSpr->getPositionX() + 2, chestSpr->getPositionY() - 2));
+            chestShadowSpr->setScale(0.3);
         }
 
         auto rewardLabel = static_cast<CCLabelBMFont *>(
             gauntletBtn->getChildByIDRecursive("reward-label"));
+
         auto rewardShadowLabel = static_cast<CCLabelBMFont *>(
             gauntletBtn->getChildByIDRecursive("reward-shadow-label"));
         if (rewardLabel && rewardShadowLabel && chestSpr) {
-        rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5);
-        rewardLabel->setScale(0.5);
-        rewardLabel->setZOrder(3);
-        rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2,
-                                            rewardLabel->getPositionY() - 2));
-        rewardShadowLabel->setScale(0.5);
+            rewardLabel->setPositionY(chestSpr->getPositionY() - 13.5);
+            rewardLabel->setScale(0.5);
+            rewardLabel->setZOrder(3);
+            rewardShadowLabel->setPosition(ccp(rewardLabel->getPositionX() + 2, rewardLabel->getPositionY() - 2));
+            rewardShadowLabel->setScale(0.5);
         }
 
         auto pack = static_cast<GJMapPack *>(gauntletBtn->getUserObject());
@@ -905,13 +928,17 @@ void BetterGauntletSelectLayer::onDiscord(CCObject *sender) {
         });
     }
 
-    void BetterGauntletSelectLayer::onLeaderboard(CCObject *sender) {
+void BetterGauntletSelectLayer::onLeaderboard(CCObject *sender) {
     LeaderboardPopup::create()->show();
+}
+
+void BetterGauntletSelectLayer::onKofi(CCObject* sender) {
+    log::info("hey jay");
 }
 
     // Custom gauntlets toggle
 
-    void BetterGauntletSelectLayer::toggleList(CCObject *sender) {
+void BetterGauntletSelectLayer::toggleList(CCObject *sender) {
     m_showingCustomList = !m_showingCustomList;
     m_showCustomList = m_showingCustomList;
 
@@ -1142,8 +1169,8 @@ void BetterGauntletSelectLayer::checkManagerStatus() {
         if (!isManager) return;
         if (self->m_managerButton) return;
 
-        auto BLMenu = self->getChildByIDRecursive("bottom-left-menu");
-        if (!BLMenu) return;
+        auto TRMenu = self->getChildByIDRecursive("top-right-menu");
+        if (!TRMenu) return;
 
         auto managerBtnSpr = CircleButtonSprite::createWithSprite(
             "GR_gauntletStar_001.png"_spr,
@@ -1158,8 +1185,8 @@ void BetterGauntletSelectLayer::checkManagerStatus() {
             [](CCMenuItemSpriteExtra *) {GauntletManagerPopup::create()->show();});
         manageBtn->setID("manager-button"_spr);
         self->m_managerButton = manageBtn;
-        BLMenu->addChild(manageBtn);
-        BLMenu->updateLayout();
+        TRMenu->addChild(manageBtn);
+        TRMenu->updateLayout();
     });
 }
 
